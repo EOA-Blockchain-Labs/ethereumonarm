@@ -1,0 +1,28 @@
+.. Ethereum on ARM documentation documentation master file, created by
+   sphinx-quickstart on Wed Jan 13 19:04:18 2021.
+
+Storage
+=======
+
+Raspberry Pi 4
+--------------
+
+You will need an SSD to run the Ethereum clients 
+(without an SSD drive there’s absolutely no chance 
+of syncing the Ethereum blockchain). There are 2 options:
+
+Use an USB portable SSD disk such as the Samsung Portable SSD.
+
+Use an USB 3.0 External Hard Drive Case with a SSD Disk. 
+In our case we used a Inateck 2.5 Hard Drive Enclosure FE2011. 
+Make sure to buy a case with an UASP compliant chip, particularly, one of these: 
+
+* JMicron JMS567
+* JMicron JMS578
+* ASMedia (ASM1153E).
+
+In all cases, avoid getting low quality SSD disks as it is a key component of your node 
+and it can drastically affect the node performance (and sync times). 
+Keep in mind that you need to plug the disk to an USB 3.0 port (in blue).
+
+

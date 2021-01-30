@@ -1,8 +1,8 @@
 .. Ethereum on ARM documentation documentation master file, created by
    sphinx-quickstart on Wed Jan 13 19:04:18 2021.
 
-Download and Install The Image
-==============================
+Download and Install
+====================
 
 Download
 --------
@@ -56,3 +56,13 @@ to turn the device into a full Ethereum node.
 .. warning::
 
   You will need to wait for about 8 to 10 minutes to allow the script to install and configure all the software.
+
+Log in
+------
+
+You can log in through SSH or using the console (if you have a monitor and keyboard attached)::
+
+  User: ethereum
+  Password: ethereum
+
+You will be prompted to change the password on first login, so you will need to log in twice.

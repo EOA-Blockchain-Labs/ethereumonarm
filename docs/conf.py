@@ -33,6 +33,7 @@ release = '0.0.1'
 # ones.
 extensions = [
     "sphinx_rtd_theme",
+    "sphinx_tabs.tabs",
     "sphinx-prompt"
 ]
 

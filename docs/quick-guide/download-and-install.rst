@@ -17,10 +17,16 @@ You can verify the file with the following SHA256 Hash:
 
 ``SHA256 149cb9b020d1c49fcf75c00449c74c6f38364df1700534b5e87f970080597d87``
 
+By running:
+
+.. prompt:: bash $
+
+  md5sum image
+
 Flash 
 -----
 
-Insert the microSD in your Desktop / Laptop and download the file.
+Insert the microSD in your Desktop / Laptop and flash the image.
 
 .. note::
   If you are not comfortable with command line or if you are 
@@ -34,7 +40,7 @@ Open a terminal and check your MicroSD device name running:
 
    sudo fdisk -l
 
-You should see a device named mmcblk0 or sdd. Unzip and flash the image:
+You should see a device named mmcblk0 or sd(x). Unzip and flash the image:
 
 .. prompt:: bash $
 
@@ -43,6 +49,10 @@ You should see a device named mmcblk0 or sdd. Unzip and flash the image:
 
 Insert MicroSD
 --------------
+
+.. warning::
+  The image will wipe out your USB disk, so be careful if you already have data
+  on it.
 
 Insert de MicroSD into the Raspberry Pi 4. Connect an Ethernet cable and attach 
 the USB SSD disk (make sure you are using a blue port).
@@ -55,7 +65,7 @@ to turn the device into a full Ethereum node.
 
 .. warning::
 
-  You will need to wait for about 8 to 10 minutes to allow the script to install and configure all the software.
+  You will need to wait for about 5 to allow the script to install and configure all the software.
 
 Log in
 ------

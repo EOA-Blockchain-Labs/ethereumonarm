@@ -4,13 +4,18 @@
 Managing clients
 ================
 
-Starting and Stopping
----------------------
+Systemctl service. Poner matriz con todos los servicios
+
+Running Clients
+---------------
 
 Changing Parameters
 -------------------
 
-Getting Info
+Updating Clients
+----------------
+
+Getting Logs
 ------------
 
 Monitoring Dashboards

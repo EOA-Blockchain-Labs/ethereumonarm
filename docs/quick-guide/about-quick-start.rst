@@ -4,7 +4,7 @@
 About Quick Start Guide
 =======================
 
-This Quick Start Guide walks you through all steps to get an Ethereum node up an running
+This Quick Start Guide walks you through all steps to get an Ethereum node up and running
 in a few minutes.
 
 The process is pretty straightforward but you will need some basic Linux/Networking skills 
@@ -15,6 +15,7 @@ into `Dappnode`_ or `Avado`_.
 
 Summing up, the installation is as follows:
 
+* Get a Raspberry Pi 4
 * Download and flash the Image into an MicroSD card
 * Connect the SSD to the USB port and the Ethernet Cable
 * Power on the device

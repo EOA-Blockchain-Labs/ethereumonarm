@@ -8,6 +8,11 @@ Ethereum on ARM documentation
    :maxdepth: 2
    :caption: Contents:
 
+
+.. figure:: /_static/images/ethnode.jpg
+   :figwidth: 200px
+   :align: center
+
 Welcome to the Ethereum on ARM documentation.
 
 Ethereum on ARM is a set of custom Linux images for ARM boards
@@ -82,8 +87,9 @@ information regarding the image and other Ethereum related software.
   :hidden:
 
   /user-guide/about-user-guide
-  /user-guide/ethereum-clients
   /user-guide/managing-clients
+  /user-guide/ethereum1.0
+  /user-guide/ethereum2.0
   /user-guide/other-ethereum-software
   /user-guide/storage
   /user-guide/security

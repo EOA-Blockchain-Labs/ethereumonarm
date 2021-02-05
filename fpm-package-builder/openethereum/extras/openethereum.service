@@ -1,0 +1,13 @@
+[Unit]
+Description=OpenEthereum client daemon
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/openethereum.conf
+ExecStart=/usr/bin/openethereum $ARGS
+Restart=always
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target
+

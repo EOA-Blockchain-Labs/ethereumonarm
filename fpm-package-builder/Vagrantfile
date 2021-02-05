@@ -1,0 +1,25 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-20.04"
+  config.vm.synced_folder ".", "/home/vagrant/ethonarm"
+  config.vm.provider "virtualbox" do |vb|
+    vb.cpus = 2
+    vb.memory = "5096"
+  end
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update
+    apt-get install -y clang pkg-config file make cmake gcc-aarch64-linux-gnu g++-aarch64-linux-gnu ruby ruby-dev rubygems build-essential rpm vim git jq curl wget python3-pip
+    gem install --no-document fpm
+    sed -i '22a \t: # Ensure this if-clause is not empty. If it were empty, and we had an 'else', then it is an error in shell syntax' /var/lib/gems/2.7.0/gems/fpm-1.12.0/templates/deb/postinst_upgrade.sh.erb
+    su - vagrant -c "curl https://sh.rustup.rs -sSf | sh -s -- -y"
+    su - vagrant -c 'cat <<EOF >> ~/.cargo/config
+[target.aarch64-unknown-linux-gnu]
+linker = "aarch64-linux-gnu-gcc"
+EOF'
+    su - vagrant -c "source ~/.cargo/env"
+    su - vagrant -c "rustup target add aarch64-unknown-linux-gnu"
+    su - vagrant -c "rustup update"                        
+  SHELL
+end

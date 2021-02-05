@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+override(){
+  systemctl stop grafana-server prometheus prometheus-node-exporter || true
+
+  # Configure Grafana
+  cp /usr/lib/ethereumonarm/grafana.db /var/lib/grafana/grafana.db
+  chown grafana:grafana /var/lib/grafana/grafana.db
+
+  #Configure prometheus
+  cp /usr/lib/ethereumonarm/prometheus /etc/default/
+  cp /usr/lib/ethereumonarm/prometheus-node-exporter /etc/default/
+  cp /usr/lib/ethereumonarm/prometheus.yml /etc/prometheus/
+
+  #A basic set of ufw rules WIP
+  cp /usr/lib/ethereumonarm/user.rules /etc/ufw/
+
+  systemctl start grafana-server prometheus prometheus-node-exporter || true
+
+}
+
+confirm() {
+  # call with a prompt string or use a default
+  read -p "Return to default config, Are you sure? " -n 1 -r
+}
+  echo    # (optional) move to a new line
+  if [[ ! $REPLY =~ ^[Yy]$ ]]
+  then
+    exit 0
+  else
+    override
+  fi
+
+while getopts 'o' OPTION; do
+  case "$OPTION" in
+    o)
+      override
+      ;;
+    :)
+     confirm
+     ;;
+    ?)
+      echo "script usage: $(basename $0) [-o] (Dont as for confirmation)" >&2
+      exit 1
+      ;;
+  esac
+done
+
+if (( $OPTIND == 1 )); then
+   confirm
+fi
+
+shift "$(($OPTIND -1))"

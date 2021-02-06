@@ -23,10 +23,9 @@
     $ make
 
 
-  4. Alternatively you can simple cd into any dir and type make to create only the desired package
-	
-	
-	
+
+4. Alternatively you can simple cd into any dir and type make to create only the desired package
+
 	$ cd geth
 	
 	$ make

@@ -3,7 +3,7 @@
 
 Vagrant.configure("2") do |config|
   config.vm.box = "bento/ubuntu-20.04"
-  config.vm.synced_folder ".", "/home/vagrant/ethonarm"
+  config.vm.synced_folder ".", "/home/vagrant/ethereumonarm"
   config.vm.provider "virtualbox" do |vb|
     vb.cpus = 2
     vb.memory = "5096"
@@ -20,6 +20,6 @@ linker = "aarch64-linux-gnu-gcc"
 EOF'
     su - vagrant -c "source ~/.cargo/env"
     su - vagrant -c "rustup target add aarch64-unknown-linux-gnu"
-    su - vagrant -c "rustup update"                        
+    su - vagrant -c "rustup update"
   SHELL
 end

@@ -17,7 +17,7 @@
 	 $ cd ethereumonarm/fpm-package-builder
 
 
-3. Just tipe make to create all the deb packages
+3. Just type make to create all the deb packages
 
 
     $ make

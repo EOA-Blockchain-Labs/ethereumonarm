@@ -34,6 +34,11 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(DEPOSIT_VERSION) --license $(PKG_LICE
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_RPM) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep
 
+BUILD_ARCH := $(shell uname -p)
+
+ifneq ($(BUILD_ARCH),aarch64)
+  $(error You need to use this script in a aarch64 system)
+endif
 
 all: prepare deb clean
 

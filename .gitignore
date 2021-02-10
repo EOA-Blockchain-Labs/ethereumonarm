@@ -1,2 +1,3 @@
 fpm-package-builder/.vagrant/
 fpm-package-builder/packages/
+image-creation-tool/ubuntu/*.img

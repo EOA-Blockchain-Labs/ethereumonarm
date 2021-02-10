@@ -2,9 +2,9 @@
 #apt-get install ruby ruby-dev rubygems build-essential rpm
 #gem install --no-document fpm
 
-URL := https://cdimage.ubuntu.com/releases/20.04.1/release/ubuntu-20.04.1-preinstalled-server-arm64+raspi.img.xz
-XZ := ubuntu-20.04.1-preinstalled-server-arm64+raspi.img.xz
-ISO := ubuntu-20.04.1-preinstalled-server-arm64+raspi.img
+URL := https://cdimage.ubuntu.com/releases/20.04.2/release/ubuntu-20.04.2-preinstalled-server-arm64+raspi.img.xz
+XZ := ubuntu-20.04.2-preinstalled-server-arm64+raspi.img.xz
+ISO := ubuntu-20.04.2-preinstalled-server-arm64+raspi.img
 
 iso:
 	mkdir /tmp/ubuntu_iso

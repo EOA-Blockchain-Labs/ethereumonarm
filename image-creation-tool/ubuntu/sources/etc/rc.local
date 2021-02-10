@@ -18,7 +18,7 @@ if [ ! -f $FLAG ]; then
   # Modify hostname (ethnode-$MAC-HASH-CHUNK)
   echo Changing hostname
   MAC_HASH=`cat /sys/class/net/eth0/address | sha256sum | awk '{print substr($0,0,9)}'`
-  echo ethnode-$MAC_HASH > /etc/hostname
+  echo ethereumonarm-$MAC_HASH > /etc/hostname
   sed -i "s/127.0.0.1.*/127.0.0.1\tethereumonarm-$MAC_HASH/g" /etc/hosts
 
   # Format USB3 SSD and mount it as /home

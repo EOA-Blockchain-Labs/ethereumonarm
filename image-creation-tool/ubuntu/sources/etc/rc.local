@@ -18,7 +18,7 @@ if [ ! -f $FLAG ]; then
   # Modify hostname (ethnode-$MAC-HASH-CHUNK)
   echo Changing hostname
   MAC_HASH=`cat /sys/class/net/eth0/address | sha256sum | awk '{print substr($0,0,9)}'`
-  echo ethnode-$MAC_HASH > /etc/hostname
+  echo ethereumonarm-$MAC_HASH > /etc/hostname
   sed -i "s/127.0.0.1.*/127.0.0.1\tethereumonarm-$MAC_HASH/g" /etc/hosts
 
   # Format USB3 SSD and mount it as /home
@@ -54,8 +54,13 @@ if [ ! -f $FLAG ]; then
 
   # Page allocation error workout
   echo "vm.min_free_kbytes=65536" >> /etc/sysctl.conf
-  # Modify swappiness parameter
+  # Increasing how aggressively the kernel will swap memory pages since we are using ZRAM first
   echo "vm.swappiness=100" >> /etc/sysctl.conf
+  # Increases cache pressure, which increases the tendency of the kernel to reclaim memory used for caching of directory and inode objects. You will use less memory over a longer period of time
+  echo "vm.vfs_cache_pressure=500" >> /etc/sysctl.conf
+  # Background processes will start writing right away when it hits the 1% limit but the system won’t force synchronous I/O until it gets to 50% dirty_ratio
+  echo "vm.dirty_background_ratio=1" >> /etc/sysctl.conf
+  echo "vm.dirty_ratio=50" >> /etc/sysctl.conf
 
 
   # Ethereum software installation
@@ -71,14 +76,14 @@ if [ ! -f $FLAG ]; then
   # Install Ethereum packages
   echo Installing Ethereum packages
   apt-get update
-  apt-get -y install ethereumonarm-armbian-extras prysm lighthouse nimbus teku geth openethereum besu
+  apt-get -y install ethereumonarm-armbian-extras geth openethereum nethermind besu prysm lighthouse nimbus teku
   systemctl enable geth
 
   # Create an alias for package updates
   cat <<EOF >> /etc/bash.bashrc
   alias update-ethereum='
 sudo apt-get update
-sudo apt-get install geth openethereum nethermind besu ipfs prysm lighthouse nimbus teku'
+sudo apt-get install geth openethereum nethermind besu prysm lighthouse nimbus teku'
 EOF
   # Install monitoring packages
   wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -

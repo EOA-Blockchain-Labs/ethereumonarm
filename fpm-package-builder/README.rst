@@ -4,7 +4,7 @@ This is a collection of Makefiles and scripts used to create all the Ethereum on
 
 	$ git clone https://github.com/diglos/ethereumonarm.git
 
-* Optional but recomended uset the provided Vagrantfile to create an Ubuntu 20.04 VM with al the needed dependences::
+* Optional but recommended use the provided Vagrantfile to create an Ubuntu 20.04 VM with all the needed dependencies::
 
 
 	$ cd ethereumonarm/fpm-package-builder

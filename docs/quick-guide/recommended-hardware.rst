@@ -7,12 +7,12 @@ Recommended Hardware
 In order to run an Ethereum node, you will need a Raspberry Pi 4 Board 
 and other additional components.
 
-This is the recommended hardware to run an Eth1 node, An Eth2 node or both. 
-If you don't know what an Eth1 or Eth2 node is, please visit the User Guide section.
+This is the recommended hardware to run an **Eth1 node**, An **Eth2 node** or **both**. 
+If you don't know what an Eth1 or Eth2 node is, please visit the :doc:`User Guide section </user-guide/about-user-guide>`.
 
 .. tabs::
 
-  .. tab:: Eth1
+  .. tab:: Ethereum 1.0 node
 
     Recommended hardware and settings for running an Ethereum 1.0 node
 
@@ -27,7 +27,7 @@ If you don't know what an Eth1 or Eth2 node is, please visit the User Guide sect
 
     While a 4 GB RAM device would work, we recommend to go for a 8 GB RAM board.
 
-  .. tab:: Eth2
+  .. tab:: Ethereum 2.0 node
 
     Recommended hardware and settings for running an Ethereum 2.0 node (Beacon Chain and Validator).
 
@@ -42,7 +42,7 @@ If you don't know what an Eth1 or Eth2 node is, please visit the User Guide sect
 
     You need an Ethereum 1.0 provider to create blocks (see :doc:`User Guide </user-guide/about-user-guide>` for further info)
     
-  .. tab:: Eth1 + Eth2
+  .. tab:: Ethereum 1.0 + Ethereum 2.0 nodes
     
     Recommended hardware and settings for running an Ethereum 1.0 
     + Ethereum 2.0 node (both running at the same time).
@@ -55,6 +55,8 @@ If you don't know what an Eth1 or Eth2 node is, please visit the User Guide sect
     * **Port forwarding** (see clients for further info)
     * **A case with heatsink and fan**
     * USB keyboard, Monitor and HDMI cable (micro-HDMI) (Optional)
+
+So, as you can see, the key components are the SDD and RAM. In general, you are good with 8 GB and 1 TB of SSD disk.
 
 .. note::
   For running an Ethereum 2.0 node you need 32 ETH

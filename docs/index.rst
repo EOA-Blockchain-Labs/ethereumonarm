@@ -50,17 +50,6 @@ The process is as follows:
 * Wait till the installation script finish all tasks
 * Enable and run an Ethereum client
 
-* **About Quick Start**:
-  :doc:`About Quick Start </quick-guide/about-quick-start>`
-* **Recommended Hardware**:
-  :doc:`Recommended Hardware </quick-guide/recommended-hardware>`
-* **Download and install the image**:
-  :doc:`Download and install the image </quick-guide/download-and-install>`
-* **Running Ethereum**:
-  :doc:`Log in </quick-guide/running-ethereum>`  
-* **What's next**:
-  :doc:`What's next </quick-guide/whats-next>`
-
 .. toctree::
   :maxdepth: 2
   :caption: Quick Start Guide
@@ -77,9 +66,6 @@ User Guide
 
 This section describes in detail how to configure and run the Ethereum nodes as well as other
 information regarding the image and other Ethereum related software.
-
-* **Security**:
-  :doc:`Security </user-guide/security>`
 
 .. toctree::
   :maxdepth: 2
@@ -99,21 +85,6 @@ information regarding the image and other Ethereum related software.
 Deverloper Guide
 ----------------
 
-* **Ethereum on ARM images**:
-  :doc:`Ethereum on ARM images </developer-guide/eoa-images>`
-* **Installation script**:
-  :doc:`Installation process </developer-guide/installation-script>`
-* **Debian packages**:
-  :doc:`Debian packages </developer-guide/debian-packages>`
-* **Config files**:
-  :doc:`Config files </developer-guide/config-files>`
-* **Systemd Services**:
-  :doc:`Systemd services </developer-guide/systemd-services>`
-* **Monitoring tools**:
-  :doc:`Monitoring tools </developer-guide/monitoring-tools>`
-* **Armbian supported devices**:
-  :doc:`Armbian supported devices </developer-guide/armbian>`
-
 .. toctree::
   :maxdepth: 2
   :caption: Developer Guide
@@ -132,17 +103,6 @@ About Ethereum on ARM
 
 Ethereum on ARM is a project
 
-* **Why ARM boards**:
-  :doc:`Why ARM boards </ethereum-on-arm/why-arm-boards>`
-* **Main Goals**:
-  :doc:`Main Goals </ethereum-on-arm/main-goals>`
-* **Main features**:
-  :doc:`Main features </ethereum-on-arm/main-features>`
-* **Developers guide**:
-  :doc:`Developers guide </ethereum-on-arm/developers>`
-* **Sources**:
-  :doc:`Sources </ethereum-on-arm/sources>`
-
 .. toctree::
   :maxdepth: 2
   :caption: Ethereum On ARM
@@ -153,7 +113,3 @@ Ethereum on ARM is a project
   /ethereum-on-arm/main-features
   /ethereum-on-arm/developers
   /ethereum-on-arm/sources
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

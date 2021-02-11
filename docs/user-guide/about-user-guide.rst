@@ -4,10 +4,6 @@
 About user guide
 ================
 
-ARM devices
------------
-
-Board Access
-------------
-
+This User Guide explains in depth how to run an Ethereum 1.0 or Ethereum 2.0 node and how 
+to manage the Ethereum software
 

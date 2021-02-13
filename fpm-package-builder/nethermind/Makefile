@@ -37,6 +37,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(NETHERMIND_VERSION) --license $(PKG_L
 	--depends	libsnappy-dev\
 	--depends libc6-dev\
 	--depends libc6\
+	--depends librocksdb-dev\
 	--depends unzip
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(NETHERMIND_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\

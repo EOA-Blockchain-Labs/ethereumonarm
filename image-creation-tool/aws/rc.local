@@ -1,0 +1,111 @@
+#!/bin/bash
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+# This script turns the Ubuntu 64 bit image into an Ethereum on ARM image
+#
+
+FLAG="/root/first-run.flag"
+if [ ! -f $FLAG ]; then
+  # Modify hostname (ethnode-$MAC-HASH-CHUNK)
+  echo Changing hostname
+  MAC_HASH=`cat /sys/class/net/eth0/address | sha256sum | awk '{print substr($0,0,9)}'`
+  echo ethereumonarm-$MAC_HASH > /etc/hostname
+  sed -i "s/127.0.0.1.*/127.0.0.1\tethereumonarm-$MAC_HASH/g" /etc/hosts
+
+  # Format USB3 SSD and mount it as /home
+
+  echo Looking for USB drive
+
+  if stat  /dev/nvme1n1 > /dev/null 2>&1;
+  then
+    echo USB drive found
+    echo Partitioning and formatting USB Drive...
+    sgdisk -n 0:0:0 /dev/nvme1n1
+
+    mkfs.ext4 -F /dev/nvme1n1p1
+    echo '/dev/nvme1n1p1 /home ext4 defaults 0 2' >> /etc/fstab && mount /home
+  else
+    echo no SDD detected
+  fi
+
+  # Create Ethereum account
+  echo "Creating ethereum  user for Geth and Parity"
+  if ! id -u ethereum >/dev/null 2>&1; then
+    adduser --disabled-password --gecos "" ethereum
+  fi
+
+  echo "ethereum:ethereum" | chpasswd
+  for GRP in sudo netdev audio video dialout plugdev; do
+    adduser ethereum $GRP
+  done
+
+  # Force password change on first login
+  chage -d 0 ethereum
+
+
+  # Ethereum software installation
+  # Add APT EthRaspbian repository
+  sleep 25
+  echo "Adding Ethereum repositories"
+  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8A584409D327B0A5
+  add-apt-repository -n "deb http://apt.ethraspbian.com focal-testing main"
+  #add-apt-repository -n "deb http://apt.ethraspbian.com bionic main"
+  #add-apt-repository -n "deb http://apt.ethraspbian.com bionic-security main"
+  #add-apt-repository "deb http://apt.ethraspbian.com bionic-upgrades main"
+
+  # Install Ethereum packages
+  echo Installing Ethereum packages
+  apt-get update
+  apt-get -y install geth openethereum nethermind besu prysm lighthouse nimbus teku
+  systemctl enable geth
+
+  # Create an alias for package updates
+  cat <<EOF >> /etc/bash.bashrc
+  alias update-ethereum='
+sudo apt-get update
+sudo apt-get install geth openethereum nethermind besu prysm lighthouse nimbus teku'
+EOF
+  # Install monitoring packages
+  wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+  echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+  apt-get -y update
+  apt-get -y install grafana
+  systemctl enable grafana-server
+  useradd -m prometheus
+  mkdir -p /home/prometheus/node-exporter/
+  chown -R  prometheus:prometheus /home/prometheus/
+  apt-get install -y prometheus prometheus-node-exporter
+
+
+  #Install ufw
+  apt-get -y install ufw
+  ufw --force disable
+
+  apt-get -y install ethereumonarm-monitoring-extras
+  set-ethereunonarm-monitoring-extras -o
+
+  #Allow ssh password login
+  sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+
+  #Disable root user
+  passwd -l root
+
+  #Delete ubuntu user
+  deluser ubuntu
+
+  #the next line creates an empty file so it won't run the next boot
+  touch $FLAG
+  reboot
+else
+  echo "Nothing to do"
+fi
+exit 0

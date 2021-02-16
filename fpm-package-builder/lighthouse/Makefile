@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 LIGHTHOUSE_VERSION := $(shell curl -s "https://api.github.com/repos/sigp/lighthouse/tags" | jq '.[0].name' | tr -d  '"'| tr -d "v")
 
-PKG_RELEASE := 2
+PKG_RELEASE := 3
 PKG_NAME := lighthouse
 
 PKG_DESCRIPTION := "Ethereum 2.0 Sigma Prime implementation"
@@ -39,7 +39,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(LIGHTHOUSE_VERSION) --license $(PKG_L
 all: prepare deb clean
 
 prepare: ## Donwload the latest binary and prepare the package files
-	wget  https://github.com/sigp/lighthouse/releases/download/v$(LIGHTHOUSE_VERSION)/lighthouse-v$(LIGHTHOUSE_VERSION)-x86_64-unknown-linux-gnu.tar.gz -O - | tar -xz -C sources/usr/bin/  lighthouse
+	wget  https://github.com/sigp/lighthouse/releases/download/v$(LIGHTHOUSE_VERSION)/lighthouse-v$(LIGHTHOUSE_VERSION)-aarch64-unknown-linux-gnu.tar.gz -O - | tar -xz -C sources/usr/bin/  lighthouse
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)

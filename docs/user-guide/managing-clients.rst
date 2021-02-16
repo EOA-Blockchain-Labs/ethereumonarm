@@ -67,7 +67,7 @@ These are the list of the services available for all clients:
 Changing Parameters
 -------------------
 
-:guilabel:`Systemd` services read client variables from ``/etc/ethereum`` directory. If
+:guilabel:`Systemd` services read client variables from ``/etc/ethereum`` directory files. If
 you want to change any client parameter you have to edit the correspondent file. For 
 instance, this is the ``/etc/ethereum/geth.conf`` content::
 
@@ -90,19 +90,56 @@ For changes to take effect, you will need to restart the client:
   sudo systemctl restart geth
 
 .. tip::
-  Consult the clients official documentation in order to change the parameters.
+  Read the clients official documentation in order to learn the specific parameters
+  of each client.
 
 Updating Clients
 ----------------
 
+**Ethereum on ARM** comes with an ``APT`` repository which allows users to easily
+update the Ethereum software. For instance, to update the :guilabel:`Geth` client run:
+
+.. prompt:: bash $
+
+  sudo apt update
+  sudo apt install geth
+
+If you want to run the new version, restart the service by running:
+
+.. prompt:: bash $
+
+  sudo systemctl restart geth
+
+.. note::
+  The `APT` command will install the last version available in the repository. Most clients 
+  provide binaries for ARM64 architecture so this is just a package to handle the software.
+
+  See our developer guide section if you want to build you own packages.
+
 Getting Logs
 ------------
+
+You can get clients info by using :guilabel:`Systemd` ``journalctl`` command. For instance, 
+to get the :guilabel:`Geth` ``output``, run:
+
+.. prompt:: bash $
+
+  sudo journalctl -u geth -f
+
+You can of course take a look at ``/var/log/syslog``:
+
+.. prompt:: bash $
+
+  sudo tail -f /var/log/syslog
 
 Monitoring Dashboards
 ---------------------
 
+We configured Grafana Dashboards to let users monitor both Ethereum 1.0 and Ethereum 2.0 clients. 
+To access the dashboards just open your browser and type your ``Raspberry_IP`` followed by the 3000 port::
 
-
-
+  http://replace_with_your_IP:3000
+  user: admin
+  passwd: ethereum
 
 

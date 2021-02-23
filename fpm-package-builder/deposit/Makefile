@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 DEPOSIT_VERSION := $(shell curl -s "https://api.github.com/repos/ethereum/eth2.0-deposit-cli/tags" | jq '.[0].name' | tr -d  '"'| tr -d "v")
 
-PKG_RELEASE := 1
+PKG_RELEASE := 0
 PKG_NAME := eth2.0-deposit-cli
 
 PKG_DESCRIPTION := "Ethereum Foundation eth2 deposit cli tool"

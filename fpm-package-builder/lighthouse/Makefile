@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 LIGHTHOUSE_VERSION := $(shell curl -s "https://api.github.com/repos/sigp/lighthouse/tags" | jq '.[0].name' | tr -d  '"'| tr -d "v")
 
-PKG_RELEASE := 3
+PKG_RELEASE := 0
 PKG_NAME := lighthouse
 
 PKG_DESCRIPTION := "Ethereum 2.0 Sigma Prime implementation"

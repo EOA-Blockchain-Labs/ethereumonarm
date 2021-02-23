@@ -52,6 +52,7 @@ prepare: ## Donwload the latest binary and prepare the package files
 	wget https://github.com/prysmaticlabs/prysm/releases/download/v$(PRYSM_VERSION)/beacon-chain-v$(PRYSM_VERSION)-linux-arm64 -O sources/usr/bin/beacon-chain
 	wget https://github.com/prysmaticlabs/prysm/releases/download/v$(PRYSM_VERSION)/validator-v$(PRYSM_VERSION)-linux-arm64 -O sources/usr/bin/validator
 	wget https://github.com/prysmaticlabs/prysm/releases/download/v$(PRYSM_VERSION)/slasher-v$(PRYSM_VERSION)-linux-arm64 -O sources/usr/bin/slasher
+	chmod +x sources/usr/bin/beacon-chain sources/usr/bin/validator sources/usr/bin/slasher
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)
 

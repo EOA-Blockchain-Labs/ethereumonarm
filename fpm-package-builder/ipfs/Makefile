@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 IPFS_VERSION := $(shell curl -s "https://api.github.com/repos/ipfs/go-ipfs/releases/latest" | jq .tag_name | tr -d  '"'| tr -d "v")
 
-PKG_RELEASE := 1
+PKG_RELEASE := 0
 PKG_NAME := ipfs
 
 PKG_DESCRIPTION := "Ipfs: A peer-to-peer hypermedia protocol designed to make the web faster, safer, and more open."

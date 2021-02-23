@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 OPENETHEREUM_VERSION := $(shell curl -s "https://api.github.com/repos/openethereum/openethereum/tags" | jq '.[0].name' | tr -d  '"'| tr -d "v")
 
-PKG_RELEASE := 1
+PKG_RELEASE := 0
 PKG_NAME := openethereum
 
 PKG_DESCRIPTION := "Parity Technologies rust implementation of the Ethereum Protocol (formerly known as Parity)"

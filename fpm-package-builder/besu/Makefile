@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 BESU_VERSION := $(shell curl -s https://api.github.com/repos/hyperledger/besu/releases/latest | jq '.name' | tr -d '"' | tr -d 'v')
 
-PKG_RELEASE := 1
+PKG_RELEASE := 0
 PKG_NAME := besu
 
 PKG_DESCRIPTION := "Hyperledger Ethereum 1.0 java client"

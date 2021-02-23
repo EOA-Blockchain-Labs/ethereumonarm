@@ -6,7 +6,7 @@ SHELL := /bin/bash
 PRYSM_VERSION := $(shell curl -s "https://api.github.com/repos/prysmaticlabs/prysm/tags" | jq '.[0].name' | tr -d  '"'| tr -d "v")
 PRYSM_DHASH :=$(shell curl -s "https://api.github.com/repos/prysmaticlabs/prysm/tags" | jq '.[0].commit.sha' | tr -d  '"' | cut -c1-8)
 
-PKG_RELEASE := 2
+PKG_RELEASE := 0
 PKG_NAME := prysm
 
 PKG_DESCRIPTION := "Ethereum 2.0 Prysmatic Labs implementation"

@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 BEE_VERSION := $(shell curl -s "https://api.github.com/repos/ethersphere/bee/releases/latest" | jq .name | tr -d  '"'| tr -d "v")
 
-PKG_RELEASE := 1
+PKG_RELEASE := 0
 PKG_NAME := bee
 
 PKG_DESCRIPTION := "Bee is a Swarm client implemented in Go."

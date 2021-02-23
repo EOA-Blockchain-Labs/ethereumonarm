@@ -6,7 +6,7 @@ SHELL := /bin/bash
 NIMBUS_VERSION := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq '.name' | tr -d '"' | tr -d 'v')
 NIMBUS_DHASH := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq '.target_commitish' | tr -d  '"' | cut -c1-8)
 
-PKG_RELEASE := 1
+PKG_RELEASE := 0
 PKG_NAME := nimbus
 
 PKG_DESCRIPTION := "Ethereum 2.0 Nimbus implementation"

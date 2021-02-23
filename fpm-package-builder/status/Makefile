@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 STATUS_VERSION := $(shell curl -s "https://api.github.com/repos/status-im/status-go/releases/latest" | jq .tag_name | tr -d  '"'| tr -d "v")
 
-PKG_RELEASE := 0
+PKG_RELEASE := 1
 PKG_NAME := statusd
 
 PKG_DESCRIPTION := "Description: Status is a messenger, crypto wallet, and Web3 browser built with state of the art technology. This is a Status Node, an Ethereum client for supporting the Status network"

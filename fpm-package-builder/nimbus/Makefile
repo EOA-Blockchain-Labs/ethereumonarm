@@ -3,8 +3,8 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-NIMBUS_VERSION := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq '.name' | tr -d '"' | tr -d 'v')
-NIMBUS_DHASH := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq '.target_commitish' | tr -d  '"' | cut -c1-8)
+NIMBUS_VERSION := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.name' | tr -d 'v')
+NIMBUS_DHASH := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.target_commitish' | cut -c1-8)
 
 PKG_RELEASE := 0
 PKG_NAME := nimbus

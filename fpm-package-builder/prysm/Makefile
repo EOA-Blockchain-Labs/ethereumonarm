@@ -3,8 +3,8 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-PRYSM_VERSION := $(shell curl -s "https://api.github.com/repos/prysmaticlabs/prysm/releases/latest" | jq '.tag_name' | tr -d  '"'| tr -d "v")
-PRYSM_DHASH :=$(shell curl -s "https://api.github.com/repos/prysmaticlabs/prysm/tags" | jq -c 'map(select(.name | contains("$(PRYSM_VERSION)")))' | jq '.[0].commit.sha' | tr -d  '"' | cut -c1-8)
+PRYSM_VERSION := $(shell curl -s "https://api.github.com/repos/prysmaticlabs/prysm/releases/latest" | jq -r '.tag_name' | tr -d "v")
+PRYSM_DHASH :=$(shell curl -s "https://api.github.com/repos/prysmaticlabs/prysm/tags" | jq -c 'map(select(.name | contains("$(PRYSM_VERSION)")))' | jq -r '.[0].commit.sha' | cut -c1-8)
 
 PKG_RELEASE := 0
 PKG_NAME := prysm

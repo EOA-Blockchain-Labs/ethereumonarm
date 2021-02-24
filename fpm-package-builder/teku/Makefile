@@ -3,7 +3,7 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-TEKU_VERSION := $(shell curl -s https://api.github.com/repos/ConsenSys/teku/releases/latest | jq '.name' | tr -d '"' | tr -d 'v')
+TEKU_VERSION := $(shell curl -s https://api.github.com/repos/ConsenSys/teku/releases/latest | jq -r '.name' | tr -d 'v')
 
 PKG_RELEASE := 0
 PKG_NAME := teku

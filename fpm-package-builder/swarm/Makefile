@@ -3,7 +3,7 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-BEE_VERSION := $(shell curl -s "https://api.github.com/repos/ethersphere/bee/releases/latest" | jq .name | tr -d  '"'| tr -d "v")
+BEE_VERSION := $(shell curl -s "https://api.github.com/repos/ethersphere/bee/releases/latest" | jq -r .name | tr -d "v")
 
 PKG_RELEASE := 0
 PKG_NAME := bee

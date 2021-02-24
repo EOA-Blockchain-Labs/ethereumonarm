@@ -3,7 +3,7 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-STATUS_VERSION := $(shell curl -s "https://api.github.com/repos/status-im/status-go/releases/latest" | jq .tag_name | tr -d  '"'| tr -d "v")
+STATUS_VERSION := $(shell curl -s "https://api.github.com/repos/status-im/status-go/releases/latest" | jq -r .tag_name | tr -d "v")
 
 PKG_RELEASE := 0
 PKG_NAME := statusd

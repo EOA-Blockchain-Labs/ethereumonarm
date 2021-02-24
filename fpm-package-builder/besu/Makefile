@@ -3,7 +3,7 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-BESU_VERSION := $(shell curl -s https://api.github.com/repos/hyperledger/besu/releases/latest | jq '.name' | tr -d '"' | tr -d 'v')
+BESU_VERSION := $(shell curl -s https://api.github.com/repos/hyperledger/besu/releases/latest | jq -r '.tag_name'| tr -d 'v')
 
 PKG_RELEASE := 0
 PKG_NAME := besu

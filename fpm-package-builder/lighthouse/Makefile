@@ -3,7 +3,7 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-LIGHTHOUSE_VERSION := $(shell curl -s "https://api.github.com/repos/sigp/lighthouse/tags" | jq '.[0].name' | tr -d  '"'| tr -d "v")
+LIGHTHOUSE_VERSION := $(shell curl -s "https://api.github.com/repos/sigp/lighthouse/releases/latest" | jq '.tag_name' | tr -d  '"'| tr -d "v")
 
 PKG_RELEASE := 0
 PKG_NAME := lighthouse

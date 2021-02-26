@@ -38,7 +38,7 @@ if [ ! -f $FLAG ]; then
   fi
 
   # Create Ethereum account
-  echo "Creating ethereum  user for Geth and Parity"
+  echo "Creating ethereum user"
   if ! id -u ethereum >/dev/null 2>&1; then
     adduser --disabled-password --gecos "" ethereum
   fi

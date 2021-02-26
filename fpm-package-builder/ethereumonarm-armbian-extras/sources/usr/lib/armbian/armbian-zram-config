@@ -13,9 +13,6 @@
 # activate_ramlog_partition
 # activate_compressed_tmp
 
-
-# Read in basic OS image information
-. /etc/armbian-release
 # and script configuration
 . /usr/lib/armbian/armbian-common
 

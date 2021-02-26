@@ -1,19 +1,27 @@
 #!/bin/sh
 set -e
+
+# Set swapfile Defaults using dphys-swapfile
+
+sed -i 's/#CONF_SWAPFILE=\/var\/swap/CONF_SWAPFILE=\/home\/ethereum\/swapfile/' /etc/dphys-swapfile
+sed -i 's/#CONF_SWAPSIZE=/CONF_SWAPSIZE=8192/' /etc/dphys-swapfile
+sed -i 's/#CONF_MAXSWAP=2048/CONF_MAXSWAP=8192/' /etc/dphys-swapfile
+systemctl enable dphys-swapfile
+
 # Automatically added by dh_installsystemd/13.2ubuntu1
 if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] || [ "$1" = "abort-deconfigure" ] || [ "$1" = "abort-remove" ] ; then
 	# This will only remove masks created by d-s-h on package removal.
-	deb-systemd-helper unmask 'armbian-ramlog.service'  'armbian-zram-config.service' >/dev/null || true
+	deb-systemd-helper unmask 'armbian-ramlog.service' 'armbian-zram-config.service' >/dev/null || true
 
 	# was-enabled defaults to true, so new installations run enable.
-	if deb-systemd-helper --quiet was-enabled 'armbian-ramlog.service'  'armbian-zram-config.service'; then
+	if deb-systemd-helper --quiet was-enabled 'armbian-ramlog.service' 'armbian-zram-config.service'; then
 		# Enables the unit on first installation, creates new
 		# symlinks on upgrades if the unit file has changed.
-		deb-systemd-helper enable 'armbian-ramlog.service'  'armbian-zram-config.service' >/dev/null || true
+		deb-systemd-helper enable 'armbian-ramlog.service' 'armbian-zram-config.service' >/dev/null || true
 	else
 		# Update the statefile to add new symlinks (if any), which need to be
 		# cleaned up on purge. Also remove old symlinks.
-		deb-systemd-helper update-state 'armbian-ramlog.service'  'armbian-zram-config.service' >/dev/null || true
+		deb-systemd-helper update-state 'armbian-ramlog.service' 'armbian-zram-config.service' >/dev/null || true
 	fi
 fi
 # End automatically added section
@@ -26,8 +34,7 @@ if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] || [ "$1" = "abort-decon
 		else
 			_dh_action=start
 		fi
-		deb-systemd-invoke $_dh_action 'armbian-ramlog.service'  'armbian-zram-config.service' 'armbian-ramlog.service' >/dev/null || true
+		deb-systemd-invoke $_dh_action 'armbian-ramlog.service' 'armbian-zram-config.service' 'armbian-ramlog.service' >/dev/null || true
 	fi
 fi
 # End automatically added section
-

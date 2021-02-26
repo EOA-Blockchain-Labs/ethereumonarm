@@ -60,16 +60,10 @@ if [ ! -f $FLAG ]; then
   # Background processes will start writing right away when it hits the 1% limit but the system won’t force synchronous I/O until it gets to 50% dirty_ratio
   echo "vm.dirty_background_ratio=1" >> /etc/sysctl.conf
   echo "vm.dirty_ratio=50" >> /etc/sysctl.conf
-  # Create swapfile
-
-  fallocate -l 8G /home/ethereum/swapfile
-  chmod 600 /home/ethereum/swapfile
-  swapon /home/ethereum/swapfile
-  echo "/home/ethereum/swapfile  swap swap defaults 0 0" >> /etc/fstab
 
   # Ethereum software installation
   # Add APT EthRaspbian repository
-  sleep 25
+  sleep 15
   echo "Adding Ethereum repositories"
   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8A584409D327B0A5
   add-apt-repository -n "deb http://apt.ethraspbian.com focal-testing main"

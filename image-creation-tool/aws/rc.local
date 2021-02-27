@@ -15,30 +15,39 @@
 
 FLAG="/root/first-run.flag"
 if [ ! -f $FLAG ]; then
-  # Modify hostname (ethnode-$MAC-HASH-CHUNK)
-  echo Changing hostname
-  MAC_HASH=`cat /sys/class/net/eth0/address | sha256sum | awk '{print substr($0,0,9)}'`
-  echo ethereumonarm-$MAC_HASH > /etc/hostname
-  sed -i "s/127.0.0.1.*/127.0.0.1\tethereumonarm-$MAC_HASH/g" /etc/hosts
+
+  # Checking access to apt.ethraspbian.com
+  nc -z apt.ethraspbian.com 80  > /dev/null 2>&1
+  if [[ $? -ne 0 ]]; then
+    echo "Stopping the installation, access to apt.ethraspbian.com is needed"
+    exit 1
+  fi
 
   # Format USB3 SSD and mount it as /home
-
-  echo Looking for USB drive
+  echo "Looking for USB drive"
 
   if stat  /dev/nvme1n1 > /dev/null 2>&1;
   then
-    echo USB drive found
-    echo Partitioning and formatting USB Drive...
+    echo "USB drive found"
+    echo "Partitioning and formatting USB Drive..."
     sgdisk -n 0:0:0 /dev/nvme1n1
 
     mkfs.ext4 -F /dev/nvme1n1p1
     echo '/dev/nvme1n1p1 /home ext4 defaults 0 2' >> /etc/fstab && mount /home
   else
-    echo no SDD detected
+    echo "no SDD detected"
+    echo "stopping the installation, and extenal disk is needed"
+    exit 1
   fi
 
+  # Modify hostname (ethnode-$MAC-HASH-CHUNK)
+  echo "Changing hostname"
+  MAC_HASH=`cat /sys/class/net/eth0/address | sha256sum | awk '{print substr($0,0,9)}'`
+  echo ethereumonarm-$MAC_HASH > /etc/hostname
+  sed -i "s/127.0.0.1.*/127.0.0.1\tethereumonarm-$MAC_HASH/g" /etc/hosts
+
   # Create Ethereum account
-  echo "Creating ethereum  user for Geth and Parity"
+  echo "Creating ethereum user"
   if ! id -u ethereum >/dev/null 2>&1; then
     adduser --disabled-password --gecos "" ethereum
   fi
@@ -63,7 +72,7 @@ if [ ! -f $FLAG ]; then
   #add-apt-repository "deb http://apt.ethraspbian.com bionic-upgrades main"
 
   # Install Ethereum packages
-  echo Installing Ethereum packages
+  echo "Installing Ethereum packages"
   apt-get update
   apt-get -y install geth openethereum nethermind besu prysm lighthouse nimbus teku
   systemctl enable geth

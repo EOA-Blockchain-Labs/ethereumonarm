@@ -71,7 +71,7 @@ if [ ! -f $FLAG ]; then
 
   # Ethereum software installation
   # Add APT EthRaspbian repository
-  sleep 15
+  sleep 25
   echo "Adding Ethereum repositories"
   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8A584409D327B0A5
   add-apt-repository -n "deb http://apt.ethraspbian.com focal-testing main"

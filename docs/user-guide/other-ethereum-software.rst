@@ -4,11 +4,14 @@
 Other Software
 ==============
 
-SWARM
------
+An Ethereum node client is the most important part of the Ethereum network but there are other 
+applications than run on top of it that are worth to try.
 
-IPFS
-----
+SWARM AND IPFS
+--------------
+
+
+
 
 Status
 ------

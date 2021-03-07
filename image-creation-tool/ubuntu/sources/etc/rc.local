@@ -39,7 +39,7 @@ if [ ! -f $FLAG ]; then
     exit 1
   fi
 
-  # Modify hostname (ethnode-$MAC-HASH-CHUNK)
+  # Modify hostname (ethereumonarm-$MAC-HASH-CHUNK)
   echo Changing hostname
   MAC_HASH=`cat /sys/class/net/eth0/address | sha256sum | awk '{print substr($0,0,9)}'`
   echo ethereumonarm-$MAC_HASH > /etc/hostname

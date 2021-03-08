@@ -1,4 +1,4 @@
-#!/bin/bash
+0#!/bin/bash
 #
 # rc.local
 #
@@ -20,14 +20,16 @@ if [ ! -f $FLAG ]; then
   n=0
   until [ "$n" -ge 3 ]
   do
-    cat /sys/class/net/eth0/operstate | grep -q "up" && break
-    n=$((n+1))
-    sleep 5
+    nc -z apt.ethraspbian.com 80  > /dev/null 2>&1
+    if [[ $? -eq 0 ]]; then
+      break
+    else
+      n=$((n+1))
+      sleep 5
+    fi
   done
 
-  # Checking access to apt.ethraspbian.com
-  nc -z apt.ethraspbian.com 80  > /dev/null 2>&1
-  if [[ $? -ne 0 ]]; then
+  if [[ "$n" -eq 3 ]]; then
     echo "Stopping the installation, access to apt.ethraspbian.com is needed"
     exit 1
   fi

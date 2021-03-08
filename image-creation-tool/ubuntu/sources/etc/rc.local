@@ -16,6 +16,15 @@
 FLAG="/root/first-run.flag"
 if [ ! -f $FLAG ]; then
 
+  # Wait to interface to link up
+  n=0
+  until [ "$n" -ge 3 ]
+  do
+    cat /sys/class/net/eth0/operstate | grep -q "up" && break
+    n=$((n+1))
+    sleep 5
+  done
+
   # Checking access to apt.ethraspbian.com
   nc -z apt.ethraspbian.com 80  > /dev/null 2>&1
   if [[ $? -ne 0 ]]; then
@@ -75,9 +84,6 @@ if [ ! -f $FLAG ]; then
   echo "Adding Ethereum repositories"
   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8A584409D327B0A5
   add-apt-repository -n "deb http://apt.ethraspbian.com focal main"
-  #add-apt-repository -n "deb http://apt.ethraspbian.com bionic main"
-  #add-apt-repository -n "deb http://apt.ethraspbian.com bionic-security main"
-  #add-apt-repository "deb http://apt.ethraspbian.com bionic-upgrades main"
 
   # Install Ethereum packages
   echo Installing Ethereum packages

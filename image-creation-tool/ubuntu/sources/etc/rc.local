@@ -1,4 +1,4 @@
-0#!/bin/bash
+#!/bin/bash
 #
 # rc.local
 #
@@ -21,7 +21,7 @@ if [ ! -f $FLAG ]; then
   until [ "$n" -ge 3 ]
   do
     nc -z apt.ethraspbian.com 80  > /dev/null 2>&1
-    if [[ $? -eq 0 ]]; then
+    if [ $? -eq 0 ]; then
       break
     else
       n=$((n+1))
@@ -29,7 +29,7 @@ if [ ! -f $FLAG ]; then
     fi
   done
 
-  if [[ "$n" -eq 3 ]]; then
+  if [ "$n" -eq 3 ]; then
     echo "Stopping the installation, access to apt.ethraspbian.com is needed"
     exit 1
   fi

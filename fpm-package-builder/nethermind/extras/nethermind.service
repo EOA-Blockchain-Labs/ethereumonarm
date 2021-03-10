@@ -4,7 +4,6 @@ After=network.target
 
 [Service]
 User=ethereum
-WorkingDirectory=/home/ethereum/.nethermind
 EnvironmentFile=/etc/ethereum/nethermind.conf
 ExecStart=/usr/bin/nethermind $ARGS
 Restart=on-failure

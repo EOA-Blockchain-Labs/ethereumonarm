@@ -108,7 +108,7 @@ EOF
   useradd -m prometheus
   mkdir -p /home/prometheus/node-exporter/
   chown -R  prometheus:prometheus /home/prometheus/
-  apt-get install -y prometheus prometheus-node-exporter
+  apt-get install -y prometheus prometheus-node-exporter prometheus-pushgateway
 
   #Install ufw
   apt-get -y install ufw

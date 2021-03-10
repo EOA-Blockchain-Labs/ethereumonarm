@@ -2,7 +2,7 @@
 # Due to shell scaping, to pass backslashes for regexes, you need to double
 # them (\\d for \d). If running under systemd, you need to double them again
 # (\\\\d to mean \d), and escape newlines too.
-ARGS="--collector.textfile.directory="/home/prometheus/node-exporter"
+ARGS="--collector.textfile.directory="/home/prometheus/node-exporter --web.listen-address=127.0.0.1:9100"
 
 # Prometheus-node-exporter supports the following options:
 #

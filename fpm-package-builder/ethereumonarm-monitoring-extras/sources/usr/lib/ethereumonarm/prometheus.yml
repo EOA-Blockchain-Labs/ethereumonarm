@@ -41,7 +41,7 @@ scrape_configs:
     # If prometheus-node-exporter is installed, grab stats about the local
     # machine by default.
     static_configs:
-      - targets: ['localhost:9100']
+      - targets: ['127.0.0.1:9100']
   - job_name: geth
     scrape_interval: 15s
     scrape_timeout: 10s
@@ -56,3 +56,8 @@ scrape_configs:
     scheme: http
     static_configs:
       - targets: ['localhost:9545']
+      #Nehermind
+  - job_name: 'pushgateway'
+    honor_labels: true
+    static_configs:
+    - targets: ['localhost:9091']

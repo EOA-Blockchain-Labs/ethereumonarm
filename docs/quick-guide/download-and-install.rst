@@ -9,9 +9,9 @@ Download
 
 Download the image here:
 
-ubuntu-20.04.1-preinstalled-server-arm64_
+ethonarmubuntu-20.04.2-preinstalled-server-arm64+raspi.img_
 
-.. _ubuntu-20.04.1-preinstalled-server-arm64: http://www.ethraspbian.com/downloads/ubuntu-20.04.1-preinstalled-server-arm64+raspi-eth2-medalla.img.zip 
+.. _ethonarmubuntu-20.04.2-preinstalled-server-arm64+raspi.img: http://www.ethraspbian.com/downloads/ethonarmubuntu-20.04.2-preinstalled-server-arm64+raspi.img.zip
 
 You can verify the file with the following ``SHA256`` Hash:
 
@@ -21,7 +21,7 @@ By running:
 
 .. prompt:: bash $
 
-  md5sum image
+  md5sum ethonarmubuntu-20.04.2-preinstalled-server-arm64+raspi.img
 
 Flash 
 -----
@@ -50,8 +50,8 @@ Unzip and flash the image:
 
 .. prompt:: bash $
 
-   unzip ubuntu-20.04.1-preinstalled-server-arm64+raspi-eth2-medalla.img.zip
-   sudo dd bs=1M if=ubuntu-20.04.1-preinstalled-server-arm64+raspi.img of=/dev/mmcblk0 conv=fdatasync status=progress
+   unzip ethonarmubuntu-20.04.2-preinstalled-server-arm64+raspi.img.zip
+   sudo dd bs=1M if=ethonarmubuntu-20.04.2-preinstalled-server-arm64+raspi.img of=/dev/mmcblk0 conv=fdatasync status=progress
 
 Insert MicroSD
 --------------
@@ -71,7 +71,7 @@ to turn the device into a full Ethereum node.
 
 .. warning::
 
-  You will need to wait for about 5 minutes to allow the script to install and configure all the software.
+  You will need to wait for about 10-15 minutes to allow the script to install and configure all the software.
 
 Log in
 ------
@@ -90,16 +90,18 @@ Through SSH:
 
 .. tip::
   If you don't have a monitor with a keyboard you can get your Raspberry Pi ``IP`` address by looking into your router 
-  or using some kind of network tool such as ``fping`` or ``nmap``. For instance (assuming you are in the 192.168.1.0 network)):
+  or using some kind of network tool such as ``fping`` or ``nmap``. For instance (assuming you are in the 192.168.1.0 network)).
 
-  With Nmap
+  In your Linux Desktop / Laptop, run:
+
+  Using Nmap
 
   .. prompt:: bash $
   
      sudo apt-get install nmap
      nmap -sP 192.168.1.0/24
   
-  With Fping
+  Using Fping
 
   .. prompt:: bash $
 

@@ -17,7 +17,7 @@ you can run an Ethereum node in order to achieve the following goals:
 Supported clients
 -----------------
 
-Ethereum on ARM supports all functional clients that works on the ARM64 
+Ethereum on ARM supports all available clients that works on the ARM64 
 architecture.
 
 .. csv-table:: Ethereum 1.0 Supported Clients

@@ -24,23 +24,23 @@ from setting up the environment and formatting the SSD disk
 to installing, managing and running the Eth1.0 and Eth2.0 clients.
 
 If you are familiar with Ethereum and have already ran
-an Ethereum node you can jump to our Quick start guide
-and get your node up and running in no time.
+an Ethereum node you can jump to our :doc:`Quick Start </quick-guide/about-quick-start>` 
+guide and get your node up and running in no time.
 
-If you need more info, please read our user guide carefully
-in order to get an idea of what Ethereum is and how to
-run a node.
+If you need more info, please use the Quick Start to install the image 
+and visit the :doc:`User Guide </user-guide/about-user-guide>` 
+in order to get further info on Ethereum how to manage the clients.
 
 .. note::
 
   We are currently focusing on the Raspberry Pi 4 image. We will add more 
-  devices once we make sure they  are reliable and have enough resources 
+  devices once we make sure they are reliable and have enough resources 
   to run both Eth1 and Eth2 nodes.
 
 Quick Start Guide
 -----------------
 
-For running a node, follow 
+For running a node, follow the step-by-step guide. 
 
 The process is as follows:
 
@@ -84,6 +84,8 @@ information regarding the image and other Ethereum related software.
 
 Deverloper Guide
 ----------------
+
+Coming soon
 
 .. toctree::
   :maxdepth: 2

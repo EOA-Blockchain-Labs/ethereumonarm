@@ -9,28 +9,28 @@ Systemd Services
 
 All clients use :guilabel:`Systemd` services for running. :guilabel:`Systemd` 
 takes care of the processes and automatically restarts them in case something 
-goes wrong. It can enable a service to automatically start on boot as well.
+goes wrong. It can enable a service to automatically start it on boot as well.
 
 :guilabel:`Systemd` command ``systemctl`` manages all operations related to 
 the services. The available options are as follows:
 
-  * **`Enable`**: Activate the service to start on boot
-  * **`Disable`**: Remove the service from boot start
-  * **`Start`**: Start the client process
-  * **`Stop`**: Stop the client process
-  * **`Restart`**: Restart the clients process
+  * **Enable**: Activate the service to start on boot
+  * **Disable**: Remove the service from boot start
+  * **Start**: Start the client process
+  * **Stop**: Stop the client process
+  * **Restart**: Restart the clients process
 
 The general syntax is:
 
 .. prompt:: bash $
 
-  sudo systemctl enable|disable|start|stop|restart service name
+  sudo systemctl enable|disable|start|stop|restart service_name
 
 .. note::
   You need the ``sudo`` command as root permissions are necessary. Type your 
   etherereum user password.
 
-For instance, to enable and run :guilabel:`Nethermind` client, type:
+For instance, to enable :guilabel:`Nethermind` client on boot and start it, type:
 
 .. prompt:: bash $
 
@@ -40,7 +40,7 @@ For instance, to enable and run :guilabel:`Nethermind` client, type:
 :guilabel:`Nethermind` will now start in the background and run automatically 
 on next boot.
 
-These are the list of the services available for all clients:
+These are the list of services available for all clients:
 
 .. csv-table:: Ethereum 1.0 Systemd Services
    :header: Client, Systemd Service
@@ -53,25 +53,25 @@ These are the list of the services available for all clients:
 .. csv-table:: Ethereum 2.0 Systemd Services
    :header: Client, Systemd Services
 
-   `Lighthouse`, `lighthouse-beacon` `ligthouse-validator` 
-   `prysm`, `prysm-beacon` `prysm-beacon`
+   `Lighthouse`, `lighthouse-beacon` `lighthouse-validator` 
+   `prysm`, `prysm-beacon` `prysm-validator`
    `Nimbus`, `nimbus`
    `Teku`, `teku`
 
 .. tip::
   :guilabel:`Geth` is the only service that is enabled by default, so when you 
   boot up the device for the first time :guilabel:`Geth` will automatically
-  start in the background and start syncing the Ethereum 1.0 blockchain.
+  run in the background and start syncing the Ethereum 1.0 blockchain.
 
 
 Changing Parameters
 -------------------
 
 :guilabel:`Systemd` services read client variables from ``/etc/ethereum`` directory files. If
-you want to change any client parameter you have to edit the correspondent file. For 
+you want to change any client parameter you have to edit the correspondent config file. For 
 instance, this is the ``/etc/ethereum/geth.conf`` content::
 
-  ARGS="--http --metrics --metrics.expensive --pprof --maxpeers 100"
+  ARGS="--http --metrics --metrics.expensive --pprof"
 
 Edit the file by running a text editor (``vim``, ``nano``):
 
@@ -79,24 +79,30 @@ Edit the file by running a text editor (``vim``, ``nano``):
 
   sudo vim /etc/ethereum/geth.conf
 
-Let's change the P2P port to 30304. Add it to the ARGS line and save it::
+For instance, let's change the P2P port to 30304. Add it to the ARGS line and save it::
 
-  ARGS="--port 30304 --http --metrics --metrics.expensive --pprof --maxpeers 100"
+  ARGS="--port 30304 --http --metrics --metrics.expensive --pprof"
 
-For changes to take effect, you will need to restart the client:
+For changes to take effect, you need to restart the client:
 
 .. prompt:: bash $
 
   sudo systemctl restart geth
 
+.. note::
+
+  All clients have its config files in ``/etc/ethereum`` except :guilabel:`Nethermind` that 
+  has an additional conf directory located in ``/opt/nethermind/configs/``
+
 .. tip::
   Read the clients official documentation in order to learn the specific parameters
   of each client.
 
+
 Updating Clients
 ----------------
 
-**Ethereum on ARM** comes with an ``APT`` repository which allows users to easily
+**Ethereum on ARM** comes with a custom ``APT`` repository which allows users to easily
 update the Ethereum software. For instance, to update the :guilabel:`Geth` client run:
 
 .. prompt:: bash $

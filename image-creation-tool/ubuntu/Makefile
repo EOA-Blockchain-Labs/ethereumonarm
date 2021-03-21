@@ -5,7 +5,8 @@
 URL := https://cdimage.ubuntu.com/releases/20.04.2/release/ubuntu-20.04.2-preinstalled-server-arm64+raspi.img.xz
 XZ := ubuntu-20.04.2-preinstalled-server-arm64+raspi.img.xz
 ISO := ubuntu-20.04.2-preinstalled-server-arm64+raspi.img
-
+RELEASE:= 00
+DATE := $(shell date +"%y.%m")
 iso:
 	mkdir /tmp/ubuntu_iso
 	wget  $(URL)
@@ -14,5 +15,5 @@ iso:
 	sudo cp -a sources/* /tmp/ubuntu_iso
 	sudo sed -i 's/1/0/' /tmp/ubuntu_iso/etc/apt/apt.conf.d/20auto-upgrades
 	sudo umount /tmp/ubuntu_iso
-	mv $(ISO) ethonarm$(ISO)
+	mv $(ISO) ethonarm_$(DATE).$(RELEASE).img
 	rmdir /tmp/ubuntu_iso

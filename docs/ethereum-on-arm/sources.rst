@@ -4,4 +4,14 @@
 Sources
 =======
 
+You can get the source code in our Github repo:
 
+https://github.com/diglos/ethereumonarm
+
+You can find here:
+
+  * docs: This Read the Docs based guide
+  * fpm-package-builder: Our package creator that builds all Ethereum related packages
+  * image-creation-tool: This directory contains the installation script and the image builder
+
+Get more info in our Developer Guide section

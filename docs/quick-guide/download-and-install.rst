@@ -9,19 +9,19 @@ Download
 
 Download the image here:
 
-ethonarmubuntu-20.04.2-preinstalled-server-arm64+raspi.img_
+ethonarm_21.03.00.img.zip_
 
-.. _ethonarmubuntu-20.04.2-preinstalled-server-arm64+raspi.img: http://www.ethraspbian.com/downloads/ethonarmubuntu-20.04.2-preinstalled-server-arm64+raspi.img.zip
+.. _ethonarm_21.03.00.img.zip: http://www.ethereumonarm.com/downloads/ethonarm_21.03.00.img.zip
 
-You can verify the file with the following ``SHA256`` Hash:
+You can verify the file with the following ``SHA512`` Hash:
 
-``SHA256 149cb9b020d1c49fcf75c00449c74c6f38364df1700534b5e87f970080597d87``
+``SHA256 725359703b7c321f56a0e193be61c1f0102a23463549285e8f286e9fb6cc522f``
 
 By running:
 
 .. prompt:: bash $
 
-  md5sum ethonarmubuntu-20.04.2-preinstalled-server-arm64+raspi.img
+  sha256sum ethonarm_21.03.00.img.zip
 
 Flash 
 -----
@@ -43,25 +43,25 @@ Open a terminal and check your MicroSD device name running:
 You should see a device named ``mmcblk0`` or ``sd(x)``.
 
 .. warning::
-  The ``dd`` command will completely erase your device so make sure you are targeting 
+  The ``dd`` command will completely erase your MicroSD device so make sure you are targeting 
   the correct one.
 
 Unzip and flash the image:
 
 .. prompt:: bash $
 
-   unzip ethonarmubuntu-20.04.2-preinstalled-server-arm64+raspi.img.zip
-   sudo dd bs=1M if=ethonarmubuntu-20.04.2-preinstalled-server-arm64+raspi.img of=/dev/mmcblk0 conv=fdatasync status=progress
+   unzip ethonarm_21.03.00.img.zip
+   sudo dd bs=1M if=ethonarm_21.03.00.img of=/dev/mmcblk0 conv=fdatasync status=progress
 
 Insert MicroSD
 --------------
 
 .. warning::
-  The image will wipe out your USB disk, so be careful if you already have data
+  The image will wipe out your USB SSD disk, so be careful if you already have data
   on it.
 
 Insert de MicroSD into the Raspberry Pi 4. Connect an Ethernet cable and attach 
-the USB SSD disk (make sure you are using a blue port).
+the USB SSD disk (make sure you are using a blue port which corresponds to USB 3).
 
 Power on
 --------
@@ -71,13 +71,13 @@ to turn the device into a full Ethereum node.
 
 .. warning::
 
-  You will need to wait for about 10-15 minutes to allow the script to install and configure all the software.
+  You need to wait for about 10-15 minutes to allow the script to install and configure all the software.
 
 Log in
 ------
 
-Once the device is available, You can log in through SSH or using the console 
-(if you have a monitor and keyboard attached)::
+Once the device is available, You can log in through SSH or using the console (if you have a monitor 
+and keyboard attached) using the ``ethereum`` account::
 
   User: ethereum
   Password: ethereum

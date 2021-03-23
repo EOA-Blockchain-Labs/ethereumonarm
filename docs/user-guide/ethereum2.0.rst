@@ -4,6 +4,17 @@
 Ethereum 2.0
 ============
 
+.. warning::
+
+  **DISCLAIMER**: Ethereum is an experimental technology. Running the Ethereum on ARM image as 
+  an Ethereum 2.0 validator node can lead to loss of ETH. This is a risk operation and you 
+  alone are responsible for your actions using the Ethereum sofware included in this image 
+  or following the instructions of this guide.
+
+  We strongly recommend to try first an Ethereum 2.0 testnet (**Pyrmont** or **Prater** and get 
+  familiarized with the process before staking with real ETH.
+
+
 Ethereum 2.0 is the new Proof of Stake chain, currently running on phase 0. If you 
 want to get further info please visit the `ethereum 2.0 EF page`_ : 
 
@@ -17,8 +28,8 @@ Beacon Chain
 The Beacon Chain is a bridge between the Ethereum 1.0 and the Ethereum 2.0 worlds. 
 It connects the Validator to the Ethereum 1.0 chain so the validator can detect the 
 32 ETH deposit transaction (which contains the Validator public key). In order to 
-propose (create) blocks in Ethereum 2.0 you need to have the Beacon Chain in sync 
-connected to an Ethereum 1.0 provider (it can be an Ethereum 1.0 local node in sync or 
+propose (create) blocks in Ethereum 2.0 you need the Beacon Chain synced and  
+connected to an Ethereum 1.0 provider (it can be an Ethereum 1.0 local node or 
 a third party Ethereum 1.0 provider (see below).
 
 Validator
@@ -27,8 +38,8 @@ Validator
 Here is basically where the stake process happens.
 
 The validator is the client that proposes blocks and does attestations according to 
-the Ethereum 2.0 specification (proposing a block would be equivalent to "mine" a block) 
-in the Ethereum 1.0 chain.
+the Ethereum 2.0 specification (proposing a block would be the equivalent to "mine" a block 
+in the Ethereum 1.0 chain).
 
 .. warning::
 
@@ -36,7 +47,7 @@ in the Ethereum 1.0 chain.
   called being slashed), so be extremely carefull and always follow the Ethereum 2.0 
   specification.
 
-  And Never run the same validator (same private keys) in two nodes at the same time. You 
+  And never run the same validator (same private keys) in two nodes at the same time. You 
   will be slashed.
 
 Staking Requirements
@@ -166,6 +177,16 @@ Congrats!, you just started your validator activation process.
 Running an Ethereum 2.0 client
 ------------------------------
 
+.. warning::
+
+  **DISCLAIMER**: As of March 2021 we only tested :guilabel:`Geth` (Ethereum 1.0) and :guilabel:`Lighthouse` 
+  (Ethereum 2.0) in a Raspberry Pi 4. In the coming weeks, we will try other Ethereum 1.0 and 2.0 clients 
+  and label them as tested.
+
+  As so, we recommend to choose these 2 clients while we make sure the others are suitable to run in 
+  these devices.
+
+
 Supported clients
 ~~~~~~~~~~~~~~~~~
 
@@ -189,6 +210,11 @@ Lighthouse
 
 :guilabel:`Lighthouse` is a full Ethereum 2.0 client written in Rust. It is very capable on
 running in resource-constrained devices such as the Raspberry Pi 4.
+
+.. csv-table::
+  :header: Systemd Services, Home Directory, Config Files, Default TCP/UDP Port
+
+  `lighthouse-beacon lighthouse-validator`, `/home/ethereum/.lighthouse`, `/etc/ethereum/lighthouse-beacon.conf /etc/ethereum/lighthouse-validator.conf`, `9000`
 
 .. tip::
   :guilabel:`Lighthouse` is the Ethereum 2.0 client that we've been running since December 
@@ -233,6 +259,15 @@ Prysm
 
 :guilabel:`Prysm` is a full Ethereum 2.0 client written in Go.
 
+.. csv-table::
+  :header: Systemd Services, Home Directory, Config Files, Default TCP/UDP Port
+
+  `prysm-beacon prysm-validator`, `/home/ethereum/.eth2`, `/etc/ethereum/prysm-beacon.conf /etc/ethereum/prysm-validator.conf`, `13000 12000`
+
+.. note::
+
+  You need to accept the Prylabs terms of service. To do so, edit the above config files and add the --accept-terms-of-use flag.
+
 1.- Port forwarding
 
 You need to open the 13000 and 12000 ports in your router (both UDP and TCP)
@@ -272,6 +307,11 @@ Teku
 
 :guilabel:`Teku` is a full Ethereum 2.0 client written in Java.
 
+.. csv-table::
+  :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
+
+  `teku`, `/home/ethereum/.teku/data_teku`, `/etc/ethereum/teku.conf`, `9151`
+
 1.- Port forwarding
 
 You need to open the 9151 port (both UDP and TCP)
@@ -309,6 +349,11 @@ Nimbus
 ~~~~~~
 
 :guilabel:`Nimbus` is a full Ethereum 2.0 client written in Nim.
+
+.. csv-table::
+  :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
+
+  `nimbus`, `/home/ethereum/.nimbus`, `/etc/ethereum/nimbus.conf`, `19000`
 
 1.- Port forwarding
 

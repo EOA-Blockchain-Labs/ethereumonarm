@@ -19,7 +19,7 @@ This is the installation process in a nutshell:
 * **Download and flash** the Image into an MicroSD card
 * **Connect the SSD** to the USB port and the Ethernet Cable
 * Power on the device
-* Wait till the installation script finish all tasks
+* Wait till the installation script finishes all tasks
 * Boot up, enable and run the Ethereum software
 
 .. _Dappnode: https://dappnode.io/

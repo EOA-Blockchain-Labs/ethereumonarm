@@ -76,13 +76,11 @@ information regarding the image and other Ethereum related software.
   /user-guide/managing-clients
   /user-guide/ethereum1.0
   /user-guide/ethereum2.0
-  /user-guide/other-ethereum-software
   /user-guide/storage
   /user-guide/security
-  /user-guide/hcl
 
 
-Deverloper Guide
+Developers Guide
 ----------------
 
 Coming soon
@@ -91,19 +89,13 @@ Coming soon
   :maxdepth: 2
   :caption: Developer Guide
   :hidden:
-  
-  /developer-guide/eoa-images
-  /developer-guide/installation-script
-  /developer-guide/debian-packages
-  /developer-guide/config-files
-  /developer-guide/systemd-services
-  /developer-guide/monitoring-tools
-  /developer-guide/armbian
 
+  /developer-guide/about
+  
 About Ethereum on ARM
 ---------------------
 
-Ethereum on ARM is a project
+Get further info about our project.
 
 .. toctree::
   :maxdepth: 2
@@ -113,5 +105,4 @@ Ethereum on ARM is a project
   /ethereum-on-arm/why-arm-boards
   /ethereum-on-arm/main-goals
   /ethereum-on-arm/main-features
-  /ethereum-on-arm/developers
   /ethereum-on-arm/sources

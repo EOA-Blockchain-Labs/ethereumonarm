@@ -11,7 +11,7 @@ Ethereum 2.0
   alone are responsible for your actions using the Ethereum sofware included in this image 
   or following the instructions of this guide.
 
-  We strongly recommend to try first an Ethereum 2.0 testnet (**Pyrmont** or **Prater** and get 
+  We strongly recommend to try first an Ethereum 2.0 testnet (**Pyrmont** or **Prater**) and get 
   familiarized with the process before staking with real ETH.
 
 

@@ -102,6 +102,16 @@ For changes to take effect, you need to restart the client:
 Updating Clients
 ----------------
 
+.. note::
+
+  If you have an old Ethereum on ARM image, please update the APT repository to focal by running:
+
+  .. prompt:: bash $
+
+     sudo add-apt-repository -r -n "deb http://apt.ethraspbian.com bionic main"
+     sudo add-apt-repository -n "deb http://apt.ethraspbian.com focal main"
+     sudo apt-get update
+
 **Ethereum on ARM** comes with a custom ``APT`` repository which allows users to easily
 update the Ethereum software. For instance, to update the :guilabel:`Geth` client run:
 
@@ -115,6 +125,20 @@ If you want to run the new version, restart the service by running:
 .. prompt:: bash $
 
   sudo systemctl restart geth
+
+These are the available packages:
+
+* geth
+* nethermind
+* openethereum
+* besu
+* lighthouse
+* prysm
+* teku
+* nimbus
+* eth2.0-deposit-cli
+* ipfs
+* swarm
 
 .. note::
   The `APT` command will install the last version available in the repository. Most clients 

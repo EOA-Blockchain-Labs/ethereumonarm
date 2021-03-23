@@ -38,13 +38,13 @@ Geth
 
 .. tip::
   :guilabel:`Geth` is the only client that runs by default so when you 
-  boot up the device for the first time it is already syncing the blockchain 
+  log in for the first time it is already syncing the blockchain 
   in the background.
 
 :guilabel:`Geth` is the reference node client for Ethereum 1.0. It 
 is the most reliable and rock solid client out there and the performance 
 on ARM64 is outstanding. It is capable of syncing the whole blockchain 
-in less than 2 days on a Raspberry Pi 4 with 8 GB RAM and a SSD.
+in less than 2 days on a Raspberry Pi 4 with 8 GB RAM and a USB 3 SSD.
 
 .. csv-table::
   :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
@@ -59,8 +59,7 @@ to the Grafana dashboard.
 
 .. prompt:: bash $
 
-  sudo systemctl disable geth
-  sudo systemctl stop geth
+  sudo journalctl -u geth -f
 
 The Grafana Dashboard is accessible through your web browser::
 
@@ -71,14 +70,14 @@ The Grafana Dashboard is accessible through your web browser::
 .. note::
   
   If you want to try another client use the ``systemctl`` command to stop and 
-  disable it as seen on :doc:`Managing Clients </user-guide/managing-clients>` section:
+  disable :guilabel:`Geth` as seen on :doc:`Managing Clients </user-guide/managing-clients>` section:
 
 .. prompt:: bash $
 
   sudo systemctl disable geth
   sudo systemctl stop geth
 
-Now choose another client and start it through Systemd service.
+Now choose another client and start it through its Systemd service.
 
 Nethermind
 ~~~~~~~~~~

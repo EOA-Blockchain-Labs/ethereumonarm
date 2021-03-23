@@ -1,8 +1,8 @@
 .. Ethereum on ARM documentation documentation master file, created by
    sphinx-quickstart on Wed Jan 13 19:04:18 2021.
 
-Running Ethereum
-================
+Running an Ethereum node
+========================
 
 Great, all set. Now it is time to run an Ethereum node. You 
 can run an Ethereum 1.0 client, Ethereum 2.0, or both.
@@ -14,10 +14,9 @@ and the :guilabel:`Lighthouse` Ethereum 2.0 Beacon Chain client, both running in
   :guilabel:`Geth` is enabled by default so you don't need to do anything to 
   get it up and running.
 
-  The Beacon Chain is part of the Ethereum 2.0 Blockchain, but this is not the so called 
-  Staking. For this, you will need a **Validator** which is a more complicated
-  process. If you want to run a Validator along with the Beacon Chain you will need 32 ETH and some
-  knowledge of how Ethereum2.0 works.
+  The Beacon Chain is part of the Ethereum 2.0 Blockchain but for staking   For this, you will 
+  need a **Validator** node which is a more complicated process. If you want to   run a Validator 
+  along with the Beacon Chain you will need 32 ETH and some knowledge of how   Ethereum2.0 works.
 
   See more info in our :doc:`User Guide </user-guide/ethereum2.0>` section.
 
@@ -25,8 +24,8 @@ and the :guilabel:`Lighthouse` Ethereum 2.0 Beacon Chain client, both running in
 Ethereum 1.0
 ------------
 
-The original Ethereum chain (with a proof of work consensus algorithm). 
-Everything happens here right now, from transactions to smart contracts 
+The original Ethereum chain (with a Proof of Work consensus algorithm). 
+Everything happens here right now, from transactions to smart contract 
 executions.
 
 .. note::
@@ -36,7 +35,7 @@ executions.
 
   * Run as an Ethereum 1.0 provider for the Ethereum 2.0 Beacon chain (this means 
     running both Eth1 and Eth2 nodes).
-  * In order to contribute to the Ethereum network health and decentralization.
+  * In order to contribute to the Ethereum 1.0 network health and decentralization.
 
 For enabling and starting :guilabel:`Geth` Eth1.0 client, you don't need to take any 
 action as the :guilabel:`Systemd` service is already enabled and running. Just 
@@ -49,7 +48,7 @@ For checking the client logs, run:
 
   sudo journalctl -u geth -f
 
-You can access Grafana's :guilabel:`Geth` Dashboard to get further info of the client.
+You can access Grafana's :guilabel:`Geth` Dashboard as well to get further info of the client.
 
 .. note::
   Ethereum on ARM supports 4 Eth1 clients: :guilabel:`Geth`, :guilabel:`Nethermind`, 
@@ -63,7 +62,7 @@ Ethereum 2.0
 ------------
 
 Ethereum 2.0 is the transition from **Proof of Work** to **Proof of Stake** consensus algorithm. It is
-currently on Phase 0 (since December 2020) and you can run an Eth2.0 node on your 
+currently on Phase 0 (since December 2020) and you can runan Eth2.0 node on your
 Raspberry Pi 4 as it doesn't depend upon CPU power.
 
 In this Quick Guide we are going to take the first step on running an Ethereum 2.0 node: 
@@ -98,4 +97,7 @@ You can get the client logs by running:
  
   You can run both Eth1.0 and Eth2.0 nodes on the same Raspberry Pi 4 (8 GB RAM model). We've been 
   staking since day zero with Geth as Eth1.0 provider and Lighthouse as Eth2.0 client on our Raspberry Pi 4.
+
+  It is important to have a backup plan, though. We recommend to setup an spare device with an Ethereum 1.0 node 
+  in sync ready for take over if something goes wrong.
 

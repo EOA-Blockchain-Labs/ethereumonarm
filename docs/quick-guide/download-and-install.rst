@@ -13,7 +13,7 @@ ethonarm_21.03.00.img.zip_
 
 .. _ethonarm_21.03.00.img.zip: http://www.ethereumonarm.com/downloads/ethonarm_21.03.00.img.zip
 
-You can verify the file with the following ``SHA512`` Hash:
+You can verify the file with the following ``SHA256`` Hash:
 
 ``SHA256 725359703b7c321f56a0e193be61c1f0102a23463549285e8f286e9fb6cc522f``
 

@@ -6,7 +6,7 @@ SHELL := /bin/bash
 PKG_NAME := ethereumonarm-armbian-extras
 PKG_DESCRIPTION := "Armbian script to config zram, ramlog, and tmpdir for Ethereum on ARM images"
 
-PKG_VERSION := 1.1.0
+PKG_VERSION := 1.2.0
 PKG_RELEASE := 0
 
 PKG_MAINTAINER := "Fernando Collado <fcollado@ethereumonarm.com>"
@@ -28,6 +28,7 @@ FPM_OPTS := -s dir -n $(PKG_NAME) -v $(PKG_VERSION) --iteration $(PKG_RELEASE)\
 	--depends dc
 
 deb: ## Create deb package
+	chmod 644 $(SOURCESDIR)etc/cron.d/armbian-truncate-logs
 	fpm -t deb -p $(PKG_DEB) $(FPM_OPTS)
 
 help:  ## List targets.

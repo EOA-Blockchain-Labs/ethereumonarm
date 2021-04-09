@@ -45,7 +45,7 @@ all: prepare deb clean
 
 prepare: ## Donwload the latest binary and prepare the package files
 	mkdir /tmp/besu_temp
-	wget  https://dl.bintray.com/hyperledger-org/besu-repo/besu-$(BESU_VERSION).zip -P /tmp/besu_temp
+	wget  https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/$(BESU_VERSION)/besu-$(BESU_VERSION).zip -P /tmp/besu_temp
 	unzip /tmp/besu_temp/besu-$(BESU_VERSION).zip -d /tmp/besu_temp
 	cp /tmp/besu_temp/besu-$(BESU_VERSION)/bin/besu sources/usr/bin/
 	cp /tmp/besu_temp/besu-$(BESU_VERSION)/lib/*  sources/usr/share/besu/lib/

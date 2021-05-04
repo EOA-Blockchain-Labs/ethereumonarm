@@ -365,7 +365,7 @@ We need to import the validator keys. Run under the ethereum account:
 
 .. prompt:: bash $
 
-  beacon_node deposits import /home/ethereum/validator_keys --data-dir=/home/ethereum/.nimbus --log-file=/home/ethereum/.nimbus/nimbus.log
+  nimbus_beacon_node deposits import /home/ethereum/validator_keys --data-dir=/home/ethereum/.nimbus --log-file=/home/ethereum/.nimbus/nimbus.log
 
 Enter the password previously defined and run:
 

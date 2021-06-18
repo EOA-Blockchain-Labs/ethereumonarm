@@ -61,3 +61,11 @@ scrape_configs:
     honor_labels: true
     static_configs:
     - targets: ['localhost:9091']
+  #Lighthouse
+  - job_name: 'local-lighthouse'
+    scrape_interval: 5s
+    metrics_path: /metrics
+    scheme: http
+    static_configs:
+      - targets: ['localhost:5054']
+

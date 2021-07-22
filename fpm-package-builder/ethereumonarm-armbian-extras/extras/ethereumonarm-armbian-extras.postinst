@@ -1,13 +1,6 @@
 #!/bin/sh
 set -e
 
-# Set swapfile Defaults using dphys-swapfile
-
-sed -i 's/#CONF_SWAPFILE=\/var\/swap/CONF_SWAPFILE=\/home\/ethereum\/swapfile/' /etc/dphys-swapfile
-sed -i 's/#CONF_SWAPSIZE=/CONF_SWAPSIZE=8192/' /etc/dphys-swapfile
-sed -i 's/#CONF_MAXSWAP=2048/CONF_MAXSWAP=8192/' /etc/dphys-swapfile
-systemctl enable dphys-swapfile
-
 # Automatically added by dh_installsystemd/13.2ubuntu1
 if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] || [ "$1" = "abort-deconfigure" ] || [ "$1" = "abort-remove" ] ; then
 	# This will only remove masks created by d-s-h on package removal.

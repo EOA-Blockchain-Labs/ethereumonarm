@@ -6,7 +6,7 @@ SHELL := /bin/bash
 PKG_NAME := ethereumonarm-armbian-extras
 PKG_DESCRIPTION := "Armbian script to config zram, ramlog, and tmpdir for Ethereum on ARM images"
 
-PKG_VERSION := 1.2.0
+PKG_VERSION := 2.0.0
 PKG_RELEASE := 0
 
 PKG_MAINTAINER := "Fernando Collado <fcollado@ethereumonarm.com>"

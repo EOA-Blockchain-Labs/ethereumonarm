@@ -11,7 +11,7 @@ Download the image here:
 
 ethonarm_21.03.00.img.zip_
 
-.. _ethonarm_21.03.00.img.zip: http://www.ethereumonarm.com/downloads/ethonarm_21.03.00.img.zip
+.. _ethonarm_21.03.00.img.zip: https://www.ethereumonarm.com/downloads/ethonarm_21.03.00.img.zip
 
 You can verify the file with the following ``SHA256`` Hash:
 

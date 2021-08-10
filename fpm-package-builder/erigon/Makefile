@@ -30,7 +30,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(ERIGON_VERSION) --license $(PKG_LICEN
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
---deb-systemd extras/erigon.service
+--deb-systemd extras/erigon.service --deb-systemd extras/erigon-rpc.service
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(ERIGON_VERSION) --license $(PKG_LICENSE)\
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
@@ -39,13 +39,13 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(ERIGON_VERSION) --license $(PKG_LICEN
 
 all: prepare deb clean
 
-prepare: ## Donwload the latest binary and prepare the package files
-	#wget https://gethstore.blob.core.windows.net/builds/geth-linux-$(PKG_ARCH_DEB)-$(ERIGON_VERSION)-$(ERIGON_DHASH).tar.gz -O - | tar -xz -C sources/usr/bin/ --wildcards --absolute-names --no-anchored --strip-components 1 '*/geth'
+prepare: ## Download the latest binary and prepare the package files
 	sudo gem install --no-document fpm
 	mkdir -p /tmp/erigon_tmp
-	cd /tmp/erigon_tmp ; git clone --recurse-submodules -j8 https://github.com/ledgerwatch/erigon.git ; cd erigon ; git checkout v$(ERIGON_VERSION); sed -i 's/\(env\)/\1 CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64/' Makefile ; make erigon
-	cp /tmp/erigon_tmp/erigon/build/bin/erigon sources/usr/bin/
-	rm -rf /tmp/erigon_tmp
+	 ## Clone GIT repo, add flags for crosscompilation and compile 
+	cd /tmp/erigon_tmp ; git clone --recurse-submodules -j8 https://github.com/ledgerwatch/erigon.git ; cd erigon ; git checkout v$(ERIGON_VERSION); sed -i 's/\(env\)/\1 CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64/' Makefile ; make erigon ; make rpcdaemon
+	cp /tmp/erigon_tmp/erigon/build/bin/erigon sources/usr/bin/ ; cp /tmp/erigon_tmp/erigon/build/bin/rpcdaemon sources/usr/bin/
+	#rm -rf /tmp/erigon_tmp
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)

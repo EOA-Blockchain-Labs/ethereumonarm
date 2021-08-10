@@ -1,0 +1,14 @@
+[Unit]
+Description=Ethereum Erigon client daemon
+Requires=erigon.service
+After=network.target erigon.service
+
+[Service]
+EnvironmentFile=/etc/ethereum/erigon-rpc.conf
+ExecStart=/usr/bin/rpcdaemon $ARGS
+Restart=always
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target
+

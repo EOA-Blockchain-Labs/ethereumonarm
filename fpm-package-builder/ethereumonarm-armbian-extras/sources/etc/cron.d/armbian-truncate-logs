@@ -1,4 +1,3 @@
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
-*/15 * * * * root /usr/lib/armbian/armbian-truncate-logs
-
+*/5 * * * * root /usr/lib/armbian/armbian-truncate-logs

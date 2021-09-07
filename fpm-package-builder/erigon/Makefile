@@ -45,7 +45,7 @@ prepare: ## Download the latest binary and prepare the package files
 	 ## Clone GIT repo, add flags for crosscompilation and compile 
 	cd /tmp/erigon_tmp ; git clone --recurse-submodules -j8 https://github.com/ledgerwatch/erigon.git ; cd erigon ; git checkout v$(ERIGON_VERSION); sed -i 's/\(env\)/\1 CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64/' Makefile ; make erigon ; make rpcdaemon
 	cp /tmp/erigon_tmp/erigon/build/bin/erigon sources/usr/bin/ ; cp /tmp/erigon_tmp/erigon/build/bin/rpcdaemon sources/usr/bin/
-	#rm -rf /tmp/erigon_tmp
+	rm -rf /tmp/erigon_tmp
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)

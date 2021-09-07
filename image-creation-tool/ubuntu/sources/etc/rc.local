@@ -117,7 +117,7 @@ EOF
   apt-get -y install ethereumonarm-monitoring-extras
   set-ethereunonarm-monitoring-extras -o
   # Insall some extra dependence
-  apt-get install libraspberrypi-bin net-tools
+  apt-get -y install libraspberrypi-bin net-tools
   #Disable root user
   passwd -l root
 

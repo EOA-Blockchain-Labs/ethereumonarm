@@ -28,6 +28,8 @@ if [ $logusage -ge $treshold ]; then
     /usr/bin/find /var/log -name 'mail.err' -or -name 'mail.info' -or -name 'mail.warning' | xargs -r truncate --size 0
     # remove
     /usr/bin/find /var/log -name '*.[0-9]' -or -name '*.gz' | xargs -r rm -f
+    /usr/bin/find /var/log/grafana -name '*.log.*' | xargs -r rm -f
     # vacuum systemd-journald
     [ -d /var/log/journal ] && journalctl --vacuum-size=${JOURNAL_SIZE}
 fi
+

@@ -17,7 +17,7 @@ of syncing the Ethereum blockchain). There are 2 options:
   * Use an USB portable SSD disk such as the Samsung Portable T5/T7 SSDs.
   * Use an USB 3.0 External Hard Drive Case with a SSD Disk. 
     In our case we used a Inateck 2.5 Hard Drive Enclosure FE2011. 
-    Make sure to buy a case with an UAS (USB Attached SCSI) compliant chip, particularly, one of these: 
+    Make sure to buy a case with an UASP (USB Attached SCSI) compliant chip, particularly, one of these: 
 
     * JMicron JMS567
     * JMicron JMS578

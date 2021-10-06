@@ -29,17 +29,13 @@ PKG_DEB := ${pkg_name}_${prysm_version}-${pkg_release}_${pkg_arch_deb}.deb
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\
 	-a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-	--deb-systemd extras/prysm-slasher.service\
 	--deb-systemd extras/prysm-beacon.service\
 	--deb-systemd extras/prysm-validator.service\
 	--conflicts prysm-beacon\
-	--conflicts prysm-slasher\
 	--conflicts prysm-validator\
 	--provides prysm-beacon\
-	--provides prysm-slasher\
 	--provides prysm-validator\
 	--replaces prysm-beacon\
-	--replaces prysm-slasher\
 	--replaces prysm-validator
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
@@ -51,8 +47,7 @@ all: prepare deb clean
 prepare: ## Donwload the latest binary and prepare the package files
 	wget https://github.com/prysmaticlabs/prysm/releases/download/v$(PRYSM_VERSION)/beacon-chain-v$(PRYSM_VERSION)-linux-arm64 -O sources/usr/bin/beacon-chain
 	wget https://github.com/prysmaticlabs/prysm/releases/download/v$(PRYSM_VERSION)/validator-v$(PRYSM_VERSION)-linux-arm64 -O sources/usr/bin/validator
-	wget https://github.com/prysmaticlabs/prysm/releases/download/v$(PRYSM_VERSION)/slasher-v$(PRYSM_VERSION)-linux-arm64 -O sources/usr/bin/slasher
-	chmod +x sources/usr/bin/beacon-chain sources/usr/bin/validator sources/usr/bin/slasher
+	chmod +x sources/usr/bin/beacon-chain sources/usr/bin/validator 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)
 

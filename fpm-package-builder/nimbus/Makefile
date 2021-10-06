@@ -5,8 +5,8 @@ SHELL := /bin/bash
 
 NIMBUS_VERSION := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.name' | tr -d 'v')
 #NIMBUS_DHASH := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.target_commitish' | cut -c1-8)
-DOWNLOAD_NAME := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.assets[2].name')
-NIMBUS_URL := https://github.com/status-im/nimbus-eth2/releases/download/v$(NIMBUS_VERSION)/$(DOWNLOAD_NAME)
+#DOWNLOAD_NAME := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.assets[2].name')
+NIMBUS_URL := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.assets[0].browser_download_url')
 
 PKG_RELEASE := 0
 PKG_NAME := nimbus
@@ -42,8 +42,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICEN
 all: prepare deb clean
 
 prepare: ## Donwload the latest binary and prepare the package files
-	#wget https://github.com/status-im/nimbus-eth2/releases/download/v$(NIMBUS_VERSION)/nimbus-eth2_Linux_arm64v8_$(NIMBUS_VERSION)_$(NIMBUS_DHASH).tar.gz -O - | tar -xz -C sources/usr/bin/ --wildcards --absolute-names --no-anchored --strip-components 2 '*/nimbus_*'
-	wget https://github.com/status-im/nimbus-eth2/releases/download/v1.4.2/nimbus-eth2_Linux_arm64v8_1.4.2_1e958cfb.tar.gz -O - | tar -xz -C sources/usr/bin/ --wildcards --absolute-names --no-anchored --strip-components 2 '*/nimbus_*'
+	wget $(NIMBUS_URL) -O - | tar -xz -C sources/usr/bin/ --wildcards --absolute-names --no-anchored --strip-components 2 '*/nimbus_*'
 	rm sources/usr/bin/nimbus*.sha512sum
 
 deb: ## Create deb package

@@ -287,7 +287,7 @@ We need to import the validator keys. Run under the ethereum account:
 
 .. prompt:: bash $
 
-  validator accounts-v2 import --keys-dir=/home/ethereum/validator_keys
+  validator accounts import --keys-dir=/home/ethereum/validator_keys
 
 Accept the default wallet path and enter a password for your wallet. Now enter 
 the password previously defined.

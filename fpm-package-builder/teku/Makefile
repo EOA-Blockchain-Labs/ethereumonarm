@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 TEKU_VERSION := $(shell curl -s https://api.github.com/repos/ConsenSys/teku/releases/latest | jq -r '.name' | tr -d 'v')
 
-PKG_RELEASE := 0
+PKG_RELEASE := 1
 PKG_NAME := teku
 
 PKG_DESCRIPTION := "Consensys Quorum Teku Eth2 java client"

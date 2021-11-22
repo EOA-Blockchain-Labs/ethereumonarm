@@ -4,7 +4,9 @@
 SHELL := /bin/bash
 
 NETHERMIND_VERSION := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/releases/latest" | jq -r '.name' | tr -d "v")
-NETHERMIND_DHASH := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/tags" | jq -c 'map(select(.name | contains("$(NETHERMIND_VERSION)")))' | jq .[0].commit.sha | tr -d  '"' | cut -c1-7)
+#NETHERMIND_DHASH := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/tags" | jq -c 'map(select(.name | contains("$(NETHERMIND_VERSION)")))' | jq .[0].commit.sha | tr -d  '"' | cut -c1-7)
+NETHERMIND_URL := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/releases/latest"|jq -r '.assets[2].browser_download_url')
+NETHERMIND_NAME := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/releases/latest"|jq -r '.assets[2].name')
 
 PKG_RELEASE := 0
 PKG_NAME := nethermind
@@ -51,8 +53,8 @@ all: prepare deb clean
 prepare: ## Donwload the latest binary and prepare the package files
 	mkdir -p /tmp/nethermind_tmp
 	mkdir -p sources/opt/nethermind/logs
-	wget https://nethdev.blob.core.windows.net/builds/nethermind-linux-$(PKG_ARCH_DEB)-$(NETHERMIND_VERSION)-$(NETHERMIND_DHASH).zip -P /tmp/nethermind_tmp
-	unzip /tmp/nethermind_tmp/nethermind-linux-$(PKG_ARCH_DEB)-$(NETHERMIND_VERSION)-$(NETHERMIND_DHASH).zip -d sources/opt/nethermind
+	wget $(NETHERMIND_URL) -P /tmp/nethermind_tmp
+	unzip /tmp/nethermind_tmp/$(NETHERMIND_NAME) -d sources/opt/nethermind
 	rm -rf /tmp/nethermind_tmp
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)

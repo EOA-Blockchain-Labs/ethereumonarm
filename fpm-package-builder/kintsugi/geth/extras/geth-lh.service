@@ -1,0 +1,13 @@
+[Unit]
+Description=Ethereum geth client daemon by The Ethereum Foundation
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/geth-lh.conf
+ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.geth-lh/kintsugi/datadir-lh && /usr/bin/geth-ks init /home/ethereum/merge-testnets/kintsugi/genesis.json  --datadir "/home/ethereum/.geth-lh/kintsugi/datadir-lh"'
+ExecStart=/usr/bin/geth-ks $ARGS
+Restart=always
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target

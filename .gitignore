@@ -1,4 +1,5 @@
 fpm-package-builder/.vagrant/
 fpm-package-builder/packages/
+fpm-package-builder/kintsugi/packages
 image-creation-tool/ubuntu/*.img
 image-creation-tool/ubuntu-rescue/*.img

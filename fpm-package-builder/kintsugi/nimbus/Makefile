@@ -3,13 +3,16 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-NIMBUS_VERSION := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.name' | tr -d 'v')
+NIMBUS_DHASH := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/commits?sha=kintsugi | jq -r '. [0] |  .sha' | cut -c1-8)
+NIMBUS_VERSION_MAIN := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.name' | tr -d 'v')
 #NIMBUS_DHASH := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.target_commitish' | cut -c1-8)
 #DOWNLOAD_NAME := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.assets[2].name')
-NIMBUS_URL := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.assets[2].browser_download_url')
+#NIMBUS_URL := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.assets[2].browser_download_url')
+NIMBUS_VERSION := $(shell date +"%y%m%d")
+
 
 PKG_RELEASE := 0
-PKG_NAME := nimbus
+PKG_NAME := nimbus-kintsugi
 
 PKG_DESCRIPTION := "Ethereum 2.0 Nimbus implementation"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
@@ -32,7 +35,7 @@ PKG_DEB := $(PKG_NAME)_$(NIMBUS_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICENSE)\
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-	--deb-systemd extras/nimbus.service
+	--deb-systemd extras/nim-geth.service
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICENSE)\
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
@@ -42,8 +45,10 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICEN
 all: prepare deb clean
 
 prepare: ## Donwload the latest binary and prepare the package files
-	wget $(NIMBUS_URL) -O - | tar -xz -C sources/usr/bin/ --wildcards --absolute-names --no-anchored --strip-components 2 '*/nimbus_*'
-	rm sources/usr/bin/nimbus*.sha512sum
+	#mkdir -p /tmp/nimbus_tmp
+	#cd /tmp/nimbus_tmp ; git clone -b kintsugi https://github.com/status-im/nimbus-eth2.git ; cd nimbus-eth2 ; make dist-arm64
+	cd /tmp/nimbus_tmp/nimbus-eth2/dist ; tar zxvf nimbus-eth2_Linux_arm64v8_$(NIMBUS_VERSION_MAIN)_$(NIMBUS_DHASH).tar.gz	
+	cp /tmp/nimbus_tmp/nimbus-eth2/dist/nimbus-eth2_Linux_arm64v8_$(NIMBUS_VERSION_MAIN)_$(NIMBUS_DHASH)/build/nimbus_beacon_node sources/usr/bin/nimbus_beacon_node-ks
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)

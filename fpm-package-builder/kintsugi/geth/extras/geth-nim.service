@@ -1,0 +1,13 @@
+[Unit]
+Description=Ethereum geth client daemon by The Ethereum Foundation
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/geth-nim.conf
+ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.geth-nim/kintsugi/datadir-nim && /usr/bin/geth-ks init /home/ethereum/merge-testnets/kintsugi/genesis.json  --datadir "/home/ethereum/.geth-nim/kintsugi/datadir-nim"'
+ExecStart=/usr/bin/geth-ks $ARGS
+Restart=always
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target

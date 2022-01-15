@@ -45,8 +45,8 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICEN
 all: prepare deb clean
 
 prepare: ## Donwload the latest binary and prepare the package files
-	#mkdir -p /tmp/nimbus_tmp
-	#cd /tmp/nimbus_tmp ; git clone -b kintsugi https://github.com/status-im/nimbus-eth2.git ; cd nimbus-eth2 ; make dist-arm64
+	mkdir -p /tmp/nimbus_tmp
+	cd /tmp/nimbus_tmp ; git clone -b kintsugi https://github.com/status-im/nimbus-eth2.git ; cd nimbus-eth2 ; make dist-arm64
 	cd /tmp/nimbus_tmp/nimbus-eth2/dist ; tar zxvf nimbus-eth2_Linux_arm64v8_$(NIMBUS_VERSION_MAIN)_$(NIMBUS_DHASH).tar.gz	
 	cp /tmp/nimbus_tmp/nimbus-eth2/dist/nimbus-eth2_Linux_arm64v8_$(NIMBUS_VERSION_MAIN)_$(NIMBUS_DHASH)/build/nimbus_beacon_node sources/usr/bin/nimbus_beacon_node-ks
 

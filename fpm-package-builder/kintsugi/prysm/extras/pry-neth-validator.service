@@ -1,0 +1,14 @@
+[Unit]
+Description=Prysm Validator daemon
+After=network.target
+Requires=pry-neth-beacon.service
+
+[Service]
+EnvironmentFile=/etc/ethereum/pry-neth-validator.conf
+ExecStart=/usr/bin/validator-ks $ARGS
+Restart=always
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target
+

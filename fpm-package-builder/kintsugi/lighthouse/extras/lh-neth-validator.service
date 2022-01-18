@@ -1,0 +1,13 @@
+[Unit]
+Description=Lighthouse Validator chain daemon
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/lh-neth-validator.conf
+ExecStart=/usr/bin/lighthouse-ks $ARGS
+Restart=always
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,0 +1,12 @@
+[Unit]
+Description=Ethereum Besu client daemon
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/besu-lh.conf
+ExecStart=/usr/bin/besu-ks $ARGS
+Restart=always
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target

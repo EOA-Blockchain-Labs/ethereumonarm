@@ -1,4 +1,0 @@
-# Configuration for bee daemon
-
-#BEE_SWAP_ENDPOINT=http://localhost:8545
-#BEE_RESOLVER_OPTIONS=

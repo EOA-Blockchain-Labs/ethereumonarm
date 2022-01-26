@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 User=ethereum
-EnvironmentFile=/etc/ethereum/kintsugi/neth-pry.conf
+EnvironmentFile=/etc/ethereum/kintsugi/neth-teku.conf
 ExecStart=/usr/bin/nethermind-ks $ARGS
 Restart=on-failure
 WorkingDirectory=/home/ethereum

@@ -3,7 +3,8 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-NETHERMIND_VERSION := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/releases/latest" | jq -r '.name' | tr -d "v")
+#NETHERMIND_VERSION := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/releases/latest" | jq -r '.name' | tr -d "v")
+NETHERMIND_VERSION := $(shell date +"%y%m%d")
 #NETHERMIND_DHASH := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/tags" | jq -c 'map(select(.name | contains("$(NETHERMIND_VERSION)")))' | jq .[0].commit.sha | tr -d  '"' | cut -c1-7)
 NETHERMIND_URL := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/releases/latest"|jq -r '.assets[2].browser_download_url')
 NETHERMIND_NAME := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/releases/latest"|jq -r '.assets[2].name')
@@ -38,7 +39,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(NETHERMIND_VERSION) --license $(PKG_L
 	--deb-user ethereum\
 	--deb-group ethereum\
 	--directories /opt/nethermind\
-	--depends	libsnappy-dev\
+	--depends libsnappy-dev\
 	--depends libc6-dev\
 	--depends libc6\
 	--depends librocksdb-dev\

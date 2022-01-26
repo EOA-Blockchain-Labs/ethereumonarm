@@ -8,7 +8,7 @@ then
     [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1
 fi
 
-source /etc/ethereum/kintsugi/secrets.env
+source secrets.env
 
 if [[ -z "${ETH1_FROM_ADDR}" ]]; then
   echo "need ETH1_FROM_ADDR environment var"
@@ -18,6 +18,12 @@ if [[ -z "${ETH1_FROM_PRIV}" ]]; then
   echo "need ETH1_FROM_PRIV environment var"
   exit 1 || return 1
 fi
+
+
+eth2-val-tools keystores \
+  --source-min=0 \
+  --source-max=1 \
+  --source-mnemonic="$VALIDATORS_MNEMONIC"
 
 
 eth2-val-tools deposit-data \

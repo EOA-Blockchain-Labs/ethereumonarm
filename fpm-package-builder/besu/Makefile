@@ -36,9 +36,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(BESU_VERSION) --license $(PKG_LICENSE
 	--deb-systemd extras/besu-teku.service\
 	--depends openjdk-11-jre-headless\
 	--depends libsecp256k1-0\
-	--replaces hyperledger-besu\
-	--conflicts hyperledger-besu\
-	--provides hyperledger-besu
+	--depends kintsugi-config\
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(BESU_VERSION) --license $(PKG_LICENSE)\
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\

@@ -3,7 +3,7 @@ Description=Nimbus Beacon chain daemon
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/nim-neth.conf
+EnvironmentFile=/etc/ethereum/kintsugi/nim-neth.conf
 ExecStart=/usr/bin/nimbus_beacon_node-ks $ARGS
 Restart=always
 User=ethereum

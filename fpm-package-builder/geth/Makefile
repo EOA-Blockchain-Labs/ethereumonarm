@@ -8,7 +8,7 @@ SHELL := /bin/bash
 
 GETH_VERSION := $(shell date +"%y%m%d")
 
-PKG_RELEASE := 2
+PKG_RELEASE := 0
 PKG_NAME := geth-kintsugi
 
 PKG_DESCRIPTION := "Kintsugi test client"
@@ -33,7 +33,8 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(GETH_VERSION) --license $(PKG_LICENSE
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 --deb-systemd extras/geth-lh.service --deb-systemd extras/geth-pry.service\
---deb-systemd extras/geth-nim.service
+--deb-systemd extras/geth-nim.service\
+--depends kintsugi-config
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(GETH_VERSION) --license $(PKG_LICENSE)\
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\

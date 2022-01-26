@@ -42,6 +42,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(NETHERMIND_VERSION) --license $(PKG_L
 	--depends libc6-dev\
 	--depends libc6\
 	--depends librocksdb-dev\
+	--depends kintsugi-config\
 	--depends unzip
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(NETHERMIND_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
@@ -58,6 +59,7 @@ prepare: ## Donwload the latest binary and prepare the package files
 	cd /tmp/nethermind_tmp/nethermind/ ; dotnet publish src/Nethermind/Nethermind.Runner -r linux-arm64 -c release -o out
 	cp extras/librocksdb.so /tmp/nethermind_tmp/nethermind/out/runtimes/linux-arm64/native/
 	cp -r /tmp/nethermind_tmp/nethermind/out/* sources/opt/nethermind/kintsugi/
+	rm -rf /tmp/nethermind_tmp
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)

@@ -44,8 +44,8 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(MERGE_CONFIG_VERSION) --license $(PKG
 all: prepare deb clean
 
 prepare: ## Donwload the latest binary and prepare the package files
-	mkdir -p sources/etc/ethereum/
-	git  -C sources/etc/ethereum/ clone https://github.com/eth-clients/merge-testnets.git 
+	mkdir -p sources/etc/ethereum/kintsugi
+	git  -C sources/etc/ethereum/kintsugi clone https://github.com/eth-clients/merge-testnets.git 
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)
@@ -55,7 +55,7 @@ rpm: ## Create rpm package
 
 .PHONY: clean
 clean: ## Clean up
-	rm -rf sources/etc/ethereum
+	rm -rf sources/etc/ethereum/kintsugi
 
 help:  ## List targets.
 	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

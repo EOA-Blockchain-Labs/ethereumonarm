@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 User=ethereum
-EnvironmentFile=/etc/ethereum/neth-nim.conf
+EnvironmentFile=/etc/ethereum/kintsugi/neth-nim.conf
 ExecStart=/usr/bin/nethermind-ks $ARGS
 Restart=on-failure
 WorkingDirectory=/home/ethereum

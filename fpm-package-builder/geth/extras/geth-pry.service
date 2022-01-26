@@ -3,8 +3,8 @@ Description=Ethereum geth client daemon by The Ethereum Foundation
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/geth-pry.conf
-ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.geth-pry/kintsugi/datadir-pry && /usr/bin/geth-ks init /home/ethereum/merge-testnets/kintsugi/genesis.json  --datadir "/home/ethereum/.geth-pry/kintsugi/datadir-pry"'
+EnvironmentFile=/etc/ethereum/kintsugi/geth-pry.conf
+ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.geth-pry/kintsugi/datadir-pry && /usr/bin/geth-ks init /etc/ethereum/kintsugi/merge-testnets/kintsugi/genesis.json  --datadir "/home/ethereum/.geth-pry/kintsugi/datadir-pry"'
 ExecStart=/usr/bin/geth-ks $ARGS
 Restart=always
 User=ethereum

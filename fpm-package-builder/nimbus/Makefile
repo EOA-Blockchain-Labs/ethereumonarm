@@ -35,7 +35,8 @@ PKG_DEB := $(PKG_NAME)_$(NIMBUS_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICENSE)\
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-	--deb-systemd extras/nim-geth.service
+	--deb-systemd extras/nim-geth.service\
+	--depends kintsugi-config\
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICENSE)\
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
@@ -49,6 +50,7 @@ prepare: ## Donwload the latest binary and prepare the package files
 	cd /tmp/nimbus_tmp ; git clone -b kintsugi https://github.com/status-im/nimbus-eth2.git ; cd nimbus-eth2 ; make dist-arm64
 	cd /tmp/nimbus_tmp/nimbus-eth2/dist ; tar zxvf nimbus-eth2_Linux_arm64v8_$(NIMBUS_VERSION_MAIN)_$(NIMBUS_DHASH).tar.gz	
 	cp /tmp/nimbus_tmp/nimbus-eth2/dist/nimbus-eth2_Linux_arm64v8_$(NIMBUS_VERSION_MAIN)_$(NIMBUS_DHASH)/build/nimbus_beacon_node sources/usr/bin/nimbus_beacon_node-ks
+	rm -rf /tmp/nimbus_tmp
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)
@@ -62,3 +64,4 @@ clean: ## Clean up
 
 help:  ## List targets.
 	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"
+

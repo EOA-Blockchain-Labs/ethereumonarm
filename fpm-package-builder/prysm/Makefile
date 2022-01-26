@@ -9,7 +9,7 @@ PRYSM_VERSION := $(shell date +"%y%m%d")
 
 
 PKG_RELEASE := 0
-PKG_NAME := prysm
+PKG_NAME := prysm-kintsugi
 
 PKG_DESCRIPTION := "Ethereum 2.0 Prysmatic Labs Kintsugi implementation"
 PKG_MAINTAINER := "diego losada <dlosada@ethereumonarm.com>"
@@ -33,12 +33,9 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENS
 	-a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 	--deb-systemd extras/pry-geth-beacon.service\
 	--deb-systemd extras/pry-geth-validator.service\
-	--conflicts prysm-beacon\
-	--conflicts prysm-validator\
+	--depends kintsugi-config\
 	--provides prysm-beacon\
 	--provides prysm-validator\
-	--replaces prysm-beacon\
-	--replaces prysm-validator
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\
@@ -51,6 +48,7 @@ prepare: ## Donwload the latest binary and prepare the package files
 	cd /tmp/prysm_tmp ; git clone -b kintsugi https://github.com/prysmaticlabs/prysm.git ; cd prysm ; bazel build //beacon-chain --config=linux_arm64_docker --workspace_status_command=hack/workspace_status.sh --stamp ; bazel build //validator --config=linux_arm64_docker --workspace_status_command=hack/workspace_status.sh --stamp
 	cp /tmp/prysm_tmp/prysm/bazel-bin/cmd/beacon-chain/beacon-chain_/beacon-chain sources/usr/bin/beacon-chain-ks
 	cp /tmp/prysm_tmp/prysm/bazel-bin/cmd/validator/validator_/validator sources/usr/bin/validator-ks
+	rm -rf /tmp/prysm_tmp
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)

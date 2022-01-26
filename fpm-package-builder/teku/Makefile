@@ -33,6 +33,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(TEKU_VERSION) --license $(PKG_LICENSE
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 	--deb-systemd extras/teku-lh.service\
+	--depends kintsugi-config\
 	--depends openjdk-11-jre-headless\
 	--depends libsecp256k1-0\
 
@@ -51,7 +52,7 @@ prepare: ## Donwload the latest binary and prepare the package files
 	cp /tmp/teku_temp/teku/build/install/teku/bin/teku sources/usr/bin/teku-ks
 	cp /tmp/teku_temp/teku/build/install/teku/lib/* sources/usr/share/teku/kintsugi/lib/
 	sed -i 's/`pwd -P`/\/usr\/share\/teku\/\kintsugi\//' sources/usr/bin/teku-ks
-	#rm -rf /tmp/teku_temp
+	rm -rf /tmp/teku_temp
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)
@@ -61,8 +62,8 @@ rpm: ## Create rpm package
 
 .PHONY: clean
 clean: ## Clean up
-	#rm sources/usr/share/teku/kintsugi/lib/*
-	#rm sources/usr/bin/teku-ks
+	rm sources/usr/share/teku/kintsugi/lib/*
+	rm sources/usr/bin/teku-ks
 
 help:  ## List targets.
 	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

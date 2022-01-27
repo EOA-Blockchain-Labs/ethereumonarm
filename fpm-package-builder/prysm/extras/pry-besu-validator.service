@@ -4,7 +4,7 @@ After=network.target
 Requires=pry-besu-beacon.service
 
 [Service]
-EnvironmentFile=/etc/ethereum/pry-besu-validator.conf
+EnvironmentFile=/etc/ethereum/kintsugi/pry-besu-validator.conf
 ExecStart=/usr/bin/validator-ks $ARGS
 Restart=always
 User=ethereum

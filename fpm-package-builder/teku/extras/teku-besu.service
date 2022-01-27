@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/teku-besu.conf
-ExecStart=/usr/bin/tesu-ks $ARGS
+ExecStart=/usr/bin/teku-ks $ARGS
 Restart=always
 User=ethereum
 

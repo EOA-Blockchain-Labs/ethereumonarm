@@ -36,6 +36,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(NETHERMIND_VERSION) --license $(PKG_L
 	--deb-systemd extras/neth-lh.service\
 	--deb-systemd extras/neth-pry.service\
 	--deb-systemd extras/neth-nim.service\
+	--deb-systemd extras/neth-teku.service\
 	--deb-user ethereum\
 	--deb-group ethereum\
 	--directories /opt/nethermind\

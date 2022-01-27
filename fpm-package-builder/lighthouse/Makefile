@@ -33,6 +33,10 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(LIGHTHOUSE_VERSION) --license $(PKG_L
 	-a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 	--deb-systemd extras/lh-geth-beacon.service\
 	--deb-systemd extras/lh-geth-validator.service\
+	--deb-systemd extras/lh-neth-beacon.service\
+	--deb-systemd extras/lh-neth-beacon.service\
+	--deb-systemd extras/lh-besu-beacon.service\
+	--deb-systemd extras/lh-besu-beacon.service\
 	--depends kintsugi-config
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(LIGHTHOUSE_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\

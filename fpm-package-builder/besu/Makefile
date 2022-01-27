@@ -34,6 +34,8 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(BESU_VERSION) --license $(PKG_LICENSE
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 	--deb-systemd extras/besu-lh.service\
 	--deb-systemd extras/besu-teku.service\
+	--deb-systemd extras/besu-nim.service\
+	--deb-systemd extras/besu-pry.service\
 	--depends openjdk-11-jre-headless\
 	--depends libsecp256k1-0\
 	--depends kintsugi-config\

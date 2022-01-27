@@ -33,6 +33,10 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENS
 	-a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 	--deb-systemd extras/pry-geth-beacon.service\
 	--deb-systemd extras/pry-geth-validator.service\
+	--deb-systemd extras/pry-neth-beacon.service\
+	--deb-systemd extras/pry-neth-validator.service\
+	--deb-systemd extras/pry-besu-beacon.service\
+	--deb-systemd extras/pry-besu-validator.service\
 	--depends kintsugi-config\
 	--provides prysm-beacon\
 	--provides prysm-validator\

@@ -54,7 +54,7 @@ prepare: ## Donwload the latest binary and prepare the package files
 	cp /tmp/teku_temp/teku/build/install/teku/bin/teku sources/usr/bin/teku-ks
 	cp /tmp/teku_temp/teku/build/install/teku/lib/* sources/usr/share/teku/kintsugi/lib/
 	sed -i 's/`pwd -P`/\/usr\/share\/teku\/\kintsugi\//' sources/usr/bin/teku-ks
-	rm -rf /tmp/teku_temp
+	#rm -rf /tmp/teku_temp
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)

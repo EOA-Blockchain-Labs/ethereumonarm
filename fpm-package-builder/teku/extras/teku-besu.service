@@ -3,7 +3,7 @@ Description=Ethereum Teku client daemon
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/teku-besu.conf
+EnvironmentFile=/etc/ethereum/kintsugi/teku-besu.conf
 ExecStart=/usr/bin/teku-ks $ARGS
 Restart=always
 User=ethereum

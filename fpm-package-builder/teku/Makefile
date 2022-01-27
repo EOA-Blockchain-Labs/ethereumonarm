@@ -53,8 +53,8 @@ prepare: ## Donwload the latest binary and prepare the package files
 	mkdir -p sources/usr/share/teku/kintsugi/lib/
 	cp /tmp/teku_temp/teku/build/install/teku/bin/teku sources/usr/bin/teku-ks
 	cp /tmp/teku_temp/teku/build/install/teku/lib/* sources/usr/share/teku/kintsugi/lib/
-	sed -i 's/`pwd -P`/\/usr\/share\/teku\/\kintsugi\//' sources/usr/bin/teku-ks
-	#rm -rf /tmp/teku_temp
+	sed -i 's/"$${APP_HOME:-\.\/}\.\."/"$${APP_HOME:-\.\/}\.\.\/share\/teku\/kintsugi"/g' sources/usr/bin/teku-ks
+	rm -rf /tmp/teku_temp
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)
@@ -64,7 +64,7 @@ rpm: ## Create rpm package
 
 .PHONY: clean
 clean: ## Clean up
-	rm sources/usr/share/teku/kintsugi/lib/*
+	rm -r sources/usr/share/
 	rm sources/usr/bin/teku-ks
 
 help:  ## List targets.

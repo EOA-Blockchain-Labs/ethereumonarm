@@ -72,6 +72,7 @@ rpm: ## Create rpm package
 .PHONY: clean
 clean: ## Clean up
 	rm -rf sources/opt/nethermind/*
+	rm -rf sources/usr/bin/nethermind-ks
 
 help:  ## List targets.
 	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

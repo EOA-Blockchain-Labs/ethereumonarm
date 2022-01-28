@@ -8,7 +8,7 @@ then
     [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1
 fi
 
-source secrets.env
+source /etc/ethereum/kintsugi/secrets.env
 
 if [[ -z "${ETH1_FROM_ADDR}" ]]; then
   echo "need ETH1_FROM_ADDR environment var"

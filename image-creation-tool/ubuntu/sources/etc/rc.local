@@ -50,7 +50,7 @@ if [ ! -f $FLAG ]; then
     exit 1
   fi
 
-  # Modify hostname (ethereumonarm-$MAC-HASH-CHUNK)
+  # Modify hostname (ethereumonarm-kintsugi-$MAC-HASH-CHUNK)
   echo Changing hostname
   MAC_HASH=`cat /sys/class/net/eth0/address | sha256sum | awk '{print substr($0,0,9)}'`
   echo ethereumonarm-$MAC_HASH > /etc/hostname
@@ -90,15 +90,9 @@ if [ ! -f $FLAG ]; then
   # Install Ethereum packages
   echo Installing Ethereum packages
   apt-get update
-  apt-get -y install ethereumonarm-armbian-extras geth openethereum nethermind erigon besu prysm lighthouse nimbus teku eth2.0-deposit-cli
-  systemctl enable geth
+  apt-get -y install ethereumonarm-armbian-extras geth-kintsugi nethermind-kintsugi besu-kintsugi prysm-kintsugi lighthouse-kintsugi nimbus-kintsugi teku-kintsugi kintsugi-config eth2-val-tools ethereal
+  systemctl enable kintsugi-config
 
-  # Create an alias for package updates
-  cat <<EOF >> /etc/bash.bashrc
-  alias update-ethereum='
-sudo apt-get update
-sudo apt-get install geth openethereum nethermind besu prysm lighthouse nimbus teku'
-EOF
   # Install monitoring packages
   wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
   echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
@@ -116,7 +110,7 @@ EOF
 
   apt-get -y install ethereumonarm-monitoring-extras
   set-ethereunonarm-monitoring-extras -o
-  # Insall some extra dependence
+  # Install some extra dependence
   apt-get -y install libraspberrypi-bin net-tools
   #Disable root user
   passwd -l root

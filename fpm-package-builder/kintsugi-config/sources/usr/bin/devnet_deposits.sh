@@ -23,7 +23,8 @@ fi
 eth2-val-tools keystores \
   --source-min=0 \
   --source-max=1 \
-  --source-mnemonic="$VALIDATORS_MNEMONIC"
+  --source-mnemonic="$VALIDATORS_MNEMONIC"\
+  --prysm-pass="$PRYSM_PASSWD"
 
 
 eth2-val-tools deposit-data \

@@ -8,7 +8,7 @@ SHELL := /bin/bash
 PRYSM_VERSION := $(shell date +"%y%m%d")
 
 
-PKG_RELEASE := 0
+PKG_RELEASE := 1
 PKG_NAME := prysm-kintsugi
 
 PKG_DESCRIPTION := "Ethereum 2.0 Prysmatic Labs Kintsugi implementation"
@@ -38,8 +38,6 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENS
 	--deb-systemd extras/pry-besu-beacon.service\
 	--deb-systemd extras/pry-besu-validator.service\
 	--depends kintsugi-config\
-	--provides prysm-beacon\
-	--provides prysm-validator\
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\

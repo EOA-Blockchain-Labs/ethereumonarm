@@ -90,7 +90,7 @@ if [ ! -f $FLAG ]; then
   # Install Ethereum packages
   echo Installing Ethereum packages
   apt-get update
-  apt-get -y install ethereumonarm-armbian-extras geth-kintsugi nethermind-kintsugi besu-kintsugi prysm-kintsugi lighthouse-kintsugi nimbus-kintsugi teku-kintsugi kintsugi-config eth2-val-tools ethereal
+  apt-get -y install kintsugi-config ethereumonarm-armbian-extras geth-kintsugi nethermind-kintsugi besu-kintsugi prysm-kintsugi lighthouse-kintsugi nimbus-kintsugi teku-kintsugi eth2-val-tools ethereal
   systemctl enable kintsugi-config
 
   # Install monitoring packages

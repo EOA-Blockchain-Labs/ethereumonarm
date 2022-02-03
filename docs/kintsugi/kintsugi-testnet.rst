@@ -348,7 +348,7 @@ Teku
 Check your the **Beacon Chain data directory**. We need to place some variables in the Teku 
 config file. Lets asume :guilabel:`Geth` as EL client.
 
-First, we need to grab the .json .txt file names located in `/home/ethereum/assigned_data` dir.
+First, we need to grab the .json and .txt file name located in `/home/ethereum/assigned_data` dir.
 
 .. prompt:: bash $
 
@@ -360,17 +360,17 @@ Write this down and edit the Teku+Geth config file (with vim, for instance):
 
   sudo vim /etc/ethereum/kintsugi/teku-geth.conf
 
-And replace {teku-key-file} and {teku-secret-file} placeholders with this value.
+And replace `{teku-key-file}` and `{teku-secret-file}` placeholders with this value.
 
-Finally, get your Metamask address and replace the {your_eth_address} placeholder with it.
+Finally, get your Metamask address and replace the `{your_eth_address}` placeholder with it.
 
 You should have somethig like this:
 
 .. prompt:: bash $
 
-  ARGS='--data-path /home/ethereum/.teku-geth/kintsugi/datadir-teku --network kintsugi --Xee-endpoint http://localhost:8545 --validator-keys=/home/ethereum/assigned_data/teku-keys/0x811becb8b9bbca53a0fc8fc5b71690e813e9f6defac4b08e2131f1e27b1875d913d4968ce40bb1d66791ce077805944c.json:/home/ethereum/assigned_data/teku-secrets/0x811becb8b9bbca53a0fc8fc5b71690e813e9f6defac4b08e2131f1e27b1875d913d4968ce40bb1d66791ce077805944c.txt --Xvalidators-proposer-default-fee-recipient 0x22898bd71D42aE90AaE78dF2ED8db34F2aE4958c
+  ARGS='--data-path /home/ethereum/.teku-geth/kintsugi/datadir-teku --network kintsugi --Xee-endpoint http://localhost:8545 --validator-keys=/home/ethereum/assigned_data/teku-keys/0x811becb8b9bbca53a0fc8fc5b71690e813e9f6defac4b08e2131f1e27b1875d913d4968ce40bb1d66791ce077805944c.json:/home/ethereum/assigned_data/teku-secrets/0x811becb8b9bbca53a0fc8fc5b71690e813e9f6defac4b08e2131f1e27b1875d913d4968ce40bb1d66791ce077805944c.txt --Xvalidators-proposer-default-fee-recipient 0x22898bd71D42aE90AaE78dF2ED8db34F2aE4958c'
 
-All set, start :guilabel:`Teku` (assuming :guilabel:`Geth` as EL):
+All set, start :guilabel:`Teku` (for instance, assuming :guilabel:`Geth` as EL):
 
 .. prompt:: bash $
 

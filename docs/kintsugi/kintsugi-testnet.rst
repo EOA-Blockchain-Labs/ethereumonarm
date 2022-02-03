@@ -8,9 +8,7 @@ This is a Plug and Play image for the **Raspberry Pi 4** that sets up and
 installs all the software to test Execution Layer and Consensus Layer clients 
 just **by starting their Systemd services**.
 
-Please check here the hardware requirements before installing the image:
-
-recommended-hardware.html_
+Please check here the recommended-hardware_ section before installing the image:
 
 .. _recommended-hardware.html: https://ethereum-on-arm-documentation.readthedocs.io/en/latest/quick-guide/recommended-hardware.html
 
@@ -144,14 +142,14 @@ This is the software included:
 
 Kintsugi tools
 
-    * **eth2-val-tools** (4GB or 8GB RAM)
-    * **ethereal** (16 GB Class 10 minimum)
+    * **eth2-val-tools** 
+    * **ethereal** 
 
 
 Managing the clients
 ====================
 
-As you need to run both Execution Layer and Consensus Layer at once we set up 
+As you need to run both **Execution Layer and Consensus Layer at once** we set up 
 all **EL+CL combinations** as Systemd services for making it easy to start them.
 
 For example, if you want to run :guilabel:`Geth` and :guilabel:`Lighthouse` Beacon 
@@ -162,7 +160,7 @@ Chain you need to start both services by running:
   sudo systemctl start geth-lh 
   sudo systemctl start lh-geth-beacon 
 
-These 2 command will start the Execution Layer and the Consensus Layer Beacon Chain.
+These 2 command will start the **Execution Layer and the Consensus Layer Beacon Chain**.
 
 You can check both client logs by running:
 
@@ -176,7 +174,7 @@ You can check both client logs by running:
 
 So, this means that **we need a Systemd service for every EL+CL combination**.
 
-For stoping a client, use the Systemctl stop directive, for instance:
+For stopping a client, use the Systemctl stop directive, for instance:
 
 .. prompt:: bash $
 
@@ -223,23 +221,23 @@ to manage the correct services:
   :guilabel:`Besu` needs a little set up before starting it:
   Edit the config file (depending on the CL, for example: 
   ``/etc/ethereum/kintsugi/besu-lh.conf`` and replace the `$COINBASE` 
-  variable from the ``--miner-coinbase`` flag for your Metamask address.
-
-See more info regarding how to manage services in "Managin clients" User Guide 
-Section.
+  variable from the ``--miner-coinbase`` flag with your Metamask address.
 
 Enabling a Validator
 ====================
 
-First of all, make sure the Consensus Layer and Execution Layer are in sync.
+First of all, make sure the **Consensus Layer and Execution Layer** are in sync.
 
 Deposit and Keys generation
 ---------------------------
 
 Get some **Kintsugi ETH** (fake ETH) from the public faucet, your **ETH address** and your 
-**address private key**. Please, check Remy Roy's guide to do so (only this part).
+**address private key**. Please, check Remy Roy's_ guide to do so (only this part).
 
-Run twice the following command in order to get your Validator keys and validator withdrawl mnemonics:
+.. _Remy Roy's: https://github.com/remyroy/ethstaker/blob/main/merge-devnet.md#trying-the-kintsugi-testnet-and-performing-transactions
+
+Once you have Metamask configured and got 32 ETH from the public faucet, run twice the 
+following command in order to get your Validator keys and validator withdrawl mnemonics:
 
 .. prompt:: bash $
 

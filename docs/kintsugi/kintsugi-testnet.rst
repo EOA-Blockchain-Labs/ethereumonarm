@@ -256,6 +256,8 @@ Use your favourite editor (vim, for instance):
 
 Fill the following variables in (inside the quotation marks):
 
+.. prompt:: bash $
+
   VALIDATORS_MNEMONIC (your first mnemonic)
   WITHDRAWALS_MNEMONIC (your second mnemonic)
   PRYSM_PASSWD (a ramdom password for the :guilabel:`Prysm` wallet)
@@ -364,6 +366,8 @@ And replace **`{teku-key-file}`** and **`{teku-secret-file}`** placeholders with
 Finally, get your Metamask address and replace the **`{your_eth_address}`** placeholder with it.
 
 You should have somethig like this:
+
+.. prompt:: bash $
 
   ARGS='--data-path /home/ethereum/.teku-geth/kintsugi/datadir-teku --network kintsugi --Xee-endpoint http://localhost:8545 --validator-keys=/home/ethereum/assigned_data/teku-keys/0x811becb8b9bbca53a0fc8fc5b71690e813e9f6defac4b08e2131f1e27b1875d913d4968ce40bb1d66791ce077805944c.json:/home/ethereum/assigned_data/teku-secrets/0x811becb8b9bbca53a0fc8fc5b71690e813e9f6defac4b08e2131f1e27b1875d913d4968ce40bb1d66791ce077805944c.txt --Xvalidators-proposer-default-fee-recipient 0x22898bd71D42aE90AaE78dF2ED8db34F2aE4958c'
 

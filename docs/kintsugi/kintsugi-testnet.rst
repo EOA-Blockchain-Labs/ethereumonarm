@@ -269,6 +269,7 @@ Now, we need to run the `devnet_deposits.sh` script to make the deposit in the K
 staking contract and generate the keys for the validator:
 
 .. prompt:: bash $
+
   devnet_deposits.sh
 
 You should see now a message displaying the transaction data and your validator
@@ -276,6 +277,7 @@ You should see now a message displaying the transaction data and your validator
  Write down the secret generated as you will need it:
 
 .. prompt:: bash $
+
   cat /home/ethereum/assigned_data/secrets/<pubkey> && echo
 
 replace the `<pubkey>` with the correspondent text chain
@@ -298,6 +300,7 @@ it will be ``/home/ethereum/.lh-geth/kintsugi/testnet-lh``
 Import the validator keys (we will suppose you've been running :guilabel:`Geth`):
 
 .. prompt:: bash $
+
   lighthouse-ks account validator import --directory=/home/ethereum/assigned_data/keys --datadir=/home/ethereum/.lh-geth/kintsugi/testnet-lh
 
 Paste the **keystore private password** (the one from /home/ethereum/assigned_data/secrets/<pubkey>)
@@ -305,6 +308,7 @@ Paste the **keystore private password** (the one from /home/ethereum/assigned_da
 Now, start the :guilabel:`Lighthouse` validator service (again, asuming :guilabel:`Geth` as EL):
 
 .. prompt:: bash $
+
   sudo systemctl start lh-geth-validator
 
 Prysm
@@ -314,6 +318,7 @@ You will need the :guilabel:`Prysm` password that you previously set in the `sec
 Put this password in the wallet file as follows:
 
 .. prompt:: bash $
+
   sudo bash -c "echo $PRYSM_PASSWD > /etc/ethereum/kintsugi/prysm-wallet-password.txt"
   
 Replace `$PRYSM_PASSWD` for your password.
@@ -321,6 +326,7 @@ Replace `$PRYSM_PASSWD` for your password.
 All set, now run the validator systemd service (for instance, :guilabel:`Nethermind` as EL):
 
 .. prompt:: bash $
+
   sudo systemctl start pry-neth-validator
 
 Nimbus
@@ -331,6 +337,7 @@ CL+EL clients. For instance, asuming :guilabel:`Besu` as EL, let's import the ke
 the :guilabel:`Nimbus` account:
 
 .. prompt:: bash $
+
   nimbus_beacon_node-ks deposits import /home/ethereum/assigned_data/keys --data-dir=/home/ethereum/.nim-besu/kintsugi/testnet-nim
 
 Paste the keystore private password (the one from `/home/ethereum/assigned_data/secrets/<pubkey>`).
@@ -344,11 +351,13 @@ config file. Lets asume :guilabel:`Geth` as EL client.
 First, we need to grab the .json .txt file names located in `/home/ethereum/assigned_data` dir.
 
 .. prompt:: bash $
+
   ls /home/ethereum/assigned_data/teku-secrets/ | cut -d "." -f 1
 
 Write this down and edit the Teku+Geth config file (with vim, for instance):
 
 .. prompt:: bash $
+
   sudo vim /etc/ethereum/kintsugi/teku-geth.conf
 
 And replace {teku-key-file} and {teku-secret-file} placeholders with this value.
@@ -358,9 +367,11 @@ Finally, get your Metamask address and replace the {your_eth_address} placeholde
 You should have somethig like this:
 
 .. prompt:: bash $
+
   ARGS='--data-path /home/ethereum/.teku-geth/kintsugi/datadir-teku --network kintsugi --Xee-endpoint http://localhost:8545 --validator-keys=/home/ethereum/assigned_data/teku-keys/0x811becb8b9bbca53a0fc8fc5b71690e813e9f6defac4b08e2131f1e27b1875d913d4968ce40bb1d66791ce077805944c.json:/home/ethereum/assigned_data/teku-secrets/0x811becb8b9bbca53a0fc8fc5b71690e813e9f6defac4b08e2131f1e27b1875d913d4968ce40bb1d66791ce077805944c.txt --Xvalidators-proposer-default-fee-recipient 0x22898bd71D42aE90AaE78dF2ED8db34F2aE4958c
 
 All set, start :guilabel:`Teku` (assuming :guilabel:`Geth` as EL):
 
 .. prompt:: bash $
+
   systemctl start teku-geth

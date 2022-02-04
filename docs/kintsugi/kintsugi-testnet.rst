@@ -361,9 +361,9 @@ Write this down and edit the Teku+Geth config file (with vim, for instance):
 
   sudo vim /etc/ethereum/kintsugi/teku-geth.conf
 
-And replace **`{teku-key-file}`** and **`{teku-secret-file}`** placeholders with this value.
+And replace `{**teku-key-file**}` and `{**teku-secret-file**}`** placeholders with this value.
 
-Finally, get your Metamask address and replace the **`{your_eth_address}`** placeholder with it.
+Finally, get your Metamask address and replace the `{**your_eth_address**}` placeholder with it.
 
 You should have somethig like this:
 

@@ -1,3 +1,5 @@
+.vscode
+image-creation-tool/ubuntu/*.img.zip
 fpm-package-builder/.vagrant/
 fpm-package-builder/packages/
 fpm-package-builder/kintsugi/packages

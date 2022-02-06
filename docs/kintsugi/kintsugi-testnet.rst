@@ -135,7 +135,7 @@ Through SSH:
 .. note::
   You will be **prompted to change the password on first login**, so you will need to log in twice.
 
-..tip::
+.. tip::
 
   Remember that you will need to forward/open the following ports for the clients to perform well (for 
   both AWS AMI and Raspberry Pi 4.

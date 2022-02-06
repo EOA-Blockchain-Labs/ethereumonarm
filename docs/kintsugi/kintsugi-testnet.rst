@@ -135,6 +135,15 @@ Through SSH:
 .. note::
   You will be **prompted to change the password on first login**, so you will need to log in twice.
 
+..tip::
+
+  Remember that you will need to forward/open the following ports for the clients to perform well (for 
+  both AWS AMI and Raspberry Pi 4.
+
+  * 30303: For Execution Layer clients (**Geth, Besu and Nethermind**)
+  * 9000: For Consensus Layer (**Lighthouse, Nimbus and Teku**)
+  * 12000 (UDP) & 13000 (TCP): for Consensus Layer **Prysm**
+
 What's included
 ===============
 

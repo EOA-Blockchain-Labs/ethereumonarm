@@ -25,18 +25,14 @@ This AMI **contains exactly the same software and configuration that the Raspber
 instructions are the same for both except from the installation processes (Flashing the MicroSD for 
 the Raspberry and launching the AMI from AWS for the Amazon image).
 
-As these images are intended for testing, we recommend to pick up AWS **spot instances** as prices 
-are up to 90% lower than On-Demand instances. See more info here:
+.. tip::
 
-`AWS spot instances`_
+  As these images are intended for testing, we recommend to pick up **AWS spot instances** as prices 
+  are up to 90% lower than On-Demand instances. See more info here:
+
+  `AWS spot instances`_
 
 .. _AWS spot instances: https://aws.amazon.com/ec2/spot/
-
-You can find the AMI here:
-
-`ami-0eac5fc607c257931`_
-
-.. _ami-0eac5fc607c257931: https://eu-west-1.console.aws.amazon.com/ec2/v2/home?region=eu-west-1#ImageDetails:imageId=ami-0eac5fc607c257931
 
 .. note::
   Remember to open the necessary ports in order to make sure all clients work properly:
@@ -45,6 +41,11 @@ You can find the AMI here:
   * **9000**: For Consensus Layer (:guilabel:`Lighthouse`, :guilabel:`Nimbus` and :guilabel:`Teku`)
   * **12000 (UDP) & 13000 (TCP)**: for Consensus Layer :guilabel:`Prysm`
 
+You can find the AMI here:
+
+`ami-0eac5fc607c257931`_
+
+.. _ami-0eac5fc607c257931: https://eu-west-1.console.aws.amazon.com/ec2/v2/home?region=eu-west-1#ImageDetails:imageId=ami-0eac5fc607c257931
 
 Download and Install
 ====================

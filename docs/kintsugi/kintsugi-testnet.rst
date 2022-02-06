@@ -4,7 +4,7 @@ About Kintsugi
 Kintsugi network is a public testnet for the upcoming Ethereum upgrade 
 to Proof of Stake called **The Merge**.
 
-This is a Plug and Play image for the **Raspberry Pi 4** that sets up and 
+This is a **Plug and Play** image for the **Raspberry Pi 4** that sets up and 
 installs all the software to test Execution Layer and Consensus Layer clients 
 just **by starting their Systemd services**.
 
@@ -13,22 +13,22 @@ Please check here the `recommended-hardware`_ section before installing the imag
 .. _recommended-hardware: https://ethereum-on-arm-documentation.readthedocs.io/en/latest/quick-guide/recommended-hardware.html
 
 Amazon ARM AWS AMI Image
-====================
+========================
 
 If you don't have a Raspberry Pi 4 but you have an **AWS account** (or you are willing to open one), 
-we've build a public **ARM AMI image** so you can try to run a Kintsugi Ethereum node and try the testnet.
+we've built a public **ARM AMI image** so you can run a **Kintsugi Ethereum node and try the testnet**.
 
 .. warning::
   The image only works with an ARM64 architecture.
 
 This AMI **contains exactly the same software and configuration that the Raspberry Pi 4** one so the 
-instructions are the same for both except from the installation processes (Flashing the MicroSD for 
-the Raspberry and launching the AMI from AWS for the Amazon image).
+instructions are the same for both except from the installation process (Flashing the MicroSD for 
+the Raspberry and launching the AMI from the AWS console).
 
 .. tip::
 
-  As these images are intended for testing, we recommend to pick up **AWS spot instances** as prices 
-  are up to 90% lower than On-Demand instances. See more info here:
+  As these images are intended for testing, we recommend picking up an **AWS spot instance** as prices 
+  are up to 90% lower than the On-Demand one. See more info here:
 
   `AWS spot instances`_
 
@@ -72,7 +72,7 @@ Flash
 Insert the microSD in your Desktop / Laptop and flash the image.
 
 .. note::
-  If you are not comfortable with command line or if you are 
+  If you are not comfortable with the command line or if you are 
   running Windows, you can use Etcher_
 
 .. _Etcher: https://www.balena.io/etcher/
@@ -104,7 +104,7 @@ Insert MicroSD
   on it.
 
 Insert de MicroSD into the Raspberry Pi 4. Connect an Ethernet cable and attach 
-the USB SSD disk (make sure you are using a blue port which corresponds to USB 3).
+the USB SSD disk (make sure you are using a blue port that corresponds to USB 3).
 
 Power on
 --------
@@ -152,7 +152,7 @@ Through SSH:
      fping -a -g 192.168.1.0/24
   
 .. note::
-  You will be **prompted to change the password on first login**, so you will need to log in twice.
+  You will be **prompted to change the password on the first login**, so you will need to log in twice.
 
 .. tip::
 
@@ -203,7 +203,7 @@ Chain you need to start both services by running:
   sudo systemctl start geth-lh 
   sudo systemctl start lh-geth-beacon 
 
-These 2 command will start the **Execution Layer and the Consensus Layer Beacon Chain**.
+These 2 commands will start the **Execution Layer and the Consensus Layer Beacon Chain**.
 
 You can check both client logs by running:
 
@@ -280,7 +280,7 @@ Get some **Kintsugi ETH** (fake ETH) from the public faucet, your **ETH address*
 .. _Remy Roy's: https://github.com/remyroy/ethstaker/blob/main/merge-devnet.md#trying-the-kintsugi-testnet-and-performing-transactions
 
 Once you have **Metamask** configured and received 32 ETH from the public faucet, run twice the 
-following command in order to get your Validator keys and validator withdrawl mnemonics:
+following command in order to get your Validator keys and validator Withdrawl mnemonics:
 
 .. prompt:: bash $
 
@@ -291,7 +291,7 @@ Save both mnemonics.
 
 Now, we need to set some ``env`` variables and run the deposit script:
 
-Use your favourite editor (vim, for instance):
+Use your favorite editor (vim, for instance):
 
 .. prompt:: bash $
 
@@ -303,9 +303,9 @@ Fill the following variables in (inside the quotation marks):
 
   VALIDATORS_MNEMONIC (your first mnemonic)
   WITHDRAWALS_MNEMONIC (your second mnemonic)
-  PRYSM_PASSWD (a ramdom password for the Prysm wallet)
-  ETH1_FROM_ADDR (your Metamask address from Remys guide)
-  ETH1_FROM_PRIV (your Metamask address private key from Remys guide)
+  PRYSM_PASSWD (a random password for the Prysm wallet)
+  ETH1_FROM_ADDR (your Metamask address from Remy's guide)
+  ETH1_FROM_PRIV (your Metamask address private key from Remy's guide)
 
 Save the changes and exit.
 
@@ -332,7 +332,7 @@ replace the `<pubkey>` with your public key.
 Validator config
 ----------------
 
-let's enable 1 validator. Check the consensus Layer previously chosen as some config 
+Let's enable 1 validator. Check the consensus Layer previously chosen as some config 
 files and services depend on it (and again, make sure that EL+CL are in sync),
 
 Lighthouse
@@ -389,8 +389,8 @@ Paste the keystore private password (the one from `/home/ethereum/assigned_data/
 Teku
 ~~~~
 
-Check your the **Beacon Chain data directory**. We need to place some variables in the Teku 
-config file. Lets asume :guilabel:`Geth` as EL client.
+Check the **Beacon Chain data directory**. We need to place some variables in the Teku 
+config file. Let's asume :guilabel:`Geth` as EL client.
 
 First, we need to grab the .json and .txt file name located in `/home/ethereum/assigned_data` dir.
 
@@ -408,7 +408,7 @@ And replace `{**teku-key-file**}` and `{**teku-secret-file**}`** placeholders wi
 
 Finally, get your Metamask address and replace the `{**your_eth_address**}` placeholder with it.
 
-You should have somethig like this:
+You should have something like this:
 
 .. prompt:: bash $
 

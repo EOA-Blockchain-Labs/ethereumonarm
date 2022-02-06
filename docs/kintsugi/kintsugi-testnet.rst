@@ -28,7 +28,7 @@ the Raspberry and launching the AMI from AWS for the Amazon image).
 As these images are intended for testing, we recommend to pick up AWS **spot instances** as prices 
 are up to 90% lower than On-Demand instances. See more info here:
 
-`AWS spot intances`_
+`AWS spot instances`_
 
 .. _AWS spot instances: https://aws.amazon.com/ec2/spot/
 

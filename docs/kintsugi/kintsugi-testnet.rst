@@ -140,9 +140,9 @@ Through SSH:
   Remember that you will need to forward/open the following ports for the clients to perform well (for 
   both AWS AMI and Raspberry Pi 4.
 
-  * 30303: For Execution Layer clients (**Geth, Besu and Nethermind**)
-  * 9000: For Consensus Layer (**Lighthouse, Nimbus and Teku**)
-  * 12000 (UDP) & 13000 (TCP): for Consensus Layer **Prysm**
+  * 30303: For Execution Layer clients (:guilabel:`Geth`, :guilabel:`Besu` and :guilabel:`Nethermind`)
+  * 9000: For Consensus Layer (:guilabel:`Lighthouse`, :guilabel:`Nimbus` and :guilabel:`Teku`)
+  * 12000 (UDP) & 13000 (TCP): for Consensus Layer :guilabel:`Prysm`
 
 What's included
 ===============
@@ -208,7 +208,7 @@ For stopping a client, use the Systemctl stop directive, for instance:
 Once you choose which clients you want to run, check the following table in order 
 to manage the correct services:
 
-.. csv-table:: Kintsugi Supported Clients
+.. csv-table:: KINTSUGI SUPPORTED CLIENTS
   :header: Execution Layer, Consensus Layer, Services
 
   Geth, Lighthouse, "| geth-lh

@@ -12,21 +12,39 @@ Please check here the `recommended-hardware`_ section before installing the imag
 
 .. _recommended-hardware: https://ethereum-on-arm-documentation.readthedocs.io/en/latest/quick-guide/recommended-hardware.html
 
-Amazon AWS AMI Image
+Amazon ARM AWS AMI Image
 ====================
 
 If you don't have a Raspberry Pi 4 but you have an **AWS account** (or you are willing to open one), 
-we've build a public **AMI image** so you can try to run a Kintsugi Ethereum node and try the testnet.
+we've build a public **ARM AMI image** so you can try to run a Kintsugi Ethereum node and try the testnet.
+
+.. warning::
+  The image only works with an ARM64 architecture.
 
 This AMI **contains exactly the same software and configuration that the Raspberry Pi 4** one so the 
 instructions are the same for both except from the installation processes (Flashing the MicroSD for 
 the Raspberry and launching the AMI from AWS for the Amazon image).
+
+As these images are intended for testing, we recommend to pick up AWS **spot instances** as prices 
+are up to 90% lower than On-Demand instances. See more info here:
+
+`AWS spot intances`_
+
+.. _AWS spot instances: https://aws.amazon.com/ec2/spot/
 
 You can find the AMI here:
 
 `ami-0eac5fc607c257931`_
 
 .. _ami-0eac5fc607c257931: https://eu-west-1.console.aws.amazon.com/ec2/v2/home?region=eu-west-1#ImageDetails:imageId=ami-0eac5fc607c257931
+
+.. note::
+  Remember to open the necessary ports in order to make sure all clients work properly:
+
+  * **30303**: For Execution Layer clients (:guilabel:`Geth`, :guilabel:`Besu` and :guilabel:`Nethermind`)
+  * **9000**: For Consensus Layer (:guilabel:`Lighthouse`, :guilabel:`Nimbus` and :guilabel:`Teku`)
+  * **12000 (UDP) & 13000 (TCP)**: for Consensus Layer :guilabel:`Prysm`
+
 
 Download and Install
 ====================
@@ -137,12 +155,11 @@ Through SSH:
 
 .. tip::
 
-  Remember that you will need to forward/open the following ports for the clients to perform well (for 
-  both AWS AMI and Raspberry Pi 4.
+  Remember that you will need to forward/open the following ports for the clients to perform well:
 
-  * 30303: For Execution Layer clients (:guilabel:`Geth`, :guilabel:`Besu` and :guilabel:`Nethermind`)
-  * 9000: For Consensus Layer (:guilabel:`Lighthouse`, :guilabel:`Nimbus` and :guilabel:`Teku`)
-  * 12000 (UDP) & 13000 (TCP): for Consensus Layer :guilabel:`Prysm`
+  * **30303**: For Execution Layer clients (:guilabel:`Geth`, :guilabel:`Besu` and :guilabel:`Nethermind`)
+  * **9000**: For Consensus Layer (:guilabel:`Lighthouse`, :guilabel:`Nimbus` and :guilabel:`Teku`)
+  * **12000 (UDP) & 13000 (TCP)**: for Consensus Layer :guilabel:`Prysm`
 
 What's included
 ===============

@@ -12,6 +12,22 @@ Please check here the `recommended-hardware`_ section before installing the imag
 
 .. _recommended-hardware: https://ethereum-on-arm-documentation.readthedocs.io/en/latest/quick-guide/recommended-hardware.html
 
+Amazon AWS AMI Image
+====================
+
+If you don't have a Raspberry Pi 4 but you have an **AWS account** (or you are willing to open one), 
+we've build a public **AMI image** so you can try to run a Kintsugi Ethereum node and try the testnet.
+
+This AMI **contains exactly the same software and configuration that the Raspberry Pi 4** one so the 
+instructions are the same for both except from the installation processes (Flashing the MicroSD for 
+the Raspberry and launching the AMI from AWS for the Amazon image).
+
+You can find the AMI here:
+
+`ami-0eac5fc607c257931`_
+
+.. _ami-0eac5fc607c257931: https://eu-west-1.console.aws.amazon.com/ec2/v2/home?region=eu-west-1#ImageDetails:imageId=ami-0eac5fc607c257931
+
 Download and Install
 ====================
 
@@ -260,9 +276,9 @@ Fill the following variables in (inside the quotation marks):
 
   VALIDATORS_MNEMONIC (your first mnemonic)
   WITHDRAWALS_MNEMONIC (your second mnemonic)
-  PRYSM_PASSWD (a ramdom password for the :guilabel:`Prysm` wallet)
-  ETH1_FROM_ADDR (your Metamask address from Remy's guide)
-  ETH1_FROM_PRIV (your Metamask address private key from Remy's guide)
+  PRYSM_PASSWD (a ramdom password for the Prysm wallet)
+  ETH1_FROM_ADDR (your Metamask address from Remys guide)
+  ETH1_FROM_PRIV (your Metamask address private key from Remys guide)
 
 Save the changes and exit.
 

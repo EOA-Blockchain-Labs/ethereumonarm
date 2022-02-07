@@ -40,6 +40,7 @@ the Raspberry and launching the AMI from the AWS console).
   * **30303**: For Execution Layer clients (:guilabel:`Geth`, :guilabel:`Besu` and :guilabel:`Nethermind`)
   * **9000**: For Consensus Layer (:guilabel:`Lighthouse`, :guilabel:`Nimbus` and :guilabel:`Teku`)
   * **12000 (UDP) & 13000 (TCP)**: for Consensus Layer :guilabel:`Prysm`
+  * **3000**: For Grafana dashboards
 
 You can find the AMI here:
 
@@ -49,6 +50,14 @@ You can find the AMI here:
 
 Download and Install
 ====================
+
+.. note::
+
+  Please, check the requirements for run an Ethereum on ARM Raspberry Pi image:
+
+  `recommended-hardware`
+
+  https://ethereum-on-arm-documentation.readthedocs.io/en/latest/quick-guide/recommended-hardware.html
 
 Download the image here:
 
@@ -161,6 +170,7 @@ Through SSH:
   * **30303**: For Execution Layer clients (:guilabel:`Geth`, :guilabel:`Besu` and :guilabel:`Nethermind`)
   * **9000**: For Consensus Layer (:guilabel:`Lighthouse`, :guilabel:`Nimbus` and :guilabel:`Teku`)
   * **12000 (UDP) & 13000 (TCP)**: for Consensus Layer :guilabel:`Prysm`
+  * **3000**: For Grafana dashboards if you want to access from the outside
 
 What's included
 ===============

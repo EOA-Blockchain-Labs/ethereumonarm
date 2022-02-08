@@ -236,6 +236,9 @@ For stopping a client, use the Systemctl stop directive, for instance:
 Once you choose which clients you want to run, check the following table in order 
 to manage the correct services:
 
+.. note::
+  All config files are located in the **/etc/ethereum/kintsugi** directory.
+
 .. csv-table:: KINTSUGI SUPPORTED CLIENTS
   :header: Execution Layer, Consensus Layer, Services, Config Files
 
@@ -288,8 +291,6 @@ to manage the correct services:
   | teku-besu", "| besu-teku.conf
   | teku-besu.conf"
   
-
-All config files are located in the **/etc/ethereum/kintsugi directory.**
 
 .. note::
   :guilabel:`Besu` needs a little set up before starting it:

@@ -237,41 +237,59 @@ Once you choose which clients you want to run, check the following table in orde
 to manage the correct services:
 
 .. csv-table:: KINTSUGI SUPPORTED CLIENTS
-  :header: Execution Layer, Consensus Layer, Services, Config Files
-  :widths: 18 18 18 36
+  :header: Execution Layer, Consensus Layer, Services, Config Files*
 
   Geth, Lighthouse, "| geth-lh
   | lh-geth-beacon
-  | lh-geth-validator", "| /etc/ethereum/kintsugi/geth-lh.conf
-  | /etc/ethereum/kintsugi/lh-geth-beacon.conf 
-  | /etc/ethereum/kintsugi/lh-geth-validator.conf"
+  | lh-geth-validator", "| geth-lh.conf
+  | lh-geth-beacon.conf 
+  | lh-geth-validator.conf"
   Geth, Prysm, "| geth-pry
   | pry-geth-beacon
-  | pry-geth-validator", 
+  | pry-geth-validator", "| geth-pry.conf
+  | pry-geth-beacon.conf 
+  | pry-geth-validator.conf"
   Geth, Nimbus, "| geth-nim
-  | nim-geth", 
+  | nim-geth", "| geth-nim.conf
+  | nim-geth.conf 
   Geth, Teku, "| geth-teku
-  | teku-geth", 
+  | teku-geth", "| geth-teku.conf
+  | teku-geth.conf
   Nethermind, Lighthouse, "| neth-lh
   | lh-neth-beacon
-  | lh-neth-validator",
+  | lh-neth-validator","| neth-lh.conf
+  | lh-neth-beacon.conf 
+  | lh-neth-validator.conf"
   Nethermind, Prysm, "| neth-pry
   | pry-neth-beacon
-  | pry-neth-validator",
+  | pry-neth-validator", "| neth-pry.conf
+  | pry-neth-beacon.conf 
+  | pry-neth-validator.conf"
   Nethermind, Nimbus, "| neth-nim
-  | nim-neth",
+  | nim-neth", "| neth-nim.conf
+  | nim-neth.conf
   Nethermind, Teku, "| neth-teku
-  | teku-neth",
+  | teku-neth", "| neth-teku.conf
+  | teku-neth.conf
   Besu, Lighthouse, "| besu-lh
   | lh-besu-beacon
-  | lh-besu-validator",
+  | lh-besu-validator", "| besu-lh.conf
+  | lh-besu-beacon.conf 
+  | lh-besu-validator.conf"
+  Geth, Prysm, "| geth-pry
   Besu, Prysm, "| besu-pry
   | pry-besu-beacon
-  | pry-besu-validator",
+  | pry-besu-validator", "| besu-pry.conf
+  | pry-besu-beacon.conf 
+  | pry-besu-validator.conf"
   Besu, Nimbus, "| besu-nim
-  | nim-besu",
+  | nim-besu", "| nbesu-nim.conf
+  | nim-besu.conf
   Besu, Teku, "| besu-teku
-  | teku-besu",
+  | teku-besu", "| besu-teku.conf
+  | teku-besu.conf
+
+All config files are located in the **/etc/ethereum/kintsugi directory.**
 
 .. note::
   :guilabel:`Besu` needs a little set up before starting it:

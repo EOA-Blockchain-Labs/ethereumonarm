@@ -244,6 +244,17 @@ to manage the correct services:
   | lh-geth-validator", "| geth-lh.conf
   | lh-geth-beacon.conf 
   | lh-geth-validator.conf"
+  | Geth, Prysm, "| geth-pry
+  | pry-geth-beacon
+  | pry-geth-validator", "| geth-pry.conf
+  | pry-geth-beacon.conf 
+  | pry-geth-validator.conf"
+  Geth, Nimbus, "| geth-nim
+  | nim-geth", "| geth-nim.conf
+  | nim-geth.conf"
+  Geth, Teku, "| geth-teku
+  | teku-geth", "| geth-teku.conf
+  | teku-geth.conf"
   
 
 All config files are located in the **/etc/ethereum/kintsugi directory.**

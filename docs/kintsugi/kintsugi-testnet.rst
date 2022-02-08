@@ -237,11 +237,13 @@ Once you choose which clients you want to run, check the following table in orde
 to manage the correct services:
 
 .. csv-table:: KINTSUGI SUPPORTED CLIENTS
-  :header: Execution Layer, Consensus Layer, Services
+  :header: Execution Layer, Consensus Layer, Services, Config Files
 
   Geth, Lighthouse, "| geth-lh
   | lh-geth-beacon
-  | lh-geth-validator"
+  | lh-geth-validator", "| /etc/ethereum/kintsugi/geth-lh.conf
+  | /etc/ethereum/kintsugi/lh-geth-beacon.conf 
+  | /etc/ethereum/kintsugi/lh-geth-validator.conf"
   Geth, Prysm, "| geth-pry
   | pry-geth-beacon
   | pry-geth-validator"

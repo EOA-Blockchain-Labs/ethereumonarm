@@ -251,10 +251,10 @@ to manage the correct services:
   | pry-geth-validator.conf"
   Geth, Nimbus, "| geth-nim
   | nim-geth", "| geth-nim.conf
-  | nim-geth.conf 
+  | nim-geth.conf"
   Geth, Teku, "| geth-teku
   | teku-geth", "| geth-teku.conf
-  | teku-geth.conf
+  | teku-geth.conf"
   Nethermind, Lighthouse, "| neth-lh
   | lh-neth-beacon
   | lh-neth-validator","| neth-lh.conf
@@ -267,27 +267,26 @@ to manage the correct services:
   | pry-neth-validator.conf"
   Nethermind, Nimbus, "| neth-nim
   | nim-neth", "| neth-nim.conf
-  | nim-neth.conf
+  | nim-neth.conf"
   Nethermind, Teku, "| neth-teku
   | teku-neth", "| neth-teku.conf
-  | teku-neth.conf
+  | teku-neth.conf"
   Besu, Lighthouse, "| besu-lh
   | lh-besu-beacon
   | lh-besu-validator", "| besu-lh.conf
   | lh-besu-beacon.conf 
   | lh-besu-validator.conf"
-  Geth, Prysm, "| geth-pry
   Besu, Prysm, "| besu-pry
   | pry-besu-beacon
   | pry-besu-validator", "| besu-pry.conf
   | pry-besu-beacon.conf 
   | pry-besu-validator.conf"
   Besu, Nimbus, "| besu-nim
-  | nim-besu", "| nbesu-nim.conf
-  | nim-besu.conf
+  | nim-besu", "| besu-nim.conf
+  | nim-besu.conf"
   Besu, Teku, "| besu-teku
   | teku-besu", "| besu-teku.conf
-  | teku-besu.conf
+  | teku-besu.conf"
 
 All config files are located in the **/etc/ethereum/kintsugi directory.**
 

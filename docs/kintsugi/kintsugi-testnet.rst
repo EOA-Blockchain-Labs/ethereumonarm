@@ -271,6 +271,22 @@ to manage the correct services:
   Nethermind, Teku, "| neth-teku
   | teku-neth", "| neth-teku.conf
   | teku-neth.conf"
+  Besu, Lighthouse, "| besu-lh
+  | lh-besu-beacon
+  | lh-besu-validator", "| besu-lh.conf
+  | lh-besu-beacon.conf 
+  | lh-besu-validator.conf"
+  Besu, Prysm, "| besu-pry
+  | pry-besu-beacon
+  | pry-besu-validator", "| besu-pry.conf
+  | pry-besu-beacon.conf 
+  | pry-besu-validator.conf"
+  Besu, Nimbus, "| besu-nim
+  | nim-besu", "| besu-nim.conf
+  | nim-besu.conf"
+  Besu, Teku, "| besu-teku
+  | teku-besu", "| besu-teku.conf
+  | teku-besu.conf"
   
 
 All config files are located in the **/etc/ethereum/kintsugi directory.**

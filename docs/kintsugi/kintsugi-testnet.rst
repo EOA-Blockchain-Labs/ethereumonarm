@@ -244,49 +244,7 @@ to manage the correct services:
   | lh-geth-validator", "| geth-lh.conf
   | lh-geth-beacon.conf 
   | lh-geth-validator.conf"
-  Geth, Prysm, "| geth-pry
-  | pry-geth-beacon
-  | pry-geth-validator", "| geth-pry.conf
-  | pry-geth-beacon.conf 
-  | pry-geth-validator.conf"
-  Geth, Nimbus, "| geth-nim
-  | nim-geth", "| geth-nim.conf
-  | nim-geth.conf"
-  Geth, Teku, "| geth-teku
-  | teku-geth", "| geth-teku.conf
-  | teku-geth.conf"
-  Nethermind, Lighthouse, "| neth-lh
-  | lh-neth-beacon
-  | lh-neth-validator","| neth-lh.conf
-  | lh-neth-beacon.conf 
-  | lh-neth-validator.conf"
-  Nethermind, Prysm, "| neth-pry
-  | pry-neth-beacon
-  | pry-neth-validator", "| neth-pry.conf
-  | pry-neth-beacon.conf 
-  | pry-neth-validator.conf"
-  Nethermind, Nimbus, "| neth-nim
-  | nim-neth", "| neth-nim.conf
-  | nim-neth.conf"
-  Nethermind, Teku, "| neth-teku
-  | teku-neth", "| neth-teku.conf
-  | teku-neth.conf"
-  Besu, Lighthouse, "| besu-lh
-  | lh-besu-beacon
-  | lh-besu-validator", "| besu-lh.conf
-  | lh-besu-beacon.conf 
-  | lh-besu-validator.conf"
-  Besu, Prysm, "| besu-pry
-  | pry-besu-beacon
-  | pry-besu-validator", "| besu-pry.conf
-  | pry-besu-beacon.conf 
-  | pry-besu-validator.conf"
-  Besu, Nimbus, "| besu-nim
-  | nim-besu", "| besu-nim.conf
-  | nim-besu.conf"
-  Besu, Teku, "| besu-teku
-  | teku-besu", "| besu-teku.conf
-  | teku-besu.conf"
+  
 
 All config files are located in the **/etc/ethereum/kintsugi directory.**
 

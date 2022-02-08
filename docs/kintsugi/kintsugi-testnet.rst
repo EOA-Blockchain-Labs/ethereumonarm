@@ -237,7 +237,7 @@ Once you choose which clients you want to run, check the following table in orde
 to manage the correct services:
 
 .. csv-table:: KINTSUGI SUPPORTED CLIENTS
-  :header: Execution Layer, Consensus Layer, Services, Config Files*
+  :header: Execution Layer, Consensus Layer, Services, Config Files
 
   Geth, Lighthouse, "| geth-lh
   | lh-geth-beacon

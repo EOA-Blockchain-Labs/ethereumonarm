@@ -238,6 +238,7 @@ to manage the correct services:
 
 .. csv-table:: KINTSUGI SUPPORTED CLIENTS
   :header: Execution Layer, Consensus Layer, Services, Config Files
+  :widths: 18 18 18 36
 
   Geth, Lighthouse, "| geth-lh
   | lh-geth-beacon
@@ -246,31 +247,31 @@ to manage the correct services:
   | /etc/ethereum/kintsugi/lh-geth-validator.conf"
   Geth, Prysm, "| geth-pry
   | pry-geth-beacon
-  | pry-geth-validator"
+  | pry-geth-validator", 
   Geth, Nimbus, "| geth-nim
-  | nim-geth"
+  | nim-geth", 
   Geth, Teku, "| geth-teku
-  | teku-geth"
+  | teku-geth", 
   Nethermind, Lighthouse, "| neth-lh
   | lh-neth-beacon
-  | lh-neth-validator"
+  | lh-neth-validator",
   Nethermind, Prysm, "| neth-pry
   | pry-neth-beacon
-  | pry-neth-validator"
+  | pry-neth-validator",
   Nethermind, Nimbus, "| neth-nim
-  | nim-neth"
+  | nim-neth",
   Nethermind, Teku, "| neth-teku
-  | teku-neth"
+  | teku-neth",
   Besu, Lighthouse, "| besu-lh
   | lh-besu-beacon
-  | lh-besu-validator"
+  | lh-besu-validator",
   Besu, Prysm, "| besu-pry
   | pry-besu-beacon
-  | pry-besu-validator"
+  | pry-besu-validator",
   Besu, Nimbus, "| besu-nim
-  | nim-besu"
+  | nim-besu",
   Besu, Teku, "| besu-teku
-  | teku-besu"
+  | teku-besu",
 
 .. note::
   :guilabel:`Besu` needs a little set up before starting it:

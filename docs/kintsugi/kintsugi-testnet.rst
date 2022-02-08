@@ -255,6 +255,22 @@ to manage the correct services:
   Geth, Teku, "| geth-teku
   | teku-geth", "| geth-teku.conf
   | teku-geth.conf"
+  Nethermind, Lighthouse, "| neth-lh
+  | lh-neth-beacon
+  | lh-neth-validator","| neth-lh.conf
+  | lh-neth-beacon.conf 
+  | lh-neth-validator.conf"
+  Nethermind, Prysm, "| neth-pry
+  | pry-neth-beacon
+  | pry-neth-validator", "| neth-pry.conf
+  | pry-neth-beacon.conf 
+  | pry-neth-validator.conf"
+  Nethermind, Nimbus, "| neth-nim
+  | nim-neth", "| neth-nim.conf
+  | nim-neth.conf"
+  Nethermind, Teku, "| neth-teku
+  | teku-neth", "| neth-teku.conf
+  | teku-neth.conf"
   
 
 All config files are located in the **/etc/ethereum/kintsugi directory.**

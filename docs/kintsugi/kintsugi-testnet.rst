@@ -1,5 +1,5 @@
-About Kintsugi
-==============
+About Kintsugi Raspberry Pi 4 image
+===================================
 
 Kintsugi network is a public testnet for the upcoming Ethereum upgrade 
 to Proof of Stake called **The Merge**.

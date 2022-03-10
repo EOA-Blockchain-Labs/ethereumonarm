@@ -2,6 +2,6 @@
 image-creation-tool/ubuntu/*.img.zip
 fpm-package-builder/.vagrant/
 fpm-package-builder/packages/
-fpm-package-builder/kintsugi/packages
+fpm-package-builder/kiln/packages
 image-creation-tool/ubuntu/*.img
 image-creation-tool/ubuntu-rescue/*.img

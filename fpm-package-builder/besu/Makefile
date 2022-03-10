@@ -9,7 +9,7 @@ BESU_SNAPSHOT := $(shell curl -s https://raw.githubusercontent.com/hyperledger/b
 
 
 PKG_RELEASE := 0
-PKG_NAME := besu-kintsugi
+PKG_NAME := besu-kiln
 
 PKG_DESCRIPTION := "Hyperledger Ethereum 1.0 java client"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
@@ -38,7 +38,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(BESU_VERSION) --license $(PKG_LICENSE
 	--deb-systemd extras/besu-pry.service\
 	--depends openjdk-11-jre-headless\
 	--depends libsecp256k1-0\
-	--depends kintsugi-config\
+	--depends kiln-config\
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(BESU_VERSION) --license $(PKG_LICENSE)\
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
@@ -51,10 +51,10 @@ prepare: ## Donwload the latest binary and prepare the package files
 	mkdir /tmp/besu_temp
 	cd /tmp/besu_temp ; git clone -b merge https://github.com/hyperledger/besu --recursive
 	cd /tmp/besu_temp/besu/ ; ./gradlew installDist distTar 
-	mkdir -p sources/usr/share/besu/kintsugi/lib/
+	mkdir -p sources/usr/share/besu/kiln/lib/
 	cp /tmp/besu_temp/besu/build/install/besu/bin/besu sources/usr/bin/besu-ks
-	cp /tmp/besu_temp/besu/build/install/besu/lib/* sources/usr/share/besu/kintsugi/lib/
-	sed -i 's/`pwd -P`/\/usr\/share\/besu\/\kintsugi\//' sources/usr/bin/besu-ks
+	cp /tmp/besu_temp/besu/build/install/besu/lib/* sources/usr/share/besu/kiln/lib/
+	sed -i 's/`pwd -P`/\/usr\/share\/besu\/\kiln\//' sources/usr/bin/besu-ks
 	rm -rf /tmp/besu_temp
 
 deb: ## Create deb package
@@ -65,7 +65,7 @@ rpm: ## Create rpm package
 
 .PHONY: clean
 clean: ## Clean up
-	rm sources/usr/share/besu/kintsugi/lib/*
+	rm sources/usr/share/besu/kiln/lib/*
 	rm sources/usr/bin/besu-ks
 
 help:  ## List targets.

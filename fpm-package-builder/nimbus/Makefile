@@ -3,7 +3,7 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-NIMBUS_DHASH := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/commits?sha=kintsugi | jq -r '. [0] |  .sha' | cut -c1-8)
+NIMBUS_DHASH := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/commits?sha=kiln | jq -r '. [0] |  .sha' | cut -c1-8)
 NIMBUS_VERSION_MAIN := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.name' | tr -d 'v')
 #NIMBUS_DHASH := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.target_commitish' | cut -c1-8)
 #DOWNLOAD_NAME := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.assets[2].name')
@@ -12,7 +12,7 @@ NIMBUS_VERSION := $(shell date +"%y%m%d")
 
 
 PKG_RELEASE := 0
-PKG_NAME := nimbus-kintsugi
+PKG_NAME := nimbus-kiln
 
 PKG_DESCRIPTION := "Ethereum 2.0 Nimbus implementation"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
@@ -38,7 +38,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICEN
 	--deb-systemd extras/nim-geth.service\
 	--deb-systemd extras/nim-neth.service\
 	--deb-systemd extras/nim-besu.service\
-	--depends kintsugi-config\
+	--depends kiln-config\
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICENSE)\
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
@@ -49,7 +49,7 @@ all: prepare deb clean
 
 prepare: ## Donwload the latest binary and prepare the package files
 	mkdir -p /tmp/nimbus_tmp
-	cd /tmp/nimbus_tmp ; git clone -b kintsugi https://github.com/status-im/nimbus-eth2.git ; cd nimbus-eth2 ; make dist-arm64
+	cd /tmp/nimbus_tmp ; git clone -b kiln https://github.com/status-im/nimbus-eth2.git ; cd nimbus-eth2 ; make dist-arm64
 	cd /tmp/nimbus_tmp/nimbus-eth2/dist ; tar zxvf nimbus-eth2_Linux_arm64v8_$(NIMBUS_VERSION_MAIN)_$(NIMBUS_DHASH).tar.gz	
 	cp /tmp/nimbus_tmp/nimbus-eth2/dist/nimbus-eth2_Linux_arm64v8_$(NIMBUS_VERSION_MAIN)_$(NIMBUS_DHASH)/build/nimbus_beacon_node sources/usr/bin/nimbus_beacon_node-ks
 	rm -rf /tmp/nimbus_tmp

@@ -15,5 +15,5 @@ iso:
 	sudo cp -a sources/* /tmp/ubuntu_iso
 	sudo sed -i 's/1/0/' /tmp/ubuntu_iso/etc/apt/apt.conf.d/20auto-upgrades
 	sudo umount /tmp/ubuntu_iso
-	mv $(ISO) ethonarm_kintsugi_$(DATE).$(RELEASE).img
+	mv $(ISO) ethonarm_kiln_$(DATE).$(RELEASE).img
 	rmdir /tmp/ubuntu_iso

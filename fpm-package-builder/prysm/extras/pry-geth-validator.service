@@ -4,7 +4,7 @@ After=network.target
 Requires=pry-geth-beacon.service
 
 [Service]
-EnvironmentFile=/etc/ethereum/kintsugi/pry-geth-validator.conf
+EnvironmentFile=/etc/ethereum/kiln/pry-geth-validator.conf
 ExecStart=/usr/bin/validator-ks $ARGS
 Restart=always
 User=ethereum

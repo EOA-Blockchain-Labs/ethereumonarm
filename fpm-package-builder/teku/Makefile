@@ -9,7 +9,7 @@ TEKU_SNAPSHOT := $(shell curl -s https://raw.githubusercontent.com/hyperledger/t
 
 
 PKG_RELEASE := 0
-PKG_NAME := teku-kintsugi
+PKG_NAME := teku-kiln
 
 PKG_DESCRIPTION := "Teku Ethereum 1.0 java client"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
@@ -35,7 +35,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(TEKU_VERSION) --license $(PKG_LICENSE
 	--deb-systemd extras/teku-besu.service\
 	--deb-systemd extras/teku-geth.service\
 	--deb-systemd extras/teku-neth.service\
-	--depends kintsugi-config\
+	--depends kiln-config\
 	--depends openjdk-11-jre-headless\
 	--depends libsecp256k1-0\
 
@@ -50,10 +50,10 @@ prepare: ## Donwload the latest binary and prepare the package files
 	mkdir /tmp/teku_temp
 	cd /tmp/teku_temp ; git clone https://github.com/ConsenSys/teku.git
 	cd /tmp/teku_temp/teku/ ; ./gradlew installDist
-	mkdir -p sources/usr/share/teku/kintsugi/lib/
+	mkdir -p sources/usr/share/teku/kiln/lib/
 	cp /tmp/teku_temp/teku/build/install/teku/bin/teku sources/usr/bin/teku-ks
-	cp /tmp/teku_temp/teku/build/install/teku/lib/* sources/usr/share/teku/kintsugi/lib/
-	sed -i 's/"$${APP_HOME:-\.\/}\.\."/"$${APP_HOME:-\.\/}\.\.\/share\/teku\/kintsugi"/g' sources/usr/bin/teku-ks
+	cp /tmp/teku_temp/teku/build/install/teku/lib/* sources/usr/share/teku/kiln/lib/
+	sed -i 's/"$${APP_HOME:-\.\/}\.\."/"$${APP_HOME:-\.\/}\.\.\/share\/teku\/kiln"/g' sources/usr/bin/teku-ks
 	rm -rf /tmp/teku_temp
 
 deb: ## Create deb package

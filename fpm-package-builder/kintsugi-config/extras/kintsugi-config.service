@@ -1,7 +1,0 @@
-[Unit]
-Description=Kintsugi git sync service
-[Service]
-ExecStart=/bin/sh -c "git  -C /etc/ethereum/kintsugi/merge-testnets/ pull"
-RemainAfterExit=yes
-[Install]
-WantedBy=sysinit.target

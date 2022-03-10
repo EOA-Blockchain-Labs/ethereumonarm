@@ -4,7 +4,7 @@ After=network.target
 Requires=pry-neth-beacon.service
 
 [Service]
-EnvironmentFile=/etc/ethereum/kintsugi/pry-neth-validator.conf
+EnvironmentFile=/etc/ethereum/kiln/pry-neth-validator.conf
 ExecStart=/usr/bin/validator-ks $ARGS
 Restart=always
 User=ethereum

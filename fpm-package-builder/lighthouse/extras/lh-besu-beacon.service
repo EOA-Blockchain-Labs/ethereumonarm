@@ -3,7 +3,7 @@ Description=Lighthouse Beacon chain daemon
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/kintsugi/lh-besu-beacon.conf
+EnvironmentFile=/etc/ethereum/kiln/lh-besu-beacon.conf
 ExecStart=/usr/bin/lighthouse-ks $ARGS
 Restart=always
 User=ethereum

@@ -1,0 +1,7 @@
+[Unit]
+Description=kiln git sync service
+[Service]
+ExecStart=/bin/sh -c "git  -C /etc/ethereum/kiln/merge-testnets/ pull"
+RemainAfterExit=yes
+[Install]
+WantedBy=sysinit.target

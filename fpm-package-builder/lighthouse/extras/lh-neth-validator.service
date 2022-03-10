@@ -3,7 +3,7 @@ Description=Lighthouse Validator chain daemon
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/kintsugi/lh-neth-validator.conf
+EnvironmentFile=/etc/ethereum/kiln/lh-neth-validator.conf
 ExecStart=/usr/bin/lighthouse-ks $ARGS
 Restart=always
 User=ethereum

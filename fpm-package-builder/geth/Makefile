@@ -9,9 +9,9 @@ SHELL := /bin/bash
 GETH_VERSION := $(shell date +"%y%m%d")
 
 PKG_RELEASE := 0
-PKG_NAME := geth-kintsugi
+PKG_NAME := geth-kiln
 
-PKG_DESCRIPTION := "Kintsugi test client"
+PKG_DESCRIPTION := "kiln test client"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
 CATEGORY := science
 WEB_URL := https://geth.ethereum.org
@@ -36,7 +36,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(GETH_VERSION) --license $(PKG_LICENSE
 --deb-systemd extras/geth-pry.service\
 --deb-systemd extras/geth-nim.service\
 --deb-systemd extras/geth-teku.service\
---depends kintsugi-config
+--depends kiln-config
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(GETH_VERSION) --license $(PKG_LICENSE)\
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
@@ -49,7 +49,7 @@ prepare: ## Donwload the latest binary and prepare the package files
 	#wget https://gethstore.blob.core.windows.net/builds/geth-linux-$(PKG_ARCH_DEB)-$(GETH_VERSION)-$(GETH_DHASH).tar.gz -O - | tar -xz -C sources/usr/bin/ --wildcards --absolute-names --no-anchored --strip-components 1 '*/geth'
 	mkdir -p /tmp/geth_tmp
 	## Clone GIT repo, add flags for crosscompilation and compile 
-	cd /tmp/geth_tmp ; git clone -b merge-kintsugi https://github.com/MariusVanDerWijden/go-ethereum.git ; cd go-ethereum ; env CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 GO111MODULE=on go build -o build/ ./cmd/geth
+	cd /tmp/geth_tmp ; git clone -b merge-kiln https://github.com/MariusVanDerWijden/go-ethereum.git ; cd go-ethereum ; env CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 GO111MODULE=on go build -o build/ ./cmd/geth
 	cp /tmp/geth_tmp/go-ethereum/build/geth sources/usr/bin/geth-ks
 	rm -rf /tmp/geth_tmp
 

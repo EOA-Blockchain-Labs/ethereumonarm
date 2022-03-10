@@ -8,9 +8,9 @@ LIGHTHOUSE_VERSION := $(shell date +"%y%m%d")
 
 
 PKG_RELEASE := 0
-PKG_NAME := lighthouse-kintsugi
+PKG_NAME := lighthouse-kiln
 
-PKG_DESCRIPTION := "Lighthouse Kintsugi Testnet"
+PKG_DESCRIPTION := "Lighthouse kiln Testnet"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
 
 CATEGORY := science
@@ -37,7 +37,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(LIGHTHOUSE_VERSION) --license $(PKG_L
 	--deb-systemd extras/lh-neth-beacon.service\
 	--deb-systemd extras/lh-besu-beacon.service\
 	--deb-systemd extras/lh-besu-beacon.service\
-	--depends kintsugi-config
+	--depends kiln-config
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(LIGHTHOUSE_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\

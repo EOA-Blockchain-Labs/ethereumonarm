@@ -50,7 +50,7 @@ if [ ! -f $FLAG ]; then
     exit 1
   fi
 
-  # Modify hostname (ethereumonarm-kintsugi-$MAC-HASH-CHUNK)
+  # Modify hostname (ethereumonarm-kiln-$MAC-HASH-CHUNK)
   echo Changing hostname
   MAC_HASH=`cat /sys/class/net/eth0/address | sha256sum | awk '{print substr($0,0,9)}'`
   echo ethereumonarm-$MAC_HASH > /etc/hostname
@@ -90,8 +90,8 @@ if [ ! -f $FLAG ]; then
   # Install Ethereum packages
   echo Installing Ethereum packages
   apt-get update
-  apt-get -y install kintsugi-config ethereumonarm-armbian-extras geth-kintsugi nethermind-kintsugi besu-kintsugi prysm-kintsugi lighthouse-kintsugi nimbus-kintsugi teku-kintsugi eth2-val-tools ethereal
-  systemctl enable kintsugi-config
+  apt-get -y install kiln-config ethereumonarm-armbian-extras geth-kiln nethermind-kiln besu-kiln prysm-kiln lighthouse-kiln nimbus-kiln teku-kiln eth2-val-tools ethereal
+  systemctl enable kiln-config
 
   # Install monitoring packages
   wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -

@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=ethereum
 EnvironmentFile=/etc/ethereum/kiln/neth-teku.conf
-ExecStart=/usr/bin/nethermind-ks $ARGS
+ExecStart=/usr/bin/nethermind-kl $ARGS
 Restart=on-failure
 WorkingDirectory=/home/ethereum
 LimitNOFILE=1000000

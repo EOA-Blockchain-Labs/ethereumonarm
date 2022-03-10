@@ -43,7 +43,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(NETHERMIND_VERSION) --license $(PKG_L
 	--depends libsnappy-dev\
 	--depends libc6-dev\
 	--depends libc6\
-	--depends librocksdb-dev\
+	--depends librockldb-dev\
 	--depends kiln-config\
 	--depends unzip
 
@@ -57,9 +57,9 @@ all: prepare deb clean
 
 prepare: ## Donwload the latest binary and prepare the package files
 	mkdir -p /tmp/nethermind_tmp
-	cd /tmp/nethermind_tmp ; git clone -b themerge_kiln https://github.com/NethermindEth/nethermind --recursive ; cd nethermind; git submodule update --init src/Dirichlet src/int256 src/rocksdb-sharp src/Math.Gmp.Native
+	cd /tmp/nethermind_tmp ; git clone -b themerge_kiln https://github.com/NethermindEth/nethermind --recursive ; cd nethermind; git submodule update --init src/Dirichlet src/int256 src/rockldb-sharp src/Math.Gmp.Native
 	cd /tmp/nethermind_tmp/nethermind/ ; dotnet publish src/Nethermind/Nethermind.Runner -r linux-arm64 -c release -o out
-	cp extras/librocksdb.so /tmp/nethermind_tmp/nethermind/out/runtimes/linux-arm64/native/
+	cp extras/librockldb.so /tmp/nethermind_tmp/nethermind/out/runtimes/linux-arm64/native/
 	cp -r /tmp/nethermind_tmp/nethermind/out/* sources/opt/nethermind/kiln/
 	rm -rf /tmp/nethermind_tmp
 

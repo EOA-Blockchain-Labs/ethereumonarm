@@ -51,7 +51,7 @@ prepare: ## Donwload the latest binary and prepare the package files
 	mkdir -p /tmp/nimbus_tmp
 	cd /tmp/nimbus_tmp ; git clone -b kiln https://github.com/status-im/nimbus-eth2.git ; cd nimbus-eth2 ; make dist-arm64
 	cd /tmp/nimbus_tmp/nimbus-eth2/dist ; tar zxvf nimbus-eth2_Linux_arm64v8_$(NIMBUS_VERSION_MAIN)_$(NIMBUS_DHASH).tar.gz	
-	cp /tmp/nimbus_tmp/nimbus-eth2/dist/nimbus-eth2_Linux_arm64v8_$(NIMBUS_VERSION_MAIN)_$(NIMBUS_DHASH)/build/nimbus_beacon_node sources/usr/bin/nimbus_beacon_node-ks
+	cp /tmp/nimbus_tmp/nimbus-eth2/dist/nimbus-eth2_Linux_arm64v8_$(NIMBUS_VERSION_MAIN)_$(NIMBUS_DHASH)/build/nimbus_beacon_node sources/usr/bin/nimbus_beacon_node-kl
 	rm -rf /tmp/nimbus_tmp
 
 deb: ## Create deb package

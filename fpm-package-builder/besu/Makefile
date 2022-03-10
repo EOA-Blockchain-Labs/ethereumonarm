@@ -52,9 +52,9 @@ prepare: ## Donwload the latest binary and prepare the package files
 	cd /tmp/besu_temp ; git clone -b merge https://github.com/hyperledger/besu --recursive
 	cd /tmp/besu_temp/besu/ ; ./gradlew installDist distTar 
 	mkdir -p sources/usr/share/besu/kiln/lib/
-	cp /tmp/besu_temp/besu/build/install/besu/bin/besu sources/usr/bin/besu-ks
+	cp /tmp/besu_temp/besu/build/install/besu/bin/besu sources/usr/bin/besu-kl
 	cp /tmp/besu_temp/besu/build/install/besu/lib/* sources/usr/share/besu/kiln/lib/
-	sed -i 's/`pwd -P`/\/usr\/share\/besu\/\kiln\//' sources/usr/bin/besu-ks
+	sed -i 's/`pwd -P`/\/usr\/share\/besu\/\kiln\//' sources/usr/bin/besu-kl
 	rm -rf /tmp/besu_temp
 
 deb: ## Create deb package
@@ -66,7 +66,7 @@ rpm: ## Create rpm package
 .PHONY: clean
 clean: ## Clean up
 	rm sources/usr/share/besu/kiln/lib/*
-	rm sources/usr/bin/besu-ks
+	rm sources/usr/bin/besu-kl
 
 help:  ## List targets.
 	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

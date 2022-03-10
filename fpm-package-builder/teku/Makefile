@@ -51,9 +51,9 @@ prepare: ## Donwload the latest binary and prepare the package files
 	cd /tmp/teku_temp ; git clone https://github.com/ConsenSys/teku.git
 	cd /tmp/teku_temp/teku/ ; ./gradlew installDist
 	mkdir -p sources/usr/share/teku/kiln/lib/
-	cp /tmp/teku_temp/teku/build/install/teku/bin/teku sources/usr/bin/teku-ks
+	cp /tmp/teku_temp/teku/build/install/teku/bin/teku sources/usr/bin/teku-kl
 	cp /tmp/teku_temp/teku/build/install/teku/lib/* sources/usr/share/teku/kiln/lib/
-	sed -i 's/"$${APP_HOME:-\.\/}\.\."/"$${APP_HOME:-\.\/}\.\.\/share\/teku\/kiln"/g' sources/usr/bin/teku-ks
+	sed -i 's/"$${APP_HOME:-\.\/}\.\."/"$${APP_HOME:-\.\/}\.\.\/share\/teku\/kiln"/g' sources/usr/bin/teku-kl
 	rm -rf /tmp/teku_temp
 
 deb: ## Create deb package
@@ -65,7 +65,7 @@ rpm: ## Create rpm package
 .PHONY: clean
 clean: ## Clean up
 	rm -r sources/usr/share/
-	rm sources/usr/bin/teku-ks
+	rm sources/usr/bin/teku-kl
 
 help:  ## List targets.
 	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

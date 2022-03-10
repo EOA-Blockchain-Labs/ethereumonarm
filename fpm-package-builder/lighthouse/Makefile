@@ -49,7 +49,7 @@ prepare: ## Donwload the latest binary and prepare the package files
 #	wget  https://github.com/sigp/lighthouse/releases/download/v$(LIGHTHOUSE_VERSION)/lighthouse-v$(LIGHTHOUSE_VERSION)-aarch64-unknown-linux-gnu.tar.gz -O - | tar -xz -C sources/usr/bin/  lighthouse
 	mkdir -p /tmp/lighthouse_tmp
 	cd /tmp/lighthouse_tmp ; git clone -b unstable https://github.com/sigp/lighthouse.git ; cd lighthouse ; cargo install cross ; make build-aarch64
-	cp /tmp/lighthouse_tmp/lighthouse/target/aarch64-unknown-linux-gnu/release/lighthouse sources/usr/bin/lighthouse-ks
+	cp /tmp/lighthouse_tmp/lighthouse/target/aarch64-unknown-linux-gnu/release/lighthouse sources/usr/bin/lighthouse-kl
 	rm -rf /tmp/lighthouse_tmp	
 
 deb: ## Create deb package
@@ -60,7 +60,7 @@ rpm: ## Create rpm package
 
 .PHONY: clean
 clean: ## Clean up
-	rm sources/usr/bin/lighthouse-ks
+	rm sources/usr/bin/lighthouse-kl
 
 help:  ## List targets.
 	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

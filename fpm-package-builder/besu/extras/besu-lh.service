@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/kiln/besu-lh.conf
-ExecStart=/usr/bin/besu-ks $ARGS
+ExecStart=/usr/bin/besu-kl $ARGS
 Restart=always
 User=ethereum
 

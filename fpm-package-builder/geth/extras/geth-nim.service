@@ -4,8 +4,8 @@ After=network.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/kiln/geth-nim.conf
-ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.geth-nim/kiln/datadir-nim && /usr/bin/geth-ks init /etc/ethereum/kiln/merge-testnets/kiln/genesis.json  --datadir "/home/ethereum/.geth-nim/kiln/datadir-nim"'
-ExecStart=/usr/bin/geth-ks $ARGS
+ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.geth-nim/kiln/datadir-nim && /usr/bin/geth-kl init /etc/ethereum/kiln/merge-testnets/kiln/genesis.json  --datadir "/home/ethereum/.geth-nim/kiln/datadir-nim"'
+ExecStart=/usr/bin/geth-kl $ARGS
 Restart=always
 User=ethereum
 

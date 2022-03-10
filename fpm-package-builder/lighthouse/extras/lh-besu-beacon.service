@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/kiln/lh-besu-beacon.conf
-ExecStart=/usr/bin/lighthouse-ks $ARGS
+ExecStart=/usr/bin/lighthouse-kl $ARGS
 Restart=always
 User=ethereum
 

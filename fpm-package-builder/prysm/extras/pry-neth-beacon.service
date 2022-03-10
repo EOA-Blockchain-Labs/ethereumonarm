@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/kiln/pry-neth-beacon.conf
-ExecStart=/usr/bin/beacon-chain-ks $ARGS
+ExecStart=/usr/bin/beacon-chain-kl $ARGS
 Restart=always
 User=ethereum
 

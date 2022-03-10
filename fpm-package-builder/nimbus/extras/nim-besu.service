@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/kiln/nim-besu.conf
-ExecStart=/usr/bin/nimbus_beacon_node-ks $ARGS
+ExecStart=/usr/bin/nimbus_beacon_node-kl $ARGS
 Restart=always
 User=ethereum
 

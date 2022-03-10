@@ -50,7 +50,7 @@ prepare: ## Donwload the latest binary and prepare the package files
 	cd /tmp/prysm_tmp ; git clone -b develop https://github.com/prysmaticlabs/prysm.git ; cd prysm ; bazel build //beacon-chain --config=linux_arm64_docker --workspace_status_command=hack/workspace_status.sh --stamp ; bazel build //validator --config=linux_arm64_docker --workspace_status_command=hack/workspace_status.sh --stamp
 	cp /tmp/prysm_tmp/prysm/bazel-bin/cmd/beacon-chain/beacon-chain_/beacon-chain sources/usr/bin/beacon-chain-kl
 	cp /tmp/prysm_tmp/prysm/bazel-bin/cmd/validator/validator_/validator sources/usr/bin/validator-kl
-	rm -rf /tmp/prysm_tmp
+	#rm -rf /tmp/prysm_tmp
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)

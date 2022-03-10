@@ -48,7 +48,7 @@ all: prepare deb clean
 prepare: ## Donwload the latest binary and prepare the package files
 #	wget  https://github.com/sigp/lighthouse/releases/download/v$(LIGHTHOUSE_VERSION)/lighthouse-v$(LIGHTHOUSE_VERSION)-aarch64-unknown-linux-gnu.tar.gz -O - | tar -xz -C sources/usr/bin/  lighthouse
 	mkdir -p /tmp/lighthouse_tmp
-	cd /tmp/lighthouse_tmp ; git clone -b unstable https://github.com/sigp/lighthouse.git ; cd lighthouse ; cargo install cross ; make build-aarch64
+	cd /tmp/lighthouse_tmp ; git clone -b kiln https://github.com/sigp/lighthouse.git ; cd lighthouse ; cargo install cross ; make build-aarch64
 	cp /tmp/lighthouse_tmp/lighthouse/target/aarch64-unknown-linux-gnu/release/lighthouse sources/usr/bin/lighthouse-kl
 	rm -rf /tmp/lighthouse_tmp	
 

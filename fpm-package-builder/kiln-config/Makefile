@@ -32,9 +32,10 @@ PKG_DEB := $(PKG_NAME)_$(MERGE_CONFIG_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).de
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(MERGE_CONFIG_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) -p $(OUTPUTDIR)\
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -x */.gitkeep\
-	--deb-systemd extras/kiln-config.service\
+	--deb-systemd extras/kiln-config.service --after-install extras/postinst\
 	--depends git\
-	--depends jq
+	--depends jq\
+	--conflicts kintsugi-config
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(MERGE_CONFIG_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
@@ -56,7 +57,7 @@ rpm: ## Create rpm package
 
 .PHONY: clean
 clean: ## Clean up
-	rm -rf /sources/etc/kiln/merge_testnets
+	rm -rf  sources/etc/ethereum/kiln/
 
 help:  ## List targets.
 	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

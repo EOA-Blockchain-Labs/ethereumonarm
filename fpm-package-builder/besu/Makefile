@@ -49,7 +49,7 @@ all: prepare deb clean
 
 prepare: ## Donwload the latest binary and prepare the package files
 	mkdir /tmp/besu_temp
-	cd /tmp/besu_temp ; git clone -b merge https://github.com/hyperledger/besu --recursive
+	cd /tmp/besu_temp ; git clone https://github.com/hyperledger/besu --recursive
 	cd /tmp/besu_temp/besu/ ; ./gradlew installDist distTar 
 	mkdir -p sources/usr/share/besu/kiln/lib/
 	cp /tmp/besu_temp/besu/build/install/besu/bin/besu sources/usr/bin/besu-kl

@@ -3,10 +3,10 @@ About Kiln Raspberry Pi 4 image
 
 The Kiln network is a public testnet for the upcoming Ethereum upgrade 
 to Proof of Stake called **The Merge**. It will be (most probably) the last 
-public testnet before the merge.
+public testnet before **The merge**.
 
 This is a **Plug and Play** image for the **Raspberry Pi 4** that sets up and 
-installs all the software to test Execution Layer and Consensus Layer clients 
+installs all the software necessary to test Execution Layer and Consensus Layer clients 
 just **by starting their Systemd services**.
 
 Please check here the `recommended-hardware`_ section before installing the image:
@@ -28,8 +28,8 @@ the Raspberry and launching the AMI from the AWS console).
 
 .. tip::
 
-  As these images are intended for testing, we recommend picking up an **AWS spot instance** as prices 
-  are up to 90% lower than the On-Demand one. See more info here:
+  As these images are intended only for testing, we recommend picking up an **AWS spot instance** to 
+  cut some costs (prices are up to 90% lower than the On-Demand one). See more info here:
 
   `AWS spot instances`_
 
@@ -135,7 +135,7 @@ and keyboard attached) using the ``ethereum`` account::
   User: ethereum
   Password: ethereum
 
-Through SSH:
+Through SSH (if you are running the AWS image follow their instructions):
 
 .. prompt:: bash $
 

@@ -1,5 +1,5 @@
 About Kiln Raspberry Pi 4 image
-===================================
+===============================
 
 The Kiln network is a public testnet for the upcoming Ethereum upgrade 
 to Proof of Stake called **The Merge**. It will be (most probably) the last 
@@ -23,12 +23,12 @@ we've built a public **ARM AMI image** so you can run a **Kiln Ethereum node and
   The image only works with an ARM64 architecture.
 
 This AMI **contains exactly the same software and configuration that the Raspberry Pi 4** one so the 
-instructions are the same for both except the installation process (Flashing the MicroSD for 
+instructions are the same for both except from the installation process (Flashing the MicroSD for 
 the Raspberry and launching the AMI from the AWS console).
 
 .. tip::
 
-  As these images are intended for testing, we recommend picking up an **AWS spot instance** because prices 
+  As these images are intended for testing, we recommend picking up an **AWS spot instance** as prices 
   are up to 90% lower than the On-Demand one. See more info here:
 
   `AWS spot instances`_

@@ -79,18 +79,18 @@ information regarding the image and other Ethereum related software.
   /user-guide/storage
   /user-guide/security
 
-Kintsugi Testnet
+Kiln Testnet
 ----------------
 
-Flash our Kintsugi public testnet image in order to try the new Execution Layer and Consensus 
+Flash our Kiln public testnet image in order to try the new Execution Layer and Consensus 
 Layer clients.
 
 .. toctree::
   :maxdepth: 2
-  :caption: Kintsugi Testnet
+  :caption: Kiln Testnet
   :hidden:
 
-  /kintsugi/kintsugi-testnet
+  /kiln/kiln-testnet
 
 Developers Guide
 ----------------

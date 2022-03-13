@@ -45,9 +45,7 @@ the Raspberry and launching the AMI from the AWS console).
 
 You can find the AMI here:
 
-`ami-0eac5fc607c257931`_
-
-.. _ami-0eac5fc607c257931: https://eu-west-1.console.aws.amazon.com/ec2/v2/home?region=eu-west-1#ImageDetails:imageId=ami-0eac5fc607c257931
+RELEASE TBA
 
 Download and Install
 ====================
@@ -62,13 +60,7 @@ Download and Install
 
 Download the image here:
 
-ethonarm_kiln_22.01.00.img.zip_
-
-.. _ethonarm_kiln_22.01.00.img.zip: https://www.ethereumonarm.com/downloads/ethonarm_kiln_22.01.00.img
-
-You can verify the file with the following ``SHA256`` Hash:
-
-``SHA256 b80cfba7b42d141bf2e416f53a1c29863d67d470b1bcc1a14f54e41a5ddeb423``
+RELEASE TBA
 
 By running:
 

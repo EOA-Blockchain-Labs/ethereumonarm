@@ -10,7 +10,7 @@ installs all the software necessary to test Execution Layer and Consensus Layer 
 just **by starting their Systemd services**. It includes all necessary tools to enable 
 and test a **validator** as well.
 
-Please check here the `recommended-hardware`_ section before installing the image:
+**Please check here the `recommended-hardware`_ section before installing the image**:
 
 .. _recommended-hardware: https://ethereum-on-arm-documentation.readthedocs.io/en/latest/quick-guide/recommended-hardware.html
 
@@ -51,21 +51,13 @@ RELEASE TBA
 Download and Install
 ====================
 
-.. note::
-
-  Please, before installing, check the requirements for run an Ethereum on ARM Raspberry Pi image:
-
-  `recommended-hardware`
-
-  https://ethereum-on-arm-documentation.readthedocs.io/en/latest/quick-guide/recommended-hardware.html
-
 Download the image here:
 
 RELEASE TBA
 
 Flash 
 -----
-,
+
 Insert the microSD in your Desktop / Laptop and flash the image.
 
 .. note::
@@ -184,8 +176,7 @@ This is the software included:
 Kiln tools
 
     * **eth2-deposit-cli**: Generates keys and sets up deposit config.
-    * **kiln-config**: Deposit script, env variables and network setup.
-
+    * **kiln-config**: Network setup.
 
 Managing the clients
 ====================
@@ -371,7 +362,7 @@ for confirmation).
 
   Make sure you wrote down the nnemonic on a safe place.
 
-Now you have 2 Json files under the ``/home/ethereum/validator_keys`` directory:
+Now you have 2 json files under the ``/home/ethereum/validator_keys`` directory:
 
   * A deposit data file for making the 32 ETH transaction to the Kiln contract.
   * A keystore file with your validator keys that will be used by your Consensus Client.
@@ -428,19 +419,23 @@ files and services depend on it (and again, make sure that EL+CL are in sync).
 Clients give insightfull info about syncing status. Check the logs for errors and the last block number 
 for both EL and CL (you can compare them with the ones displayed on the Kiln explorer:
 
+`https://beaconchain.kiln.themerge.dev/`_
+
+.. _https://beaconchain.kiln.themerge.dev/: https://beaconchain.kiln.themerge.dev/
+
 Lighthouse
 ~~~~~~~~~~
 
-First, you need to write down the **Beacon Chain data directory**. For instance, if you started :guilabel:`Geth` with :guilabel:`Lighthouse`, 
+First, you need to check for the **Beacon Chain data directory**. For instance, if you started :guilabel:`Geth` with :guilabel:`Lighthouse`, 
 the data directory will be ``/home/ethereum/.lh-geth/kiln/testnet-lh``
 
 Import the validator keys (we will suppose you've been running :guilabel:`Geth`):
 
 .. prompt:: bash $
 
-  lighthouse-ks account validator import --directory=/home/ethereum/assigned_data/keys --datadir=/home/ethereum/.lh-geth/kiln/testnet-lh
+  lighthouse-kl account validator import --directory=/home/ethereum/validator_keys --datadir=/home/ethereum/.lh-geth/kiln/testnet-lh
 
-Paste the **keystore private password** (the one from /home/ethereum/assigned_data/secrets/<pubkey>)
+Type your keystore password.
 
 Now, start the :guilabel:`Lighthouse` validator service (again, the example command asumes :guilabel:`Geth` as EL):
 
@@ -451,16 +446,15 @@ Now, start the :guilabel:`Lighthouse` validator service (again, the example comm
 Prysm
 ~~~~~
 
-You will need the :guilabel:`Prysm` password that you previously set in the `secrets.env` file. 
-Put this password in the wallet file as follows:
+We need to import the validator keys. Run under the ethereum account:
 
 .. prompt:: bash $
 
-  sudo bash -c "echo $PRYSM_PASSWD > /etc/ethereum/kiln/prysm-wallet-password.txt"
+  validator-kl accounts import --keys-dir=/home/ethereum/validator_keys
   
 Replace `$PRYSM_PASSWD` variable for your password.
 
-All set, now run the validator systemd service (for instance, :guilabel:`Nethermind` as EL):
+All set, now run the validator systemd service (for instance, assuming :guilabel:`Nethermind` as EL):
 
 .. prompt:: bash $
 
@@ -470,14 +464,14 @@ Nimbus
 ~~~~~~
 
 Again, you need to check the **Beacon Chain data directory** (depends on your 
-CL+EL clients. For instance, asuming :guilabel:`Besu` as EL, let's import the keys into 
+CL+EL clients. For instance, assuming :guilabel:`Besu` as EL, let's import the keys into 
 the :guilabel:`Nimbus` account:
 
 .. prompt:: bash $
 
-  nimbus_beacon_node-ks deposits import /home/ethereum/assigned_data/keys --data-dir=/home/ethereum/.nim-besu/kiln/testnet-nim
+  nimbus_beacon_node-kl deposits import /home/ethereum/validator_keys --data-dir=/home/ethereum/.nim-besu/kiln/testnet-nim
 
-Paste the keystore private password (the one from `/home/ethereum/assigned_data/secrets/<pubkey>`).
+Type your keystore password.
 
 Teku
 ~~~~

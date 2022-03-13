@@ -310,19 +310,22 @@ Additionally, the Ethereum Foundation set up a **Launchpad** portal to make the 
 much more easy. Here you can upload the Json file and make the 32 ETH transaction 
 with your wallet or a web3 wallet (we will use Metamask).
 
-
-Deposit and Keys generation
----------------------------
+Preparation
+-----------
 
 The first step is to get some **Kiln ETH** (fake ETH).
 
-Go to the **Kiln portal information** and add the Kiln network to Metamask:
+1. Create an address in **Metamask**.
+
+2. Go to the **Kiln portal information** and add the Kiln network to Metamask:
 
 `https://kiln.themerge.dev/`_
 
 .. _https://kiln.themerge.dev/: https://kiln.themerge.dev/
 
-Go to the **public faucet** to get 32 KILN ETH:
+Click **"Add network to Metamask"**
+
+3. Go to the **public faucet** to get 32 KILN ETH:
 
 `https://faucet.kiln.themerge.dev/`_
 
@@ -330,7 +333,10 @@ Go to the **public faucet** to get 32 KILN ETH:
 
 Paste your ETH address, complete the captcha process and click **"Request funds"**.
 
-Now you have 32 ETHs in your account to enable 1 validator.
+Check your Metamask account. You should have now 32 ETHs.
+
+Keys generation and deposit
+---------------------------
 
 Visit the **EF Launchpad** website to start the process:
 
@@ -421,8 +427,6 @@ files and services depend on it (and again, make sure that EL+CL are in sync).
 
 Clients give insightfull info about syncing status. Check the logs for errors and the last block number 
 for both EL and CL (you can compare them with the ones displayed on the Kiln explorer:
-
-
 
 Lighthouse
 ~~~~~~~~~~

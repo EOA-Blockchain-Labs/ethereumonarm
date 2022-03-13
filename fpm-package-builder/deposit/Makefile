@@ -40,7 +40,7 @@ BUILD_ARCH := $(shell uname -p)
 all: prepare deb clean
 
 prepare: ## Donwload the latest binary and compile the package files
-	wget https://github.com/ethereum/eth2.0-deposit-cli/releases/download/v$(DEPOSIT_VERSION)/staking_deposit-cli-$(DEPOSIT_HASH)-linux-amd64.tar.gz -O - | tar -xz -C sources/usr/bin --wildcards --absolute-names --no-anchored --strip-components 2
+	wget https://github.com/ethereum/eth2.0-deposit-cli/releases/download/v$(DEPOSIT_VERSION)/staking_deposit-cli-$(DEPOSIT_HASH)-linux-arm64.tar.gz -O - | tar -xz -C sources/usr/bin --wildcards --absolute-names --no-anchored --strip-components 2
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)
 

@@ -7,7 +7,8 @@ public testnet before **The merge**.
 
 This is a **Plug and Play** image for the **Raspberry Pi 4** that sets up and 
 installs all the software necessary to test Execution Layer and Consensus Layer clients 
-just **by starting their Systemd services**.
+just **by starting their Systemd services**. It includes all necessary tools to enable 
+and test a **validator** as well.
 
 Please check here the `recommended-hardware`_ section before installing the image:
 
@@ -16,7 +17,7 @@ Please check here the `recommended-hardware`_ section before installing the imag
 Amazon ARM AWS AMI Image
 ========================
 
-If you don't have a Raspberry Pi 4 but you have an **AWS account** (or you are willing to open one), 
+If you don't have a Raspberry Pi 4 but you own an **AWS account** (or you are willing to open one), 
 we've built a public **ARM AMI image** so you can run a **Kiln Ethereum node and try the testnet**.
 
 .. warning::
@@ -52,7 +53,7 @@ Download and Install
 
 .. note::
 
-  Please, check the requirements for run an Ethereum on ARM Raspberry Pi image:
+  Please, before installing, check the requirements for run an Ethereum on ARM Raspberry Pi image:
 
   `recommended-hardware`
 
@@ -61,12 +62,6 @@ Download and Install
 Download the image here:
 
 RELEASE TBA
-
-By running:
-
-.. prompt:: bash $
-
-  sha256sum ethonarm_kiln_22.01.00.img.zip
 
 Flash 
 -----
@@ -169,12 +164,12 @@ What's included
 ===============
 
 As you may know, Eth1 clients are renamed to **Execution Layer** clients and 
-Eth2 clients are renamed to **Consensus Layer** clients and **we need to run 
+Eth2 clients are renamed to **Consensus Layer** clients. **We need to run 
 both at the same time** (EL+CL) so they can work together.
 
 The image includes all Consensus Layer clients and Execution Layer binaries ready
-to run and all necessary tools to make the deposit and generate the keys to enable 
-a Validator.
+to run through Systemd services and all necessary tools to make a deposit in the staking 
+contract and generate the keys to enable a Validator.
 
 This is the software included:
 
@@ -188,14 +183,14 @@ This is the software included:
 
 Kiln tools
 
-    * **eth2-val-tools** 
-    * **ethereal** 
+    * **eth2-deposit-cli**: Generates keys and sets up deposit config.
+    * **kiln-config**: Deposit script, env variables and network setup.
 
 
 Managing the clients
 ====================
 
-As you need to run both **Execution Layer and Consensus Layer at once** we set up 
+As you need to run along **Execution Layer and Consensus Layer** we set up 
 all **EL+CL combinations** as Systemd services for making it easy to start them.
 
 For example, if you want to run :guilabel:`Geth` and :guilabel:`Lighthouse` Beacon 
@@ -216,9 +211,10 @@ You can check both client logs by running:
 
 .. note::
   For :guilabel:`Lighthouse` and :guilabel:`Prysm` you will need to start an additional service 
-  to run a Validator. We'll get to that in the `"Validator config"` section
+  to run a Validator. We'll get to that in the `"Enabling a Validator"` section
 
-So, this means that **we need a Systemd service for every EL+CL combination**.
+So, this means that **we need 2 Systemd services for every EL+CL combination** (and 3 if you are 
+running a validator with :guilabel:`Lighthouse` or :guilabel:`Prysm`).
 
 For stopping a client, use the Systemctl stop directive, for instance:
 
@@ -358,7 +354,12 @@ Validator config
 ----------------
 
 Let's enable 1 validator. Check the consensus Layer previously chosen as some config 
-files and services depend on it (and again, make sure that EL+CL are in sync),
+files and services depend on it (and again, make sure that EL+CL are in sync).
+
+Clients give insightfull info about syncing status. Check the logs for errors and the last block number 
+for both EL and CL (you can compare them with the ones displayed on the Kiln explorer:
+
+
 
 Lighthouse
 ~~~~~~~~~~

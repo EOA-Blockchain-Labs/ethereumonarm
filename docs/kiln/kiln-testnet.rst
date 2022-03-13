@@ -310,11 +310,9 @@ Additionally, the Ethereum Foundation set up a **Launchpad** portal to make the 
 much more easy. Here you can upload the Json file and make the 32 ETH transaction 
 with your wallet or a web3 wallet (we will use Metamask).
 
-Enabling a validator
---------------------
 
 Deposit and Keys generation
-===========================
+---------------------------
 
 The first step is to get some **Kiln ETH** (fake ETH).
 
@@ -416,7 +414,7 @@ Congrats!, you just started your validator activation process.
 
 
 Validator config
-================
+----------------
 
 Let's enable 1 validator. Check the consensus Layer previously chosen as some config 
 files and services depend on it (and again, make sure that EL+CL are in sync).

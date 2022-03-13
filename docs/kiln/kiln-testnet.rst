@@ -292,45 +292,49 @@ Enabling a Validator
 
 In order to stake and run a validator you will need:
 
+  * An ETH address (you can create one easily with Metamask)
   * 32 KILN ETH (never send REAL ETH to this network)
   * An Execution Layer client
   * A Consensus Layer client consisting of:
     * A Beacon Chain
     * A/several Validator(s)
 
-For making the 32 ETH deposit you need to create 2 key pairs and a Json file with the 
+For making the 32 ETH deposit you need to create **2 key pairs** and a **Json file** with the 
 necessary information to interact with the Eth2 Kiln contract through a transaction.
 
-The Ethereum Foundation provides a tool (eth2.0-deposit-tool) to create the keys and the 
+The Ethereum Foundation provides a tool (**eth2.0-deposit-tool**) to create the keys and the 
 deposit information (which among others contains your validator(s) public key(s)). This 
 tool is already installed in your node.
 
-Additionally, the Ethereum Foundation set up a web Launchpad to make the staking process 
+Additionally, the Ethereum Foundation set up a **Launchpad** portal to make the staking process 
 much more easy. Here you can upload the Json file and make the 32 ETH transaction 
-with your wallet or a web3 wallet (such as Metamask or Walletconnect).
+with your wallet or a web3 wallet (we will use Metamask).
+
+Enabling a validator
+--------------------
 
 Deposit and Keys generation
----------------------------
+===========================
 
 The first step is to get some **Kiln ETH** (fake ETH).
 
-Go to the Kiln portal and add the Kiln network to Metamask:
+Go to the **Kiln portal information** and add the Kiln network to Metamask:
 
-`https://kiln.themerge.dev/`
+`https://kiln.themerge.dev/`_
 
 .. _https://kiln.themerge.dev/: https://kiln.themerge.dev/
 
-Go to the public faucet:
+Go to the **public faucet** to get 32 KILN ETH:
 
 `https://faucet.kiln.themerge.dev/`_
 
 .. _https://faucet.kiln.themerge.dev/: https://faucet.kiln.themerge.dev/
 
-Paste your ETH address and complete the captcha process and click "Request funds".
+Paste your ETH address, complete the captcha process and click **"Request funds"**.
 
 Now you have 32 ETHs in your account to enable 1 validator.
 
-Visit the EF Launchpad website to start the process:
+Visit the **EF Launchpad** website to start the process:
 
 `https://kiln.launchpad.ethereum.org/`_
 
@@ -341,16 +345,16 @@ Follow these steps:
 1. Click **"Become a validator"**.
 
 2. Read carefully all the information and click **"I Accept"** in the following pages
-until you reach until you reach the **"Confirmation"** screen and click **"Continue"**. 
+until you reach the **"Confirmation"** screen. Click **"Continue"**. 
    
 3. In the following screens you should choose an **Execution client** and a **Consensus client**. You can skip 
 these instructions as all software is already included in the image and ready to run. Click **"Continue"** in 
 both screens.
 
 4. Now it is time to generate the key pairs. Select the number of validators you want to run in order to check 
-the total ETH you will need. skip the operating system and the key tool selection as we don't need it either.
+the total ETH you will need. **skip the operating system and the key tool selection as we don't need it either**.
 
-5. Let's create the key pairs. In your ethereum node, type the following command (as ethereum user):
+5. Go to your node and open a terminal in order to create the key pairs. Type the following command (as ethereum user):
 
 .. prompt:: bash $
 
@@ -363,16 +367,16 @@ for confirmation).
 
   Make sure you wrote down the nnemonic on a safe place.
 
-6. Now you have 2 Json files under the ``/home/ethereum/validator_keys`` directory:
+Now you have 2 Json files under the ``/home/ethereum/validator_keys`` directory:
 
   * A deposit data file for making the 32 ETH transaction to the Kiln contract.
   * A keystore file with your validator keys that will be used by your Consensus Client.
 
 
-7. Back to the Launchpad website, check **"I am keeping my keys safe and have written down 
-my mnemonic phrase"** and click **"Continue"**.
+6. Back to the Launchpad website, check **"I am keeping my keys safe and have written down 
+my mnemonic phrase"**. Click **"Continue"**.
 
-8. We need to upload the deposit file (located in your Ethereum node). You can, either copy and paste the 
+7. We need to upload the deposit file (located in your Ethereum node). You can, either copy and paste the 
 file content and save it as a new json file in your desktop computer or copy the file 
 from the Raspberry to your desktop through SSH.
 
@@ -400,19 +404,19 @@ from the Raspberry to your desktop through SSH.
      Replace the variables (``$YOUR_RASPBERRYPI_IP`` and ``$FILE_ID``) with your data. 
      This command will copy the file to your desktop computer ``/tmp`` directory.
 
-Once you have the file in your local desktop click + to upload and click **"Continue"**.
+Once you have the file in your local desktop **click over "+"** and upload the deposit_data file.
 
-9. Connect your **"Metamask"** wallet.
+8. Connect your **"Metamask"** wallet if is not already connected.
 
-10. Mark all checklists to confirm that you understand all warnings and click **"Continue"**.
+9. Mark all checklists to confirm that you understand all warnings and click **"Continue"**.
 
-11.  Finally, click "Send deposit" and confirm the transaction.
+10.  Finally, click **"Send deposit"** and **confirm the transaction**.
 
 Congrats!, you just started your validator activation process.
 
 
 Validator config
-----------------
+================
 
 Let's enable 1 validator. Check the consensus Layer previously chosen as some config 
 files and services depend on it (and again, make sure that EL+CL are in sync).

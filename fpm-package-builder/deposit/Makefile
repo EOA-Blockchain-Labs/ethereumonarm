@@ -4,6 +4,7 @@
 SHELL := /bin/bash
 
 DEPOSIT_VERSION := $(shell curl -s "https://api.github.com/repos/ethereum/eth2.0-deposit-cli/releases/latest" | jq -r '.tag_name'| tr -d "v")
+DEPOSIT_HASH := $(shell curl -s "https://api.github.com/repos/ethereum/eth2.0-deposit-cli/tags" | jq -r '.[0].commit.sha' | cut -c1-7)
 
 PKG_RELEASE := 0
 PKG_NAME := eth2.0-deposit-cli
@@ -36,20 +37,10 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(DEPOSIT_VERSION) --license $(PKG_LICE
 
 BUILD_ARCH := $(shell uname -p)
 
-ifneq ($(BUILD_ARCH),aarch64)
-  $(error You need to use this script in a aarch64 system)
-endif
-
 all: prepare deb clean
 
 prepare: ## Donwload the latest binary and compile the package files
-	-sudo apt-get install python3-pip
-	pip3 install pyinstaller click
-	-git clone https://github.com/ethereum/eth2.0-deposit-cli.git
-	-cd eth2.0-deposit-cli; git checkout v$(DEPOSIT_VERSION); sudo ./deposit.sh install
-	cd eth2.0-deposit-cli/build_configs/linux ; PATH=~/.local/bin:$(PATH) pyinstaller -F build.spec
-	cp eth2.0-deposit-cli/build_configs/linux/dist/deposit sources/usr/bin
-
+	wget https://github.com/ethereum/eth2.0-deposit-cli/releases/download/v$(DEPOSIT_VERSION)/staking_deposit-cli-$(DEPOSIT_HASH)-linux-amd64.tar.gz -O - | tar -xz -C sources/usr/bin --wildcards --absolute-names --no-anchored --strip-components 2
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)
 
@@ -59,7 +50,6 @@ rpm: ## Create rpm package
 .PHONY: clean
 clean: ## Clean up
 	rm sources/usr/bin/deposit
-	rm eth2.0-deposit-cli -rf
 
 help:  ## List targets.
 	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

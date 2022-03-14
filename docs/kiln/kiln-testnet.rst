@@ -65,7 +65,7 @@ By running:
 
 .. prompt:: bash $
 
-  sha256sum ethonarm_kiln_22.01.00.img.zip
+  sha256sum ethonarm_kiln_22.03.00.img.zip
 
 Flash 
 -----

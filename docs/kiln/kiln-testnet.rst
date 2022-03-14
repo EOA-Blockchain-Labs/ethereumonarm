@@ -324,7 +324,7 @@ Click **"Add network to Metamask"**
 
 Paste your ETH address, complete the captcha process and click **"Request funds"**.
 
-Check your Metamask account. You should have now 32 ETHs.
+Check your Metamask account. You should have now 32 KILN ETHs.
 
 Keys generation and deposit
 ---------------------------
@@ -339,7 +339,7 @@ Follow these steps:
 
 1. Click **"Become a validator"**.
 
-2. Read carefully all the information and click **"I Accept"** in the following pages
+2. Read carefully all the information and click **"Continue"** and **"I Accept"** in the following pages
 until you reach the **"Confirmation"** screen. Click **"Continue"**. 
    
 3. In the following screens you should choose an **Execution client** and a **Consensus client**. You can skip 
@@ -362,10 +362,12 @@ for confirmation).
 
   Make sure you wrote down the nnemonic on a safe place.
 
+Type again your mnemonic phrase to complete the process.
+
 Now you have 2 json files under the ``/home/ethereum/validator_keys`` directory:
 
-  * A deposit data file for making the 32 ETH transaction to the Kiln contract.
-  * A keystore file with your validator keys that will be used by your Consensus Client.
+  * A deposit data file for making the **32 ETH transaction to the Kiln contract**.
+  * A keystore file with your **validator keys** that will be used by your **Consensus Client**.
 
 
 6. Back to the Launchpad website, check **"I am keeping my keys safe and have written down 
@@ -373,7 +375,7 @@ my mnemonic phrase"**. Click **"Continue"**.
 
 7. We need to upload the deposit file (located in your Ethereum node). You can, either copy and paste the 
 file content and save it as a new json file in your desktop computer or copy the file 
-from the Raspberry to your desktop through SSH.
+from the Raspberry/AWS image to your desktop through SSH.
 
 .. tabs::
 
@@ -401,11 +403,19 @@ from the Raspberry to your desktop through SSH.
 
 Once you have the file in your local desktop **click over "+"** and upload the deposit_data file.
 
-8. Connect your **"Metamask"** wallet if is not already connected.
+8. Connect your **"Metamask"** wallet if it is not already connected.
 
 9. Mark all checklists to confirm that you understand all warnings and click **"Continue"**.
 
 10.  Finally, click **"Send deposit"** and **confirm the transaction**.
+
+You will see your validator public key and the transaction status. In a few seconds the transaction will be 
+confirmed. Now you will have to wait until you validator is enabled (the system takes some time to 
+process all deposits).
+
+**You can click the Beaconcha explorer (right below the Action menu) to get more information about your validator status**.
+
+Click "Continue" to get a report of the staking process.
 
 Congrats!, you just started your validator activation process.
 
@@ -471,7 +481,11 @@ the :guilabel:`Nimbus` account:
 
   nimbus_beacon_node-kl deposits import /home/ethereum/validator_keys --data-dir=/home/ethereum/.nim-besu/kiln/testnet-nim
 
-Type your keystore password.
+Type your keystore password and restart the validator process:
+
+.. prompt:: bash $
+
+  sudo systemctl restart .nim-besu
 
 Teku
 ~~~~

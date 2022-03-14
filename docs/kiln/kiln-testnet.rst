@@ -55,7 +55,7 @@ Download the image here:
 
 ethonarm_kiln_22.03.00.img.zip_
 
-.. _ethonarm_kiln_22.03.00.img.zip: https://ethereumonarm-my.sharepoint.com/personal/dlosada_ethereumonarm_com/_layouts/15/download.aspx?SourceUrl=%2Fpersonal%2Fdlosada%5Fethereumonarm%5Fcom%2FDocuments%2Fethonarm%2Dreleases%2Fethonarm%5Fkiln%5F22%2E03%2E00%2Eimg%2Ezip
+.. _ethonarm_kiln_22.03.00.img.zip: https://ethraspbian.com/downloads/ethonarm_kiln_22.03.00.img.zip
 
 You can verify the file with the following ``SHA256`` Hash:
 

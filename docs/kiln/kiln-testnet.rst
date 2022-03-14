@@ -94,8 +94,8 @@ Unzip and flash the image:
 
 .. prompt:: bash $
 
-   unzip ethonarm_kiln_22.01.00.img.zip
-   sudo dd bs=1M if=ethonarm_kiln_22.01.00.img of=/dev/mmcblk0 conv=fdatasync status=progress
+   unzip ethonarm_kiln_22.03.00.img.zip
+   sudo dd bs=1M if=ethonarm_kiln_22.03.00.img of=/dev/mmcblk0 conv=fdatasync status=progress
 
 Insert MicroSD
 --------------

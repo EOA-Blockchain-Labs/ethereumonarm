@@ -447,7 +447,7 @@ Import the validator keys (we will suppose you've been running :guilabel:`Geth`)
 
 Type your keystore password.
 
-Now, start the :guilabel:`Lighthouse` validator service (again, the example command asumes :guilabel:`Geth` as EL):
+Now, start the :guilabel:`Lighthouse` validator service (again, the example command assumes :guilabel:`Geth` as EL):
 
 .. prompt:: bash $
 
@@ -476,13 +476,7 @@ Start the validator service
 
 .. prompt:: bash $
 
-  systemctl start pry-geth-validator
-
-All set, now run the validator systemd service.
-
-.. prompt:: bash $
-
-  sudo systemctl start pry-neth-validator
+  sudo systemctl start pry-geth-validator
 
 Nimbus
 ~~~~~~
@@ -507,27 +501,24 @@ Teku
 Check the **Beacon Chain data directory**. We need to place some variables in the Teku 
 config file. Let's asume :guilabel:`Geth` as EL client.
 
-First, we need to grab the .json and .txt file name located in `/home/ethereum/assigned_data` dir.
+We need to set some variables before starting the client.
+
+First, let's get the keystore json file:
 
 .. prompt:: bash $
 
-  ls /home/ethereum/assigned_data/teku-secrets/ | cut -d "." -f 1
+  ls /home/ethereum/validator_keys/keystore*
 
-Write this down and edit the Teku+Geth config file (with vim, for instance):
+Copy the json file (only the file, not the entire path).
 
-.. prompt:: bash $
-
-  sudo vim /etc/ethereum/kiln/teku-geth.conf
-
-And replace `{**teku-key-file**}` and `{**teku-secret-file**}`** placeholders with this value.
-
-Finally, get your Metamask address and replace the `{**your_eth_address**}` placeholder with it.
-
-You should have something like this:
+Finally, get your Metamask address and put both together in the following command:
 
 .. prompt:: bash $
 
-  ARGS='--data-path /home/ethereum/.teku-geth/kiln/datadir-teku --network kiln --Xee-endpoint http://localhost:8545 --validator-keys=/home/ethereum/assigned_data/teku-keys/0x811becb8b9bbca53a0fc8fc5b71690e813e9f6defac4b08e2131f1e27b1875d913d4968ce40bb1d66791ce077805944c.json:/home/ethereum/assigned_data/teku-secrets/0x811becb8b9bbca53a0fc8fc5b71690e813e9f6defac4b08e2131f1e27b1875d913d4968ce40bb1d66791ce077805944c.txt --Xvalidators-proposer-default-fee-recipient 0x22898bd71D42aE90AaE78dF2ED8db34F2aE4958c'
+  sudo sed -i 's/changeme1/$KEYSTORE_FILE/' /etc/ethereum/kiln/teku-geth.conf
+  sudo sed -i 's/changeme2/$YOUR_ETH_ADDRESS/' /etc/ethereum/kiln/teku-geth.conf
+
+Replace $KEYSTORE_FILE for your json file and $YOUR_ETH_ADDRESS for your Metamask address.
 
 All set, start :guilabel:`Teku` (for instance, assuming :guilabel:`Geth` as EL):
 

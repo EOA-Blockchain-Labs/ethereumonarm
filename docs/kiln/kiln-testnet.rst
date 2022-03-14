@@ -456,15 +456,29 @@ Now, start the :guilabel:`Lighthouse` validator service (again, the example comm
 Prysm
 ~~~~~
 
-We need to import the validator keys. Run under the ethereum account:
+We need to import the validator keys. Run under the ethereum account. Assuming we are using :guilabel:`Geth` as Execution Layer:
 
 .. prompt:: bash $
 
-  validator-kl accounts import --keys-dir=/home/ethereum/validator_keys
+  validator-kl accounts import --keys-dir=/home/ethereum/validator_keys --wallet-dir /home/ethereum/.pry-geth/kiln/testnet-pry
   
-Replace `$PRYSM_PASSWD` variable for your password.
+Accept the terms of service and create a password for a new wallet.
 
-All set, now run the validator systemd service (for instance, assuming :guilabel:`Nethermind` as EL):
+Enter your keystore password.
+
+Store the walleta password:
+
+.. prompt:: bash $
+
+  echo "$YOUR_PASSWORD" > /home/ethereum/validator_keys/prysm-password.txt
+
+Start the validator service
+
+.. prompt:: bash $
+
+  systemctl start pry-geth-validator
+
+All set, now run the validator systemd service.
 
 .. prompt:: bash $
 

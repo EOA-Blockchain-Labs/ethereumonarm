@@ -53,7 +53,19 @@ Download and Install
 
 Download the image here:
 
-RELEASE TBA
+ethonarm_kiln_22.03.00.img.zip_
+
+.. _ethonarm_kiln_22.03.00.img.zip: https://ethereumonarm-my.sharepoint.com/personal/dlosada_ethereumonarm_com/_layouts/15/download.aspx?SourceUrl=%2Fpersonal%2Fdlosada%5Fethereumonarm%5Fcom%2FDocuments%2Fethonarm%2Dreleases%2Fethonarm%5Fkiln%5F22%2E03%2E00%2Eimg%2Ezip
+
+You can verify the file with the following ``SHA256`` Hash:
+
+``989e7230a198dcd263f98a0361fcf3caff4d30d2da0eb7f50109d3bddd10d9d7``
+
+By running:
+
+.. prompt:: bash $
+
+  sha256sum ethonarm_kiln_22.01.00.img.zip
 
 Flash 
 -----

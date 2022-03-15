@@ -233,7 +233,7 @@ to manage the correct services:
 .. note::
   All config files are located in the **/etc/ethereum/kiln** directory.
 
-.. csv-table:: KINTSUGI SUPPORTED CLIENTS
+.. csv-table:: KILN SUPPORTED CLIENTS
   :header: Execution Layer, Consensus Layer, Services, Config Files
 
   Geth, Lighthouse, "| geth-lh
@@ -284,13 +284,6 @@ to manage the correct services:
   Besu, Teku, "| besu-teku
   | teku-besu", "| besu-teku.conf
   | teku-besu.conf"
-  
-
-.. note::
-  :guilabel:`Besu` needs a little set up before starting it:
-  Edit the config file (depending on the CL, for example: 
-  ``/etc/ethereum/kiln/besu-lh.conf`` and replace the `$COINBASE` 
-  variable from the ``--miner-coinbase`` flag with your Metamask address.
 
 Enabling a Validator
 ====================

@@ -10,7 +10,10 @@ installs all the software necessary to test Execution Layer and Consensus Layer 
 just **by starting their Systemd services**. It includes all necessary tools to enable 
 and test a **validator** as well.
 
-**Please check here the `recommended-hardware`_ section before installing the image**:
+.. warning::
+  
+  Please check here the `recommended-hardware`_ as you need some hardware requirements for the 
+  installer to work such as a USB-SSD Disk.
 
 .. _recommended-hardware: https://ethereum-on-arm-documentation.readthedocs.io/en/latest/quick-guide/recommended-hardware.html
 

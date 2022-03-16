@@ -8,7 +8,7 @@ SHELL := /bin/bash
 PRYSM_VERSION := $(shell date +"%y%m%d")
 
 
-PKG_RELEASE := 1
+PKG_RELEASE := 0
 PKG_NAME := prysm-kiln
 
 PKG_DESCRIPTION := "Ethereum 2.0 Prysmatic Labs kiln implementation"
@@ -47,10 +47,10 @@ all: prepare deb clean
 
 prepare: ## Donwload the latest binary and prepare the package files
 	mkdir -p /tmp/prysm_tmp
-	cd /tmp/prysm_tmp ; git clone -b develop https://github.com/prysmaticlabs/prysm.git ; cd prysm ; bazel build //beacon-chain --config=linux_arm64_docker --workspace_status_command=hack/workspace_status.sh --stamp ; bazel build //validator --config=linux_arm64_docker --workspace_status_command=hack/workspace_status.sh --stamp
+	cd /tmp/prysm_tmp ; git clone -b develop https://github.com/prysmaticlabs/prysm.git ; cd prysm ; bazelisk build //beacon-chain --config=linux_arm64_docker --workspace_status_command=hack/workspace_status.sh --stamp ; bazelisk build //validator --config=linux_arm64_docker --workspace_status_command=hack/workspace_status.sh --stamp
 	cp /tmp/prysm_tmp/prysm/bazel-bin/cmd/beacon-chain/beacon-chain_/beacon-chain sources/usr/bin/beacon-chain-kl
 	cp /tmp/prysm_tmp/prysm/bazel-bin/cmd/validator/validator_/validator sources/usr/bin/validator-kl
-	#rm -rf /tmp/prysm_tmp
+	rm -rf /tmp/prysm_tmp
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)
@@ -60,4 +60,4 @@ rpm: ## Create rpm package
 
 .PHONY: clean
 clean: ## Clean up
-	rm sources/usr/bin/*
+	rm -f sources/usr/bin/*

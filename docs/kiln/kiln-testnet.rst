@@ -12,8 +12,8 @@ and test a **validator** as well.
 
 .. warning::
   
-  Please check here the `recommended-hardware`_ as you need some hardware requirements for the 
-  installer to work such as a USB-SSD Disk.
+  Please check here the `recommended-hardware`_ as you need some requirements for the 
+  installer to work such as an USB-SSD Disk.
 
 .. _recommended-hardware: https://ethereum-on-arm-documentation.readthedocs.io/en/latest/quick-guide/recommended-hardware.html
 

@@ -521,17 +521,20 @@ First, let's get the keystore json file:
 
 Copy the json file (only the file, not the entire path).
 
-Finally, get your Metamask address and put both together in the following command:
+Finally, get your Metamask address and the Keystore password and put all together in the following commands:
 
 .. prompt:: bash $
 
   sudo sed -i 's/changeme1/$KEYSTORE_FILE/' /etc/ethereum/kiln/teku-geth.conf
+  echo "$KEYSTORE_PASSWORD" > /home/ethereum/validator_keys/teku-password.txt
   sudo sed -i 's/changeme2/$YOUR_ETH_ADDRESS/' /etc/ethereum/kiln/teku-geth.conf
 
-Replace $KEYSTORE_FILE for your json file and $YOUR_ETH_ADDRESS for your Metamask address.
+Replace $KEYSTORE_FILE for your json file, $KEYSTORE_PASSWORD for your keystore password 
+and $YOUR_ETH_ADDRESS for your Metamask address.
 
 All set, start :guilabel:`Teku` (for instance, assuming :guilabel:`Geth` as EL):
 
 .. prompt:: bash $
 
   systemctl start teku-geth
+

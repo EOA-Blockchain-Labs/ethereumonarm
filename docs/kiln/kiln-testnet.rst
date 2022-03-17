@@ -457,6 +457,14 @@ Import the validator keys (we will suppose you've been running :guilabel:`Geth`)
 
 Type your keystore password.
 
+Set the Suggested fee address:
+
+.. prompt:: bash $
+
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS/' /etc/ethereum/kiln/lh-geth-validator.conf
+
+Replace $YOUR_ETH_ADDRESS with your Metamask address.
+
 Now, start the :guilabel:`Lighthouse` validator service (again, the example command assumes :guilabel:`Geth` as EL):
 
 .. prompt:: bash $

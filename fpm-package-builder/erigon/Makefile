@@ -46,7 +46,7 @@ prepare: ## Download the latest binary and prepare the package files
 	 ## Clone GIT repo, add flags for crosscompilation and compile 
 	cd /tmp/erigon_tmp ; git clone --recurse-submodules -j8 https://github.com/ledgerwatch/erigon.git
 	cd /tmp/erigon_tmp/erigon ; sed -i 's/GOBUILD = $(CGO_CFLAGS)/GOBUILD = $(CGO_CFLAGS) CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 /' Makefile ; make erigon ; make rpcdaemon
-	cp /tmp/erigon_tmp/erigon/build/bin/erigon sources/usr/bin/ ; cp /tmp/erigon_tmp/erigon/build/bin/rpcdaemon sources/usr/bin/
+	cp /tmp/erigon_tmp/erigon/build/bin/erigon sources/usr/bin/erigon-kl ; cp /tmp/erigon_tmp/erigon/build/bin/rpcdaemon sources/usr/bin/rpcdaemon-kl
 	rm -rf /tmp/erigon_tmp
 
 deb: ## Create deb package
@@ -57,8 +57,7 @@ rpm: ## Create rpm package
 
 .PHONY: clean
 clean: ## Clean up
-	rm sources/usr/bin/erigon
-	rm sources/usr/bin/rpcdaemon
+	rm sources/usr/bin/*
 
 help:  ## List targets.
 	"$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

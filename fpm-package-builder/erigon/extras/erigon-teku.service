@@ -1,0 +1,13 @@
+[Unit]
+Description=Ethereum erigon client daemon
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/kiln/erigon-teku.conf
+ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.erigon-teku/kiln/datadir-teku && /usr/bin/erigon-kl init /etc/ethereum/kiln/merge-testnets/kiln/genesis.json  --datadir "/home/ethereum/.erigon-teku/kiln/datadir-teku"'
+ExecStart=/usr/bin/erigon-kl $ARGS
+Restart=always
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target

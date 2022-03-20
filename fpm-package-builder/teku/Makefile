@@ -34,6 +34,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(TEKU_VERSION) --license $(PKG_LICENSE
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 	--deb-systemd extras/teku-besu.service\
 	--deb-systemd extras/teku-geth.service\
+	--deb-systemd extras/teku-erigon.service\
 	--deb-systemd extras/teku-neth.service\
 	--depends kiln-config\
 	--depends openjdk-11-jre-headless\

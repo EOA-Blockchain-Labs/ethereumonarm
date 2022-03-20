@@ -1,0 +1,13 @@
+[Unit]
+Description=Lighthouse Validator chain daemon
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/kiln/lh-erigon-validator.conf
+ExecStart=/usr/bin/lighthouse-kl $ARGS
+Restart=always
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target
+

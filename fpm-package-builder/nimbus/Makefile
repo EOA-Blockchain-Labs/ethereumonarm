@@ -4,8 +4,7 @@
 SHELL := /bin/bash
 
 NIMBUS_DHASH := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/commits?sha=kiln-dev-auth | jq -r '. [0] |  .sha' | cut -c1-8)
-NIMBUS_VERSION_MAIN="1.7.0"
-#NIMBUS_VERSION_MAIN := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.name' | tr -d 'v')
+NIMBUS_VERSION_MAIN := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.name' | tr -d 'v')
 #NIMBUS_DHASH := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.target_commitish' | cut -c1-8)
 #DOWNLOAD_NAME := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.assets[2].name')
 #NIMBUS_URL := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.assets[2].browser_download_url')

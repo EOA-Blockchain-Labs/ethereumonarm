@@ -90,7 +90,7 @@ if [ ! -f $FLAG ]; then
   # Install Ethereum packages
   echo Installing Ethereum packages
   apt-get update
-  apt-get -y install kiln-config ethereumonarm-armbian-extras geth-kiln nethermind-kiln besu-kiln prysm-kiln lighthouse-kiln nimbus-kiln teku-kiln eth2.0-deposit-cli
+  apt-get -y install kiln-config ethereumonarm-armbian-extras geth-kiln nethermind-kiln besu-kiln erigon-kiln prysm-kiln lighthouse-kiln nimbus-kiln teku-kiln eth2.0-deposit-cli
   systemctl enable kiln-config
 
   # Install monitoring packages

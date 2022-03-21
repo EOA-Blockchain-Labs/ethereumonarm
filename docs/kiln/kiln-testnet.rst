@@ -42,7 +42,7 @@ the Raspberry and launching the AMI from the AWS console).
 .. note::
   Remember to open the necessary ports in order to make sure all clients work properly:
 
-  * **30303**: For Execution Layer clients (:guilabel:`Geth`, :guilabel:`Besu` and :guilabel:`Nethermind`)
+  * **30303**: For Execution Layer clients (:guilabel:`Geth`, :guilabel:`Besu`, :guilabel:`Nethermind` and :guilabel:`Erigon`)
   * **9000**: For Consensus Layer (:guilabel:`Lighthouse`, :guilabel:`Nimbus` and :guilabel:`Teku`)
   * **12000 (UDP) & 13000 (TCP)**: for Consensus Layer :guilabel:`Prysm`
   * **3000**: For Grafana dashboards
@@ -188,7 +188,7 @@ This is the software included:
    `Geth`, `Lighthouse`
    `Nethermind`, `Prysm`
    `Besu`,`Nimbus`
-   ` `, `Teku`
+   `Erigon`, `Teku`
 
 Kiln tools
 
@@ -255,6 +255,22 @@ to manage the correct services:
   Geth, Teku, "| geth-teku
   | teku-geth", "| geth-teku.conf
   | teku-geth.conf"
+  Erigon, Lighthouse, "| erigon-lh
+  | lh-erigon-beacon
+  | lh-erigon-validator", "| erigon-lh.conf
+  | lh-erigon-beacon.conf 
+  | lh-erigon-validator.conf"
+  | Erigon, Prysm, "| erigon-pry
+  | pry-erigon-beacon
+  | pry-erigon-validator", "| erigon-pry.conf
+  | pry-erigon-beacon.conf 
+  | pry-erigon-validator.conf"
+  Erigon, Nimbus, "| erigon-nim
+  | nim-erigon", "| erigon-nim.conf
+  | nim-erigon.conf"
+  Erigon, Teku, "| erigon-teku
+  | teku-erigon", "| erigon-teku.conf
+  | teku-erigon.conf"
   Nethermind, Lighthouse, "| neth-lh
   | lh-neth-beacon
   | lh-neth-validator","| neth-lh.conf

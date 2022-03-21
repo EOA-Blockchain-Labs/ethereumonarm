@@ -58,19 +58,19 @@ Download and Install
 
 Download the image here:
 
-ethonarm_kiln_22.03.00.img.zip_
+ethonarm_kiln_22.03.01.img.zip_
 
-.. _ethonarm_kiln_22.03.00.img.zip: https://ethereumonarm-my.sharepoint.com/:u:/p/fernando/ET-0VVw0wwhAigpiMjFos_cBXIpH4uCgAUSlQIf2mCUcgw?download=1
+.. _ethonarm_kiln_22.03.01.img.zip: https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/ES56R_SuvaVFkiMO1Tgnf6kB7lEbBfla5c2c18E3WQRJzA?download=1
 
 You can verify the file with the following ``SHA256`` Hash:
 
-``989e7230a198dcd263f98a0361fcf3caff4d30d2da0eb7f50109d3bddd10d9d7``
+``485cf36128ca60a41b5de82b5fee3ee46b7c479d0fc5dfa5b9341764414c4c57``
 
 By running:
 
 .. prompt:: bash $
 
-  sha256sum ethonarm_kiln_22.03.00.img.zip
+  sha256sum ethonarm_kiln_22.03.01.img.zip
 
 Flash 
 -----
@@ -99,8 +99,8 @@ Unzip and flash the image:
 
 .. prompt:: bash $
 
-   unzip ethonarm_kiln_22.03.00.img.zip
-   sudo dd bs=1M if=ethonarm_kiln_22.03.00.img of=/dev/mmcblk0 conv=fdatasync status=progress
+   unzip ethonarm_kiln_22.03.01.img.zip
+   sudo dd bs=1M if=ethonarm_kiln_22.03.01.img of=/dev/mmcblk0 conv=fdatasync status=progress
 
 Insert MicroSD
 --------------

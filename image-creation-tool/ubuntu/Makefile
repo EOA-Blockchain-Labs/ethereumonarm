@@ -2,9 +2,9 @@
 #apt-get install ruby ruby-dev rubygems build-essential rpm
 #gem install --no-document fpm
 
-URL := https://cdimage.ubuntu.com/releases/20.04.3/release/ubuntu-20.04.3-preinstalled-server-arm64+raspi.img.xz
-XZ := ubuntu-20.04.3-preinstalled-server-arm64+raspi.img.xz
-ISO := ubuntu-20.04.3-preinstalled-server-arm64+raspi.img
+URL := https://cdimage.ubuntu.com/releases/20.04.4/release/ubuntu-20.04.4-preinstalled-server-arm64+raspi.img.xz
+XZ := ubuntu-20.04.4-preinstalled-server-arm64+raspi.img.xz
+ISO := ubuntu-20.04.4-preinstalled-server-arm64+raspi.img
 RELEASE:= 00
 DATE := $(shell date +"%y.%m")
 iso:

@@ -195,6 +195,23 @@ Kiln tools
     * **eth2-deposit-cli**: Generates keys and sets up deposit config.
     * **kiln-config**: Network setup.
 
+Kiln configuration
+==================
+
+The **network configuration** depends upon ``kiln-config`` package. It contains all necessary files to 
+provide **info to the Execution and Consensus clients**.
+
+The config files are located on ``/etc/ethereum/kiln/merge-testnets/kiln/``. This is a **Git repository** 
+mantained by the EF core developers. If the repo gets an upgrade **you can update it** by running the following 
+command:
+
+.. prompt:: bash $
+
+  sudo systemctl restart kiln-config
+
+All **EL and CL clients config files** are located on ``/etc/ethereum/kiln``as well as the ``jwtsecret`` file necessary for 
+**EL and CL client communication**.
+
 Managing the clients
 ====================
 

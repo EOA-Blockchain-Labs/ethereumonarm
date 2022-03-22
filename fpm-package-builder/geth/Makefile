@@ -49,7 +49,7 @@ prepare: ## Donwload the latest binary and prepare the package files
 	#wget https://gethstore.blob.core.windows.net/builds/geth-linux-$(PKG_ARCH_DEB)-$(GETH_VERSION)-$(GETH_DHASH).tar.gz -O - | tar -xz -C sources/usr/bin/ --wildcards --absolute-names --no-anchored --strip-components 1 '*/geth'
 	mkdir -p /tmp/geth_tmp
 	## Clone GIT repo, add flags for crosscompilation and compile 
-	cd /tmp/geth_tmp ; git clone -b merge-kiln-v2 https://github.com/MariusVanDerWijden/go-ethereum.git ; cd go-ethereum ; env CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 GO111MODULE=on go build -o build/ ./cmd/geth
+	cd /tmp/geth_tmp ; git clone https://github.com/ethereum/go-ethereum.git ; cd go-ethereum ; env CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 GO111MODULE=on go build -o build/ ./cmd/geth
 	cp /tmp/geth_tmp/go-ethereum/build/geth sources/usr/bin/geth-kl
 	rm -rf /tmp/geth_tmp
 

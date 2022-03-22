@@ -49,9 +49,9 @@ the Raspberry and launching the AMI from the AWS console).
 
 You can find the AMI here:
 
-`ami-0cadea75c48fa1d48`_
+`ami-031b2457fbd78cd08`_
 
-.. _ami-0cadea75c48fa1d48: https://eu-west-1.console.aws.amazon.com/ec2/v2/home?region=eu-west-1#ImageDetails:imageId=ami-0cadea75c48fa1d48
+.. _ami-031b2457fbd78cd08: https://eu-west-1.console.aws.amazon.com/ec2/v2/home?region=eu-west-1#ImageDetails:imageId=ami-031b2457fbd78cd08
 
 Download and Install
 ====================

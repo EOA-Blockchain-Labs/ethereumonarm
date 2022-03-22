@@ -209,7 +209,7 @@ command:
 
   sudo systemctl restart kiln-config
 
-All **EL and CL clients config files** are located on ``/etc/ethereum/kiln``as well as the ``jwtsecret`` file necessary for 
+All **EL and CL clients config files** are located on ``/etc/ethereum/kiln`` as well as the ``jwtsecret`` file necessary for 
 **EL and CL client communication**.
 
 Managing the clients

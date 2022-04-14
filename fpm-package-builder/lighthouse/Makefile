@@ -36,9 +36,9 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(LIGHTHOUSE_VERSION) --license $(PKG_L
 	--deb-systemd extras/lh-erigon-beacon.service\
 	--deb-systemd extras/lh-erigon-validator.service\
 	--deb-systemd extras/lh-neth-beacon.service\
-	--deb-systemd extras/lh-neth-beacon.service\
+	--deb-systemd extras/lh-neth-validator.service\
 	--deb-systemd extras/lh-besu-beacon.service\
-	--deb-systemd extras/lh-besu-beacon.service\
+	--deb-systemd extras/lh-besu-validator.service\
 	--depends kiln-config
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(LIGHTHOUSE_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\

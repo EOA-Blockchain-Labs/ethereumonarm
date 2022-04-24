@@ -9,19 +9,19 @@ Download
 
 Download the image here:
 
-ethonarm_21.03.00.img.zip_
+ethonarm_22.04.00.img.zip_
 
-.. _ethonarm_21.03.00.img.zip: https://www.ethereumonarm.com/downloads/ethonarm_21.03.00.img.zip
+.. _ethonarm_22.04.00.img.zip: https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/Ec_VmUvr80VFjf3RYSU-NzkBmj2JOteDECj8Bibde929Gw?download=1
 
 You can verify the file with the following ``SHA256`` Hash:
 
-``SHA256 725359703b7c321f56a0e193be61c1f0102a23463549285e8f286e9fb6cc522f``
+``SHA256 fb497e8f8a7388b62d6e1efbc406b9558bee7ef46ec7e53083630029c117444f``
 
 By running:
 
 .. prompt:: bash $
 
-  sha256sum ethonarm_21.03.00.img.zip
+  sha256sum ethonarm_22.04.00.img.zip
 
 Flash 
 -----
@@ -50,8 +50,8 @@ Unzip and flash the image:
 
 .. prompt:: bash $
 
-   unzip ethonarm_21.03.00.img.zip
-   sudo dd bs=1M if=ethonarm_21.03.00.img of=/dev/mmcblk0 conv=fdatasync status=progress
+   unzip ethonarm_22.04.00.img.zip
+   sudo dd bs=1M if=ethonarm_22.04.00.img of=/dev/mmcblk0 conv=fdatasync status=progress
 
 Insert MicroSD
 --------------

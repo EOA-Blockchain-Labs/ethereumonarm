@@ -53,6 +53,11 @@ Unzip and flash the image:
    unzip ethonarm_22.04.00.img.zip
    sudo dd bs=1M if=ethonarm_22.04.00.img of=/dev/mmcblk0 conv=fdatasync status=progress
 
+.. note::
+  If you plan to use your Raspberry Pi 4 in headless mode you will need to create an empty file 
+  named `ssh` with no contents or filetype extension.
+
+
 Insert MicroSD
 --------------
 

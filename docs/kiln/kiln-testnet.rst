@@ -231,8 +231,8 @@ These 2 commands will start the **Execution Layer and the Consensus Layer Beacon
 You can check both client logs by running:
 
 .. prompt:: bash $
-  sudo journalctl geth-lh -f
-  sudo journalctl lh-geth-beacon -f
+  sudo journalctl -u geth-lh -f
+  sudo journalctl -u lh-geth-beacon -f
 
 .. note::
   For :guilabel:`Lighthouse` and :guilabel:`Prysm` you will need to start an additional service 

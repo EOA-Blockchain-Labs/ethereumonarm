@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/ropsten/erigon-pry.conf
-ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.erigon-pry/ropsten/datadir-pry && /usr/bin/erigon-rp init /etc/ethereum/ropsten/merge-testnets/ropsten/genesis.json  --datadir "/home/ethereum/.erigon-pry/ropsten/datadir-pry"'
+ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.erigon-pry/ropsten/datadir-pry && /usr/bin/erigon-rp init /etc/ethereum/ropsten/merge-testnets/ropsten-beacon-chain/genesis.json  --datadir "/home/ethereum/.erigon-pry/ropsten/datadir-pry"'
 ExecStart=/usr/bin/erigon-rp $ARGS
 Restart=always
 User=ethereum

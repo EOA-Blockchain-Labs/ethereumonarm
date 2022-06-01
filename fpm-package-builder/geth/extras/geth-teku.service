@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/ropsten/geth-teku.conf
-ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.geth-teku/ropsten/datadir-teku && /usr/bin/geth-rp init /etc/ethereum/ropsten/merge-testnets/ropsten/genesis.json  --datadir "/home/ethereum/.geth-teku/ropsten/datadir-teku"'
+ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.geth-teku/ropsten/datadir-teku && /usr/bin/geth-rp init /etc/ethereum/ropsten/merge-testnets/ropsten-beacon-chain/genesis.json  --datadir "/home/ethereum/.geth-teku/ropsten/datadir-teku"'
 ExecStart=/usr/bin/geth-rp $ARGS
 Restart=always
 User=ethereum

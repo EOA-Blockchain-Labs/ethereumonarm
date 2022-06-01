@@ -4,8 +4,8 @@ After=network.target
 Requires=pry-neth-beacon.service
 
 [Service]
-EnvironmentFile=/etc/ethereum/kiln/pry-neth-validator.conf
-ExecStart=/usr/bin/validator-kl $ARGS
+EnvironmentFile=/etc/ethereum/ropsten/pry-neth-validator.conf
+ExecStart=/usr/bin/validator-rp $ARGS
 Restart=always
 User=ethereum
 

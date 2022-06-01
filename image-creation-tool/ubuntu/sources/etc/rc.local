@@ -50,7 +50,7 @@ if [ ! -f $FLAG ]; then
     exit 1
   fi
 
-  # Modify hostname (ethereumonarm-kiln-$MAC-HASH-CHUNK)
+  # Modify hostname (ethereumonarm-ropsten-$MAC-HASH-CHUNK)
   echo Changing hostname
   MAC_HASH=`cat /sys/class/net/eth0/address | sha256sum | awk '{print substr($0,0,9)}'`
   echo ethereumonarm-$MAC_HASH > /etc/hostname
@@ -90,8 +90,8 @@ if [ ! -f $FLAG ]; then
   # Install Ethereum packages
   echo Installing Ethereum packages
   apt-get update
-  apt-get -y install kiln-config ethereumonarm-armbian-extras geth-kiln nethermind-kiln besu-kiln erigon-kiln prysm-kiln lighthouse-kiln nimbus-kiln teku-kiln eth2.0-deposit-cli
-  systemctl enable kiln-config
+  apt-get -y install ropsten-config ethereumonarm-armbian-extras geth-ropsten nethermind-ropsten besu-ropsten erigon-ropsten prysm-ropsten lighthouse-ropsten nimbus-ropsten teku-ropsten eth2.0-deposit-cli
+  systemctl enable ropsten-config
 
   # Install monitoring packages
   wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -

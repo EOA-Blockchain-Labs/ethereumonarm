@@ -9,7 +9,7 @@ TEKU_SNAPSHOT := $(shell curl -s https://raw.githubusercontent.com/hyperledger/t
 
 
 PKG_RELEASE := 0
-PKG_NAME := teku-kiln
+PKG_NAME := teku-ropsten
 
 PKG_DESCRIPTION := "Teku Ethereum 1.0 java client"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
@@ -36,7 +36,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(TEKU_VERSION) --license $(PKG_LICENSE
 	--deb-systemd extras/teku-geth.service\
 	--deb-systemd extras/teku-erigon.service\
 	--deb-systemd extras/teku-neth.service\
-	--depends kiln-config\
+	--depends ropsten-config\
 	--depends openjdk-11-jre-headless\
 	--depends libsecp256k1-0\
 
@@ -51,10 +51,10 @@ prepare: ## Donwload the latest binary and prepare the package files
 	mkdir /tmp/teku_temp
 	cd /tmp/teku_temp ; git clone https://github.com/ConsenSys/teku.git
 	cd /tmp/teku_temp/teku/ ; ./gradlew installDist
-	mkdir -p sources/usr/share/teku/kiln/lib/
-	cp /tmp/teku_temp/teku/build/install/teku/bin/teku sources/usr/bin/teku-kl
-	cp /tmp/teku_temp/teku/build/install/teku/lib/* sources/usr/share/teku/kiln/lib/
-	sed -i 's/"$${APP_HOME:-\.\/}\.\."/"$${APP_HOME:-\.\/}\.\.\/share\/teku\/kiln"/g' sources/usr/bin/teku-kl
+	mkdir -p sources/usr/share/teku/ropsten/lib/
+	cp /tmp/teku_temp/teku/build/install/teku/bin/teku sources/usr/bin/teku-rp
+	cp /tmp/teku_temp/teku/build/install/teku/lib/* sources/usr/share/teku/ropsten/lib/
+	sed -i 's/"$${APP_HOME:-\.\/}\.\."/"$${APP_HOME:-\.\/}\.\.\/share\/teku\/ropsten"/g' sources/usr/bin/teku-rp
 	rm -rf /tmp/teku_temp
 
 deb: ## Create deb package
@@ -66,7 +66,7 @@ rpm: ## Create rpm package
 .PHONY: clean
 clean: ## Clean up
 	rm -r sources/usr/share/
-	rm sources/usr/bin/teku-kl
+	rm sources/usr/bin/teku-rp
 
 help:  ## List targets.
 	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

@@ -3,9 +3,9 @@ Description=Ethereum geth client daemon by The Ethereum Foundation
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/kiln/geth-nim.conf
-ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.geth-nim/kiln/datadir-nim && /usr/bin/geth-kl init /etc/ethereum/kiln/merge-testnets/kiln/genesis.json  --datadir "/home/ethereum/.geth-nim/kiln/datadir-nim"'
-ExecStart=/usr/bin/geth-kl $ARGS
+EnvironmentFile=/etc/ethereum/ropsten/geth-nim.conf
+ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.geth-nim/ropsten/datadir-nim && /usr/bin/geth-rp init /etc/ethereum/ropsten/merge-testnets/ropsten/genesis.json  --datadir "/home/ethereum/.geth-nim/ropsten/datadir-nim"'
+ExecStart=/usr/bin/geth-rp $ARGS
 Restart=always
 User=ethereum
 

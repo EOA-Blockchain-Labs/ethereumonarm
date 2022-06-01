@@ -3,8 +3,8 @@ Description=Ethereum Teku client daemon
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/kiln/teku-neth.conf
-ExecStart=/usr/bin/teku-kl $ARGS
+EnvironmentFile=/etc/ethereum/ropsten/teku-neth.conf
+ExecStart=/usr/bin/teku-rp $ARGS
 Restart=always
 User=ethereum
 

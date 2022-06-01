@@ -8,9 +8,9 @@ LIGHTHOUSE_VERSION := $(shell date +"%y%m%d")
 
 
 PKG_RELEASE := 0
-PKG_NAME := lighthouse-kiln
+PKG_NAME := lighthouse-ropsten
 
-PKG_DESCRIPTION := "Lighthouse kiln Testnet"
+PKG_DESCRIPTION := "Lighthouse ropsten Testnet"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
 
 CATEGORY := science
@@ -39,7 +39,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(LIGHTHOUSE_VERSION) --license $(PKG_L
 	--deb-systemd extras/lh-neth-validator.service\
 	--deb-systemd extras/lh-besu-beacon.service\
 	--deb-systemd extras/lh-besu-validator.service\
-	--depends kiln-config
+	--depends ropsten-config
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(LIGHTHOUSE_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\
@@ -51,7 +51,7 @@ prepare: ## Donwload the latest binary and prepare the package files
 #	wget  https://github.com/sigp/lighthouse/releases/download/v$(LIGHTHOUSE_VERSION)/lighthouse-v$(LIGHTHOUSE_VERSION)-aarch64-unknown-linux-gnu.tar.gz -O - | tar -xz -C sources/usr/bin/  lighthouse
 	mkdir -p /tmp/lighthouse_tmp
 	cd /tmp/lighthouse_tmp ; git clone -b unstable https://github.com/sigp/lighthouse.git ; cd lighthouse ; cargo install cross ; make build-aarch64
-	cp /tmp/lighthouse_tmp/lighthouse/target/aarch64-unknown-linux-gnu/release/lighthouse sources/usr/bin/lighthouse-kl
+	cp /tmp/lighthouse_tmp/lighthouse/target/aarch64-unknown-linux-gnu/release/lighthouse sources/usr/bin/lighthouse-rp
 	rm -rf /tmp/lighthouse_tmp	
 
 deb: ## Create deb package
@@ -62,7 +62,7 @@ rpm: ## Create rpm package
 
 .PHONY: clean
 clean: ## Clean up
-	rm sources/usr/bin/lighthouse-kl
+	rm sources/usr/bin/lighthouse-rp
 
 help:  ## List targets.
 	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

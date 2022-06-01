@@ -4,8 +4,8 @@ After=network.target
 
 [Service]
 User=ethereum
-EnvironmentFile=/etc/ethereum/kiln/neth-lh.conf
-ExecStart=/usr/bin/nethermind-kl $ARGS
+EnvironmentFile=/etc/ethereum/ropsten/neth-lh.conf
+ExecStart=/usr/bin/nethermind-rp $ARGS
 Restart=on-failure
 WorkingDirectory=/home/ethereum
 LimitNOFILE=1000000

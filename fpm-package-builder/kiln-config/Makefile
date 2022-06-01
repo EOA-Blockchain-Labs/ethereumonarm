@@ -9,7 +9,7 @@ MERGE_CONFIG_URL := https://github.com/eth-clients/merge-testnets.git
 
 
 PKG_RELEASE := 0
-PKG_NAME := kiln-config
+PKG_NAME := ropsten-config
 
 PKG_DESCRIPTION := "A repository to host the various Ethereum testnet configuration files"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
@@ -32,7 +32,7 @@ PKG_DEB := $(PKG_NAME)_$(MERGE_CONFIG_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).de
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(MERGE_CONFIG_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) -p $(OUTPUTDIR)\
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -x */.gitkeep\
-	--deb-systemd extras/kiln-config.service --after-install extras/postinst\
+	--deb-systemd extras/ropsten-config.service --after-install extras/postinst\
 	--depends git\
 	--depends jq\
 	--conflicts kintsugi-config
@@ -46,8 +46,8 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(MERGE_CONFIG_VERSION) --license $(PKG
 all: prepare deb clean
 
 prepare: ## Donwload the latest binary and prepare the package files
-	mkdir -p sources/etc/ethereum/kiln
-	git  -C sources/etc/ethereum/kiln clone https://github.com/eth-clients/merge-testnets.git 
+	mkdir -p sources/etc/ethereum/ropsten
+	git  -C sources/etc/ethereum/ropsten clone https://github.com/eth-clients/merge-testnets.git 
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)
@@ -57,7 +57,7 @@ rpm: ## Create rpm package
 
 .PHONY: clean
 clean: ## Clean up
-	rm -rf  sources/etc/ethereum/kiln/
+	rm -rf  sources/etc/ethereum/ropsten/
 
 help:  ## List targets.
 	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

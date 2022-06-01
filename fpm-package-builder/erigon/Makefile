@@ -8,7 +8,7 @@ ERIGON_VERSION := $(shell date +"%y%m%d")
 ERIGON_DHASH :=$(shell curl -s "https://api.github.com/repos/ledgerwatch/erigon/tags" | jq -c 'map(select(.name | contains("$(ERIGON_VERSION)")))' | jq -r '.[0].commit.sha' | cut -c1-8)
 
 PKG_RELEASE := 0
-PKG_NAME := erigon-kiln
+PKG_NAME := erigon-ropsten
 
 PKG_DESCRIPTION := "Erigon Go implementation of the Ethereum protocol"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
@@ -47,9 +47,9 @@ prepare: ## Download the latest binary and prepare the package files
 	sudo gem install --no-document fpm
 	mkdir -p /tmp/erigon_tmp
 	 ## Clone GIT repo, add flags for crosscompilation and compile 
-	cd /tmp/erigon_tmp ; git clone --recurse-submodules -j8 https://github.com/ledgerwatch/erigon.git
+	cd /tmp/erigon_tmp ; git clone -b alpha --recurse-submodules -j8 https://github.com/ledgerwatch/erigon.git
 	cd /tmp/erigon_tmp/erigon ; sed -i 's/GOBUILD = $(CGO_CFLAGS)/GOBUILD = $(CGO_CFLAGS) CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 /' Makefile ; make erigon ; make rpcdaemon
-	cp /tmp/erigon_tmp/erigon/build/bin/erigon sources/usr/bin/erigon-kl ; cp /tmp/erigon_tmp/erigon/build/bin/rpcdaemon sources/usr/bin/rpcdaemon-kl
+	cp /tmp/erigon_tmp/erigon/build/bin/erigon sources/usr/bin/erigon-rp ; cp /tmp/erigon_tmp/erigon/build/bin/rpcdaemon sources/usr/bin/rpcdaemon-rp
 	rm -rf /tmp/erigon_tmp
 
 deb: ## Create deb package

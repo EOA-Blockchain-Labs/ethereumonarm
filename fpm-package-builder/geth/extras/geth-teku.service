@@ -3,9 +3,9 @@ Description=Ethereum geth client daemon by The Ethereum Foundation
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/kiln/geth-teku.conf
-ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.geth-teku/kiln/datadir-teku && /usr/bin/geth-kl init /etc/ethereum/kiln/merge-testnets/kiln/genesis.json  --datadir "/home/ethereum/.geth-teku/kiln/datadir-teku"'
-ExecStart=/usr/bin/geth-kl $ARGS
+EnvironmentFile=/etc/ethereum/ropsten/geth-teku.conf
+ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.geth-teku/ropsten/datadir-teku && /usr/bin/geth-rp init /etc/ethereum/ropsten/merge-testnets/ropsten/genesis.json  --datadir "/home/ethereum/.geth-teku/ropsten/datadir-teku"'
+ExecStart=/usr/bin/geth-rp $ARGS
 Restart=always
 User=ethereum
 

@@ -9,9 +9,9 @@ PRYSM_VERSION := $(shell date +"%y%m%d")
 
 
 PKG_RELEASE := 0
-PKG_NAME := prysm-kiln
+PKG_NAME := prysm-ropsten
 
-PKG_DESCRIPTION := "Ethereum 2.0 Prysmatic Labs kiln implementation"
+PKG_DESCRIPTION := "Ethereum 2.0 Prysmatic Labs ropsten implementation"
 PKG_MAINTAINER := "diego losada <dlosada@ethereumonarm.com>"
 CATEGORY := science
 WEB_URL := https://github.com/prysmaticlabs/prysm
@@ -39,7 +39,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENS
 	--deb-systemd extras/pry-neth-validator.service\
 	--deb-systemd extras/pry-besu-beacon.service\
 	--deb-systemd extras/pry-besu-validator.service\
-	--depends kiln-config\
+	--depends ropsten-config\
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\
@@ -50,8 +50,8 @@ all: prepare deb clean
 prepare: ## Donwload the latest binary and prepare the package files
 	mkdir -p /tmp/prysm_tmp
 	cd /tmp/prysm_tmp ; git clone -b develop https://github.com/prysmaticlabs/prysm.git ; cd prysm ; bazelisk build //beacon-chain --config=linux_arm64_docker --workspace_status_command=hack/workspace_status.sh --stamp ; bazelisk build //validator --config=linux_arm64_docker --workspace_status_command=hack/workspace_status.sh --stamp
-	cp /tmp/prysm_tmp/prysm/bazel-bin/cmd/beacon-chain/beacon-chain_/beacon-chain sources/usr/bin/beacon-chain-kl
-	cp /tmp/prysm_tmp/prysm/bazel-bin/cmd/validator/validator_/validator sources/usr/bin/validator-kl
+	cp /tmp/prysm_tmp/prysm/bazel-bin/cmd/beacon-chain/beacon-chain_/beacon-chain sources/usr/bin/beacon-chain-rp
+	cp /tmp/prysm_tmp/prysm/bazel-bin/cmd/validator/validator_/validator sources/usr/bin/validator-rp
 	rm -rf /tmp/prysm_tmp
 
 deb: ## Create deb package

@@ -3,8 +3,8 @@ Description=Ethereum Besu client daemon
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/kiln/besu-lh.conf
-ExecStart=/usr/bin/besu-kl $ARGS
+EnvironmentFile=/etc/ethereum/ropsten/besu-lh.conf
+ExecStart=/usr/bin/besu-rp $ARGS
 Restart=always
 User=ethereum
 

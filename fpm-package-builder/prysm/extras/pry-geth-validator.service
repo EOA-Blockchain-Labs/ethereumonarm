@@ -4,8 +4,8 @@ After=network.target
 Requires=pry-geth-beacon.service
 
 [Service]
-EnvironmentFile=/etc/ethereum/kiln/pry-geth-validator.conf
-ExecStart=/usr/bin/validator-kl $ARGS
+EnvironmentFile=/etc/ethereum/ropsten/pry-geth-validator.conf
+ExecStart=/usr/bin/validator-rp $ARGS
 Restart=always
 User=ethereum
 

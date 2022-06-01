@@ -4,8 +4,8 @@ After=network.target
 Requires=pry-besu-beacon.service
 
 [Service]
-EnvironmentFile=/etc/ethereum/kiln/pry-besu-validator.conf
-ExecStart=/usr/bin/validator-kl $ARGS
+EnvironmentFile=/etc/ethereum/ropsten/pry-besu-validator.conf
+ExecStart=/usr/bin/validator-rp $ARGS
 Restart=always
 User=ethereum
 

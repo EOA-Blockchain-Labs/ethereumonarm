@@ -3,8 +3,8 @@ Description=Prysm Beacon chain daemon
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/kiln/pry-besu-beacon.conf
-ExecStart=/usr/bin/beacon-chain-kl $ARGS
+EnvironmentFile=/etc/ethereum/ropsten/pry-besu-beacon.conf
+ExecStart=/usr/bin/beacon-chain-rp $ARGS
 Restart=always
 User=ethereum
 

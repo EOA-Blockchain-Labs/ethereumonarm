@@ -9,9 +9,9 @@ SHELL := /bin/bash
 GETH_VERSION := $(shell date +"%y%m%d")
 
 PKG_RELEASE := 0
-PKG_NAME := geth-kiln
+PKG_NAME := geth-ropsten
 
-PKG_DESCRIPTION := "kiln test client"
+PKG_DESCRIPTION := "ropsten test client"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
 CATEGORY := science
 WEB_URL := https://geth.ethereum.org
@@ -36,7 +36,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(GETH_VERSION) --license $(PKG_LICENSE
 --deb-systemd extras/geth-pry.service\
 --deb-systemd extras/geth-nim.service\
 --deb-systemd extras/geth-teku.service\
---depends kiln-config
+--depends ropsten-config
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(GETH_VERSION) --license $(PKG_LICENSE)\
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
@@ -50,7 +50,7 @@ prepare: ## Donwload the latest binary and prepare the package files
 	mkdir -p /tmp/geth_tmp
 	## Clone GIT repo, add flags for crosscompilation and compile 
 	cd /tmp/geth_tmp ; git clone https://github.com/ethereum/go-ethereum.git ; cd go-ethereum ; env CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 GO111MODULE=on go build -o build/ ./cmd/geth
-	cp /tmp/geth_tmp/go-ethereum/build/geth sources/usr/bin/geth-kl
+	cp /tmp/geth_tmp/go-ethereum/build/geth sources/usr/bin/geth-rp
 	rm -rf /tmp/geth_tmp
 
 deb: ## Create deb package
@@ -61,7 +61,7 @@ rpm: ## Create rpm package
 
 .PHONY: clean
 clean: ## Clean up
-	rm sources/usr/bin/geth-kl
+	rm sources/usr/bin/geth-rp
 
 help:  ## List targets.
 	"$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

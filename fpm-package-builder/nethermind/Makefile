@@ -10,7 +10,7 @@ NETHERMIND_URL := $(shell curl -s "https://api.github.com/repos/NethermindEth/ne
 NETHERMIND_NAME := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/releases/latest"|jq -r '.assets[2].name')
 
 PKG_RELEASE := 0
-PKG_NAME := nethermind-kiln
+PKG_NAME := nethermind-ropsten
 
 PKG_DESCRIPTION := "Ethereum 1 client written in .NET"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
@@ -44,7 +44,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(NETHERMIND_VERSION) --license $(PKG_L
 	--depends libc6-dev\
 	--depends libc6\
 	--depends librocksdb-dev\
-	--depends kiln-config\
+	--depends ropsten-config\
 	--depends unzip
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(NETHERMIND_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
@@ -57,10 +57,10 @@ all: prepare deb clean
 
 prepare: ## Donwload the latest binary and prepare the package files
 	mkdir -p /tmp/nethermind_tmp
-	cd /tmp/nethermind_tmp ; git clone -b kiln https://github.com/NethermindEth/nethermind.git --recursive; cd nethermind; git submodule update --init src/Dirichlet src/int256 src/Math.Gmp.Native
+	cd /tmp/nethermind_tmp ; git clone -b ropsten https://github.com/NethermindEth/nethermind.git --recursive; cd nethermind; git submodule update --init src/Dirichlet src/int256 src/Math.Gmp.Native
 	cd /tmp/nethermind_tmp/nethermind/ ; dotnet publish src/Nethermind/Nethermind.Runner -r linux-arm64 -c release -o out
 	cp extras/librocksdb.so /tmp/nethermind_tmp/nethermind/out/runtimes/linux-arm64/native/
-	cp -r /tmp/nethermind_tmp/nethermind/out/* sources/opt/nethermind/kiln/
+	cp -r /tmp/nethermind_tmp/nethermind/out/* sources/opt/nethermind/ropsten/
 	rm -rf /tmp/nethermind_tmp
 
 deb: ## Create deb package
@@ -71,7 +71,7 @@ rpm: ## Create rpm package
 
 .PHONY: clean
 clean: ## Clean up
-	rm -rf sources/opt/nethermind/kiln/*
+	rm -rf sources/opt/nethermind/ropsten/*
 
 help:  ## List targets.
 	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

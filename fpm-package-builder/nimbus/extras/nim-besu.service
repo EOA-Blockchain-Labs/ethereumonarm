@@ -3,8 +3,8 @@ Description=Nimbus Beacon chain daemon
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/kiln/nim-besu.conf
-ExecStart=/usr/bin/nimbus_beacon_node-kl $ARGS
+EnvironmentFile=/etc/ethereum/ropsten/nim-besu.conf
+ExecStart=/usr/bin/nimbus_beacon_node-rp $ARGS
 Restart=always
 User=ethereum
 

@@ -36,7 +36,8 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(GETH_VERSION) --license $(PKG_LICENSE
 --deb-systemd extras/geth-pry.service\
 --deb-systemd extras/geth-nim.service\
 --deb-systemd extras/geth-teku.service\
---depends ropsten-config
+--depends ropsten-config\
+--conflicts geth-kiln
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(GETH_VERSION) --license $(PKG_LICENSE)\
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\

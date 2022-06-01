@@ -39,6 +39,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(TEKU_VERSION) --license $(PKG_LICENSE
 	--depends ropsten-config\
 	--depends openjdk-11-jre-headless\
 	--depends libsecp256k1-0\
+	--conflicts teku-kiln
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(TEKU_VERSION) --license $(PKG_LICENSE)\
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\

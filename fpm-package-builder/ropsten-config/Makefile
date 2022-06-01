@@ -35,7 +35,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(MERGE_CONFIG_VERSION) --license $(PKG
 	--deb-systemd extras/ropsten-config.service --after-install extras/postinst\
 	--depends git\
 	--depends jq\
-	--conflicts kintsugi-config
+	--conflicts kintsugi-config\
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(MERGE_CONFIG_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\

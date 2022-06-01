@@ -45,7 +45,8 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(NETHERMIND_VERSION) --license $(PKG_L
 	--depends libc6\
 	--depends librocksdb-dev\
 	--depends ropsten-config\
-	--depends unzip
+	--depends unzip\
+	--conflicts nethermind-kiln
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(NETHERMIND_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\

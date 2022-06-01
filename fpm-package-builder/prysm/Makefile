@@ -40,6 +40,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENS
 	--deb-systemd extras/pry-besu-beacon.service\
 	--deb-systemd extras/pry-besu-validator.service\
 	--depends ropsten-config\
+	--conflicts prysm-kiln
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\

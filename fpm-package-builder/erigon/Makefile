@@ -34,7 +34,8 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(ERIGON_VERSION) --license $(PKG_LICEN
 --deb-systemd extras/erigon-lh.service \
 --deb-systemd extras/erigon-nim.service \
 --deb-systemd extras/erigon-pry.service \
---deb-systemd extras/erigon-teku.service
+--deb-systemd extras/erigon-teku.service\
+--conflicts erigon-kiln
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(ERIGON_VERSION) --license $(PKG_LICENSE)\
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\

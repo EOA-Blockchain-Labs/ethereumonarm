@@ -40,6 +40,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICEN
 	--deb-systemd extras/nim-neth.service\
 	--deb-systemd extras/nim-besu.service\
 	--depends ropsten-config\
+	--conflicts nimbus-kiln
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICENSE)\
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\

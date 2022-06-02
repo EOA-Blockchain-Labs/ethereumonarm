@@ -3,8 +3,9 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-NIMBUS_DHASH := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/commits?sha=ropsten-dev-auth | jq -r '. [0] |  .sha' | cut -c1-8)
-NIMBUS_VERSION_MAIN := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.name' | tr -d 'v')
+NIMBUS_DHASH := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/commits?sha=unstable | jq -r '. [0] |  .sha' | cut -c1-8)
+#NIMBUS_VERSION_MAIN := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.name' | tr -d 'v')
+NIMBUS_VERSION_MAIN := "22.5.1"
 #NIMBUS_DHASH := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.target_commitish' | cut -c1-8)
 #DOWNLOAD_NAME := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.assets[2].name')
 #NIMBUS_URL := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.assets[2].browser_download_url')
@@ -51,7 +52,7 @@ all: prepare deb clean
 
 prepare: ## Donwload the latest binary and prepare the package files
 	mkdir -p /tmp/nimbus_tmp
-	cd /tmp/nimbus_tmp ; git clone -b develop https://github.com/status-im/nimbus-eth2.git ; cd nimbus-eth2 ; make dist-arm64
+	cd /tmp/nimbus_tmp ; git clone -b unstable https://github.com/status-im/nimbus-eth2.git ; cd nimbus-eth2 ; make dist-arm64
 	cd /tmp/nimbus_tmp/nimbus-eth2/dist ; tar zxvf nimbus-eth2_Linux_arm64v8_$(NIMBUS_VERSION_MAIN)_$(NIMBUS_DHASH).tar.gz	
 	cp /tmp/nimbus_tmp/nimbus-eth2/dist/nimbus-eth2_Linux_arm64v8_$(NIMBUS_VERSION_MAIN)_$(NIMBUS_DHASH)/build/nimbus_beacon_node sources/usr/bin/nimbus_beacon_node-rp
 	rm -rf /tmp/nimbus_tmp

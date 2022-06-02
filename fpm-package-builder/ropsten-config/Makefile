@@ -46,8 +46,8 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(MERGE_CONFIG_VERSION) --license $(PKG
 all: prepare deb clean
 
 prepare: ## Donwload the latest binary and prepare the package files
-	mkdir -p sources/etc/ethereum/ropsten
-	git  -C sources/etc/ethereum/ropsten clone https://github.com/eth-clients/merge-testnets.git 
+	#mkdir -p sources/etc/ethereum/ropsten
+	#git  -C sources/etc/ethereum/ropsten clone https://github.com/eth-clients/merge-testnets.git 
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)

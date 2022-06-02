@@ -4,7 +4,6 @@ After=network.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/ropsten/geth-lh.conf
-ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.geth-lh/ropsten/datadir-lh && /usr/bin/geth-rp init /etc/ethereum/ropsten/merge-testnets/ropsten-beacon-chain/genesis.json  --datadir "/home/ethereum/.geth-lh/ropsten/datadir-lh"'
 ExecStart=/usr/bin/geth-rp $ARGS
 Restart=always
 User=ethereum

@@ -1,6 +1,7 @@
 [Unit]
 Description=ropsten git sync service
 [Service]
+ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /etc/ethereum/ropsten/merge-testnets/ && /usr/bin/git clone https://github.com/eth-clients/merge-testnets.git /etc/ethereum/ropsten/merge-testnets/'
 ExecStart=/bin/sh -c "git  -C /etc/ethereum/ropsten/merge-testnets/ pull"
 RemainAfterExit=yes
 [Install]

@@ -92,6 +92,18 @@ Layer clients.
 
   /kiln/kiln-testnet
 
+Ropsten
+-------
+
+Join the Ropsten HF (June 7th-8th)
+
+.. toctree::
+  :maxdepth: 2
+  :caption: Ropsten Hard fork
+  :hidden:
+
+  /ropsten/ropsten
+
 Developers Guide
 ----------------
 

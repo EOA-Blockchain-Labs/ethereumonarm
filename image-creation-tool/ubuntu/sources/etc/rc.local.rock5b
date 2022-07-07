@@ -35,7 +35,6 @@ if [ ! -f $FLAG ]; then
   fi
 
   # Enable SSH server and install necessary packages
-  systemctl enable ssh
   apt-get -y install gdisk software-properties-common
 
   # Format NVMe disk and mount it as /home
@@ -84,8 +83,7 @@ if [ ! -f $FLAG ]; then
   # Install Ethereum packages
   echo Installing Ethereum packages
   apt-get update
-  apt-get -y install ethereumonarm-armbian-extras geth openethereum nethermind erigon besu prysm lighthouse nimbus teku eth2.0-deposit-cli
-  systemctl enable geth
+  apt-get -y install ethereumonarm-armbian-extras geth nethermind erigon besu prysm lighthouse nimbus teku eth2.0-deposit-cli
 
   # Create an alias for package updates
   cat <<EOF >> /etc/bash.bashrc
@@ -114,8 +112,8 @@ EOF
   #Disable root user
   passwd -l root
 
-  #Delete odroid user
-  deluser odroid
+  #Delete rock user
+  deluser rock
 
   #the next line creates an empty file so it won't run on next boot
   touch $FLAG

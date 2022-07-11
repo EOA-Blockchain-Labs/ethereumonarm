@@ -15,8 +15,9 @@
 
 FLAG="/root/first-run.flag"
 if [ ! -f $FLAG ]; then
-
-  # Wait to interface to link up
+  # Wait for the interface to link up
+  sleep 15
+  apt-get update && apt-get -y install netcat
   n=0
   until [ "$n" -ge 3 ]
   do
@@ -34,8 +35,8 @@ if [ ! -f $FLAG ]; then
     exit 1
   fi
 
-  # Enable SSH server and install necessary packages
-  apt-get -y install gdisk software-properties-common
+  # Install some necessary deps
+  apt-get -y install gdisk software-properties-common apt-utils
 
   # Format NVMe disk and mount it as /home
   echo "Looking for NVMe drive"
@@ -55,7 +56,7 @@ if [ ! -f $FLAG ]; then
 
   # Modify hostname (ethereumonarm-$MAC-HASH-CHUNK)
   echo Changing hostname
-  MAC_HASH=`cat /sys/class/net/eth0/address | sha256sum | awk '{print substr($0,0,9)}'`
+  MAC_HASH=`cat /sys/class/net/enP4p65s0/address | sha256sum | awk '{print substr($0,0,9)}'`
   echo ethereumonarm-rock5b-$MAC_HASH > /etc/hostname
   sed -i "s/127.0.0.1.*/127.0.0.1\tethereumonarm-$MAC_HASH/g" /etc/hosts
 
@@ -89,9 +90,10 @@ if [ ! -f $FLAG ]; then
   cat <<EOF >> /etc/bash.bashrc
   alias update-ethereum='
 sudo apt-get update
-sudo apt-get install geth openethereum nethermind besu prysm lighthouse nimbus teku'
+sudo apt-get install geth nethermind erigon besu prysm lighthouse nimbus teku eth2.0-deposit-cli'
 EOF
   # Install monitoring packages
+  apt-get -y install gpg wget
   wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
   echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
   apt-get -y update

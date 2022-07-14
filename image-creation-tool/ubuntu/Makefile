@@ -21,9 +21,9 @@ rpi_iso:
 	rmdir /tmp/ubuntu_iso
 
 # Odroid M1 image
-ODROID_URL := https://dn.odroid.com/RK3568/ODROID-M1/Ubuntu/ubuntu-20.04-server-odroidm1-20220318.img.xz
-ODROID_XZ := ubuntu-20.04-server-odroidm1-20220318.img.xz
-ODROID_ISO := ubuntu-20.04-server-odroidm1-20220318.img
+ODROID_URL := https://dn.odroid.com/RK3568/ODROID-M1/Ubuntu/ubuntu-20.04-server-odroidm1-20220531.img.xz
+ODROID_XZ := ubuntu-20.04-server-odroidm1-20220531.img.xz
+ODROID_ISO := ubuntu-20.04-server-odroidm1-20220531.img
 odroid_iso:
 	mkdir /tmp/ubuntu_iso
 	wget  $(ODROID_URL)

@@ -54,7 +54,7 @@ if [ ! -f $FLAG ]; then
   echo Changing hostname
   MAC_HASH=`cat /sys/class/net/eth0/address | sha256sum | awk '{print substr($0,0,9)}'`
   echo ethereumonarm-rpi4-$MAC_HASH > /etc/hostname
-  sed -i "s/127.0.0.1.*/127.0.0.1\tethereumonarm-$MAC_HASH/g" /etc/hosts
+  sed -i "s/127.0.0.1.*/127.0.0.1\tethereumonarm-rpi4-$MAC_HASH/g" /etc/hosts
 
   # Create Ethereum account
   echo "Creating ethereum user"
@@ -90,8 +90,7 @@ if [ ! -f $FLAG ]; then
   # Install Ethereum packages
   echo Installing Ethereum packages
   apt-get update
-  apt-get -y install ethereumonarm-armbian-extras geth openethereum nethermind erigon besu prysm lighthouse nimbus teku eth2.0-deposit-cli
-  systemctl enable geth
+  apt-get -y install ethereumonarm-armbian-extras geth nethermind erigon besu prysm lighthouse nimbus teku eth2.0-deposit-cli
 
   # Create an alias for package updates
   cat <<EOF >> /etc/bash.bashrc

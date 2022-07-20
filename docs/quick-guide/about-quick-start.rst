@@ -5,7 +5,7 @@ About Quick Start Guide
 =======================
 
 This Guide walks you through all steps to get an Ethereum node up and running
-in a Raspberry Pi 4 in a few minutes.
+in an ARM board in a few minutes.
 
 The process is pretty straightforward but you will need some basic Linux/Networking skills 
 to complete the installation.
@@ -15,7 +15,7 @@ into `Dappnode`_ or `Avado`_.
 
 This is the installation process in a nutshell:
 
-* Get your **Raspberry Pi 4**
+* Get your **ARM Board**
 * **Download and flash** the Image into an MicroSD card
 * **Connect the SSD** to the USB port and the Ethernet Cable
 * Power on the device

@@ -33,9 +33,10 @@ in order to get further info on Ethereum how to manage the clients.
 
 .. note::
 
-  We are currently focusing on the Raspberry Pi 4 image. We will add more 
-  devices once we make sure they are reliable and have enough resources 
-  to run both Eth1 and Eth2 nodes.
+  We are now supporting 3 devices:
+  * Raspberry Pi 4 (8 GB RAM + external USB Disk)
+  * Hardkernel Odroid M1
+  * Radxa Rock 5B (16 GB RAM recommended)
 
 Quick Start Guide
 -----------------

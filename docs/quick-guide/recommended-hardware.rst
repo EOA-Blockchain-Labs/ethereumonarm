@@ -58,6 +58,7 @@ If you don't know what an Ethereum node is, please visit the :doc:`User Guide se
     * **Raspberry 4** (8GB RAM), **Odroid M1** or **Rock 5B (8GB/16GB RAM)** board
     * **MicroSD Card** (16 GB Class 10 minimum)
     * Storage
+    
       * Raspberry Pi 4 **2 TB SSD minimum** USB 3.0 disk or an SSD with an USB to SATA case (see :doc:`Storage </user-guide/storage>` section).
       * Odroid M1 **NVMe disk 2 TB minimum**
       * Rock 5B **NVMe disk 2 TB minimum**

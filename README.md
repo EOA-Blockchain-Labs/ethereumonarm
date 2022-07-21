@@ -1,3 +1,5 @@
+[![GitPOAP Badge](https://public-api.gitpoap.io/v1/repo/diglos/ethereumonarm/badge)](https://www.gitpoap.io/gh/diglos/ethereumonarm)
+
 # ethereumonarm
 Ethereum on ARM is a custom Linux image (currently for Raspberry Pi 4) that runs Ethereum clients as a boot service and automatically turns the Raspberry Pi 4 into a full Ethereum 1.0 node or a Ethereum 2.0 node.
 

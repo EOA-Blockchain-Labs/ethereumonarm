@@ -13,7 +13,7 @@ For more info about how the node works and get sync info, please visit
 our :doc:`User Guide </user-guide/about-user-guide>`.
 
 .. tip::
-  Remember that you can stake with your Raspberry Pi 4. If you have
+  Remember that you can stake with your ARM board. If you have
   32 ETH check out our Ethereum 2.0 section and get your validator up
   and running.
 

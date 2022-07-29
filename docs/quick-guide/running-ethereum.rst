@@ -5,39 +5,38 @@ Running an Ethereum node
 ========================
 
 Great, all set. Now it is time to run an Ethereum node. You 
-can run an Ethereum 1.0 client, Ethereum 2.0, or both.
+can run an Execution Layer client, Consensus Layer client, or both.
 
-In this Quick Start Guide we will run the :guilabel:`Geth` Ethereum 1.0 client 
-and the :guilabel:`Lighthouse` Ethereum 2.0 Beacon Chain client, both running in the same device.
+In this Quick Start Guide we will run the :guilabel:`Geth` EL
+and the :guilabel:`Lighthouse` CL Beacon Chain client, both running in the same device.
 
 .. note::
   :guilabel:`Geth` is enabled by default so you don't need to do anything to 
   get it up and running.
 
-  The Beacon Chain is part of the Ethereum 2.0 Blockchain but for staking   For this, you will 
-  need a **Validator** node which is a more complicated process. If you want to   run a Validator 
-  along with the Beacon Chain you will need 32 ETH and some knowledge of how   Ethereum2.0 works.
+  The Beacon Chain is part of the CL client but for staking.   For this, you will 
+  need a **Validator** node which is a more complicated process. If you want to run a Validator 
+  along with the Beacon Chain you will need 32 ETH and some knowledge of how the CL works.
 
   See more info in our :doc:`User Guide </user-guide/ethereum2.0>` section.
 
 
-Ethereum 1.0
-------------
+Execution Layer
+---------------
 
-The original Ethereum chain (with a Proof of Work consensus algorithm). 
+Formerly Ethereum 1.0 node. The original Ethereum chain (with a Proof of Work consensus algorithm). 
 Everything happens here right now, from transactions to smart contract 
 executions.
 
 .. note::
-  You can **not** mine Ethereum 1.0 with an ARM device as it depends on CPU
-  power and these devices are quite limited. So, you can run an Ethereum 1.0 node 
-  in order to achieve the following goals:
+  You can **not** mine with an ARM device until The Merge goes through.
+  In the meanwhile, you can run an EL node in order to achieve the following goals:
 
-  * Run as an Ethereum 1.0 provider for the Ethereum 2.0 Beacon chain (this means 
-    running both Eth1 and Eth2 nodes).
-  * In order to contribute to the Ethereum 1.0 network health and decentralization.
+  * Run as an EL provider for the CL Beacon chain (this means 
+    running both EL and CL nodes).
+  * In order to contribute to the Ethereum network health and decentralization.
 
-For enabling and starting :guilabel:`Geth` Eth1.0 client, you don't need to take any 
+For enabling and starting :guilabel:`Geth` EL client, you don't need to take any 
 action as the :guilabel:`Systemd` service is already enabled and running. Just 
 **Open the 30303 port in your router** so :guilabel:`Geth` can discover and connect 
 to other peers (both UDP and TCP protocols).
@@ -58,12 +57,11 @@ You can access Grafana's :guilabel:`Geth` Dashboard as well to get further info 
   client for ARM devices.
  
 
-Ethereum 2.0
-------------
+Consensus Layer
+---------------
 
-Ethereum 2.0 is the transition from **Proof of Work** to **Proof of Stake** consensus algorithm. It is
-currently on Phase 0 (since December 2020) and you can runan Eth2.0 node on your
-Raspberry Pi 4 as it doesn't depend upon CPU power.
+Formerly Ethereum 2.0. It is the transition from **Proof of Work** to **Proof of Stake** consensus algorithm. It is
+scheduled for 3Q 2022 and you will be able to "mine" (validating) ETH even with resource-constrained devices.
 
 In this Quick Guide we are going to take the first step on running an Ethereum 2.0 node: 
 enabling the Beacon Chain through the :guilabel:`Lighthouse` client. If you want to run the 

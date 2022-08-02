@@ -1,0 +1,13 @@
+[Unit]
+Description=Ethereum geth client daemon by The Ethereum Foundation (merge test)
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/geth-goerli.conf
+ExecStart=/usr/bin/geth $ARGS
+Restart=always
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target
+

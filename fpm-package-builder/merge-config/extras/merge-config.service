@@ -1,0 +1,7 @@
+[Unit]
+Description=Merge testnets git sync service
+[Service]
+ExecStart=/bin/sh -c "git  -C /etc/ethereum/merge-testnets/ pull"
+RemainAfterExit=yes
+[Install]
+WantedBy=sysinit.target

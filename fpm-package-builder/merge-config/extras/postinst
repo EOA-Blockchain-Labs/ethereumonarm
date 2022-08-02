@@ -1,0 +1,4 @@
+#!/bin/bash
+# post-installation script
+openssl rand -hex 32 | tr -d "\n" > "/etc/ethereum/jwtsecret"
+git  -C /etc/ethereum/ clone https://github.com/eth-clients/merge-testnets.git

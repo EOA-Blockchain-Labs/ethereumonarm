@@ -46,9 +46,9 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(MERGE_CONFIG_VERSION) --license $(PKG
 
 all: prepare deb clean
 
-prepare: ## Donwload the latest binary and prepare the package files
-	#mkdir -p sources/etc/ethereum/
-	#git  -C sources/etc/ethereum/ clone https://github.com/eth-clients/merge-testnets.git 
+prepare: ## Download the latest binary and prepare the package files
+	mkdir -p sources/etc/ethereum/
+	curl -o sources/etc/ethereum/finalized-prater-state.ssz -H 'Accept: application/octet-stream' https://goerli.checkpoint-sync.ethdevops.io/eth/v2/debug/beacon/states/finalized 
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)

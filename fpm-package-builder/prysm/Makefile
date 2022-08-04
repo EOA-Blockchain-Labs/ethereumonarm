@@ -3,8 +3,10 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-PRYSM_VERSION := $(shell curl -s "https://api.github.com/repos/prysmaticlabs/prysm/releases/latest" | jq -r '.tag_name' | tr -d "v")
-PRYSM_DHASH :=$(shell curl -s "https://api.github.com/repos/prysmaticlabs/prysm/tags" | jq -c 'map(select(.name | contains("$(PRYSM_VERSION)")))' | jq -r '.[0].commit.sha' | cut -c1-8)
+#PRYSM_VERSION := $(shell curl -s "https://api.github.com/repos/prysmaticlabs/prysm/releases/latest" | jq -r '.tag_name' | tr -d "v")
+#PRYSM_DHASH :=$(shell curl -s "https://api.github.com/repos/prysmaticlabs/prysm/tags" | jq -c 'map(select(.name | contains("$(PRYSM_VERSION)")))' | jq -r '.[0].commit.sha' | cut -c1-8)
+PRYSM_VERSION := 2.1.4-rc.0
+PRYSM_DHASH := a7c9c76
 
 PKG_RELEASE := 0
 PKG_NAME := prysm
@@ -29,14 +31,15 @@ PKG_DEB := ${pkg_name}_${prysm_version}-${pkg_release}_${pkg_arch_deb}.deb
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\
 	-a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-	--deb-systemd extras/prysm-beacon.service\
-	--deb-systemd extras/prysm-validator.service\
+	--deb-systemd extras/prysm-beacon.service --deb-systemd extras/prysm-beacon-prater.service\
+	--deb-systemd extras/prysm-validator.service --deb-systemd extras/prysm-validator-prater.service\
 	--conflicts prysm-beacon\
 	--conflicts prysm-validator\
 	--provides prysm-beacon\
 	--provides prysm-validator\
 	--replaces prysm-beacon\
-	--replaces prysm-validator
+	--replaces prysm-validator\
+	--depends merge-config
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\

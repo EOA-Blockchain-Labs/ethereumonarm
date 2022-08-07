@@ -80,30 +80,17 @@ information regarding the image and other Ethereum related software.
   /user-guide/storage
   /user-guide/security
 
-Kiln Testnet
-----------------
+Goerli
+------
 
-Flash our Kiln public testnet image in order to try the new Execution Layer and Consensus 
-Layer clients.
-
-.. toctree::
-  :maxdepth: 2
-  :caption: Kiln Testnet
-  :hidden:
-
-  /kiln/kiln-testnet
-
-Ropsten
--------
-
-Join the Ropsten HF (June 7th-8th)
+Join the Goerli HF (August 2022)
 
 .. toctree::
   :maxdepth: 2
   :caption: Ropsten Hard fork
   :hidden:
 
-  /ropsten/ropsten
+  /ropsten/goerli
 
 Developers Guide
 ----------------

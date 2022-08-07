@@ -110,4 +110,4 @@ to manage the correct services:
 Enabling a Validator
 ====================
 
-Soon.
+Coming Soon.

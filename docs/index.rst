@@ -90,7 +90,7 @@ Join the Goerli HF (August 2022)
   :caption: Ropsten Hard fork
   :hidden:
 
-  /ropsten/goerli
+  /goerli/goerli
 
 Developers Guide
 ----------------

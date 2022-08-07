@@ -87,7 +87,7 @@ Join the Goerli HF (August 2022)
 
 .. toctree::
   :maxdepth: 2
-  :caption: Ropsten Hard fork
+  :caption: Goerli Hard fork
   :hidden:
 
   /goerli/goerli

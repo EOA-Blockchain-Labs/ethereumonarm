@@ -9,10 +9,10 @@ We are supporting this fork by including config files and Systemd services along
 :guilabel:`Prysm` and :guilabel:`Teku` as Consensus Layer clients (**Prater** testnet
 
 Installation
-=================
+============
 
 Packages are already included in the mainnet clients so you need to install an **Ethereum on ARM image** for your device. 
-Please se the section `Download and install`
+Please se the section `Download and install`_
 
 .. _Download and install: https://ethereum-on-arm-documentation.readthedocs.io/en/latest/quick-guide/download-and-install.html
 

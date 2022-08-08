@@ -1,12 +1,12 @@
-About Goerli fork
-=================
+About Goerli/Prater fork
+========================
 
-**Goerli** hardfork is the last test before the mainnet upgrade known as **The Merge** that is schedule for the second
+**Goerli/Prater** hardfork is the last test before the mainnet upgrade known as **The Merge** that is schedule for the second
 week of August 2022.
 
 We are supporting this fork by including config files and Systemd services along with the mainnet clients packages. :guilabel:`Geth`,  
-:guilabel:`Nethermind` and :guilabel:`Besu` as Execution Layer clients and  :guilabel:`Lighthouse`, :guilabel:`Nimbus`, 
-:guilabel:`Prysm` and :guilabel:`Teku` as Consensus Layer clients.
+:guilabel:`Nethermind` and :guilabel:`Besu` as Execution Layer clients (**Goerli** testnet) and  :guilabel:`Lighthouse`, :guilabel:`Nimbus`, 
+:guilabel:`Prysm` and :guilabel:`Teku` as Consensus Layer clients (**Prater** testnet
 
 Installation
 =================
@@ -34,7 +34,7 @@ Please se the section `Download and install`
 What's included
 ===============
 
-* Goerli configuration: **Goerli** config files and Systemd services
+* Goerli/Prater configuration: **Goerli/Prater** config files and Systemd services
 * Execution Layer clients
 * Consensus Layer clients
 
@@ -43,8 +43,8 @@ to run through Systemd services and all necessary tools to make a deposit in the
 contract and generate the keys to enable a Validator.
 
 
-Goerli configuration
-====================
+Goerli/Prater configuration
+===========================
 
 The **network configuration** depends upon ``merge-config`` package. It contains all necessary files to 
 provide **info to the Execution and Consensus clients**. Particularly, it creates the ``jwtsecret`` file 
@@ -62,7 +62,7 @@ to update all Execution and Consensus Clients, run:
   sudo apt-get update
   sudo apt-get install geth besu nethermind lighthouse prysm teku nimbus
 
-If you have a fresh image installed, everything is ready.
+If you installed a fresh image installed, everything is ready.
 
 As you need to run along **Execution Layer and Consensus Layer** we set up 
 all **EL+CL combinations** as Systemd services for making it easy to start them.
@@ -85,7 +85,7 @@ As said, in order to get ready for the Goerli for you need no start 2 clients, a
 .. prompt:: bash $
 
   sudo systemctl start geth-goerli
-  sudo systemctl start ligthouse-beacon-goerli
+  sudo systemctl start ligthouse-beacon-prater
 
 To access the logs, use ``journalctl`` for each service, for instance:
 
@@ -99,11 +99,12 @@ Once you choose which clients you want to run, check the following table in orde
 to manage the correct services:
 
 .. note::
-  All config files are located in the **/etc/ethereum/** with the ``goerli`` suffix.
+  All config files are located in the **/etc/ethereum/** with the ``goerli`` suffix for EL clients 
+  and ``prater`` suffix for CL clients.
 
   
 .. note::
-  Please note that **Consensus clients** (except Nimbus) are configured to use the CheckPoint sync 
+  Please note that **Consensus clients** (except Nimbus) are configured to use the **CheckPoint sync** 
   so they will get in sync very quickly.
 
 

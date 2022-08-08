@@ -4,14 +4,25 @@ About Goerli/Prater fork
 **Goerli/Prater** hardfork is the last test before the mainnet upgrade known as **The Merge** that is schedule for the second
 week of August 2022.
 
-We are supporting this fork by including config files and Systemd services along with the mainnet clients packages. :guilabel:`Geth`,  
-:guilabel:`Nethermind` and :guilabel:`Besu` as Execution Layer clients (**Goerli** testnet) and  :guilabel:`Lighthouse`, :guilabel:`Nimbus`, 
-:guilabel:`Prysm` and :guilabel:`Teku` as Consensus Layer clients (**Prater** testnet
+We are supporting this fork by including config files and Systemd services along with the mainnet clients packages. 
+**Execution Layer clients run on the Goerli testnet** and **Consensus clients on Prater**.
+
+What's included
+===============
+
+* Goerli/Prater configuration: **Goerli/Prater** config files and Systemd services
+* **Execution Layer** clients: :guilabel:`Geth`, :guilabel:`Nethermind` and :guilabel:`Besu`
+* **Consensus Layer** clients: :guilabel:`Lighthouse`, :guilabel:`Prysm`, :guilabel:`Nimbus` and :guilabel:`Teku`
+
+The image includes all Consensus Layer clients and Execution Layer binaries **ready
+to run through Systemd services** and all necessary tools to make a deposit in the staking 
+contract and generate the keys to enable a Validator.
 
 Installation
 ============
 
-Packages are already included in the mainnet clients so you need to install an **Ethereum on ARM image** for your device. 
+Packages are already included in the mainnet clients so you need to install an **Ethereum on ARM image** for your device or update 
+your mainnet clients if you already have an Ethereum on ARM node running. 
 Please se the section `Download and install`_
 
 .. _Download and install: https://ethereum-on-arm-documentation.readthedocs.io/en/latest/quick-guide/download-and-install.html
@@ -30,17 +41,6 @@ Please se the section `Download and install`_
   * **30303**: For the Execution Layer clients
   * **9000**: For Consensus Layer clients except :guilabel:`Prysm` (:guilabel:`Lighthouse`, :guilabel:`Nimbus`)
   * **12000 (UDP) & 13000 (TCP)**: for Consensus Layer :guilabel:`Prysm`
-
-What's included
-===============
-
-* Goerli/Prater configuration: **Goerli/Prater** config files and Systemd services
-* Execution Layer clients
-* Consensus Layer clients
-
-The image includes all Consensus Layer clients and Execution Layer binaries ready
-to run through Systemd services and all necessary tools to make a deposit in the staking 
-contract and generate the keys to enable a Validator.
 
 
 Goerli/Prater configuration
@@ -62,24 +62,21 @@ to update all Execution and Consensus Clients, run:
   sudo apt-get update
   sudo apt-get install geth besu nethermind lighthouse prysm teku nimbus
 
-If you installed a fresh image installed, everything is ready.
-
-As you need to run along **Execution Layer and Consensus Layer** we set up 
-all **EL+CL combinations** as Systemd services for making it easy to start them.
+If you installed a fresh image, everything is ready.
 
 .. note::
   For :guilabel:`Lighthouse` and :guilabel:`Prysm` you will need to start an additional service 
   to run a Validator. We'll get to that in the `"Enabling a Validator"` section
 
-In it important to remark that you will need to run **both Execution and Consensus Layer clients** 
-in order to run an Ethereum node after The MergeSo, this means that **we need 2 Systemd services 
+In it important to remark that you will need to run **both Execution and Consensus Layer clients** at the same time
+in order to run an Ethereum node after The Merge. This means that **we need 2 Systemd services 
 for every EL+CL combination** (and 3 if you are running a validator with :guilabel:`Lighthouse` or :guilabel:`Prysm`).
 
 
-Managing clients
-~~~~~~~~~~~~~~~~
+Starting the clients
+~~~~~~~~~~~~~~~~~~~~
 
-As said, in order to get ready for the Goerli for you need no start 2 clients, an **Execution Layer** and a 
+As said, in order to get ready for the Goerli/Prater merge **you need to start 2 clients**, an **Execution Layer** and a 
 **Consensus Layer**. For instance, for starting :guilabel:`Geth` and :guilabel:`Lighthouse`, run:
 
 .. prompt:: bash $
@@ -91,20 +88,19 @@ To access the logs, use ``journalctl`` for each service, for instance:
 
 .. prompt:: bash $
 
-  sudo journalctl -u geth -f 
+  sudo journalctl -u geth -f
+  sudo journalctl -u lighthouse-beacon-prater -f
 
 
-For stopping a client, use the Systemctl stop directive
-Once you choose which clients you want to run, check the following table in order 
-to manage the correct services:
+For stopping a client, use the Systemctl stop directive.
 
 .. note::
-  All config files are located in the **/etc/ethereum/** with the ``goerli`` suffix for EL clients 
-  and ``prater`` suffix for CL clients.
+  All config files are located in the **/etc/ethereum/** with the ``goerli`` suffix for **EL clients** 
+  and ``prater`` suffix for **CL clients**.
 
   
 .. note::
-  Please note that **Consensus clients** (except Nimbus) are configured to use the **CheckPoint sync** 
+  Please note that **Consensus clients** (except :guilabel:`Nimbus`) are configured to use the **CheckPoint sync** 
   so they will get in sync very quickly.
 
 

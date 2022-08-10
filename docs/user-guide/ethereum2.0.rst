@@ -353,11 +353,11 @@ Nimbus
 .. csv-table::
   :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
 
-  `nimbus`, `/home/ethereum/.nimbus`, `/etc/ethereum/nimbus.conf`, `19000`
+  `nimbus`, `/home/ethereum/.nimbus`, `/etc/ethereum/nimbus.conf`, `9000`
 
 1.- Port forwarding
 
-You need to open the 19000 port (both UDP and TCP)
+You need to open the 9000 port (both UDP and TCP)
 
 2.- Start the Beacon Chain and the Validator
 

@@ -3,16 +3,16 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-IPFS_VERSION := $(shell curl -s "https://api.github.com/repos/ipfs/go-ipfs/releases/latest" | jq .tag_name | tr -d  '"'| tr -d "v")
+IPFS_VERSION := $(shell curl -s "https://api.github.com/repos/ipfs/kubo/releases/latest" | jq .tag_name | tr -d  '"'| tr -d "v")
 
 PKG_RELEASE := 0
-PKG_NAME := ipfs
+PKG_NAME := kubo
 
-PKG_DESCRIPTION := "Ipfs: A peer-to-peer hypermedia protocol designed to make the web faster, safer, and more open."
+PKG_DESCRIPTION := "Ipfs Kubo: A peer-to-peer hypermedia protocol designed to make the web faster, safer, and more open."
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
 
 CATEGORY := science
-WEB_URL :=  https://github.com/ipfs/go-ipfs
+WEB_URL :=  https://ipfs.tech/
 
 PKG_VENDOR := "Ethereum on ARM"
 PKG_LICENSE := MIT
@@ -30,7 +30,7 @@ PKG_DEB := $(PKG_NAME)_$(IPFS_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(IPFS_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\
 	-a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-	--deb-systemd extras/ipfs.service
+	--deb-systemd extras/ipfs.service --conflicts ipfs
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(PKG_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\
@@ -40,7 +40,8 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(PKG_VERSION) --license $(PKG_LICENSE)
 all: prepare deb clean
 
 prepare: ## Donwload the latest binary and prepare the package files
-	wget https://ipfs.io/ipns/dist.ipfs.io/go-ipfs/v$(IPFS_VERSION)/go-ipfs_v$(IPFS_VERSION)_linux-arm64.tar.gz -O - | tar -xz -C sources/usr/bin/ --wildcards --absolute-names --no-anchored --strip-components 1 '*/ipfs'
+	wget https://github.com/ipfs/kubo/releases/download/v$(IPFS_VERSION)/kubo_v$(IPFS_VERSION)_linux-arm64.tar.gz -O - | tar -xz -C sources/usr/bin/ --wildcards --absolute-names --no-anchored --strip-components 1 '*/ipfs'
+
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)

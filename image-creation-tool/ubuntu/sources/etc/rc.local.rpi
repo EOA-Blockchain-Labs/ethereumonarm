@@ -90,13 +90,13 @@ if [ ! -f $FLAG ]; then
   # Install Ethereum packages
   echo Installing Ethereum packages
   apt-get update
-  apt-get -y install ethereumonarm-armbian-extras geth nethermind erigon besu prysm lighthouse nimbus teku eth2.0-deposit-cli
+  apt-get -y install ethereumonarm-armbian-extras geth nethermind erigon besu prysm lighthouse nimbus teku staking-deposit-cli
 
   # Create an alias for package updates
   cat <<EOF >> /etc/bash.bashrc
   alias update-ethereum='
 sudo apt-get update
-sudo apt-get install geth openethereum nethermind besu prysm lighthouse nimbus teku'
+sudo apt-get install geth nethermind erigon besu prysm lighthouse nimbus teku staking-deposit-cli'
 EOF
   # Install monitoring packages
   wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -

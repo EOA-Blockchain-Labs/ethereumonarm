@@ -3,13 +3,13 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-DEPOSIT_VERSION := $(shell curl -s "https://api.github.com/repos/ethereum/eth2.0-deposit-cli/releases/latest" | jq -r '.tag_name'| tr -d "v")
-DEPOSIT_HASH := $(shell curl -s "https://api.github.com/repos/ethereum/eth2.0-deposit-cli/tags" | jq -r '.[0].commit.sha' | cut -c1-7)
+DEPOSIT_VERSION := $(shell curl -s "https://api.github.com/repos/ethereum/staking-deposit-cli/releases/latest" | jq -r '.tag_name'| tr -d "v")
+DEPOSIT_HASH := $(shell curl -s "https://api.github.com/repos/ethereum/staking-deposit-cli/tags" | jq -r '.[0].commit.sha' | cut -c1-7)
 
 PKG_RELEASE := 0
-PKG_NAME := eth2.0-deposit-cli
+PKG_NAME := staking-deposit-cli
 
-PKG_DESCRIPTION := "Ethereum Foundation eth2 deposit cli tool"
+PKG_DESCRIPTION := "deposit-cli is a tool for creating EIP-2335 format BLS12-381 keystores and a corresponding deposit_data*.json file for Ethereum Staking Launchpad."
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
 
 CATEGORY := science
@@ -29,7 +29,8 @@ PKG_DEB := $(PKG_NAME)_$(DEPOSIT_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
 
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(DEPOSIT_VERSION) --license $(PKG_LICENSE)\
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
-	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep
+	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
+	--conflicts eth2.0-deposit-cli
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(DEPOSIT_VERSION) --license $(PKG_LICENSE)\
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
@@ -40,7 +41,7 @@ BUILD_ARCH := $(shell uname -p)
 all: prepare deb clean
 
 prepare: ## Donwload the latest binary and compile the package files
-	wget https://github.com/ethereum/eth2.0-deposit-cli/releases/download/v$(DEPOSIT_VERSION)/staking_deposit-cli-$(DEPOSIT_HASH)-linux-arm64.tar.gz -O - | tar -xz -C sources/usr/bin --wildcards --absolute-names --no-anchored --strip-components 2
+	wget https://github.com/ethereum/staking-deposit-cli/releases/download/v$(DEPOSIT_VERSION)/staking_deposit-cli-$(DEPOSIT_HASH)-linux-arm64.tar.gz -O - | tar -xz -C sources/usr/bin --wildcards --absolute-names --no-anchored --strip-components 2
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)
 

@@ -82,7 +82,7 @@ As said, in order to get ready for the Goerli/Prater merge **you need to start 2
 .. prompt:: bash $
 
   sudo systemctl start geth-goerli
-  sudo systemctl start ligthouse-beacon-prater
+  sudo systemctl start lighthouse-beacon-prater
 
 To access the logs, use ``journalctl`` for each service, for instance:
 

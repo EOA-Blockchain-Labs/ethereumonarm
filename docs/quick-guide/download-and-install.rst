@@ -4,12 +4,14 @@
 Download and Install
 ====================
 
+There are 3 images available for **Raspberry Pi 4**, **Odroid M1** and **Rock 5B** (not available yet) boards.
+
 Download
 --------
 
-Download the image here:
-
 **Raspberry Pi 4**
+
+Download link:
 
 ethonarm_22.04.00.img.zip_
 
@@ -27,6 +29,8 @@ By running:
 
 **Rock 5B**
 
+Download link:
+
 ethonarm_rock5b_22.07.00.img.zip_
 
 .. _ethonarm_rock5b_22.07.00.img.zip: https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/EZEp3NlgoUJKpCoKRYLIVKMBtPGmFyy9lz__qdMKvc7xNw?download=1
@@ -42,6 +46,8 @@ By running:
   sha256sum ethonarm_rock5b_22.07.00.img.zip
 
 **Odroid M1**
+
+Download link:
 
 ethonarm_odroid_22.07.00.img.zip_
 

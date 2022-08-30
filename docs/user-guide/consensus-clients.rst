@@ -1,36 +1,35 @@
 .. Ethereum on ARM documentation documentation master file, created by
    sphinx-quickstart on Wed Jan 13 19:04:18 2021.
 
-Ethereum 2.0
-============
+Consensus Layer
+===============
 
 .. warning::
 
   **DISCLAIMER**: Ethereum is an experimental technology. Running the Ethereum on ARM image as 
-  an Ethereum 2.0 validator node can lead to loss of ETH. This is a risk operation and you 
+  an Consensus Layer validator node can lead you to loss of ETH. This is a risk operation and you 
   alone are responsible for your actions using the Ethereum sofware included in this image 
   or following the instructions of this guide.
 
-  We strongly recommend to try first an Ethereum 2.0 testnet (**Pyrmont** or **Prater**) and get 
+  We strongly recommend to try first an Consensus Layer testnet (**Prater**) and get 
   familiarized with the process before staking with real ETH.
 
 
-Ethereum 2.0 is the new Proof of Stake chain, currently running on phase 0. If you 
-want to get further info please visit the `ethereum 2.0 EF page`_ : 
+The Consensus Layer is the new Proof of Stake chain. If you 
+want to get further info please visit the `ethereum EF page`_ : 
 
-.. _ethereum 2.0 EF page: https://ethereum.org/en/eth2/
+.. _ethereum EF page: https://ethereum.org/es/upgrades/
 
-An Ethereum 2.0 client consists of two components, a Beacon chain and a Validator.
+An Ethereum Consensus Layer client consists of two components, a Beacon chain and a Validator.
 
 Beacon Chain
 ------------
 
-The Beacon Chain is a bridge between the Ethereum 1.0 and the Ethereum 2.0 worlds. 
-It connects the Validator to the Ethereum 1.0 chain so the validator can detect the 
+The Beacon Chain is a bridge between the Execution Layer and the Consensus Layer clients. 
+It connects the Validator to the EL so the validator can detect the 
 32 ETH deposit transaction (which contains the Validator public key). In order to 
-propose (create) blocks in Ethereum 2.0 you need the Beacon Chain synced and  
-connected to an Ethereum 1.0 provider (it can be an Ethereum 1.0 local node or 
-a third party Ethereum 1.0 provider (see below).
+propose (create) blocks in Ethereum you need the Beacon Chain synced and  
+connected to an EL client (running along 1 on 1).
 
 Validator
 ---------
@@ -38,17 +37,17 @@ Validator
 Here is basically where the stake process happens.
 
 The validator is the client that proposes blocks and does attestations according to 
-the Ethereum 2.0 specification (proposing a block would be the equivalent to "mine" a block 
-in the Ethereum 1.0 chain).
+the Consensus Layer specification (proposing a block would be the equivalent to "mine" a block 
+in the former Ethereum 1.0 chain).
 
 .. warning::
 
   There is a chance of losing your ETH if your validator does something wrong (this is 
-  called being slashed), so be extremely carefull and always follow the Ethereum 2.0 
+  called being slashed), so be extremely carefull and always follow the protocol 
   specification.
 
-  And never run the same validator (same private keys) in two nodes at the same time. You 
-  will be slashed.
+  And **never (NEVER)** run the same validator (same private keys) in two different validator nodes at the same time. 
+  **You will be slashed**.
 
 Staking Requirements
 --------------------
@@ -56,39 +55,36 @@ Staking Requirements
 In order to stake and run a validator you will need:
 
   * 32 ETH
-  * An Ethereum 1.0 node client or a Ethereum 1.0 provider
-  * An Ethereum 2.0 node client consisting of:
-    * A Beacon Chain
-    * A/several Validator(s)
+  * An Ethereum Execution Layer client
+  * An Ethereum Consensus Layer client consisting of:
+    * A Beacon Chain instance
+    * A Validator instance (with one or more validator keys)
 
 For making the 32 ETH deposit you need to create 2 key pairs and a Json file with the 
 necessary information to interact with the Eth2 mainnet contract through a transaction.
 
-The Ethereum Foundation provides a tool (eth2.0-deposit-tool) to create the keys and the 
+The Ethereum Foundation provides a tool (staking-deposit-cli) to create the keys and the 
 deposit information (which among others contains your validator(s) public key(s)). This 
-tool is already installed in your node.
+tool is already installed in your node in the new images. If you are running an older image 
+please, run:
+
+.. prompt:: bash $
+
+  sudo apt-get update
+  sudo apt-get install staking-deposit-cli
 
 Additionally, the Ethereum Foundation set up a web Launchpad to make the staking process 
-much more easy. Here you can upload the Json file and make the 32 ETH transaction 
+much more easy. Here you can upload the Deposit Json file and make the 32 ETH transaction 
 with your wallet or a web3 wallet (such as Metamask or Walletconnect).
 
 Validator setup and 32 ETH deposit
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The validator setup is client agnostic so it will be valid for all Ethereum 2.0 clients.
+The validator setup is client agnostic so it will be valid for all CL clients.
 
 .. note::
-  At this point, you should have an Ethereum 1.0 node running with the blockchain synced. 
-  You can not propose blocks without an Ethereum 1.0.
-
-  You can use a third party Ethereum 1.0 provider such as Infura_, QuikNode_, Chainstack_, 
-  or Alchemy_, but we'd love to see you running your own Ethereum 1.0 node ir order to contribute 
-  to the network decentralization and to avoid any issues with a third party provider.
-
-.. _Infura: https://infura.io
-.. _QuikNode: https://www.quiknode.io
-.. _Chainstack: https://chainstack.com
-.. _Alchemy: https://alchemyapi.io
+  At this point, you should have an Execution Layer + Consensus Layer clients combo (running along one instance 
+  1 on 1).
   
 The first step is to visit the EF Launchpad website to start the process:
 
@@ -100,16 +96,16 @@ The first step is to visit the EF Launchpad website to start the process:
 
 2. Read carefully and accept all warnings. 
    
-3. You can skip the Ethereum 1.0 selection as all clients are already installed. click 
+3. You can skip the **Execution Client** selection as all clients are already installed and configured. click 
    "Continue"
 
-4. Same for Ethereum 2.0 client. Click "Continue"
+4. Same for the **Consensus clients**. Click "Continue"
 
 5. In the next screen, select the number of validators you want to run. Remember that you need 
    32 ETH for each.
 
-6. Ethereum on ARM provides the Ethereum Foundation tool to generate, so, in you Raspberry Pi 
-   terminal and under the ethereum account, run (assuming 1 validator):
+6. Ethereum on ARM provides the Ethereum Foundation tool (staking-deposit-cli) to generate the keys, 
+   so, in your device terminal and under the ethereum account, run (assuming 1 validator):
 
 .. prompt:: bash $
 
@@ -120,22 +116,27 @@ down your mnemonic password, press any key and type it again as requested.
 
 .. warning::
 
-  Make sure you wrote down the nnemonic on a safe place. Without it you will NOT be
+  **Make sure you wrote down the nnemonic on a safe place**. Without it you will NOT be
   able to withdrawn your ETH in the future.
 
-  Again, please, make sure your mnemonic is safe!!!
+  **Again, please, make sure your mnemonic is safe!!!**
 
 8. Now you have 2 Json files under the ``validator_keys`` directory:
 
   * A deposit data file for making the 32 ETH transaction to the mainnet (which contains 
     your validator public key as well).
-  * A keystore file with your validator keys that will be used by your Ethereum 2.0 
+  * A keystore file with your validator keys that will be used by your Consensus Layer 
     client.
 
 9. Back to the Launchpad website, check **"I am keeping my keys safe and have written down 
 my mnemonic phrase"** and click **"Continue"**.
 
-10. It is time to send the 32 ETH deposit to the Ethereum 1.0 mainnet. You need the 
+.. warning::
+
+  At this point, **make sure you have both an Execution Layer client + a Consensus Layer client synced, 
+  running along and properly configured**.
+
+10. It is time to send the 32 ETH deposit to the Ethereum mainnet contractg. You need the 
 deposit file (located in your Raspberry Pi). You can, either copy and paste the 
 file content and save it as a new json file in your desktop computer or copy the file 
 from the Raspberry to your desktop through SSH.
@@ -169,28 +170,23 @@ Metamask, click continue and check all warnings. Click "Continue" and click
 **“Initiate the Transaction”**. Confirm the transaction in Metamask and wait 
 for the confirmation (a notification will pop up shortly).
 
-The Beacon Chain (which is connected to the Ethereum 1.0 chain) will detect 
+The Beacon Chain (which is connected to the Execution Layer client) will detect 
 this deposit and the Validator will be enabled.
 
 Congrats!, you just started your validator activation process.
 
-Running an Ethereum 2.0 client
+Running a Consensus Layer client
 ------------------------------
 
 .. warning::
 
-  **DISCLAIMER**: As of March 2021 we only tested :guilabel:`Geth` (Ethereum 1.0) and :guilabel:`Lighthouse` 
-  (Ethereum 2.0) in a Raspberry Pi 4. In the coming weeks, we will try other Ethereum 1.0 and 2.0 clients 
-  and label them as tested.
-
-  As so, we recommend to choose these 2 clients while we make sure the others are suitable to run in 
-  these devices.
+  Remember that you need to run an Execution Layer along with the Consensus Layer client as well.
 
 
 Supported clients
 ~~~~~~~~~~~~~~~~~
 
-Ethereum on ARM supports the main Ethereum 2.0 clients available.
+Ethereum on ARM supports the main Consensus Layer clients available.
 
 .. csv-table::
    :header: Client, Official Binary, Language, Home
@@ -208,7 +204,7 @@ Ethereum on ARM supports the main Ethereum 2.0 clients available.
 Lighthouse
 ~~~~~~~~~~
 
-:guilabel:`Lighthouse` is a full Ethereum 2.0 client written in Rust. It is very capable on
+:guilabel:`Lighthouse` is a full CL client written in Rust. It is very capable on
 running in resource-constrained devices such as the Raspberry Pi 4.
 
 .. csv-table::
@@ -216,10 +212,6 @@ running in resource-constrained devices such as the Raspberry Pi 4.
 
   `lighthouse-beacon lighthouse-validator`, `/home/ethereum/.lighthouse`, `/etc/ethereum/lighthouse-beacon.conf /etc/ethereum/lighthouse-validator.conf`, `9000`
 
-.. tip::
-  :guilabel:`Lighthouse` is the Ethereum 2.0 client that we've been running since December 
-  2020 (along with a Geth Ethereum 1.0 node), and, so far, the only client tested on this architecture 
-  in production.
 
 1.- Port forwarding
 
@@ -238,39 +230,46 @@ The Lighthouse client will start to sync the Beacon Chain. This can take several
 
 3.- Start de validator
 
-We need to import the previously generated validator keys. Run under the ethereum account:
+We need to import the previously generated validator keys and set the set Fee Recipient flag. Run under the ethereum account:
 
 .. prompt:: bash $
 
   lighthouse account validator import --directory=/home/ethereum/validator_keys
 
-Then, type your previously defined password and run:
+Then, type your previously defined password
+
+Now, copy your Ethereum Address for receiving tips and set the set the fee recipient flag:
 
 .. prompt:: bash $
 
-  sudo systemctl enable lighthouse-validator
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/lighthouse-validator.conf
+
+  For instance:
+
+.. prompt:: bash $
+
+  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/lighthouse-validator.conf
+
+.. prompt:: bash $
+
   sudo systemctl start lighthouse-validator
 
-The Lighthouse beacon chain and validator are now enabled.
+The Lighthouse beacon chain and validator are now started.
 
 
 Prysm
 ~~~~~
 
-:guilabel:`Prysm` is a full Ethereum 2.0 client written in Go.
+:guilabel:`Prysm` is a full Consensus Layer client written in Go.
 
 .. csv-table::
   :header: Systemd Services, Home Directory, Config Files, Default TCP/UDP Port
 
   `prysm-beacon prysm-validator`, `/home/ethereum/.eth2`, `/etc/ethereum/prysm-beacon.conf /etc/ethereum/prysm-validator.conf`, `13000 12000`
 
-.. note::
-
-  You need to accept the Prylabs terms of service. To do so, edit the above config files and add the --accept-terms-of-use flag.
-
 1.- Port forwarding
 
-You need to open the 13000 and 12000 ports in your router (both UDP and TCP)
+You need to open the 13000 (TCP) and 12000 (UDP) ports in your router/firewall
 
 2.- Start the beacon chain
 
@@ -292,12 +291,23 @@ We need to import the validator keys. Run under the ethereum account:
 Accept the default wallet path and enter a password for your wallet. Now enter 
 the password previously defined.
 
+Now, copy your Ethereum Address for receiving tips and set the set the fee recipient flag:
+
+.. prompt:: bash $
+
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/prysm-validator.conf
+
+  For instance, your command should look like this::
+
+.. prompt:: bash $
+
+  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/prysm-validator.conf
+
 Lastly, set up your password and start the client:
 
 .. prompt:: bash $
 
   echo "$YOUR_PASSWORD" > /home/ethereum/validator_keys/prysm-password.txt
-  sudo systemctl enable prysm-validator
   sudo systemctl start prysm-validator
 
 The Prysm beacon chain and the validator are now enabled.
@@ -305,7 +315,7 @@ The Prysm beacon chain and the validator are now enabled.
 Teku
 ~~~~
 
-:guilabel:`Teku` is a full Ethereum 2.0 client written in Java.
+:guilabel:`Teku` is a full Consensus Layer client written in Java.
 
 .. csv-table::
   :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
@@ -314,33 +324,49 @@ Teku
 
 1.- Port forwarding
 
-You need to open the 9151 port (both UDP and TCP)
+You need to open the 9000 port (both UDP and TCP)
 
 2.- Start the Beacon Chain and the Validator
 
-Under the Ethereum account, check the name of your keystore file:
+Copy your Ethereum Address for receiving tips and set the set the fee recipient flag:
 
 .. prompt:: bash $
 
-  ls /home/ethereum/validator_keys/keystore*
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/teku.conf
 
-Set the keystore file name in the teku config file (replace the $KEYSTORE_FILE variable with the file listed above)
-
-.. prompt:: bash $
-
-  sudo sed -i 's/changeme/$KEYSTORE_FILE/' /etc/ethereum/teku.conf
-
-Set the password previously entered:
+  For instance, your command should look like this:
 
 .. prompt:: bash $
 
-  echo "yourpassword" > validator_keys/teku-password.txt
+  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/teku.conf
+
+Now, let's create a password file with the same name as the json one in the validator_keys directory:
+
+You can see the keystore name by running:
+
+.. prompt:: bash $
+
+  ls /home/ethereum/validator_keys
+
+Create a txt file with the same name of the json one and write the filestore password (replace 
+$KEYSTORE_NAME for your file name and $YOUR_PASSWORD with a strong password generated by you):
+
+.. prompt:: bash $
+
+  touch validator_keys/$KEYSTORE_NAME.txt
+  echo "$YOUR_PASSWORD" > validator_keys/$KEYSTORE_NAME.txt
+
+now, you should see something like this in your validator_keys directory:
+
+.. prompt:: bash $
+
+  keystore-m_12381_3600_0_0_0-1661710189.json
+  keystore-m_12381_3600_0_0_0-1661710189.txt
 
 Start the beacon chain and the validator:
 
 .. prompt:: bash $
 
-  sudo systemctl enable teku
   sudo systemctl start teku
 
 The Teku beacon chain and validator are now enabled.
@@ -348,7 +374,7 @@ The Teku beacon chain and validator are now enabled.
 Nimbus
 ~~~~~~
 
-:guilabel:`Nimbus` is a full Ethereum 2.0 client written in Nim.
+:guilabel:`Nimbus` is a full Consensus Layer client written in Nim.
 
 .. csv-table::
   :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
@@ -367,11 +393,24 @@ We need to import the validator keys. Run under the ethereum account:
 
   nimbus_beacon_node deposits import /home/ethereum/validator_keys --data-dir=/home/ethereum/.nimbus --log-file=/home/ethereum/.nimbus/nimbus.log
 
-Enter the password previously defined and run:
+Enter the password previously defined.
+
+Now, copy your Ethereum Address for receiving tips and set the set the fee recipient flag:
 
 .. prompt:: bash $
 
-  sudo systemctl enable nimbus
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/nimbus.conf
+
+  For instance:
+
+.. prompt:: bash $
+
+  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/nimbus.conf
+
+Start the Nimbus service:
+
+.. prompt:: bash $
+
   sudo systemctl start nimbus
 
 The Nimbus beacon chain and validator are now enabled.

@@ -75,8 +75,8 @@ information regarding the image and other Ethereum related software.
 
   /user-guide/about-user-guide
   /user-guide/managing-clients
-  /user-guide/ethereum1.0
-  /user-guide/ethereum2.0
+  /user-guide/execution-clients
+  /user-guide/consensus-clients
   /user-guide/storage
   /user-guide/security
 

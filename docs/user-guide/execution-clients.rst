@@ -1,58 +1,47 @@
 .. Ethereum on ARM documentation documentation master file, created by
    sphinx-quickstart on Wed Jan 13 19:04:18 2021.
 
-Ethereum 1.0
-============
+Execution Clients
+=================
 
-Ethereum 1.0 is the first Ethereum implementation and uses a Proof of 
-Work algorithm.
-
-you can run an Ethereum node in order to achieve the following goals:
-
-  * Run as an **Ethereum 1.0 provider** for the Ethereum 2.0 Beacon chain 
-    (this means running both Ethereum 1.0 and Ethereum 2.0 nodes).
-
-  * Contribute to the Ethereum network **health and decentralization**.
+The **Execution Clients** (formerly Ethereum 1.0)
 
 Supported clients
 -----------------
 
-Ethereum on ARM supports all available clients that works on the ARM64 
-architecture.
+Ethereum on ARM supports all available EL clients.
 
-.. csv-table:: Ethereum 1.0 Supported Clients
+.. csv-table:: Execution Layer Supported Clients
    :header: Client, Official Binary, Language, Home
 
    `Geth`, `Yes`, `Go`, geth.ethereum.org_
    `Nethermind`, `Yes`, `.NET`, nethermind.io_
-   `Openethereum`,`No`, `Rust`, openethereum.github.io_
+   `Erigon`,`No`, `Go`, github.com/ledgerwatch/erigon_
    `Hyperledger Besu`, `Yes`, `Java`, hyperledger.org_
 
 .. _geth.ethereum.org: https://geth.ethereum.org
 .. _nethermind.io: https://nethermind.io
-.. _openethereum.github.io: https://openethereum.github.io
+.. _github.com/ledgerwatch/erigon: https://github.com/ledgerwatch/erigon
 .. _hyperledger.org: https://hyperledger.org/use/besu
 
 Geth
 ~~~~
 
-.. tip::
-  :guilabel:`Geth` is the only client that runs by default so when you 
-  log in for the first time it is already syncing the blockchain 
-  in the background.
-
-:guilabel:`Geth` is the reference node client for Ethereum 1.0. It 
-is the most reliable and rock solid client out there and the performance 
-on ARM64 is outstanding. It is capable of syncing the whole blockchain 
-in less than 2 days on a Raspberry Pi 4 with 8 GB RAM and a USB 3 SSD.
+:guilabel:`Geth` is the most used EL client. It is develope by the Ethereum Foundation team
+nd the performance on ARM64 is outstanding. It is capable of syncing the whole blockchain 
+in 2 days on a **Raspberry Pi 4 with 8 GB RAM** and in less that a day on the 
+**Radxa Rock 5B**.
 
 .. csv-table::
   :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
 
   `geth`, `/home/ethereum/.geth`, `/etc/ethereum/geth.conf`, `30303`
 
-You are already running :guilabel:`Geth` so you don't need to do anything to 
-run the client.
+You can start the client by running:
+
+.. prompt:: bash $
+
+  sudo systemctl start geth
 
 For further info of how the node is doing you can use Systemd journal or connect 
 to the Grafana dashboard. 
@@ -82,7 +71,7 @@ Now choose another client and start it through its Systemd service.
 Nethermind
 ~~~~~~~~~~
 
-:guilabel:`Nethermind` is a .NET enterprise-friendly full Ethereum 1.0 client.
+:guilabel:`Nethermind` is a .NET enterprise-friendly full Execution Layer client.
 
 .. csv-table::
   :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
@@ -109,16 +98,16 @@ In order to start the client run:
 
   sudo systemctl start besu
 
-Openethereum
-~~~~~~~~~~~~
+Erigon
+~~~~~~
 
 .. csv-table::
   :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
 
-  `openethereum`, `/home/ethereum/.openethereum`, `/etc/ethereum/openethereum.conf`, `30303`
+  `erigon`, `/home/ethereum/.erigon`, `/etc/ethereum/erigon.conf`, `30303`
 
 In order to start the client run:
 
 .. prompt:: bash $
 
-  sudo systemctl start openethereum
+  sudo systemctl start erigon

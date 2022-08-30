@@ -8,8 +8,8 @@ This User Guide explains in detail how to run an Ethereum node (both Execution L
 to manage them through Systemd services. You will find here:
 
   * How to manage the Ethereum client Systemd services and other common tasks
-  * Detailed info about the Execution Layer clients (formerly Ethereum 1.0 clients) and how to run them
-  * Detailed info about the Consensus Layer clients (formerly Ethereum 2.0 clients) and how to run them
+  * Detailed info about the Execution Layer clients (formerly known as Ethereum 1.0 clients) and how to run them
+  * Detailed info about the Consensus Layer clients (formerly known as Ethereum 2.0 clients) and how to run them
   * How to run and configure other Ethereum related software
 
 .. warning::

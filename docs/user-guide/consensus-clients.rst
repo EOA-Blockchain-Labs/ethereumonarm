@@ -16,7 +16,7 @@ Consensus Layer
 
 
 The Consensus Layer is the new Proof of Stake chain. If you 
-want to get further info please visit the `ethereum EF page`_ : 
+want to get further info please visit the `ethereum EF page`_
 
 .. _ethereum EF page: https://ethereum.org/es/upgrades/
 
@@ -29,12 +29,12 @@ The Beacon Chain is a bridge between the Execution Layer and the Consensus Layer
 It connects the Validator to the EL so the validator can detect the 
 32 ETH deposit transaction (which contains the Validator public key). In order to 
 propose (create) blocks in Ethereum you need the Beacon Chain synced and  
-connected to an EL client (running along 1 on 1).
+connected to an EL client.
 
 Validator
 ---------
 
-Here is basically where the stake process happens.
+Here is basically where the stake process happens (with the new Proof of Stake algorithm).
 
 The validator is the client that proposes blocks and does attestations according to 
 the Consensus Layer specification (proposing a block would be the equivalent to "mine" a block 
@@ -56,16 +56,15 @@ In order to stake and run a validator you will need:
 
   * 32 ETH
   * An Ethereum Execution Layer client
-  * An Ethereum Consensus Layer client consisting of:
-    * A Beacon Chain instance
-    * A Validator instance (with one or more validator keys)
+  * An Ethereum Consensus Layer client consisting of: A Beacon Chain instance and a 
+  Validator instance (with one or more validator keys)
 
 For making the 32 ETH deposit you need to create 2 key pairs and a Json file with the 
 necessary information to interact with the Eth2 mainnet contract through a transaction.
 
 The Ethereum Foundation provides a tool (staking-deposit-cli) to create the keys and the 
 deposit information (which among others contains your validator(s) public key(s)). This 
-tool is already installed in your node in the new images. If you are running an older image 
+tool is already installed in your node in the new Ethereum on ARM images. If you are running an older image 
 please, run:
 
 .. prompt:: bash $
@@ -83,8 +82,8 @@ Validator setup and 32 ETH deposit
 The validator setup is client agnostic so it will be valid for all CL clients.
 
 .. note::
-  At this point, you should have an Execution Layer + Consensus Layer clients combo (running along one instance 
-  1 on 1).
+  At this point, you should have an Execution Layer + Consensus Layer clients combo ( both clients 
+  running along one 1 on 1).
   
 The first step is to visit the EF Launchpad website to start the process:
 
@@ -414,4 +413,3 @@ Start the Nimbus service:
   sudo systemctl start nimbus
 
 The Nimbus beacon chain and validator are now enabled.
-

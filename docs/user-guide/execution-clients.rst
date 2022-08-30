@@ -4,19 +4,22 @@
 Execution Clients
 =================
 
-The **Execution Clients** (formerly Ethereum 1.0)
+The **Execution Clients** (formerly known as Ethereum 1.0) are the clients responsible for 
+executing transactions, among other operations.
+
+These clients included the Proof of work algorithm that will be depreciated as of 14th September 2022.
 
 Supported clients
 -----------------
 
-Ethereum on ARM supports all available EL clients.
+Ethereum on ARM supports all available Execution Layer clients.
 
 .. csv-table:: Execution Layer Supported Clients
    :header: Client, Official Binary, Language, Home
 
    `Geth`, `Yes`, `Go`, geth.ethereum.org_
    `Nethermind`, `Yes`, `.NET`, nethermind.io_
-   `Erigon`,`No`, `Go`, github.com/ledgerwatch/erigon_
+   `Erigon`,`No (crosscompiled)`, `Go`, `github.com/ledgerwatch/erigon`_
    `Hyperledger Besu`, `Yes`, `Java`, hyperledger.org_
 
 .. _geth.ethereum.org: https://geth.ethereum.org
@@ -24,12 +27,16 @@ Ethereum on ARM supports all available EL clients.
 .. _github.com/ledgerwatch/erigon: https://github.com/ledgerwatch/erigon
 .. _hyperledger.org: https://hyperledger.org/use/besu
 
+.. warning::
+
+  Remember that you need to run a Consensus Layer client along with the Execution Layer client as well.
+
 Geth
 ~~~~
 
 :guilabel:`Geth` is the most used EL client. It is develope by the Ethereum Foundation team
-nd the performance on ARM64 is outstanding. It is capable of syncing the whole blockchain 
-in 2 days on a **Raspberry Pi 4 with 8 GB RAM** and in less that a day on the 
+and the performance on ARM64 devices is outstanding. It is capable of syncing the whole blockchain 
+in 2 days on a **Raspberry Pi 4 with 8 GB RAM** and in less that 1 day on the 
 **Radxa Rock 5B**.
 
 .. csv-table::

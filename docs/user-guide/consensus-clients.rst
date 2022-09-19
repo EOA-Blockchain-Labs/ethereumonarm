@@ -206,15 +206,8 @@ CheckPoint sync
 You can **sync your Consensus Client in minutes** using the info provided by an already synced Beacon Node. 
 All Consensus clients support this sync mode and the necessary flags are detailed on each client section.
 
-You will need to pass a valid URL to your client from a synced client. The easiest way to do this is by using 
-an Infura Endpoint (registration needed). See the fantastic `Somer Esat guides`_ that explain in detail how to do so:
-
-.. _Somer Esat guides: https://github.com/SomerEsat/ethereum-staking-guides
-
-For instance, see the "Step 11 — Configure the Beacon Node Service" of the Lighthouse guide in orde to create a valid 
-`Infura CheckPoint URL`_:
-
-.. _Infura CheckPoint URL: https://someresat.medium.com/guide-to-staking-on-ethereum-ubuntu-lighthouse-773f5d982e03
+You will need to pass a valid URL to your client from a synced client. We include now the **EthStaker** URL 
+Checkpoint Sync as default. You can change it at any time by editing the CL config file.
 
 
 Lighthouse
@@ -242,7 +235,8 @@ Under the ethereum account, run:
   sudo systemctl enable lighthouse-beacon
   sudo systemctl start lighthouse-beacon
 
-The Lighthouse client will start to sync the Beacon Chain. This can take several hours.
+The Lighthouse client will start to sync the Beacon Chain. **This may take just some minutes as Checkpoint sync 
+is enabled by default.**
 
 3.- Start de validator
 
@@ -272,11 +266,6 @@ Now, copy your Ethereum Address for receiving tips and set the set the fee recip
 
 The Lighthouse beacon chain and validator are now started.
 
-.. tip::
-  If you want to enable the Checkpoint sync to get your Lighthouse node up and running in minutes, get a valid 
-  Checkpoint URL (see above section **"Checkpoint Sync"**) and add the flag ``--checkpoint-sync-url $CHECKPOINT_URL`` to  
-  the ``/etc/ethereum/lighthouse-beacon.conf`` file replacing ``$CHECKPOINT_URL`` for your URL. Then restart the beacon node.
-
 Prysm
 ~~~~~
 
@@ -299,6 +288,9 @@ Under the ethereum account, run:
 
   sudo systemctl enable prysm-beacon
   sudo systemctl start prysm-beacon
+
+This will start to sync the Beacon Chain. **This may take just some minutes as Checkpoint sync 
+is enabled by default.**
 
 3.- Start de validator
 
@@ -331,12 +323,6 @@ Lastly, set up your password and start the client:
   sudo systemctl start prysm-validator
 
 The Prysm beacon chain and the validator are now enabled.
-
-.. tip::
-  If you want to enable the Checkpoint sync to get your Prysm node up and running in minutes, get a valid 
-  Checkpoint URL (see above section **"Checkpoint Sync"**) and add the flags ``--checkpoint-sync-url=$CHECKPOINT_URL`` and 
-  ``--genesis-beacon-api-url=$CHECKPOINT_URL`` to the ``/etc/ethereum/prysm-beacon.conf`` file replacing ``$CHECKPOINT_URL`` 
-  for your URL. Then restart the beacon node.
 
 Teku
 ~~~~
@@ -395,12 +381,8 @@ Start the beacon chain and the validator:
 
   sudo systemctl start teku
 
-The Teku beacon chain and validator are now enabled.
-
-.. tip::
-  If you want to enable the Checkpoint sync to get your Teku node up and running in minutes, get a valid 
-  Checkpoint URL (see above section **"Checkpoint Sync"**) and add the flag ``--initial-state=$CHECKPOINT_URL`` to  
-  the ``/etc/ethereum/teku.conf`` file replacing ``$CHECKPOINT_URL`` for your URL. Then restart the beacon node.
+The Teku beacon chain and validator are now enabled. the Beacon Chain will sync in just 
+a few minutes as **Checkpoint sync is enabled by default.** 
 
 Nimbus
 ~~~~~~
@@ -438,15 +420,16 @@ Now, copy your Ethereum Address for receiving tips and set the set the fee recip
 
   sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/nimbus.conf
 
-Start the Nimbus service:
+Now, in order to enable the **Checkpoint Sync** run the following command:
+
+.. prompt:: bash $
+
+  nimbus_beacon_node trustedNodeSync --network=mainnet --data-dir=/home/ethereum/.nimbus --trusted-node-url=https://beaconstate.ethstaker.cc --backfill=false
+
+Wait for the command to finish and start the Nimbus service:
 
 .. prompt:: bash $
 
   sudo systemctl start nimbus
 
 The Nimbus beacon chain and validator are now enabled.
-
-.. tip::
-  If you want to enable the Checkpoint sync to get your Nimbus node up and running in minutes, get a valid 
-  Checkpoint URL (see above section **"Checkpoint Sync"**) and add the flag ``--trusted-node-url=$CHECKPOINT_URL`` to  
-  the ``/etc/ethereum/nimbus.conf`` file replacing ``$CHECKPOINT_URL`` for your URL. Then restart the beacon node.

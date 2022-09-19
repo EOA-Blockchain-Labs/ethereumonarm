@@ -179,7 +179,12 @@ Running a Consensus Layer client
 
 .. warning::
 
-  Remember that you need to run an Execution Layer along with the Consensus Layer client as well.
+  Remember that you need to run an Execution Layer along with the Consensus Layer client as well. 
+  CL client is the one telling the EL how to follow the head of the chain, so, without it, EL would 
+  be lost and it could not start the sync.
+
+  **You need a synced Consensus Client for the Execution Client sync to start. As we are using Checkpoint 
+  Sync, CL client should be in sync in a few minutes.**
 
 
 Supported clients

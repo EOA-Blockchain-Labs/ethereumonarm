@@ -90,12 +90,7 @@ You can get the client logs by running:
   sudo journalctl -u lighthouse-beacon -f
 
 .. tip::
-  It is recommended to wait for :guilabel:`Geth` client to get synced (this will take about 1 day and a half) 
-  before enabling and running the Beacon chain.
- 
-  You can run both Eth1.0 and Eth2.0 nodes on the same Raspberry Pi 4 (8 GB RAM model). We've been 
-  staking since day zero with Geth as Eth1.0 provider and Lighthouse as Eth2.0 client on our Raspberry Pi 4.
-
-  It is important to have a backup plan, though. We recommend to setup an spare device with an Ethereum 1.0 node 
-  in sync ready for take over if something goes wrong.
+  All CL clients are configured to use CheckPoint Sync that will get the 
+  Beacon Chain in sync in just a few minutes. Take a look to our User Guide for 
+  more info.
 

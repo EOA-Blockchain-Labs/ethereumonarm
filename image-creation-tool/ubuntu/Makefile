@@ -6,9 +6,9 @@ DATE := $(shell date +"%y.%m")
 RELEASE:= 00
 
 # Raspberry Pi 4 image
-RPI_URL := https://cdimage.ubuntu.com/releases/20.04.4/release/ubuntu-20.04.4-preinstalled-server-arm64+raspi.img.xz
-RPI_XZ := ubuntu-20.04.4-preinstalled-server-arm64+raspi.img.xz
-RPI_ISO := ubuntu-20.04.4-preinstalled-server-arm64+raspi.img
+RPI_URL := https://cdimage.ubuntu.com/releases/20.04.4/release/ubuntu-20.04.5-preinstalled-server-arm64+raspi.img.xz
+RPI_XZ := ubuntu-20.04.5-preinstalled-server-arm64+raspi.img.xz
+RPI_ISO := ubuntu-20.04.5-preinstalled-server-arm64+raspi.img
 rpi_iso:
 	mkdir /tmp/ubuntu_iso
 	wget  $(RPI_URL)

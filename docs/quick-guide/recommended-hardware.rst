@@ -4,7 +4,7 @@
 Recommended Hardware
 ====================
 
-In order to run an Ethereum node with our images, you will need a Raspberry Pi 4, an Odroid M1 or A
+In order to run an Ethereum node with our images, you will need a Raspberry Pi 4, an Odroid M1 or a
 Rock 5B Board with some additional components.
 
 This is the recommended hardware to run an **Ethereum 1.0 node**, An **Ethereum 2.0 node** or **both**. 
@@ -29,11 +29,11 @@ If you don't know what an Ethereum node is, please visit the :doc:`User Guide se
     * **A case with heatsink and fan**
     * USB keyboard, Monitor and HDMI cable (micro-HDMI) (Optional)
 
-    We strongly recomend a 8 GB RAM board.
+    We strongly recommend a 8 GB RAM board.
 
   .. tab:: Consensus Layer node
 
-    Recommended hardware and settings for running an Consensus Layer node (Beacon Chain and Validator).
+    Recommended hardware and settings for running a Consensus Layer node (Beacon Chain and Validator).
 
     * **Raspberry 4** (8GB RAM), **Odroid M1** or **Rock 5B (8GB/16GB RAM)** board
     * **MicroSD Card** (16 GB Class 10 minimum)

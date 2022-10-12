@@ -16,7 +16,7 @@ into `Dappnode`_ or `Avado`_.
 This is the installation process in a nutshell:
 
 * Get your **ARM Board**
-* **Download and flash** the Image into an MicroSD card
+* **Download and flash** the Image into a MicroSD card
 * **Connect the SSD** to the USB port and the Ethernet Cable
 * Power on the device
 * Wait till the installation script finishes all tasks

@@ -39,7 +39,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(NETHERMIND_VERSION) --license $(PKG_L
 	--depends	libsnappy-dev\
 	--depends libc6-dev\
 	--depends libc6\
-	--depends librocksdb-dev\
+	--conflicts librocksdb-dev --conflicts librocksdb5.17 \
 	--depends unzip\
 	--depends merge-config
 

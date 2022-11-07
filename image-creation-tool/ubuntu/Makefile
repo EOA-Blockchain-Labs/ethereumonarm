@@ -35,15 +35,16 @@ odroid_iso:
 	rmdir /tmp/ubuntu_iso
 
 # Radxa Rock 5B image
-ROCK5B_URL := https://github.com/radxa/debos-radxa/releases/download/20220919-0624/rock-5b-ubuntu-focal-server-arm64-20220919-0839-gpt.img.xz
+#ROCK5B_URL := https://github.com/radxa/debos-radxa/releases/download/20220919-0624/rock-5b-ubuntu-focal-server-arm64-20220919-0839-gpt.img.xz  
 ROCK5B_XZ := rock-5b-ubuntu-focal-server-arm64-20220919-0839-gpt.img.xz
 ROCK5B_ISO := rock-5b-ubuntu-focal-server-arm64-20220919-0839-gpt.img
 rock5b_iso:
 	mkdir /tmp/ubuntu_iso
-	wget  $(ROCK5B_URL)
+	#wget  $(ROCK5B_URL)
 	unxz $(ROCK5B_XZ)
 	sudo mount -o loop,offset=553648128 $(ROCK5B_ISO) /tmp/ubuntu_iso
 	sudo cp -a sources/etc/rc.local.rock5b /tmp/ubuntu_iso/etc/rc.local
+	sudo cp -a sources/etc/sysfs.d/tk-optimize-rk3588.conf /tmp/ubuntu_iso/etc/sysfs.d/
 	sudo umount /tmp/ubuntu_iso
 	mv $(ROCK5B_ISO) ethonarm_rock5b_$(DATE).$(RELEASE).img
 	rmdir /tmp/ubuntu_iso

@@ -18,8 +18,6 @@ and the :guilabel:`Lighthouse` CL Beacon Chain client, both running in the same 
   need a **Validator** node which is a more complicated process. If you want to run a Validator 
   along with the Beacon Chain you will need 32 ETH and some knowledge of how the CL works.
 
-  See more info in our :doc:`User Guide </user-guide/ethereum2.0>` section.
-
 
 Execution Layer
 ---------------
@@ -64,9 +62,7 @@ Formerly Ethereum 2.0. It is the transition from **Proof of Work** to **Proof of
 scheduled for 3Q 2022 and you will be able to "mine" (validating) ETH even with resource-constrained devices.
 
 In this Quick Guide we are going to take the first step on running an Ethereum 2.0 node: 
-enabling the Beacon Chain through the :guilabel:`Lighthouse` client. If you want to run the 
-Validator, please see our :doc:`User Guide </user-guide/ethereum2.0>` to get a step by step 
-explanation.
+enabling the Beacon Chain through the :guilabel:`Lighthouse` client.
 
 For enabling and starting the :guilabel:`Lighthouse` Eth2.0 Beacon Chain, follow these steps:
 

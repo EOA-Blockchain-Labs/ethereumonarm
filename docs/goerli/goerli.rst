@@ -54,7 +54,7 @@ which EC and CL use to communicate. The config files are located on ``/etc/ether
 Quick start guide
 =================
 
-If you already have an **Ethereum on ARM image** installed you can update your clients with the ``apt-get``commnand. In order
+If you already have an **Ethereum on ARM image** installed you can update your clients with the ``apt-get`` commnand. In order
 to update all Execution and Consensus Clients, run:
 
 .. prompt:: bash $

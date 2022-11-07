@@ -57,7 +57,7 @@ In order to stake and run a validator you will need:
   * 32 ETH
   * An Ethereum Execution Layer client
   * An Ethereum Consensus Layer client consisting of: A Beacon Chain instance and a 
-  Validator instance (with one or more validator keys)
+    Validator instance (with one or more validator keys)
 
 For making the 32 ETH deposit you need to create 2 key pairs and a Json file with the 
 necessary information to interact with the Eth2 mainnet contract through a transaction.
@@ -175,7 +175,7 @@ this deposit and the Validator will be enabled.
 Congrats!, you just started your validator activation process.
 
 Running a Consensus Layer client
-------------------------------
+--------------------------------
 
 .. warning::
 

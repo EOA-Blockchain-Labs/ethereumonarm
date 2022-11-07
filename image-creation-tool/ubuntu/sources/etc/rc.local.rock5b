@@ -84,7 +84,7 @@ if [ ! -f $FLAG ]; then
   # Install Ethereum packages
   echo Installing Ethereum packages
   apt-get update
-  apt-get -y install ethereumonarm-armbian-extras geth nethermind erigon besu prysm lighthouse nimbus teku staking-deposit-cli
+  apt-get -y install geth nethermind erigon besu prysm lighthouse nimbus teku staking-deposit-cli
 
   # Create an alias for package updates
   cat <<EOF >> /etc/bash.bashrc
@@ -93,29 +93,29 @@ sudo apt-get update
 sudo apt-get install geth nethermind erigon besu prysm lighthouse nimbus teku staking-deposit-cli'
 EOF
   # Install monitoring packages
-  apt-get -y install gpg wget
-  wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
-  echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
-  apt-get -y update
-  apt-get -y install grafana
-  systemctl enable grafana-server
-  useradd -m prometheus
-  mkdir -p /home/prometheus/node-exporter/
-  chown -R  prometheus:prometheus /home/prometheus/
-  apt-get install -y prometheus prometheus-node-exporter prometheus-pushgateway
+  #apt-get -y install gpg wget
+  #wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+  #echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+  #apt-get -y update
+  #apt-get -y install grafana
+  #systemctl enable grafana-server
+  #useradd -m prometheus
+  #mkdir -p /home/prometheus/node-exporter/
+  #chown -R  prometheus:prometheus /home/prometheus/
+  #apt-get install -y prometheus prometheus-node-exporter prometheus-pushgateway
 
   #Install ufw
   apt-get -y install ufw
   ufw --force disable
 
-  apt-get -y install ethereumonarm-monitoring-extras
-  set-ethereunonarm-monitoring-extras -o
+  #apt-get -y install ethereumonarm-monitoring-extras
+  #set-ethereunonarm-monitoring-extras -o
 
   #Disable root user
   passwd -l root
 
   #Delete rock user
-  deluser rock
+  #deluser rock
 
   #the next line creates an empty file so it won't run on next boot
   touch $FLAG

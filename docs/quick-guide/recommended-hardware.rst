@@ -8,7 +8,7 @@ In order to run an Ethereum node with our images, you will need a Raspberry Pi 4
 Rock 5B Board with some additional components.
 
 .. tip::
-We strongly recommend the **Rock 5B** board to run an Ethereum full/staking node.
+  We strongly recommend the **Rock 5B** board to run an Ethereum full/staking node.
 
 This is the recommended hardware to run an **Execution Layer client** + **Consensus Layer client**. 
 If you don't know what an Ethereum node is, please visit the :doc:`User Guide section </user-guide/about-user-guide>`.

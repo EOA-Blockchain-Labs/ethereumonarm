@@ -14,9 +14,9 @@ Rock 5B
 
 You can acquire the Rock 5B from several distributors. These are the recommended components (from Allnetchina):
 
-`Rock 5B board 16 GB`_
-`Acrylic protector with passive heatsink`_
-`Radxa power supply`_
+* `Rock 5B board 16 GB`_
+* `Acrylic protector with passive heatsink`_
+* `Radxa power supply`_
 
 You will need a MicroSD and an NVME or USB3 disk as well.
 

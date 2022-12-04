@@ -4,10 +4,46 @@
 Download and Install
 ====================
 
-There are 3 images available for **Raspberry Pi 4**, **Odroid M1** and **Rock 5B** (not available yet) boards.
+There are 3 images available for  **Rock 5B**, **Raspberry Pi 4** and **Odroid M1** boards.
+
+Getting the hardware
+--------------------
+
+Rock 5B
+~~~~~~~
+
+You can acquire the Rock 5B from several distributors. These are the recommended components (from Allnetchina):
+
+`Rock 5B board 16 GB`_
+`Acrylic protector with passive heatsink`_
+`Radxa power supply`_
+
+You will need a MicroSD and an NVME or USB3 disk as well.
+
+.. _Rock 5B board 16 GB: https://shop.allnetchina.cn/products/rock5-model-b?variant=39514839515238
+.. _Acrylic protector with passive heatsink: https://shop.allnetchina.cn/products/rock5-b-acrylic-protector?variant=39877626396774
+.. _Radxa power supply: https://shop.allnetchina.cn/products/radxa-power-pd-30w?variant=39929851904102
 
 Download
 --------
+
+**Rock 5B**
+
+Download link:
+
+ethonarm_rock5b_22.12.00.img.zip_
+
+.. _ethonarm_rock5b_22.12.00.img.zip: https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/EWl-x5A-t9hPgc-8e_2dTuQBT5plzrIi6KLzkCDSE9H4iw?download=1
+
+You can verify the file with the following ``SHA256`` Hash:
+
+``SHA256 c47d05296f6af4f2a9ef58266902039aed8aabe74f6de85fde13edf5c598fa93``
+
+By running:
+
+.. prompt:: bash $
+
+  sha256sum ethonarm_rock5b_22.12.00.img.zip
 
 **Raspberry Pi 4**
 
@@ -26,24 +62,6 @@ By running:
 .. prompt:: bash $
 
   sha256sum ethonarm_22.04.00.img.zip
-
-**Rock 5B**
-
-Download link:
-
-ethonarm_rock5b_22.07.00.img.zip_
-
-.. _ethonarm_rock5b_22.07.00.img.zip: https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/EZEp3NlgoUJKpCoKRYLIVKMBtPGmFyy9lz__qdMKvc7xNw?download=1
-
-You can verify the file with the following ``SHA256`` Hash:
-
-``SHA256 a8ae4886564251c9f0abfa9dfb03fbe99872e97bafc25a3dc187d6565a6462d4``
-
-By running:
-
-.. prompt:: bash $
-
-  sha256sum ethonarm_rock5b_22.07.00.img.zip
 
 **Odroid M1**
 
@@ -89,12 +107,12 @@ You should see a device named ``mmcblk0`` or ``sd(x)``.
   The ``dd`` command will completely erase your MicroSD device so make sure you are targeting 
   the correct one.
 
-Unzip and flash the image (we are using here the Raspberry Pi 4 image):
+Unzip and flash the image (we are using here the Rock 5B image):
 
 .. prompt:: bash $
 
-   unzip ethonarm_22.04.00.img.zip
-   sudo dd bs=1M if=ethonarm_22.04.00.img of=/dev/mmcblk0 conv=fdatasync status=progress
+   unzip ethonarm_rock5b_22.12.00.img.zip
+   sudo dd bs=1M if=ethonarm_rock5b_22.12.00.img of=/dev/mmcblk0 conv=fdatasync status=progress
 
 Insert MicroSD
 --------------

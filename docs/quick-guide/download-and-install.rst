@@ -18,16 +18,33 @@ You can acquire the Rock 5B from several distributors. These are the recommended
 * `Acrylic protector with passive heatsink`_
 * `Radxa power supply`_
 
-You will need a MicroSD and an NVME or USB3 disk as well.
+You will need a **MicroSD** and an **NVME** or **USB3 disk** as well (we recommend an NVMe disk).
 
 .. _Rock 5B board 16 GB: https://shop.allnetchina.cn/products/rock5-model-b?variant=39514839515238
 .. _Acrylic protector with passive heatsink: https://shop.allnetchina.cn/products/rock5-b-acrylic-protector?variant=39877626396774
 .. _Radxa power supply: https://shop.allnetchina.cn/products/radxa-power-pd-30w?variant=39929851904102
 
-Download
---------
+Raspberry Pi 4
+~~~~~~~~~~~~~~
 
-**Rock 5B**
+You can acquire a Raspberry Pi 4 from multiples sources. This is the official website.
+
+* `Raspberry Pi 4 (8 GB)`_
+
+.. _Raspberry Pi 4 (8 GB): https://www.raspberrypi.com/products/raspberry-pi-4-model-b/?variant=raspberry-pi-4-model-b-8gb
+
+Make sure you pick the 8 GB RAM version.
+
+
+
+Odroid M1
+~~~~~~~~~
+
+Images download
+---------------
+
+Rock 5B
+~~~~~~~
 
 Download link:
 
@@ -84,8 +101,8 @@ By running:
   sha256sum ethonarm_odroid_22.07.00.img.zip
 
 
-Flash 
------
+Installing the image (Flashing) 
+-------------------------------
 
 Insert the microSD in your Desktop / Laptop and flash the image.
 

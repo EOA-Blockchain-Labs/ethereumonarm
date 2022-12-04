@@ -33,12 +33,24 @@ You can acquire a Raspberry Pi 4 from multiples sources. This is the official we
 
 .. _Raspberry Pi 4 (8 GB): https://www.raspberrypi.com/products/raspberry-pi-4-model-b/?variant=raspberry-pi-4-model-b-8gb
 
-Make sure you pick the 8 GB RAM version.
+Make sure you get the 8 GB RAM version.
 
+You will need a **MicroSD** and an **USB3 disk** as well. A case with heathsink and 
+the official Raspberry Pi 4 power supply is recommended.
 
+.. warning::
+  Due to the electronic components outage, the Raspberry Pi 4 is hard to purchase and the price is usually very high.
 
 Odroid M1
 ~~~~~~~~~
+
+You can get the Odroid M1 from the official Hardkernel store.
+
+* `Odroid M1 8 GB board`_ (choose your power supply here)
+* `Odroid metal case`_
+
+.. _Odroid M1 8 GB board: https://www.hardkernel.com/shop/odroid-m1-with-8gbyte-ram/
+.. _Odroid metal case: https://www.hardkernel.com/shop/m1-metal-case-kit/
 
 Images download
 ---------------

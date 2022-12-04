@@ -44,10 +44,6 @@ If you don't know what an Ethereum node is, please visit the :doc:`User Guide se
     * **Port forwarding** (see clients for further info)
     * **A case with heatsink and fan**
     * USB keyboard, Monitor and HDMI cable (micro-HDMI) (Optional)
-
-    .. warning::
-
-      You need an Execution layer provider to create blocks (see :doc:`User Guide </user-guide/about-user-guide>` for further info)
     
   .. tab:: Odroid M1
     
@@ -65,6 +61,3 @@ If you don't know what an Ethereum node is, please visit the :doc:`User Guide se
     * USB keyboard, Monitor and HDMI cable (micro-HDMI) (Optional)
 
 The key components are the SDD disk and the RAM memory. Try to buy an 8 GB board and a decent SSD.
-
-.. note::
-  For running an Ethereum 2.0 validator you need 32 ETH

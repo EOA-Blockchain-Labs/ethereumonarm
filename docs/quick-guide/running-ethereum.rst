@@ -4,40 +4,65 @@
 Running an Ethereum node
 ========================
 
-Great, all set. Now it is time to run an Ethereum node. You 
-can run an Execution Layer client, Consensus Layer client, or both.
+Great, all set. Now it is time to run an Ethereum full node. You 
+need to run an Execution Layer client and a Consensus Layer client at the same time.
 
 In this Quick Start Guide we will run the :guilabel:`Geth` EL
-and the :guilabel:`Lighthouse` CL Beacon Chain client, both running in the same device.
+and the :guilabel:`Lighthouse` CL client.
 
 .. note::
-  :guilabel:`Geth` is enabled by default so you don't need to do anything to 
-  get it up and running.
 
-  The Beacon Chain is part of the CL client but for staking.   For this, you will 
-  need a **Validator** node which is a more complicated process. If you want to run a Validator 
-  along with the Beacon Chain you will need 32 ETH and some knowledge of how the CL works.
+  The **Beacon Chain** is the Consensus Layer part that guides the Execution Layer on how to follow the head of the chain. 
+  You need to run both, the **Consensus Layer Beacon Chain and the Execution Layer to run a full Ethereum node**. If you want 
+  to **stake** (create blocks, formerly known as mining) you will need to run a **Consensus Layer Validator** as well which 
+  is a more complicated process (besides depositing 32 ETH).
 
+Consensus Layer
+---------------
+
+Let's start by **running a Consensus Layer Beacon chain**. This client is the responsible of getting the chain and telling
+the Execution Layer where the chain head is. We will run :guilabel:`Lighthouse`.
+
+.. tip::
+  All CL clients are configured to use **CheckPoint Sync** that will get the 
+  Beacon Chain in sync in just a few minutes. Take a look to our User Guide for 
+  more info.
+
+For starting the :guilabel:`Lighthouse` CL Beacon Chain, follow these steps:
+
+1. **Open the 9000  port in your router** so :guilabel:`Lighthouse` can discover and connect
+to other peers (both ``UDP`` and ``TCP`` protocols).
+
+2. **Start** the service:
+
+.. prompt:: bash $
+
+  sudo systemctl start lighthouse-beacon
+
+Now, :guilabel:`Lighthouse` will start syncing the Beacon Chain and try to connect to the Execution Layer client.
+
+You can get the client logs by running:
+
+.. prompt:: bash $
+
+  sudo journalctl -u lighthouse-beacon -f
 
 Execution Layer
 ---------------
 
-Formerly Ethereum 1.0 node. The original Ethereum chain (with a Proof of Work consensus algorithm). 
-Everything happens here right now, from transactions to smart contract 
-executions.
+It is the former Ethereum 1.0 node and the original Ethereum chain. It needs to to communicate with a Consensus Layer Beacon chain 
+to follow the chain. This client validates and executes all transactions and stores the chain state.
 
-.. note::
-  You can **not** mine with an ARM device until The Merge goes through.
-  In the meanwhile, you can run an EL node in order to achieve the following goals:
+We will use the :guilabel:`Geth`. Follow these steps to start the client:
 
-  * Run as an EL provider for the CL Beacon chain (this means 
-    running both EL and CL nodes).
-  * In order to contribute to the Ethereum network health and decentralization.
-
-For enabling and starting :guilabel:`Geth` EL client, you don't need to take any 
-action as the :guilabel:`Systemd` service is already enabled and running. Just 
-**Open the 30303 port in your router** so :guilabel:`Geth` can discover and connect 
+1. **Open the 30303 port in your router** so :guilabel:`Geth` can discover and connect 
 to other peers (both UDP and TCP protocols).
+
+2. **Start the service**
+
+.. prompt:: bash $
+
+  sudo systemctl start geth
 
 For checking the client logs, run:
 
@@ -49,44 +74,9 @@ You can access Grafana's :guilabel:`Geth` Dashboard as well to get further info 
 
 .. note::
   Ethereum on ARM supports 4 Eth1 clients: :guilabel:`Geth`, :guilabel:`Nethermind`, 
-  :guilabel:`Openethereum` and :guilabel:`Besu` (all already installed in your system).
+  :guilabel:`Erigon` and :guilabel:`Besu` (all already installed in your system).
 
-  We recommend running :guilabel:`Geth` as default as it is the most reliable and tested
-  client for ARM devices.
  
 
-Consensus Layer
----------------
 
-Formerly Ethereum 2.0. It is the transition from **Proof of Work** to **Proof of Stake** consensus algorithm. It is
-scheduled for 3Q 2022 and you will be able to "mine" (validating) ETH even with resource-constrained devices.
-
-In this Quick Guide we are going to take the first step on running an Ethereum 2.0 node: 
-enabling the Beacon Chain through the :guilabel:`Lighthouse` client.
-
-For enabling and starting the :guilabel:`Lighthouse` Eth2.0 Beacon Chain, follow these steps:
-
-1. **Open the 9000  port in your router** so :guilabel:`Lighthouse` can discover and connect
-to other peers (both ``UDP`` and ``TCP`` protocols).
-
-2. **Enable the service and start** it:
-
-.. prompt:: bash $
-
-  sudo systemctl enable lighthouse-beacon
-  sudo systemctl start lighthouse-beacon
-
-Now, :guilabel:`Lighthouse` will connect to the :guilabel:`Geth` Eth1.0 client and start syncing the
-Beacon chain.
-
-You can get the client logs by running:
-
-.. prompt:: bash $
-
-  sudo journalctl -u lighthouse-beacon -f
-
-.. tip::
-  All CL clients are configured to use CheckPoint Sync that will get the 
-  Beacon Chain in sync in just a few minutes. Take a look to our User Guide for 
-  more info.
 

@@ -9,7 +9,7 @@ Ethereum on ARM documentation
    :caption: Contents:
 
 
-.. figure:: /_static/images/ethnode.jpg
+.. figure:: /_static/images/merge_node.jpg
    :figwidth: 200px
    :align: center
 

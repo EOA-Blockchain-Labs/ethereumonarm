@@ -11,7 +11,7 @@ Consensus Layer
   alone are responsible for your actions using the Ethereum sofware included in this image 
   or following the instructions of this guide.
 
-  We strongly recommend to try first an Consensus Layer testnet (**Prater**) and get 
+  We strongly recommend to try first a Consensus Layer testnet and get 
   familiarized with the process before staking with real ETH.
 
 

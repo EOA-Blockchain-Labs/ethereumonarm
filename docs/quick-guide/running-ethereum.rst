@@ -73,10 +73,5 @@ For checking the client logs, run:
 You can access Grafana's :guilabel:`Geth` Dashboard as well to get further info of the client.
 
 .. note::
-  Ethereum on ARM supports 4 Eth1 clients: :guilabel:`Geth`, :guilabel:`Nethermind`, 
+  Ethereum on ARM supports 4 EL clients: :guilabel:`Geth`, :guilabel:`Nethermind`, 
   :guilabel:`Erigon` and :guilabel:`Besu` (all already installed in your system).
-
- 
-
-
-

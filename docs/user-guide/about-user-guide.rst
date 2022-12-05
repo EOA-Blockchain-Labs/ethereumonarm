@@ -16,7 +16,7 @@ to manage them through Systemd services. You will find here:
 
   You need to run along both clients (Execution client+Consensus client) at the same time. You can choose 
   any EL+CL combination (we recommend to run minority clients) but once started you need to keep them runnning 
-  one by one (for instance, Geth+Lighthouse)
+  one by one (for instance: Geth+Lighthouse)
 
 More info about **The Merge**
 

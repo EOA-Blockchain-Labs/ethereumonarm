@@ -9,35 +9,35 @@ Ethereum on ARM documentation
    :caption: Contents:
 
 
-.. figure:: /_static/images/node.jpg
+.. figure:: /_static/images/ethereum_node.jpg
    :figwidth: 400px
    :align: center
 
 Welcome to the Ethereum on ARM documentation.
 
 Ethereum on ARM is a set of custom Linux images for ARM boards
-that runs Ethereum clients as a boot service and automatically turns the devices
-into full Ethereum 1.0/2.0 nodes.
+that run Ethereum clients as a Systemd service and automatically turns such devices
+into full/staking Ethereum nodes.
 
-The image takes care of all the necessary steps to run a node,
-from setting up the environment and formatting the SSD disk
-to installing, managing and running the Eth1.0 and Eth2.0 clients.
+**The image takes care of all the necessary steps to run a node,
+from setting up the environment and formatting the disk
+to installing, managing and running the Execution and Consensus clients.**
 
 If you are familiar with Ethereum and have already ran
 an Ethereum node you can jump to our :doc:`Quick Start </quick-guide/about-quick-start>` 
-guide and get your node up and running in no time.
+guide and get your node up and running in minutes.
 
 If you need more info, please use the Quick Start to install the image 
 and visit the :doc:`User Guide </user-guide/about-user-guide>` 
-in order to get further info on Ethereum how to manage the clients.
+in order to get further info on Ethereum and how to manage the clients.
 
 .. note::
 
-  We are now supporting 3 devices:
+  We are currently supporting 3 devices:
+  * **Radxa Rock 5B (16 GB RAM). RECOMMENDED**
   * Raspberry Pi 4 (8 GB RAM + external USB Disk)
   * Hardkernel Odroid M1
-  * Radxa Rock 5B (16 GB RAM recommended)
-
+  
 Quick Start Guide
 -----------------
 
@@ -46,10 +46,10 @@ For running a node, follow the step-by-step guide.
 The process is as follows:
 
 * Download and flash the Image into an MicroSD card
-* Connect the SSD to the USB port and the Ethernet Cable
+* Connect the SSD (NVMe or USB depending on device) and the Ethernet Cable
 * Power on the device
-* Wait till the installation script finish all tasks
-* Enable and run an Ethereum client
+* Wait till the installation script finish all tasks (about 10-15 minutes)
+* Run an Ethereum clients (one Execution client + one Consensus client)
 
 .. toctree::
   :maxdepth: 2
@@ -80,18 +80,6 @@ information regarding the image and other Ethereum related software.
   /user-guide/storage
   /user-guide/security
 
-Goerli
-------
-
-Join the Goerli HF (August 2022)
-
-.. toctree::
-  :maxdepth: 2
-  :caption: Goerli Hard fork
-  :hidden:
-
-  /goerli/goerli
-
 Developers Guide
 ----------------
 
@@ -107,7 +95,7 @@ Coming soon
 About Ethereum on ARM
 ---------------------
 
-Get further info about our project.
+Get further info about our project and why you should run an Ethereum node on ARM boards.
 
 .. toctree::
   :maxdepth: 2

@@ -10,7 +10,7 @@ Ethereum on ARM documentation
 
 
 .. figure:: /_static/images/merge_node.jpg
-   :figwidth: 200px
+   :figwidth: 400px
    :align: center
 
 Welcome to the Ethereum on ARM documentation.

@@ -74,7 +74,8 @@ By running:
 
   sha256sum ethonarm_rock5b_22.12.00.img.zip
 
-**Raspberry Pi 4**
+Raspberry Pi 4
+~~~~~~~~~~~~~~
 
 Download link:
 
@@ -92,15 +93,14 @@ By running:
 
   sha256sum ethonarm_22.04.00.img.zip
 
-**Odroid M1**
+Odroid M1
+~~~~~~~~~
 
 Download link:
 
 ethonarm_odroid_22.07.00.img.zip_
 
 .. _ethonarm_odroid_22.07.00.img.zip: https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/EejUgF6sH55EoUY3Pc34jwEBMIwIxYmJYDUqfGp0TJ1Eyw?download=1
-
-
 
 You can verify the file with the following ``SHA256`` Hash:
 
@@ -147,16 +147,16 @@ Insert MicroSD
 --------------
 
 .. warning::
-  The image will wipe out your USB SSD disk, so be careful if you already have data
+  The image will wipe out your NVME/USB SSD disk, so be careful if you already have data
   on it.
 
 Insert de MicroSD into the board. Connect an Ethernet cable and attach 
-the disk (make sure you are using a blue port which corresponds to USB 3).
+the disk (make sure you are using a blue port which if your connecting a USB disk).
 
 Power on
 --------
 
-The Ubuntu OS will boot up in less than one minute and will start to perform the necessary tasks
+The Ubuntu OS will boot up in less than one minute and the installation script will start to perform the necessary tasks
 to turn the device into a full Ethereum node.
 
 .. warning::

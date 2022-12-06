@@ -5,7 +5,7 @@ Running an Ethereum node
 ========================
 
 Great, all set. Now it is time to run an Ethereum full node. You 
-need to run an Execution Layer client and a Consensus Layer client at the same time.
+need to **run an Execution Layer client and a Consensus Layer client at the same time**.
 
 In this Quick Start Guide we will run the :guilabel:`Geth` EL
 and the :guilabel:`Lighthouse` CL client.
@@ -20,7 +20,7 @@ and the :guilabel:`Lighthouse` CL client.
 Consensus Layer
 ---------------
 
-Let's start by **running a Consensus Layer Beacon chain**. This client is the responsible of getting the chain and telling
+Let's start by **running a Consensus Layer Beacon chain**. This client is the responsible of following the chain and telling
 the Execution Layer where the chain head is. We will run :guilabel:`Lighthouse`.
 
 .. tip::

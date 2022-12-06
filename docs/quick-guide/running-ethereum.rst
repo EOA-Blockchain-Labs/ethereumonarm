@@ -15,7 +15,7 @@ and the :guilabel:`Lighthouse` CL client.
   The **Beacon Chain** is the Consensus Layer part that guides the Execution Layer on how to follow the head of the chain. 
   You need to run both, the **Consensus Layer Beacon Chain and the Execution Layer to run a full Ethereum node**. If you want 
   to **stake** (create blocks, formerly known as mining) you will need to run a **Consensus Layer Validator** as well which 
-  is a more complicated process (besides depositing 32 ETH).
+  is a more complicated process (besides you need to own 32 ETH).
 
 Consensus Layer
 ---------------
@@ -25,7 +25,7 @@ the Execution Layer where the chain head is. We will run :guilabel:`Lighthouse`.
 
 .. tip::
   All CL clients are configured to use **CheckPoint Sync** that will get the 
-  Beacon Chain in sync in just a few minutes. Take a look to our User Guide for 
+  Beacon Chain in sync in just a few minutes. Take a look to our :doc:`User Guide </user-guide/consensus-clients.html#running-a-consensus-layer-client>`for 
   more info.
 
 For starting the :guilabel:`Lighthouse` CL Beacon Chain, follow these steps:
@@ -39,13 +39,18 @@ to other peers (both ``UDP`` and ``TCP`` protocols).
 
   sudo systemctl start lighthouse-beacon
 
-Now, :guilabel:`Lighthouse` will start syncing the Beacon Chain and try to connect to the Execution Layer client.
+Now, :guilabel:`Lighthouse` will start syncing the Beacon Chain and try to connect to the Execution Layer client. The 
+Beacon Chain will get in sync quite fast as it uses Checkpoint Sync so we can move on and start the Execution Layer client
 
 You can get the client logs by running:
 
 .. prompt:: bash $
 
   sudo journalctl -u lighthouse-beacon -f
+
+.. note::
+  Ethereum on ARM supports 4 CL clients: :guilabel:`Lighthouse`, :guilabel:`Prysm`, 
+  :guilabel:`Teku` and :guilabel:`Nimbus` (all already installed in your system).
 
 Execution Layer
 ---------------
@@ -56,7 +61,7 @@ to follow the chain. This client validates and executes all transactions and sto
 We will use the :guilabel:`Geth`. Follow these steps to start the client:
 
 1. **Open the 30303 port in your router** so :guilabel:`Geth` can discover and connect 
-to other peers (both UDP and TCP protocols).
+to other peers (both ``UDP`` and ``TCP`` protocols).
 
 2. **Start the service**
 
@@ -70,7 +75,7 @@ For checking the client logs, run:
 
   sudo journalctl -u geth -f
 
-You can access Grafana's :guilabel:`Geth` Dashboard as well to get further info of the client.
+You can access Grafana's Dashboard as well to get further info of the clients.
 
 .. note::
   Ethereum on ARM supports 4 EL clients: :guilabel:`Geth`, :guilabel:`Nethermind`, 

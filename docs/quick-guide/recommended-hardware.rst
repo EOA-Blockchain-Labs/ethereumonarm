@@ -23,8 +23,7 @@ If you don't know what an Ethereum node is, please visit the :doc:`User Guide se
 
     * **Rock 5B board** (16GB RAM)
     * **MicroSD Card** (16 GB Class 10 minimum)
-    * Storage
-      * **NVMe disk** 2 TB minimum
+    * **NVMe disk** 2 TB minimum
     * **Power supply** (Radxa official)
     * **Ethernet cable**
     * **Port forwarding** (see clients for further info)
@@ -37,8 +36,7 @@ If you don't know what an Ethereum node is, please visit the :doc:`User Guide se
 
     * **Raspberry 4 board** (8GB RAM)
     * **MicroSD Card** (16 GB Class 10 minimum)
-    * Storage
-      * **USB 3.0 disk** or a SSD with an USB to SATA case (2 TB Minimum) (see :doc:`Storage </user-guide/storage>` section).
+    * **USB 3.0 disk** or a SSD with an USB to SATA case (2 TB Minimum) (see :doc:`Storage </user-guide/storage>` section).
     * **Power supply**
     * **Ethernet cable**
     * **Port forwarding** (see clients for further info)
@@ -52,12 +50,11 @@ If you don't know what an Ethereum node is, please visit the :doc:`User Guide se
 
     * **Odroid M1 board** (8 GB RAM)
     * **MicroSD Card** (16 GB Class 10 minimum)
-    * Storage
-      * Odroid M1 **NVMe disk (2 TB minimum)**
+    * **NVMe disk (2 TB minimum)**
     * **Power supply**
     * **Ethernet cable**
     * **Port forwarding** (see clients for further info)
     * **A case with heatsink and fan**
     * USB keyboard, Monitor and HDMI cable (micro-HDMI) (Optional)
 
-The key components are the SDD disk and the RAM memory. Try to buy an 8 GB board and a decent SSD.
+The key components are the SDD disk and the RAM memory.

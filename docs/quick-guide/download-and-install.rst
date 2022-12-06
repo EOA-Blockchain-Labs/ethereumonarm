@@ -41,6 +41,9 @@ the official Raspberry Pi 4 power supply is recommended.
 .. warning::
   Due to the electronic components outage, the Raspberry Pi 4 is hard to purchase and the price is usually very high.
 
+  Post-merge, it is still possible to run a node on a Raspberry Pi 4 but the hardware is quite limited. Run **Nimbus+Geth** 
+  clients combo as this is the best option in terms of performance.
+
 Odroid M1
 ~~~~~~~~~
 
@@ -51,6 +54,10 @@ You can get the Odroid M1 from the official Hardkernel store.
 
 .. _Odroid M1 8 GB board: https://www.hardkernel.com/shop/odroid-m1-with-8gbyte-ram/
 .. _Odroid metal case: https://www.hardkernel.com/shop/m1-metal-case-kit/
+
+.. warning::
+  Post-merge, it is still possible to run a node on an Odroid M1 but the hardware is quite limited. Run **Nimbus+Geth** 
+  clients combo as this is the best option in terms of performance.
 
 Images download
 ---------------

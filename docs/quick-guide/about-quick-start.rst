@@ -17,7 +17,7 @@ This is the installation process in a nutshell:
 
 * Get your **ARM Board**
 * **Download and flash** the Image into a MicroSD card
-* **Connect the SSD** to the USB port and the Ethernet Cable
+* **Connect the SSD** and the Ethernet Cable
 * Power on the device
 * Wait till the installation script finishes all tasks
 * Boot up, enable and run the Ethereum software

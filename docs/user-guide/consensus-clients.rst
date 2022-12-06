@@ -7,12 +7,12 @@ Consensus Layer
 .. warning::
 
   **DISCLAIMER**: Ethereum is an experimental technology. Running the Ethereum on ARM image as 
-  an Consensus Layer validator node can lead you to loss of ETH. This is a risk operation and you 
+  an Consensus Layer validator node can lead you to ETH loss. This is a risk operation and you 
   alone are responsible for your actions using the Ethereum sofware included in this image 
   or following the instructions of this guide.
 
   We strongly recommend to try first a Consensus Layer testnet and get 
-  familiarized with the process before staking with real ETH.
+  familiarized with the process before staking real ETH.
 
 
 The Consensus Layer is the new Proof of Stake chain. If you 
@@ -27,9 +27,13 @@ Beacon Chain
 
 The Beacon Chain is a bridge between the Execution Layer and the Consensus Layer clients. 
 It connects the Validator to the EL so the validator can detect the 
-32 ETH deposit transaction (which contains the Validator public key). In order to 
-propose (create) blocks in Ethereum you need the Beacon Chain synced and  
-connected to an EL client.
+32 ETH deposit transaction (which contains the Validator public key).
+
+The Beacon Chain also guides the Execution Client on the chain head.
+
+In order to propose (create) blocks in Ethereum you need an Execution Client in sync 
+the Beacon Chain in sync and a Validator (the Beacon chain and the Validator are both 
+part of the Consensus Layer client).
 
 Validator
 ---------
@@ -38,7 +42,7 @@ Here is basically where the stake process happens (with the new Proof of Stake a
 
 The validator is the client that proposes blocks and does attestations according to 
 the Consensus Layer specification (proposing a block would be the equivalent to "mine" a block 
-in the former Ethereum 1.0 chain).
+in the former Proof of Work Ethereum chain).
 
 .. warning::
 
@@ -60,7 +64,7 @@ In order to stake and run a validator you will need:
     Validator instance (with one or more validator keys)
 
 For making the 32 ETH deposit you need to create 2 key pairs and a Json file with the 
-necessary information to interact with the Eth2 mainnet contract through a transaction.
+necessary information to interact with the mainnet staking contract through a transaction.
 
 The Ethereum Foundation provides a tool (staking-deposit-cli) to create the keys and the 
 deposit information (which among others contains your validator(s) public key(s)). This 

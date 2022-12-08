@@ -6,8 +6,8 @@ Consensus Layer
 
 .. warning::
 
-  **DISCLAIMER**: Ethereum is an experimental technology. Running the Ethereum on ARM image as 
-  an Consensus Layer validator node can lead you to ETH loss. This is a risk operation and you 
+  **DISCLAIMER**: Ethereum is an experimental technology. **Running the Ethereum on ARM image as 
+  an Consensus Layer validator node can lead you to ETH loss**. This is a risky operation and you 
   alone are responsible for your actions using the Ethereum sofware included in this image 
   or following the instructions of this guide.
 
@@ -29,16 +29,18 @@ The Beacon Chain is a bridge between the Execution Layer and the Consensus Layer
 It connects the Validator to the EL so the validator can detect the 
 32 ETH deposit transaction (which contains the Validator public key).
 
-The Beacon Chain also guides the Execution Client on the chain head.
+The Beacon Chain also guides the Execution Client on how to follow the chain head.
 
-In order to propose (create) blocks in Ethereum you need an Execution Client in sync 
-the Beacon Chain in sync and a Validator (the Beacon chain and the Validator are both 
+In order to propose (create) blocks in Ethereum you need an Execution Client in sync running along 
+with a Beacon Chain in sync and a Validator (the Beacon chain and the Validator are both 
 part of the Consensus Layer client).
 
 Validator
 ---------
 
-Here is basically where the stake process happens (with the new Proof of Stake algorithm).
+
+
+Basically, here is where the stake process happens (through the new Proof of Stake algorithm).
 
 The validator is the client that proposes blocks and does attestations according to 
 the Consensus Layer specification (proposing a block would be the equivalent to "mine" a block 
@@ -53,14 +55,15 @@ in the former Proof of Work Ethereum chain).
   And **never (NEVER)** run the same validator (same private keys) in two different validator nodes at the same time. 
   **You will be slashed**.
 
+
 Staking Requirements
 --------------------
 
 In order to stake and run a validator you will need:
 
   * 32 ETH
-  * An Ethereum Execution Layer client
-  * An Ethereum Consensus Layer client consisting of: A Beacon Chain instance and a 
+  * A synced Ethereum Execution Layer client
+  * A synced Ethereum Consensus Layer client consisting of: A Beacon Chain instance and a 
     Validator instance (with one or more validator keys)
 
 For making the 32 ETH deposit you need to create 2 key pairs and a Json file with the 
@@ -95,20 +98,20 @@ The first step is to visit the EF Launchpad website to start the process:
 
 .. _https://launchpad.ethereum.org: https://launchpad.ethereum.org
 
-1. Click **“Get started”**
+1. Click **“Become a validator”**
 
 2. Read carefully and accept all warnings. 
    
 3. You can skip the **Execution Client** selection as all clients are already installed and configured. click 
    "Continue"
 
-4. Same for the **Consensus clients**. Click "Continue"
+4. Same for the **Consensus Clients**. Click "Continue"
 
 5. In the next screen, select the number of validators you want to run. Remember that you need 
-   32 ETH for each.
+   32 ETH each.
 
 6. Ethereum on ARM provides the Ethereum Foundation tool (staking-deposit-cli) to generate the keys, 
-   so, in your device terminal and under the ethereum account, run (assuming 1 validator):
+   so, **in your ARM board terminal** and under the ethereum account, run (assuming 1 validator):
 
 .. prompt:: bash $
 
@@ -190,6 +193,11 @@ Running a Consensus Layer client
   **You need a synced Consensus Client for the Execution Client sync to start. As we are using Checkpoint 
   Sync, CL client should be in sync in a few minutes.**
 
+.. note::
+  **REMEMBER: Staking is NOT necessary for running a full Ethereum node**. For this, you just need 
+  a synced Execution Client running along with a synced Consensus Layer Beacon Chain.
+
+  If you are not going to stake skip the steps related to creating wallets or importing account keys.
 
 Supported clients
 ~~~~~~~~~~~~~~~~~
@@ -212,18 +220,14 @@ Ethereum on ARM supports the main Consensus Layer clients available.
 CheckPoint sync
 ~~~~~~~~~~~~~~~
 
-You can **sync your Consensus Client in minutes** using the info provided by an already synced Beacon Node. 
-All Consensus clients support this sync mode and the necessary flags are detailed on each client section.
-
-You will need to pass a valid URL to your client from a synced client. We include now the **EthStaker** URL 
-Checkpoint Sync as default. You can change it at any time by editing the CL config file.
-
+**All Consensus Layer clients are configured to use CheckPoint Sync by default** that will 
+get the Beacon Chain synced in just a few minutes.
 
 Lighthouse
 ~~~~~~~~~~
 
 :guilabel:`Lighthouse` is a full CL client written in Rust. It is very capable on
-running in resource-constrained devices such as the Raspberry Pi 4.
+running in resource-constrained devices such as the Raspberry Pi 4 and the Rock 5B.
 
 .. csv-table::
   :header: Systemd Services, Home Directory, Config Files, Default TCP/UDP Port
@@ -241,13 +245,12 @@ Under the ethereum account, run:
 
 .. prompt:: bash $
 
-  sudo systemctl enable lighthouse-beacon
   sudo systemctl start lighthouse-beacon
 
 The Lighthouse client will start to sync the Beacon Chain. **This may take just some minutes as Checkpoint sync 
 is enabled by default.**
 
-3.- Start de validator
+3.- Start de validator (only necessary for staking, skip this step for running an Ethereum full node)
 
 We need to import the previously generated validator keys and set the set Fee Recipient flag. Run under the ethereum account:
 
@@ -301,7 +304,7 @@ Under the ethereum account, run:
 This will start to sync the Beacon Chain. **This may take just some minutes as Checkpoint sync 
 is enabled by default.**
 
-3.- Start de validator
+3.- Start de validator (only necessary for staking, skip this step for running an Ethereum full node)
 
 We need to import the validator keys. Run under the ethereum account:
 
@@ -341,7 +344,7 @@ Teku
 .. csv-table::
   :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
 
-  `teku`, `/home/ethereum/.teku/data_teku`, `/etc/ethereum/teku.conf`, `9151`
+  `teku`, `/home/ethereum/.teku/data_teku`, `/etc/ethereum/teku.conf`, `9000`
 
 1.- Port forwarding
 
@@ -407,9 +410,9 @@ Nimbus
 
 You need to open the 9000 port (both UDP and TCP)
 
-2.- Start the Beacon Chain and the Validator
+2.- Import the validator keys (only necessary for staking, skip this step for running an Ethereum full node)
 
-We need to import the validator keys. Run under the ethereum account:
+We need to import the validator keys. Run under the ethereum account (only necessary for staking, skip this step for running an Ethereum full node):
 
 .. prompt:: bash $
 
@@ -417,7 +420,8 @@ We need to import the validator keys. Run under the ethereum account:
 
 Enter the password previously defined.
 
-Now, copy your Ethereum Address for receiving tips and set the set the fee recipient flag:
+3. Start the Beacon Chain (and the Validator if set in the previous step). Copy your Ethereum Address for 
+receiving tips and set the fee recipient flag:
 
 .. prompt:: bash $
 
@@ -429,16 +433,20 @@ Now, copy your Ethereum Address for receiving tips and set the set the fee recip
 
   sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/nimbus.conf
 
-Now, in order to enable the **Checkpoint Sync** run the following command:
+4. Enable Checkpoint Sync. 
+
+We need to run a command before the **Checkpoint Sync** gets started:
 
 .. prompt:: bash $
 
   nimbus_beacon_node trustedNodeSync --network=mainnet --data-dir=/home/ethereum/.nimbus --trusted-node-url=https://beaconstate.ethstaker.cc --backfill=false
 
-Wait for the command to finish and start the Nimbus service:
+Wait for the command to finish.
+
+5. Start the Nimbus service:
 
 .. prompt:: bash $
 
   sudo systemctl start nimbus
 
-The Nimbus beacon chain and validator are now enabled.
+The Nimbus Beacon Chain and Validator (if set) are now running.

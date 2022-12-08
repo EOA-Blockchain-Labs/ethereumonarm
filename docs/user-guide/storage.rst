@@ -4,7 +4,7 @@
 Storage
 =======
 
-**You need at least 1 TB SSD** in order to sync the Ethereum 1.0 blockchain. Again, there is no chance of 
+**You need at least 2 TB SSD** in order to run a Full Ethereum node. Again, there is no chance of 
 syncing the blockchain with an HDD disk.
 
 Raspberry Pi 4
@@ -40,6 +40,9 @@ Rock 5B
 -------
 
 This board includes a 4x M.2 2280 NVMe disk.
+
+You can use a USB SSD as well (same as Raspberry Pi 4). The installation script will detect the 
+disk attached, format and mount it as /home. The default /home will be the NVMe disk.
 
 Odroid M1
 ---------

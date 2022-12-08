@@ -47,7 +47,7 @@ These are the list of services available for all clients:
 
    `Geth`, `geth`
    `Nethermind`, `nethermind`
-   `Openethereum`,`openethereum`
+   `Erigon`,`erigon`
    `Hyperledger Besu`, `besu`
 
 .. csv-table:: Ethereum 2.0 Systemd Services
@@ -58,11 +58,6 @@ These are the list of services available for all clients:
    `Nimbus`, `nimbus`
    `Teku`, `teku`
 
-.. tip::
-  :guilabel:`Geth` is the only service that is enabled by default, so when you 
-  boot up the device for the first time :guilabel:`Geth` will automatically
-  run in the background and start syncing the Ethereum 1.0 blockchain.
-
 
 Changing Parameters
 -------------------
@@ -71,7 +66,7 @@ Changing Parameters
 you want to change any client parameter you have to edit the correspondent config file. For 
 instance, this is the ``/etc/ethereum/geth.conf`` content::
 
-  ARGS="--http --metrics --metrics.expensive --pprof"
+  ARGS="--metrics --metrics.expensive --pprof --http --authrpc.jwtsecret=/etc/ethereum/jwtsecret"
 
 Edit the file by running a text editor (``vim``, ``nano``):
 
@@ -81,7 +76,7 @@ Edit the file by running a text editor (``vim``, ``nano``):
 
 For instance, let's change the P2P port to 30304. Add it to the ARGS line and save it::
 
-  ARGS="--port 30304 --http --metrics --metrics.expensive --pprof"
+  ARGS="--metrics --metrics.expensive --pprof --http --authrpc.jwtsecret=/etc/ethereum/jwtsecret --port 30304"
 
 For changes to take effect, you need to restart the client:
 
@@ -91,7 +86,7 @@ For changes to take effect, you need to restart the client:
 
 .. note::
 
-  All clients have its config files in ``/etc/ethereum`` except :guilabel:`Nethermind` that 
+  All clients have its own config files in ``/etc/ethereum`` except :guilabel:`Nethermind` that 
   has an additional conf directory located in ``/opt/nethermind/configs/``
 
 .. tip::
@@ -130,15 +125,15 @@ These are the available packages:
 
 * geth
 * nethermind
-* openethereum
+* erigon
 * besu
 * lighthouse
 * prysm
 * teku
 * nimbus
-* eth2.0-deposit-cli
+* staking-deposit-cli
 * ipfs
-* swarm
+* kubo
 
 .. note::
   The `APT` command will install the last version available in the repository. Most clients 
@@ -165,7 +160,7 @@ You can of course take a look at ``/var/log/syslog``:
 Monitoring Dashboards
 ---------------------
 
-We configured Grafana Dashboards to let users monitor both Ethereum 1.0 and Ethereum 2.0 clients. 
+We configured Grafana Dashboards to let users monitor both Execution and Consensus clients. 
 To access the dashboards just open your browser and type your ``Raspberry_IP`` followed by the 3000 port::
 
   http://replace_with_your_IP:3000

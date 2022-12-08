@@ -29,7 +29,7 @@ Ethereum on ARM supports all available Execution Layer clients.
 
 .. warning::
 
-  Remember that you need to run a Consensus Layer client along with the Execution Layer client as well.
+  Remember that you need to run a Consensus Layer client along with the Execution Layer client.
 
 Geth
 ~~~~

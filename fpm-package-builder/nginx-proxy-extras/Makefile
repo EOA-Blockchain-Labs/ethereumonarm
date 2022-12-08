@@ -4,7 +4,7 @@
 SHELL := /bin/bash
 
 PKG_NAME := nginx-proxy-extras
-PKG_DESCRIPTION := "Nginx proxy config for ethereum packages"
+PKG_DESCRIPTION := "Nginx proxy config for RPC Ethereum EL clients"
 
 PKG_VERSION := 0.1
 PKG_RELEASE := 0

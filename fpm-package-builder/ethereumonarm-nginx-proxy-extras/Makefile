@@ -3,8 +3,8 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-PKG_NAME := nginx-proxy-extras
-PKG_DESCRIPTION := "Nginx proxy config for RPC Ethereum EL clients"
+PKG_NAME := ethereumonarm-nginx-proxy-extras
+PKG_DESCRIPTION := "Nginx proxy config for RPC Ethereum EL clients queries"
 
 PKG_VERSION := 0.1
 PKG_RELEASE := 0
@@ -19,6 +19,7 @@ PKG_DEB := ${pkg_name}_${pkg_version}-${pkg_release}_${pkg_arch}.deb
 FPM_OPTS := -s dir -n $(PKG_NAME) -v $(PKG_VERSION) --iteration $(PKG_RELEASE)\
 	-C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\
 	-a $(PKG_ARCH) -p $(OUTPUTDIR) -x */.gitkeep\
+	--after-install extras/postinst\
 	--depends nginx
 
 deb: ## Create deb package

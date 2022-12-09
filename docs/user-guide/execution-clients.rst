@@ -5,9 +5,7 @@ Execution Clients
 =================
 
 The **Execution Clients** (formerly known as Ethereum 1.0) are the clients responsible for 
-executing transactions, among other operations.
-
-These clients included the Proof of work algorithm that will be depreciated as of 14th September 2022.
+executing transactions and store the global state among other operations.
 
 Supported clients
 -----------------
@@ -63,18 +61,6 @@ The Grafana Dashboard is accessible through your web browser::
   user: admin
   passwd: ethereum
 
-.. note::
-  
-  If you want to try another client use the ``systemctl`` command to stop and 
-  disable :guilabel:`Geth` as seen on :doc:`Managing Clients </user-guide/managing-clients>` section:
-
-.. prompt:: bash $
-
-  sudo systemctl disable geth
-  sudo systemctl stop geth
-
-Now choose another client and start it through its Systemd service.
-
 Nethermind
 ~~~~~~~~~~
 
@@ -118,3 +104,7 @@ In order to start the client run:
 .. prompt:: bash $
 
   sudo systemctl start erigon
+
+.. note::
+  :guilabel:`Erigon` is the only client that includes a Light Consensus Client. You can 
+  run a full Ethereum node just by starting the Erigon service.

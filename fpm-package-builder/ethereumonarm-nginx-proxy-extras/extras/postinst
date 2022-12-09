@@ -1,0 +1,4 @@
+#!/bin/bash
+# post-installation script
+systemctl restart nginx
+exit 0

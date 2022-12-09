@@ -34,7 +34,7 @@ in order to get further info on Ethereum and how to manage the clients.
 .. note::
 
   We are currently supporting 3 devices:
-  
+
   * **Radxa Rock 5B (16 GB RAM). RECOMMENDED**
   * Raspberry Pi 4 (8 GB RAM + external USB Disk)
   * Hardkernel Odroid M1
@@ -76,6 +76,7 @@ information regarding the image and other Ethereum related software.
 
   /user-guide/about-user-guide
   /user-guide/managing-clients
+  /user-guide/nodes-staking
   /user-guide/execution-clients
   /user-guide/consensus-clients
   /user-guide/storage

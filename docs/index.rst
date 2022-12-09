@@ -79,6 +79,7 @@ information regarding the image and other Ethereum related software.
   /user-guide/nodes-staking
   /user-guide/execution-clients
   /user-guide/consensus-clients
+  /user-guide/using-your-node
   /user-guide/storage
   /user-guide/security
 

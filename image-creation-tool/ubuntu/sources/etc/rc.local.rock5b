@@ -134,6 +134,10 @@ EOF
   chown -R  prometheus:prometheus /home/prometheus/
   apt-get install -y prometheus prometheus-node-exporter prometheus-pushgateway
 
+  # Install Nginx proxy for connecting wallets or quering the RPC API
+  apt-get -f install nginx-proxy-extras
+  systemctl enable nginx
+
   #Install ufw
   apt-get -y install ufw
   ufw --force disable

@@ -4,10 +4,10 @@
 Using your node
 ===============
 
-You can use your node besides contributing to the network decentralization or staking. If you 
-often send transactions to the network or need to query the API, you can configure your clients to do so.
+Besides contributing to the network decentralization, you can use your node for sending transactions  
+or to query the Ethereum API.
 
-Our image includes an **Nginx proxy** that exposes the Execution Layer RPC to make the node communication easier.
+Our image includes an **Nginx proxy** that connects to the **Execution Layer RPC** and make the node communication easier.
 
 The Nginx proxy is included in the last images. If you are running an old one make sure it is installed by 
 typing:
@@ -16,15 +16,23 @@ typing:
 
   sudo apt-get update && sudo apt-get install ethereumonarm-nginx-proxy-extras
 
+
+SSL config
+----------
+
+An SSL preconfiguration is included in the ``/etc/nginx/sites-available/ethereum-ssl.conf`` file as well. 
+It is intended to be used with your own certificate or Let's Encrypt. Use this only if you know what you 
+are doing.
+
 Sending transactions
 --------------------
 
 You can use your favourite wallet to send transactions to the network. For instance, let's 
 see how to connect **Metamask** to your node.
 
-1. Open the extension in your browser and click in the top network menu (probably showing "Ethereum Mainnet")
+1. Open the extension in your browser and click in the top network menu (probably showing "Ethereum Mainnet").
 
-2. Click **"Add Network"** buttom
+2. Click **"Add Network"** button.
 
 .. figure:: /_static/images/metamask-add-network.jpg
    :figwidth: 600px

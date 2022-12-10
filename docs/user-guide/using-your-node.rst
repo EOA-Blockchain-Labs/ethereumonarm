@@ -44,7 +44,7 @@ see how to connect **Metamask** to your node.
    :figwidth: 600px
    :align: center
 
-4. Fill in the data with your node data.
+4. Fill in with your node data.
 
 .. figure:: /_static/images/metamask-settings.jpg
    :figwidth: 600px
@@ -59,9 +59,10 @@ For instance. This is a configured local node:
 Querying the blockchain
 -----------------------
 
-You can query the API using several method. This is an example using ``curl`` (from your desktop terminal):
+You can query the API using several methods. This is an example of how to get the last 
+block using ``curl`` (from your desktop terminal):
 
-Replace $YOUR_NODE_IP for your node IP address.
+Replace ``$YOUR_NODE_IP`` for your node IP address.
 
 .. prompt:: bash $
 

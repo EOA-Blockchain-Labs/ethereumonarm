@@ -45,7 +45,7 @@ Edit the CL config files and add the data described below.
 
 .. note::
   You need to change the Mev Boost address depending on where you are running the service (on the same 
-  node or on an external node). Choose ``localhost``if you are running the service along with your 
+  node or on an external node). Choose ``localhost`` if you are running the service along with your 
   validator or **the external node** ``IP`` if you are using an external device.
 
   **We will be using localhost in the examples.**

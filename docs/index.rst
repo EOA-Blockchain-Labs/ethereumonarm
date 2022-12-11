@@ -80,6 +80,7 @@ information regarding the image and other Ethereum related software.
   /user-guide/execution-clients
   /user-guide/consensus-clients
   /user-guide/using-your-node
+  /user-guide/mev-boost
   /user-guide/storage
   /user-guide/security
 

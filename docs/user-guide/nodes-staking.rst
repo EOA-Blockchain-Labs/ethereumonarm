@@ -19,7 +19,7 @@ There are three node setups you can run with your ARM board:
 Full Ethereum node
 ------------------
 
-*Definitions from `ethereum.org`_*
+Definitions from `ethereum.org`_
 
 * Stores full blockchain data (although this is periodically pruned so 
 a full node does not store all state data back to genesis)
@@ -40,7 +40,7 @@ need an Execution Layer Client and a Consensus Layer Client** ( just the Beacon 
 Archive Ethereum node
 ---------------------
 
-*Definitions from `ethereum.org`_*
+Definitions from `ethereum.org`_
 
 * Stores everything kept in the full node and builds an archive of historical states. 
 It is needed if you want to query something like an account balance at block #4,000,000, 

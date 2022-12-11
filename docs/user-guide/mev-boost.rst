@@ -48,7 +48,7 @@ Edit the CL config files and add the data described below.
   node or on an external node). Choose ``localhost`` if you are running the service along with your 
   validator or **the external node** ``IP`` if you are using an external device.
 
-  **We will be using localhost in the examples.**
+  **We will be using ``localhost`` in the examples.**
 
 Lighthouse
 ~~~~~~~~~~
@@ -98,7 +98,7 @@ Edit the Validator config file:
 
   sudo vim /etc/ethereum/prysm-validator.conf
 
-Add the flag ``--enable-builder``at the end of the file.
+Add the flag ``--enable-builder`` at the end of the file.
 
 Nimbus
 ~~~~~~

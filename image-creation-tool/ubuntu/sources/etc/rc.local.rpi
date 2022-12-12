@@ -109,8 +109,13 @@ EOF
   chown -R  prometheus:prometheus /home/prometheus/
   apt-get install -y prometheus prometheus-node-exporter prometheus-pushgateway
 
+  # install Ethereum on ARM monitoring config
+  apt-get -y install ethereumonarm-monitoring-extras
+  set-ethereunonarm-monitoring-extras -o
+
   # Install Nginx proxy for connecting wallets or quering the RPC API
-  apt-get -y install nginx-proxy-extras
+  apt-get -y install nginx
+  apt-get -y install ethereumonarm-nginx-proxy-extras
   systemctl enable nginx
 
   # Install MEV Boost with no censorship relays
@@ -120,9 +125,7 @@ EOF
   apt-get -y install ufw
   ufw --force disable
 
-  apt-get -y install ethereumonarm-monitoring-extras
-  set-ethereunonarm-monitoring-extras -o
-  # Insall some extra dependence
+  # Intsall some extra dependence
   apt-get -y install libraspberrypi-bin net-tools
   #Disable root user
   passwd -l root

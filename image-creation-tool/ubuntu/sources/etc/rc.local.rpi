@@ -43,7 +43,7 @@ if [ ! -f $FLAG ]; then
     wipefs -a /dev/sda
     sgdisk -n 0:0:0 /dev/sda
     mkfs.ext4 -F /dev/sda1
-    echo '/dev/sda1 /home ext4 defaults 0 2' >> /etc/fstab && mount /home
+    echo '/dev/sda1 /home ext4 defaults,noatime 0 2' >> /etc/fstab && mount /home
   else
     echo "no SDD detected"
     echo "Stopping the installation, and extenal disk is needed"

@@ -69,11 +69,11 @@ Download link:
 
 ethonarm_rock5b_22.12.00.img.zip_
 
-.. _ethonarm_rock5b_22.12.00.img.zip: https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/EWl-x5A-t9hPgc-8e_2dTuQBT5plzrIi6KLzkCDSE9H4iw?download=1
+.. _ethonarm_rock5b_22.12.00.img.zip: https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/EbpQq90lW4ZGv0h_89z6hMUBklyJCDEI7bBuBpFXUvucaQ?download=1
 
 You can verify the file with the following ``SHA256`` Hash:
 
-``SHA256 c47d05296f6af4f2a9ef58266902039aed8aabe74f6de85fde13edf5c598fa93``
+``SHA256 a7f57f83d4c90c998b69fdd628850ea7a56a2efb2f78c914015b0fd630d3e407``
 
 By running:
 

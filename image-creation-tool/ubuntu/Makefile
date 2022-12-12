@@ -37,7 +37,7 @@ odroid_iso:
 # Radxa Rock 5B image
 ROCK5B_URL := https://github.com/radxa/debos-radxa/releases/download/20221111-1029/rock-5b-ubuntu-focal-server-arm64-20221111-1242-gpt.img.xz  
 ROCK5B_XZ := rock-5b-ubuntu-focal-server-arm64-20221111-1242-gpt.img.xz
-ROCK5B_ISO := Armbian_23.02.0-trunk_Rock-5b_focal_legacy_5.10.72.img
+ROCK5B_ISO := Armbian_23.02.0-trunk_Rock-5b_focal_legacy_5.10.110.img
 rock5b_iso:
 	mkdir /tmp/ubuntu_iso
 	#wget  $(ROCK5B_URL)

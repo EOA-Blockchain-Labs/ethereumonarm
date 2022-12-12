@@ -1,4 +1,5 @@
 #!/bin/bash
 # post-installation script
+rm /etc/nginx/sites-enabled/default
 systemctl restart nginx
 exit 0

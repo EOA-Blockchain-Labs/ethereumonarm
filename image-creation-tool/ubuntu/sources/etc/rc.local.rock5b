@@ -111,6 +111,9 @@ if [ ! -f $FLAG ]; then
   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8A584409D327B0A5
   add-apt-repository -y -n "deb http://apt.ethraspbian.com focal main"
 
+  # Put kernel package on hold
+  apt-mark hold linux-image-legacy-rockchip-rk3588
+
   # Install Ethereum packages
   echo Installing Ethereum packages
   apt-get update

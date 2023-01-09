@@ -4,7 +4,7 @@
 SHELL := /bin/bash
 
 NIMBUS_VERSION := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.name' | tr -d 'v')
-NIMBUS_URL := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.assets[8].browser_download_url')
+NIMBUS_URL := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.assets[10].browser_download_url')
 
 PKG_RELEASE := 0
 PKG_NAME := nimbus

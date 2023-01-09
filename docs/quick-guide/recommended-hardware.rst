@@ -28,7 +28,7 @@ If you don't know what an Ethereum node is, please visit the :doc:`User Guide se
     * **Ethernet cable**
     * **Port forwarding** (see clients for further info)
     * **A case with passive heatsinkn**
-    * USB keyboard, Monitor and HDMI cable (micro-HDMI) (Optional)
+    * USB keyboard, Monitor and HDMI cable (full size) (Optional)
 
   .. tab:: Raspberry Pi 4
 

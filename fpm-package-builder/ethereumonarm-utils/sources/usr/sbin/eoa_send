@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+eoa_chech=$(which eoa_check)  
+ 
+$eoa_chech | sed -E 's/([0-9]{1,3}\.)([0-9]{1,3}\.)([0-9]{1,3}\.)([0-9]{1,3})/XXX.XXX.\3\4/g' | curl -F 'sprunge=<-' http://sprunge.us

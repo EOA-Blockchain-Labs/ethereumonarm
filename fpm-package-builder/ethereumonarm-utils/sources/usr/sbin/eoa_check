@@ -133,8 +133,9 @@ grep -hoP '(?<=Package: ).+' /var/lib/apt/lists/apt.ethraspbian.com_dists_focal_
 
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 
-awk '{printf ("%0.2f\n",$1/172.41); }' < /sys/devices/iio_sysfs_trigger/subsystem/devices/iio\:device0/in_voltage6_raw
+awk '{printf ("Voltage %0.2f\n",$1/172.41); }' < /sys/devices/iio_sysfs_trigger/subsystem/devices/iio\:device0/in_voltage6_raw
 
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 
+echo -n  "Temp: " 
 cat /sys/class/thermal/thermal_zone0/temp

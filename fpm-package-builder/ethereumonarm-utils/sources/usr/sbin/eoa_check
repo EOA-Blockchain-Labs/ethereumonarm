@@ -1,18 +1,36 @@
 #!/usr/bin/env bash
 
+#Colors
 red='\033[0;91m'
 green='\033[0;92m'
+orange='\033[0;33m'
 nc='\033[0m'
-disks=0
+
+#Disks
 nvme_disk=false
 usb_disk=false
+jwtsecret_file=/etc/ethereum/jwtsecret
 
-execution_layer="geth erigon besu nethermind"
+#Service lists
 consensus_layer="prysm-beacon teku lighthouse-beacon nimbus"
-readonly consensus_layer execution_layer
+execution_layer="geth erigon besu nethermind"
 
+#Execution port
+execution_port=8551
+
+#Service status
 consensus_is_running=false
 execution_is_running=false
+
+# Get the total RAM size in bytes
+total_ram=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+
+# Convert bytes to gigabytes
+total_ram_gb=$(awk "BEGIN {print $total_ram/1024/1024}")
+
+separator() {
+	printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+}
 
 # Check if the user is root
 if [ "$(id -u)" != "0" ]; then
@@ -21,63 +39,78 @@ if [ "$(id -u)" != "0" ]; then
 	exit 1
 fi
 
-printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+# Print separator
+separator
 
 # Check Ethereum user
 if id "ethereum" >/dev/null 2>&1; then
 	echo -e "Ethereum user check ${green}✓${nc} ethereum user exists"
 else
 	echo -e "${red}User ethereum does not exist, installation failed${nc}. Please see /var/log for more info"
+	exit 1
 fi
 
-printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+# Print separator
+separator
 
+# Check consensus layer
 for c in ${consensus_layer}; do
-	if (systemctl is-active --quiet "$c"); then
+	if (systemctl is-active "$c" >/dev/null 2>&1); then
 		echo -e "Consensus Layer check ${green}✓${nc} $c service is running"
 		consensus_is_running=true
 		continue
 	fi
 done
 
+# Check execution layer
 for e in ${execution_layer}; do
-	if (systemctl is-active --quiet "$e"); then
+	if (systemctl is-active "$e" >/dev/null 2>&1); then
 		echo -e "Execution Layer check ${green}✓${nc} $e service is running"
 		execution_is_running=true
 		continue
 	fi
 done
 
+# Print error if no consensus client is running
 if [ "${consensus_is_running}" = false ]; then
 	echo -e "Error: ${red}No Consensus Client is running${nc}. Please, start a Consensus Layer client"
-	exit 0
+	exit 1
 fi
 
+# Print error if no execution client is running
 if [ "${execution_is_running}" = false ]; then
 	echo -e "${red}No Execution Client is running${nc}. Please, start an Execution Layer client"
-	exit 0
+	exit 1
 fi
 
-printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+# Print separator
+separator
 
 # Check JWT file
-if test -s "/etc/ethereum/jwtsecret"; then
+if test -s "$jwtsecret_file"; then
 	echo -e "JWT secret file check ${green}✓${nc} File exists and it is not empty"
 else
-	echo -e "${red}The file /etc/ethereum/jwtsecret does not exist or it is empty${nc}"
+	echo -e "${red}The file $jwtsecret_file does not exist or it is empty${nc}"
+	exit 1
 fi
 
-printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+# Print separator
+separator
 
-# Check 8551 port
-if nc -z localhost 8551; then
-	echo -e "Port 8551 check ${green}✓${nc} Port is listening and accepting connections"
+# Check $execution_port port
+if nc -z localhost $execution_port; then
+	echo -e "Port $execution_port check ${green}✓${nc} Port is listening and accepting connections"
 else
-	echo -e "${red}Port 8551 is not open. Execution Layer and Consensus Layer cannot communicate between${nc}"
+	echo -e "${red}Port $execution_port is not open. Execution Layer and Consensus Layer cannot communicate between${nc}"
+	exit 1
 fi
 
-# Check if device '/dev/sda' exists
-if [ -e "/dev/sda" ]; then
+# Print separator
+separator
+
+if (curl -s ifconfig.co/port/30303 -w "\n" | grep -c "\"reachable\": true" >/dev/null 2>&1); then
+	echo -e "Port 30303 check ${green}✓${nc} Port is open"
+else
 	disks=$((disks + 1))
 	usb_disk=true
 fi
@@ -88,54 +121,71 @@ if [ -e "/dev/nvme0n1" ]; then
 	nvme_disk=true
 fi
 
-printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+# Print separator
+separator
 
-if [ $disks -eq 0 ]; then
+# Check if there are any SSD disks present or mounted
+if [ $usb_disk ] || [ $nvme_disk ]; then
+	echo -e "Disk check ${green}✓${nc} External disk detected"
+else
 	echo -e "${red}Error: There are no SSD disks present or mounted${nc}. Please review your set up or /etc/fstab config."
 	exit 1
+fi
+
+# Print separator
+separator
+
+# Check RAM size and output result
+if [ "$(echo "$total_ram_gb < 8" | bc)" -eq 1 ]; then
+	echo -e "RAM size check ${red}FAIL${nc} Total RAM is less than 8GB"
+elif [ "$(echo "$total_ram_gb >= 7 && $total_ram_gb < 15" | bc)" -eq 1 ]; then
+	echo -e "RAM size check ${orange}WARNING${nc} Total RAM is between 8GB and 16GB"
 else
-	echo -e "Disk check ${green}✓${nc} External disk detected"
+	echo -e "RAM size check ${green}PASS${nc} Total RAM is over 16GB"
 fi
 
-printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+# Print separator
+separator
 
-lsblk
+echo "Installed packages:"
+grep -hoP '(?<=Package: ).+' /var/lib/apt/lists/apt.ethraspbian.com_dists_focal_* | tr '\n' ' '
+echo ""
 
-printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+# Print separator
+separator
 
-if [[ $usb_disk == true ]]; then
-	echo -e "The USB SSD disk model is $(smartctl -a /dev/sda | grep "Model Number" | awk '{ $1=$2="";$0=$0;} NF=NF')"
-fi
-if [[ $nvme_disk == true ]]; then
-	echo -e "The NVME Disk model is $(smartctl -a /dev/nvme0n1 | grep "Model Number" | awk '{ $1=$2="";$0=$0;} NF=NF')"
-fi
+echo "Voltage:"
+awk '{printf ("%0.2f\n",$1/172.41); }' </sys/devices/iio_sysfs_trigger/subsystem/devices/iio:device0/in_voltage6_raw
 
-printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+# Print separator
+separator
 
+echo "Temperature:"
+awk '{printf ("%0.2f\n",$1/1000); }' </sys/class/thermal/thermal_zone0/temp
+
+# Print separator
+separator
+
+echo "Swap file info:"
+swapon -s
+
+# Print separator
+separator
+
+echo "Top processes:"
 top -bcn 1
 
-printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+# Print separator
+separator
 
+echo "Listening ports:"
 ss -tunlp
 
-printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+# Print separator
+separator
 
-curl ifconfig.co/port/30303 -w "\n"
-curl ifconfig.co/port/9000 -w "\n"
-
-printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
-
+echo "Last 100 lines of syslog:"
 tail -n 100 /var/log/syslog
 
-printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
-
-grep -hoP '(?<=Package: ).+' /var/lib/apt/lists/apt.ethraspbian.com_dists_focal_* | tr '\n' ' '
-
-printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
-
-awk '{printf ("Voltage %0.2f\n",$1/172.41); }' < /sys/devices/iio_sysfs_trigger/subsystem/devices/iio\:device0/in_voltage6_raw
-
-printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
-
-echo -n  "Temp: " 
-cat /sys/class/thermal/thermal_zone0/temp
+# Exit with success
+exit 0

@@ -111,8 +111,13 @@ separator
 if (curl -s ifconfig.co/port/30303 -w "\n" | grep -c "\"reachable\": true" >/dev/null 2>&1); then
 	echo -e "Port 30303 check ${green}✓${nc} Port is open"
 else
-	disks=$((disks + 1))
-	usb_disk=true
+	echo -e "${red}Port 30303 is not open, open it in your router or firewall ${nc}"
+fi
+
+if (curl -s ifconfig.co/port/9000 -w "\n" | grep -c "\"reachable\": true" >/dev/null 2>&1); then
+	echo -e "Port 9000 check ${green}✓${nc} Port is open"
+else
+	echo -e "${red}Port 9000 is not open, open it in your router or firewall ${nc}"
 fi
 
 # Check if device '/dev/nvme0n1' exists

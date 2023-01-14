@@ -161,6 +161,7 @@ EOF
 
   #the next line creates an empty file so it won't run on next boot
   touch $FLAG
+  grep "rc.local" /var/log/syslog >> $FLAG
   reboot
 else
   echo "Nothing to do"

@@ -10,8 +10,8 @@ nc='\033[0m'
 #Disks
 nvme_disk=false
 usb_disk=false
-nvme_disk_model=`smartctl -a /dev/nvme0n1 | grep "Model Number" | awk '{ $1=$2="";$0=$0;} NF=NF'`
-usb_disk_model=`smartctl -a /dev/sda | grep "Model Number" | awk '{ $1=$2="";$0=$0;} NF=NF'`
+nvme_disk_model=$(smartctl -a /dev/nvme0n1 | grep "Model Number" | awk '{ $1=$2="";$0=$0;} NF=NF')
+usb_disk_model=$(smartctl -a /dev/sda | grep "Model Number" | awk '{ $1=$2="";$0=$0;} NF=NF')
 jwtsecret_file=/etc/ethereum/jwtsecret
 
 #Service lists
@@ -101,9 +101,9 @@ separator
 
 echo -e "${bold}TEMPERATURE AND POWER INFO${nc}"
 
-echo "Voltage: `awk '{printf ("%0.2f\n",$1/172.41); }' </sys/devices/iio_sysfs_trigger/subsystem/devices/iio:device0/in_voltage6_raw`v"
+echo "Voltage: $(awk '{printf ("%0.2f\n",$1/172.41); }' </sys/devices/iio_sysfs_trigger/subsystem/devices/iio:device0/in_voltage6_raw)v"
 
-echo "Temperature: `awk '{printf ("%0.2f\n",$1/1000); }' </sys/class/thermal/thermal_zone0/temp`ºC"
+echo "Temperature: $(awk '{printf ("%0.2f\n",$1/1000); }' </sys/class/thermal/thermal_zone0/temp)ºC"
 
 
 echo
@@ -172,7 +172,7 @@ separator
 echo -e "${bold}JWT PORT${nc}"
 
 # Check $execution_port port
-if `nc -z localhost $execution_port`; then
+if nc -z localhost $execution_port; then
 	echo -e "Port $execution_port check ${green}PASS${nc} Port is listening and accepting connections"
 else
 	echo -e "${red}Port $execution_port is not open. Execution Layer and Consensus Layer cannot communicate${nc}"

@@ -4,11 +4,14 @@
 red='\033[0;91m'
 green='\033[0;92m'
 orange='\033[0;33m'
+bold='\033[1m'
 nc='\033[0m'
 
 #Disks
 nvme_disk=false
 usb_disk=false
+nvme_disk_model=`smartctl -a /dev/nvme0n1 | grep "Model Number" | awk '{ $1=$2="";$0=$0;} NF=NF'`
+usb_disk_model=`smartctl -a /dev/sda | grep "Model Number" | awk '{ $1=$2="";$0=$0;} NF=NF'`
 jwtsecret_file=/etc/ethereum/jwtsecret
 
 #Service lists
@@ -28,6 +31,10 @@ total_ram=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
 # Convert bytes to gigabytes
 total_ram_gb=$(awk "BEGIN {print $total_ram/1024/1024}")
 
+section() {
+	printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' "#"
+}
+
 separator() {
 	printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 }
@@ -39,107 +46,14 @@ if [ "$(id -u)" != "0" ]; then
 	exit 1
 fi
 
+# Hardware tests
 # Print separator
+
+echo
+echo -e "${bold}HARDWARE${nc}"
+section
 separator
-
-# Check Ethereum user
-if id "ethereum" >/dev/null 2>&1; then
-	echo -e "Ethereum user check ${green}✓${nc} ethereum user exists"
-else
-	echo -e "${red}User ethereum does not exist, installation failed${nc}. Please see /var/log for more info"
-	exit 1
-fi
-
-# Print separator
-separator
-
-# Check consensus layer
-for c in ${consensus_layer}; do
-	if (systemctl is-active "$c" >/dev/null 2>&1); then
-		echo -e "Consensus Layer check ${green}✓${nc} $c service is running"
-		consensus_is_running=true
-		continue
-	fi
-done
-
-# Check execution layer
-for e in ${execution_layer}; do
-	if (systemctl is-active "$e" >/dev/null 2>&1); then
-		echo -e "Execution Layer check ${green}✓${nc} $e service is running"
-		execution_is_running=true
-		continue
-	fi
-done
-
-# Print error if no consensus client is running
-if [ "${consensus_is_running}" = false ]; then
-	echo -e "Error: ${red}No Consensus Client is running${nc}. Please, start a Consensus Layer client"
-	exit 1
-fi
-
-# Print error if no execution client is running
-if [ "${execution_is_running}" = false ]; then
-	echo -e "${red}No Execution Client is running${nc}. Please, start an Execution Layer client"
-	exit 1
-fi
-
-# Print separator
-separator
-
-# Check JWT file
-if test -s "$jwtsecret_file"; then
-	echo -e "JWT secret file check ${green}✓${nc} File exists and it is not empty"
-else
-	echo -e "${red}The file $jwtsecret_file does not exist or it is empty${nc}"
-	exit 1
-fi
-
-# Print separator
-separator
-
-# Check $execution_port port
-if nc -z localhost $execution_port; then
-	echo -e "Port $execution_port check ${green}✓${nc} Port is listening and accepting connections"
-else
-	echo -e "${red}Port $execution_port is not open. Execution Layer and Consensus Layer cannot communicate between${nc}"
-	exit 1
-fi
-
-# Print separator
-separator
-
-if (curl -s ifconfig.co/port/30303 -w "\n" | grep -c "\"reachable\": true" >/dev/null 2>&1); then
-	echo -e "Port 30303 check ${green}✓${nc} Port is open"
-else
-	echo -e "${red}Port 30303 is not open, open it in your router or firewall ${nc}"
-fi
-
-if (curl -s ifconfig.co/port/9000 -w "\n" | grep -c "\"reachable\": true" >/dev/null 2>&1); then
-	echo -e "Port 9000 check ${green}✓${nc} Port is open"
-else
-	echo -e "${red}Port 9000 is not open, open it in your router or firewall ${nc}"
-fi
-
-# Check if device '/dev/nvme0n1' exists
-if [ -e "/dev/nvme0n1" ]; then
-	disks=$((disks + 1))
-	nvme_disk=true
-fi
-
-# Print separator
-separator
-
-# Check if there are any SSD disks present or mounted
-if [ $usb_disk ] || [ $nvme_disk ]; then
-	echo -e "Disk check ${green}✓${nc} External disk detected"
-else
-	echo -e "${red}Error: There are no SSD disks present or mounted${nc}. Please review your set up or /etc/fstab config."
-	exit 1
-fi
-
-# Print separator
-separator
-
+echo -e "${bold}RAM${nc}"
 # Check RAM size and output result
 if [ "$(echo "$total_ram_gb < 8" | bc)" -eq 1 ]; then
 	echo -e "RAM size check ${red}FAIL${nc} Total RAM is less than 8GB"
@@ -152,24 +66,32 @@ fi
 # Print separator
 separator
 
-echo "Installed packages:"
-grep -hoP '(?<=Package: ).+' /var/lib/apt/lists/apt.ethraspbian.com_dists_focal_* | tr '\n' ' '
-echo ""
+echo -e "${bold}DISKS${nc}"
+# Check if device '/dev/nvme0n1' exists
+if [ -e "/dev/nvme0n1" ]; then
+	nvme_disk=true
+fi
 
-# Print separator
-separator
+# Check if device '/dev/sda' exists
+if [ -e "/dev/sda" ]; then
+	usb_disk=true
+fi
 
-echo "Voltage:"
-awk '{printf ("%0.2f\n",$1/172.41); }' </sys/devices/iio_sysfs_trigger/subsystem/devices/iio:device0/in_voltage6_raw
+# Check if there are any SSD disks present or mounted
+if [ $usb_disk ] || [ $nvme_disk ]; then
+	echo -e "Disk check ${green}PASS${nc} External disk detected"
+else
+	echo -e "${red}Error: There are no SSD disks present or mounted${nc}. Please review your set up or /etc/fstab config."
+	exit 1
+fi
 
-# Print separator
-separator
+if $nvme_disk; then
+	echo -e "Your NVMe Disk model is $nvme_disk_model"
+fi
 
-echo "Temperature:"
-awk '{printf ("%0.2f\n",$1/1000); }' </sys/class/thermal/thermal_zone0/temp
-
-# Print separator
-separator
+if $usb_disk; then
+	echo -e "Your USB Disk model is $usb_disk_model"
+fi
 
 echo "Swap file info:"
 swapon -s
@@ -177,19 +99,124 @@ swapon -s
 # Print separator
 separator
 
-echo "Top processes:"
+echo -e "${bold}TEMPERATURE AND POWER INFO${nc}"
+
+echo "Voltage: `awk '{printf ("%0.2f\n",$1/172.41); }' </sys/devices/iio_sysfs_trigger/subsystem/devices/iio:device0/in_voltage6_raw`v"
+
+echo "Temperature: `awk '{printf ("%0.2f\n",$1/1000); }' </sys/class/thermal/thermal_zone0/temp`ºC"
+
+
+echo
+echo -e "${bold}SYSTEM${nc}"
+section
+separator
+echo -e "${bold}USER CONFIG${nc}"
+# Check Ethereum account
+if id "ethereum" >/dev/null 2>&1; then
+	echo -e "Ethereum account check ${green}PASS${nc} ethereum user exists"
+else
+	echo -e "${red}User ethereum does not exist, installation failed${nc}. Please see /var/log for more info"
+	exit 1
+fi
+
+echo
+echo -e "${bold}ETHEREUM${nc}"
+section
+separator
+echo -e "${bold}ETHEREUM CLIENTS${nc}"
+
+# Check consensus layer
+for c in ${consensus_layer}; do
+	if (systemctl is-active "$c" >/dev/null 2>&1); then
+		echo -e "Consensus Layer check ${green}PASS${nc} $c service is running"
+		consensus_is_running=true
+		continue
+	fi
+done
+
+# Check execution layer
+for e in ${execution_layer}; do
+	if (systemctl is-active "$e" >/dev/null 2>&1); then
+		echo -e "Execution Layer check ${green}PASS${nc} $e service is running"
+		execution_is_running=true
+		continue
+	fi
+done
+
+# Print error and exit if no consensus client is running
+if [ "${consensus_is_running}" = false ]; then
+	echo -e "Error: ${red}No Consensus Client is running${nc}. Please, start a Consensus Layer client and run eoa_check.sh again"
+	exit 1
+fi
+
+# Print error and exit if no execution client is running
+if [ "${execution_is_running}" = false ]; then
+	echo -e "${red}No Execution Client is running${nc}. Please, start an Execution Layer client and run eoa_check.sh again"
+	exit 1
+fi
+
+# Print separator
+separator
+echo -e "${bold}JWT FILE${nc}"
+
+# Check JWT file
+if test -s "$jwtsecret_file"; then
+	echo -e "JWT secret file check ${green}PASS${nc} File exists and it is not empty"
+else
+	echo -e "${red}The file $jwtsecret_file does not exist or it is empty${nc}"
+	exit 1
+fi
+
+# Print separator
+separator
+echo -e "${bold}JWT PORT${nc}"
+
+# Check $execution_port port
+if `nc -z localhost $execution_port`; then
+	echo -e "Port $execution_port check ${green}PASS${nc} Port is listening and accepting connections"
+else
+	echo -e "${red}Port $execution_port is not open. Execution Layer and Consensus Layer cannot communicate${nc}"
+	exit 1
+fi
+
+# Print separator
+separator
+echo -e "${bold}FORWARDED PORTS${nc}"
+
+if (curl -s ifconfig.co/port/30303 -w "\n" | grep -c "\"reachable\": true" >/dev/null 2>&1); then
+	echo -e "Port 30303 check ${green}PASS${nc} Port is open"
+else
+	echo -e "Port 30303 check ${red}FAIL${nc}, please open it in your router or firewall ${nc}"
+fi
+
+if (curl -s ifconfig.co/port/9000 -w "\n" | grep -c "\"reachable\": true" >/dev/null 2>&1); then
+	echo -e "Port 9000 check ${green}PASS${nc} Port is open"
+else
+	echo -e "Port 9000 check ${red}FAIL${nc}, please open it in your router or firewall ${nc}"
+fi
+
+# Print separator
+separator
+echo -e "${bold}INSTALLED PACKAGES${nc}"
+grep -hoP '(?<=Package: ).+' /var/lib/apt/lists/apt.ethraspbian.com_dists_focal_* | tr '\n' ' '
+echo ""
+
+# Print separator
+echo
+echo -e "${bold}LOGS${nc}"
+section
+separator
+echo -e "${bold}PROCESSES${nc}"
 top -bcn 1
 
 # Print separator
 separator
-
-echo "Listening ports:"
+echo -e "${bold}LISTENING PORTS${nc}"
 ss -tunlp
 
 # Print separator
 separator
-
-echo "Last 100 lines of syslog:"
+echo -e "${bold}SYSLOG${nc}"
 tail -n 100 /var/log/syslog
 
 # Exit with success

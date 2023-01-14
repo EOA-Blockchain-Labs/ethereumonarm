@@ -105,7 +105,6 @@ echo "Voltage: $(awk '{printf ("%0.2f\n",$1/172.41); }' </sys/devices/iio_sysfs_
 
 echo "Temperature: $(awk '{printf ("%0.2f\n",$1/1000); }' </sys/class/thermal/thermal_zone0/temp)ºC"
 
-
 echo
 echo -e "${bold}SYSTEM${nc}"
 section
@@ -218,6 +217,10 @@ ss -tunlp
 separator
 echo -e "${bold}SYSLOG${nc}"
 tail -n 100 /var/log/syslog
+
+separator
+echo -e "${bold}RC.LOCAL${nc}"
+cat /root/first-run.flag
 
 # Exit with success
 exit 0

@@ -4,7 +4,7 @@
 SHELL := /bin/bash
 
 NIMBUS_VERSION := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.name' | tr -d 'v')
-NIMBUS_URL := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.assets[10].browser_download_url')
+NIMBUS_URL := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.assets[8].browser_download_url')
 
 PKG_RELEASE := 0
 PKG_NAME := nimbus
@@ -30,7 +30,8 @@ PKG_DEB := $(PKG_NAME)_$(NIMBUS_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICENSE)\
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-	--deb-systemd extras/nimbus.service --deb-systemd extras/nimbus-prater.service\
+	--before-upgrade extras/preinst\
+	--deb-systemd extras/nimbus-beacon.service --deb-systemd extras/nimbus-validator.service\
 	--depends merge-config
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICENSE)\

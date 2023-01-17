@@ -1,0 +1,24 @@
+#!/bin/bash
+# pre-installation script
+
+set -e
+
+# Check if the nimbus service is running
+
+if pgrep -f "nimbus_beacon_node" > /dev/null
+then
+    echo "Nimbus service is running, please stop it before upgrading Nimbus"
+    exit 1
+fi
+
+if [ -d /home/ethereum/.nimbus ]
+then
+    mv /home/ethereum/.nimbus /home/ethereum/.nimbus-beacon
+fi
+
+if [ -d /home/ethereum/.nimbus-beacon/validators ]; then
+    mkdir -p /home/ethereum/.nimbus-validator/
+    chown -R ethereum:ethereum /home/ethereum/.nimbus-validator/
+    mv /home/ethereum/.nimbus-beacon/secrets /home/ethereum/.nimbus-validator
+    mv /home/ethereum/.nimbus-beacon/validators /home/ethereum/.nimbus-validator
+fi

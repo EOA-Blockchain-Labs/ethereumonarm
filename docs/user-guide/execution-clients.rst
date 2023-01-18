@@ -32,7 +32,7 @@ Ethereum on ARM supports all available Execution Layer clients.
 Geth
 ~~~~
 
-:guilabel:`Geth` is the most used EL client. It is develope by the Ethereum Foundation team
+:guilabel:`Geth` is the most used EL client. It is developed by the Ethereum Foundation team
 and the performance on ARM64 devices is outstanding. It is capable of syncing the whole blockchain 
 in 2 days on a **Raspberry Pi 4 with 8 GB RAM** and in less that 1 day on the 
 **Radxa Rock 5B**.

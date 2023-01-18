@@ -8,7 +8,7 @@ bold='\033[1m'
 nc='\033[0m'
 
 #Board model
-model=`cat /sys/firmware/devicetree/base/model | tr -d '\0'`
+model=$(tr -d '\0' </sys/firmware/devicetree/base/model)
 
 #Disks
 nvme_disk=false
@@ -107,8 +107,7 @@ separator
 
 echo -e "${bold}TEMPERATURE AND POWER INFO${nc}"
 
-if grep -q 'ROCK' /sys/firmware/devicetree/base/model
-then
+if grep -q 'ROCK' /sys/firmware/devicetree/base/model; then
 	echo "Voltage: $(awk '{printf ("%0.2f\n",$1/172.41); }' </sys/devices/iio_sysfs_trigger/subsystem/devices/iio:device0/in_voltage6_raw)v"
 fi
 echo "Temperature: $(awk '{printf ("%0.2f\n",$1/1000); }' </sys/class/thermal/thermal_zone0/temp)ºC"

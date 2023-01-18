@@ -7,6 +7,9 @@ orange='\033[0;33m'
 bold='\033[1m'
 nc='\033[0m'
 
+#Board model
+model=`cat /sys/firmware/devicetree/base/model`
+
 #Disks
 nvme_disk=false
 usb_disk=false
@@ -53,14 +56,17 @@ echo
 echo -e "${bold}HARDWARE${nc}"
 section
 separator
+echo -e "${bold}BOARD${nc}"
+echo -e "You are running a $model"
+separator
 echo -e "${bold}RAM${nc}"
 # Check RAM size and output result
-if [ "$(echo "$total_ram_gb < 8" | bc)" -eq 1 ]; then
+if [ "$(echo "$total_ram_gb < 7" | bc)" -eq 1 ]; then
 	echo -e "RAM size check ${red}FAIL${nc} Total RAM is less than 8GB"
 elif [ "$(echo "$total_ram_gb >= 7 && $total_ram_gb < 15" | bc)" -eq 1 ]; then
-	echo -e "RAM size check ${orange}WARNING${nc} Total RAM is between 8GB and 16GB"
+	echo -e "RAM size check ${orange}WARNING${nc} Total RAM is 8GB"
 else
-	echo -e "RAM size check ${green}PASS${nc} Total RAM is over 16GB"
+	echo -e "RAM size check ${green}PASS${nc} Total RAM is 16GB or more"
 fi
 
 # Print separator
@@ -101,8 +107,10 @@ separator
 
 echo -e "${bold}TEMPERATURE AND POWER INFO${nc}"
 
-echo "Voltage: $(awk '{printf ("%0.2f\n",$1/172.41); }' </sys/devices/iio_sysfs_trigger/subsystem/devices/iio:device0/in_voltage6_raw)v"
-
+if grep -q 'ROCK' /sys/firmware/devicetree/base/model
+then
+	echo "Voltage: $(awk '{printf ("%0.2f\n",$1/172.41); }' </sys/devices/iio_sysfs_trigger/subsystem/devices/iio:device0/in_voltage6_raw)v"
+fi
 echo "Temperature: $(awk '{printf ("%0.2f\n",$1/1000); }' </sys/class/thermal/thermal_zone0/temp)ºC"
 
 echo

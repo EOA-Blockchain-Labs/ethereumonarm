@@ -150,7 +150,7 @@ EOF
 
   # Install Nginx proxy for connecting wallets or quering the RPC API
   apt-get -y install nginx
-  apt-get -y install ethereumonarm-nginx-proxy-extras
+  apt-get -y install ethereumonarm-nginx-proxy-extras ethereumonarm-utils
   systemctl enable nginx
 
   #Disable root user

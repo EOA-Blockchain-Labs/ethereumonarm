@@ -14,7 +14,7 @@ model=$(tr -d '\0' </sys/firmware/devicetree/base/model)
 nvme_disk=false
 usb_disk=false
 nvme_disk_model=$(smartctl -a /dev/nvme0n1 | grep "Model Number" | awk '{ $1=$2="";$0=$0;} NF=NF')
-usb_disk_model=$(smartctl -a /dev/sda | grep "Model Number" | awk '{ $1=$2="";$0=$0;} NF=NF')
+usb_disk_model=$(smartctl -a /dev/sda | grep "Device Model" | awk '{ $1=$2="";$0=$0;} NF=NF')
 jwtsecret_file=/etc/ethereum/jwtsecret
 
 #Service lists
@@ -57,7 +57,7 @@ echo -e "${bold}HARDWARE${nc}"
 section
 separator
 echo -e "${bold}BOARD${nc}"
-echo -e "You are running a $model"
+echo -e "You are running a $model board"
 separator
 echo -e "${bold}RAM${nc}"
 # Check RAM size and output result

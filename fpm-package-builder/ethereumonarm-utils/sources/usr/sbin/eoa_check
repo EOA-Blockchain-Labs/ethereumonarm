@@ -8,7 +8,7 @@ bold='\033[1m'
 nc='\033[0m'
 
 #Board model
-model=`cat /sys/firmware/devicetree/base/model`
+model=`cat /sys/firmware/devicetree/base/model | tr -d '\0'`
 
 #Disks
 nvme_disk=false

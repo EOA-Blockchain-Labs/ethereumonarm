@@ -115,7 +115,7 @@ EOF
 
   # Install Nginx proxy for connecting wallets or quering the RPC API
   apt-get -y install nginx
-  apt-get -y install ethereumonarm-nginx-proxy-extras
+  apt-get -y install ethereumonarm-nginx-proxy-extras ethereumonarm-utils
   systemctl enable nginx
 
   # Install MEV Boost with no censorship relays
@@ -125,7 +125,7 @@ EOF
   apt-get -y install ufw
   ufw --force disable
 
-  # Intsall some extra dependence
+  # Install some extra dependence
   apt-get -y install libraspberrypi-bin net-tools
   #Disable root user
   passwd -l root

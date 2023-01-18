@@ -85,7 +85,7 @@ if [ ! -f $FLAG ]; then
   # Install Ethereum packages
   echo Installing Ethereum packages
   apt-get update
-  apt-get -y install ethereumonarm-armbian-extras geth nethermind erigon besu prysm lighthouse nimbus teku staking-deposit-cli
+  apt-get -y install ethereumonarm-armbian-extras ethereumonarm-utils geth nethermind erigon besu prysm lighthouse nimbus teku staking-deposit-cli
 
   # Create an alias for package updates
   cat <<EOF >> /etc/bash.bashrc

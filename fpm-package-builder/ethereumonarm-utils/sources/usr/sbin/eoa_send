@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-eoa_check=$(which eoa_check)  
+eoa_check=$(which eoa_check)
 
 if [ -z "$eoa_check" ]; then
     echo "eoa_check not found"
@@ -13,9 +13,6 @@ output=$($eoa_check)
 output=$(echo "$output" | sed -E 's/([0-9]{1,3}\.)([0-9]{1,3}\.)([0-9]{1,3}\.)([0-9]{1,3})/XXX.XXX.\3\4/g')
 
 # check if curl command is available
-if ! [ -x "$(command -v curl)" ]; then
-    echo "curl command not found, please install it"
-    exit 1
-fi
+which curl >/dev/null 2>&1 || apt-get -f -qq -y install curl
 
-curl --no-progress-meter -F 'sprunge=<-' http://sprunge.us <<< "$output" 
+curl --no-progress-meter -F 'sprunge=<-' http://sprunge.us <<<"$output"

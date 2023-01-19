@@ -18,4 +18,4 @@ if ! [ -x "$(command -v curl)" ]; then
     exit 1
 fi
 
-curl --no-progress-meter -d 'sprunge=<-' http://sprunge.us <<< "$output" 
+curl --no-progress-meter -F 'sprunge=<-' http://sprunge.us <<< "$output" 

@@ -46,7 +46,7 @@ separator() {
 if [ "$(id -u)" != "0" ]; then
 	# If the user is not root, print an error message and exit
 	echo -e "Error: ${red}You must be Root to run this script${nc}. please run sudo eoa_check.sh"
-	exit 1
+
 fi
 
 # Hardware tests
@@ -88,7 +88,7 @@ if [ $usb_disk ] || [ $nvme_disk ]; then
 	echo -e "Disk check ${green}PASS${nc} External disk detected"
 else
 	echo -e "${red}Error: There are no SSD disks present or mounted${nc}. Please review your set up or /etc/fstab config."
-	exit 1
+
 fi
 
 if $nvme_disk; then
@@ -116,8 +116,23 @@ echo "Temperature: $(awk '{printf ("%0.2f\n",$1/1000); }' </sys/class/thermal/th
 separator
 
 echo -e "${bold}SPEEDTEST${nc}"
-which sppeedtest-cli >/dev/null 2>&1 || apt-get -f -qq -y install speedtest-cli >/dev/null 2>&1
-speedtest-cli | grep -E "Download|Upload"
+
+which speedtest-cli >/dev/null 2>&1 || apt-get -f -qq -y install speedtest-cli >/dev/null 2>&1
+output=$(speedtest-cli --csv)
+download_speed=$(echo "$output" | awk -F , '{print $7}')
+upload_speed=$(echo "$output" | awk -F , '{print $8}')
+
+#Convert bits to human readable format
+download_human=$(numfmt --to=iec-i --suffix=B/s "$download_speed")
+upload_human=$(numfmt --to=iec-i --suffix=B/s "$upload_speed")
+
+#Check download speed
+if (($(echo "$download_speed < 100000" | awk '{print ($1<100000)}'))); then
+	echo -e "Your download speed is ${orange}less than 100 Mbits/s${nc}, probably not enough to keep in sync. Download Speed: $download_human"
+else
+	echo -e "Your download speed is ${green}above 100 Mbits/s${nc}. Download Speed: $download_human"
+fi
+echo -e "Upload Speed: $upload_human"
 
 echo
 echo -e "${bold}SYSTEM${nc}"
@@ -129,7 +144,6 @@ if id "ethereum" >/dev/null 2>&1; then
 	echo -e "Ethereum account check ${green}PASS${nc} ethereum user exists"
 else
 	echo -e "${red}User ethereum does not exist, installation failed${nc}. Please see /var/log for more info"
-	exit 1
 fi
 
 echo
@@ -159,13 +173,13 @@ done
 # Print error and exit if no consensus client is running
 if [ "${consensus_is_running}" = false ]; then
 	echo -e "Error: ${red}No Consensus Client is running${nc}. Please, start a Consensus Layer client and run eoa_check.sh again"
-	exit 1
+
 fi
 
 # Print error and exit if no execution client is running
 if [ "${execution_is_running}" = false ]; then
 	echo -e "${red}No Execution Client is running${nc}. Please, start an Execution Layer client and run eoa_check.sh again"
-	exit 1
+
 fi
 
 # Print separator
@@ -177,7 +191,7 @@ if test -s "$jwtsecret_file"; then
 	echo -e "JWT secret file check ${green}PASS${nc} File exists and it is not empty"
 else
 	echo -e "${red}The file $jwtsecret_file does not exist or it is empty${nc}"
-	exit 1
+
 fi
 
 # Print separator
@@ -189,7 +203,7 @@ if nc -z localhost $execution_port; then
 	echo -e "Port $execution_port check ${green}PASS${nc} Port is listening and accepting connections"
 else
 	echo -e "${red}Port $execution_port is not open. Execution Layer and Consensus Layer cannot communicate${nc}"
-	exit 1
+
 fi
 
 # Print separator

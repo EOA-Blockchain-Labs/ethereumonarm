@@ -1,11 +1,32 @@
 #!/usr/bin/env bash
 
+use_colors=true
+
+while getopts "n" opt; do
+	case ${opt} in
+	n)
+		use_colors=false
+		;;
+	\?)
+		echo "Invalid option: -$OPTARG" >&2
+		;;
+	esac
+done
+
 #Colors
-red='\033[0;91m'
-green='\033[0;92m'
-orange='\033[0;33m'
-bold='\033[1m'
-nc='\033[0m'
+if [ "$use_colors" = true ]; then
+	red='\033[0;91m'
+	green='\033[0;92m'
+	orange='\033[0;33m'
+	bold='\033[1m'
+	nc='\033[0m'
+else
+	red=''
+	green=''
+	orange=''
+	bold=''
+	nc=''
+fi
 
 #Board model
 model=$(tr -d '\0' </sys/firmware/devicetree/base/model)
@@ -46,7 +67,26 @@ separator() {
 if [ "$(id -u)" != "0" ]; then
 	# If the user is not root, print an error message and exit
 	echo -e "Error: ${red}You must be Root to run this script${nc}. please run sudo eoa_check.sh"
+	exit 1
 
+fi
+
+
+# Show script summary
+echo -e "${bold}This script will check various system information such as hardware, software, and service status.${nc}"
+echo -e "It will check for the following: "
+echo -e "- Board model"
+echo -e "- RAM size"
+echo -e "- Disk model"
+echo -e "- Service status of consensus and execution layer"
+echo -e "- Execution port number"
+echo -e "- jwtsecret file"
+echo 
+read -p "Do you want to continue? (y/n) " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]
+then
+    exit 1
 fi
 
 # Hardware tests

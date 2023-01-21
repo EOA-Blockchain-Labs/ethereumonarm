@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 
 use_colors=true
+show_summary=true
 
-while getopts "n" opt; do
+while getopts "ns" opt; do
 	case ${opt} in
 	n)
 		use_colors=false
+		;;
+	s)
+		show_summary=false
 		;;
 	\?)
 		echo "Invalid option: -$OPTARG" >&2
@@ -26,6 +30,25 @@ else
 	orange=''
 	bold=''
 	nc=''
+fi
+
+# Show script summary
+if [ "$show_summary" = true ]; then
+  echo -e "${bold}This script will check various system information such as hardware, software, and service status.${nc}"
+  echo -e "It will check for the following: "
+  echo -e "- Board model"
+  echo -e "- RAM size"
+  echo -e "- Disk model"
+  echo -e "- Service status of consensus and execution layer"
+  echo -e "- Execution port number"
+  echo -e "- jwtsecret file"
+  echo 
+  read -p "Do you want to continue? (y/n) " -n 1 -r
+  echo
+  if [[ ! $REPLY =~ ^[Yy]$ ]]
+  then
+      exit 1
+  fi
 fi
 
 #Board model

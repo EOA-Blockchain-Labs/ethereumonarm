@@ -71,24 +71,6 @@ if [ "$(id -u)" != "0" ]; then
 
 fi
 
-
-# Show script summary
-echo -e "${bold}This script will check various system information such as hardware, software, and service status.${nc}"
-echo -e "It will check for the following: "
-echo -e "- Board model"
-echo -e "- RAM size"
-echo -e "- Disk model"
-echo -e "- Service status of consensus and execution layer"
-echo -e "- Execution port number"
-echo -e "- jwtsecret file"
-echo 
-read -p "Do you want to continue? (y/n) " -n 1 -r
-echo
-if [[ ! $REPLY =~ ^[Yy]$ ]]
-then
-    exit 1
-fi
-
 # Hardware tests
 # Print separator
 

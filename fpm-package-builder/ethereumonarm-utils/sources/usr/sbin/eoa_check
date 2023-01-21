@@ -112,6 +112,13 @@ if grep -q 'ROCK' /sys/firmware/devicetree/base/model; then
 fi
 echo "Temperature: $(awk '{printf ("%0.2f\n",$1/1000); }' </sys/class/thermal/thermal_zone0/temp)ºC"
 
+# Print separator
+separator
+
+echo -e "${bold}SPEEDTEST${nc}"
+which sppeedtest-cli >/dev/null 2>&1 || apt-get -f -qq -y install speedtest-cli >/dev/null 2>&1
+speedtest-cli | grep -E "Download|Upload"
+
 echo
 echo -e "${bold}SYSTEM${nc}"
 section

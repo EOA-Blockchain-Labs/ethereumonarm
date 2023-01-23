@@ -83,6 +83,7 @@ information regarding the image and other Ethereum related software.
   /user-guide/mev-boost
   /user-guide/storage
   /user-guide/security
+  /user-guide/Troubleshooting
 
 Developers Guide
 ----------------

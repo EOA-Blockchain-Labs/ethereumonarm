@@ -11,8 +11,13 @@ steps** in order to solve the issue or get assistance.
 EOA Check script
 ----------------
 
-We developed a script that performs some tests regarding your node Hardware, System and Ethereum software config. If 
-your node doesn't run properly, please run this script and check the output.
+This script is designed to check for common issues that users may encounter when trying to install 
+and run their first Ethereum on ARM node. It checks for various system information such as hardware, 
+software, and service status and looks for the usual problems that users may face based on the shared 
+experiences in the Discord community.
+
+The script's purpose is to help users troubleshooting info and identify any potential issues that may be 
+preventing the Ethereum on ARM node from running properly.
 
 We will include it by default in the next images release. From now, you can install it by typing:
 

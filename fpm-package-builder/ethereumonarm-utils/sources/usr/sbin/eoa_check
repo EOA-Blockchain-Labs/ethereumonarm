@@ -270,7 +270,7 @@ fi
 # Print separator
 separator
 echo -e "${bold}INSTALLED PACKAGES${nc}"
-grep -hoP '(?<=Package: ).+' /var/lib/apt/lists/apt.ethraspbian.com_dists_focal_* | tr '\n' ' '
+grep -hoP '(?<=Package: ).+' /var/lib/apt/lists/apt.ethraspbian.com_dists_focal_* | xargs dpkg-query -f '${binary:Package}\n' -W 2>/dev/null
 echo ""
 
 # Print separator

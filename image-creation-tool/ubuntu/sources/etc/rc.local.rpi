@@ -18,13 +18,12 @@ if [ ! -f $FLAG ]; then
 
   # Wait to interface to link up
   n=0
-  until [ "$n" -ge 3 ]
-  do
-    nc -z apt.ethraspbian.com 80  > /dev/null 2>&1
-    if [ $? -eq 0 ]; then
+  until [ "$n" -ge 3 ]; do
+
+    if nc -z apt.ethraspbian.com 80 >/dev/null 2>&1; then
       break
     else
-      n=$((n+1))
+      n=$((n + 1))
       sleep 5
     fi
   done
@@ -36,14 +35,13 @@ if [ ! -f $FLAG ]; then
 
   # Format USB3 SSD and mount it as /home
   echo "Looking for USB drive"
-  if stat  /dev/sda > /dev/null 2>&1;
-  then
+  if stat /dev/sda >/dev/null 2>&1; then
     echo "USB drive found"
     echo "Partitioning and formatting USB Drive..."
     wipefs -a /dev/sda
     sgdisk -n 0:0:0 /dev/sda
     mkfs.ext4 -F /dev/sda1
-    echo '/dev/sda1 /home ext4 defaults,noatime 0 2' >> /etc/fstab && mount /home
+    echo '/dev/sda1 /home ext4 defaults,noatime 0 2' >>/etc/fstab && mount /home
   else
     echo "no SDD detected"
     echo "Stopping the installation, and extenal disk is needed"
@@ -52,8 +50,8 @@ if [ ! -f $FLAG ]; then
 
   # Modify hostname (ethereumonarm-$MAC-HASH-CHUNK)
   echo Changing hostname
-  MAC_HASH=`cat /sys/class/net/eth0/address | sha256sum | awk '{print substr($0,0,9)}'`
-  echo ethereumonarm-rpi4-$MAC_HASH > /etc/hostname
+  MAC_HASH=$(sha256sum </sys/class/net/eth0/address | awk '{print substr($0,0,9)}')
+  echo ethereumonarm-rpi4-"$MAC_HASH" >/etc/hostname
   sed -i "s/127.0.0.1.*/127.0.0.1\tethereumonarm-rpi4-$MAC_HASH/g" /etc/hosts
 
   # Create Ethereum account
@@ -70,15 +68,17 @@ if [ ! -f $FLAG ]; then
   # Force password change on first login
   chage -d 0 ethereum
 
-  # Page allocation error workout
-  echo "vm.min_free_kbytes=65536" >> /etc/sysctl.conf
   # Increasing how aggressively the kernel will swap memory pages since we are using ZRAM first
-  echo "vm.swappiness=100" >> /etc/sysctl.conf
   # Increases cache pressure, which increases the tendency of the kernel to reclaim memory used for caching of directory and inode objects. You will use less memory over a longer period of time
-  echo "vm.vfs_cache_pressure=500" >> /etc/sysctl.conf
   # Background processes will start writing right away when it hits the 1% limit but the system won’t force synchronous I/O until it gets to 50% dirty_ratio
-  echo "vm.dirty_background_ratio=1" >> /etc/sysctl.conf
-  echo "vm.dirty_ratio=50" >> /etc/sysctl.conf
+  # Page allocation error workout
+  {
+    echo "vm.min_free_kbytes=65536"
+    echo "vm.swappiness=100"
+    echo "vm.vfs_cache_pressure=500"
+    echo "vm.dirty_background_ratio=1"
+    echo "vm.dirty_ratio=50"
+  } >>/etc/sysctl.conf
 
   # Ethereum software installation
   # Add APT EthRaspbian repository
@@ -90,13 +90,11 @@ if [ ! -f $FLAG ]; then
   # Install Ethereum packages
   echo Installing Ethereum packages
   apt-get update
-  apt-get -y install ethereumonarm-armbian-extras geth nethermind erigon besu prysm lighthouse nimbus teku staking-deposit-cli
+  apt-get -y install ethereumonarm-armbian-extras geth nethermind erigon besu prysm lighthouse nimbus teku staking-deposit-cli ethereumonarm-utils
 
   # Create an alias for package updates
-  cat <<EOF >> /etc/bash.bashrc
-  alias update-ethereum='
-sudo apt-get update
-sudo apt-get install geth nethermind erigon besu prysm lighthouse nimbus teku staking-deposit-cli'
+  cat <<EOF >>/etc/bash.bashrc
+  alias update-ethereum='sudo apt-get update && sudo apt-get install geth nethermind erigon besu prysm lighthouse nimbus teku staking-deposit-cli'
 EOF
   # Install monitoring packages
   wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
@@ -106,7 +104,7 @@ EOF
   systemctl enable grafana-server
   useradd -m prometheus
   mkdir -p /home/prometheus/node-exporter/
-  chown -R  prometheus:prometheus /home/prometheus/
+  chown -R prometheus:prometheus /home/prometheus/
   apt-get install -y prometheus prometheus-node-exporter prometheus-pushgateway
 
   # install Ethereum on ARM monitoring config
@@ -135,7 +133,7 @@ EOF
 
   #the next line creates an empty file so it won't run the next boot
   touch $FLAG
-  grep "rc.local" /var/log/syslog >> $FLAG
+  grep "rc.local" /var/log/syslog >>$FLAG
   reboot
 else
   echo "Nothing to do"

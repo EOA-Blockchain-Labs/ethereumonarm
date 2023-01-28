@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Check if the eoa_check command is available
 eoa_check=$(which eoa_check)
 
 if [ -z "$eoa_check" ]; then
@@ -7,12 +8,14 @@ if [ -z "$eoa_check" ]; then
     exit 1
 fi
 
+# Run the eoa_check command with the -ns flag and save the output
 output=$($eoa_check -ns)
 
-# remove all but the last octet of IP addresses
+# Use sed to remove all but the last octet of IP addresses in the output
 output=$(echo "$output" | sed -E 's/([0-9]{1,3}\.)([0-9]{1,3}\.)([0-9]{1,3}\.)([0-9]{1,3})/XXX.XXX.\3\4/g')
 
-# check if curl command is available
+# Check if the curl command is available, if not install it
 which curl >/dev/null 2>&1 || apt-get -f -qq -y install curl >/dev/null 2>&1
 
+# Use curl to upload the modified output to sprunge.us
 curl --no-progress-meter -F 'sprunge=<-' http://sprunge.us <<<"$output"

@@ -113,7 +113,7 @@ EOF
 
   # Install Nginx proxy for connecting wallets or quering the RPC API
   apt-get -y install nginx
-  apt-get -y install ethereumonarm-nginx-proxy-extras ethereumonarm-utils
+  apt-get -y install ethereumonarm-nginx-proxy-extras
   systemctl enable nginx
 
   # Install MEV Boost with no censorship relays
@@ -131,7 +131,7 @@ EOF
   #Delete ubuntu user
   deluser ubuntu
 
-  #the next line creates an empty file so it won't run the next boot
+  #the next line creates an empty file so it won't run on next boot
   touch $FLAG
   grep "rc.local" /var/log/syslog >>$FLAG
   reboot

@@ -408,6 +408,11 @@ a few minutes as **Checkpoint sync is enabled by default.**
 Nimbus
 ~~~~~~
 
+.. warning::
+
+  From version 23.1.0, we upgraded :guilabel:`Nimbus` to run as 2 independent processes, 
+  1 binary for the Beacon Chain and 1 binary for the validator (so 2 different services)
+
 :guilabel:`Nimbus` is a full Consensus Layer client written in Nim.
 
 .. csv-table::

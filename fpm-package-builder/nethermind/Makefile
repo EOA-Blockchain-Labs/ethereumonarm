@@ -5,8 +5,8 @@ SHELL := /bin/bash
 
 NETHERMIND_VERSION := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/releases/latest" | jq -r '.name' | tr -d "v")
 #NETHERMIND_DHASH := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/tags" | jq -c 'map(select(.name | contains("$(NETHERMIND_VERSION)")))' | jq .[0].commit.sha | tr -d  '"' | cut -c1-7)
-NETHERMIND_URL := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/releases/latest"|jq -r '.assets[3].browser_download_url')
-NETHERMIND_NAME := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/releases/latest"|jq -r '.assets[3].name')
+NETHERMIND_URL := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/releases/latest"|jq -r '.assets[0].browser_download_url')
+NETHERMIND_NAME := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/releases/latest"|jq -r '.assets[0].name')
 
 PKG_RELEASE := 0
 PKG_NAME := nethermind

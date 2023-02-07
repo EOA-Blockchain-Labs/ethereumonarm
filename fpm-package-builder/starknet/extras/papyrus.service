@@ -1,0 +1,13 @@
+[Unit]
+Description=Papyrus StarkNet node
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/papyrus.conf
+ExecStart=/usr/bin/papyrus_node $ARGS
+Restart=always
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target
+

@@ -4,10 +4,10 @@ After=network.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/papyrus.conf
+ExecStartPre=-/bin/bash -c 'test -d "/home/ethereum/.papyrus" || mkdir "/home/ethereum/.papyrus" && chown -R ethereum:ethereum /home/ethereum/.papyrus'
 ExecStart=/usr/bin/papyrus_node $ARGS
 Restart=always
 User=ethereum
 
 [Install]
 WantedBy=multi-user.target
-

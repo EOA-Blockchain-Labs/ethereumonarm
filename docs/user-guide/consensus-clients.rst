@@ -416,6 +416,7 @@ Nimbus
   If you are using a prior release please upgrade and take into account that you need to 
   run 2 Systemd services.
 
+  **You need to stop the nimbus service before upgrading to 23.1.0**
   
 :guilabel:`Nimbus` is a full Consensus Layer client written in Nim.
 

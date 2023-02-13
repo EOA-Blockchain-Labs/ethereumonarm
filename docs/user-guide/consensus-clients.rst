@@ -422,7 +422,7 @@ Nimbus
 .. csv-table::
   :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
 
-  `nimbus`, `/home/ethereum/.nimbus`, `/etc/ethereum/nimbus.conf`, `9000`
+  `nimbus`, `/home/ethereum/.nimbus-beacon /home/ethereum/.nimbus-validator`, `/etc/ethereum/nimbus-beacon.conf /etc/ethereum/nimbus-validator.conf`, `9000`
 
 1.- Port forwarding
 
@@ -433,13 +433,13 @@ receiving tips and set the fee recipient flag:
 
 .. prompt:: bash $
 
-  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/nimbus.conf
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/nimbus-beacon.conf
 
   For instance:
 
 .. prompt:: bash $
 
-  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/nimbus.conf
+  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/nimbus-beacon.conf
 
 3. Enable Checkpoint Sync. 
 
@@ -447,7 +447,7 @@ We need to run a command before the **Checkpoint Sync** gets started:
 
 .. prompt:: bash $
 
-  nimbus_beacon_node trustedNodeSync --network=mainnet --data-dir=/home/ethereum/.nimbus --trusted-node-url=https://beaconstate.ethstaker.cc --backfill=false
+  nimbus_beacon_node trustedNodeSync --network=mainnet --data-dir=/home/ethereum/.nimbus-beacon --trusted-node-url=https://beaconstate.ethstaker.cc --backfill=false
 
 Wait for the command to finish.
 
@@ -465,7 +465,7 @@ We need to import your validator keys. Run under the ethereum account:
 
 .. prompt:: bash $
 
-  nimbus_beacon_node deposits import /home/ethereum/validator_keys --data-dir=/home/ethereum/.nimbus --log-file=/home/ethereum/.nimbus/nimbus.log
+  nimbus_beacon_node deposits import /home/ethereum/validator_keys --data-dir=/home/ethereum/.nimbus-validator --log-file=/home/ethereum/.nimbus-validator/nimbus.log
 
 Enter the password previously defined.
 

@@ -411,8 +411,12 @@ Nimbus
 .. warning::
 
   From version 23.1.0, we upgraded :guilabel:`Nimbus` to run as 2 independent processes, 
-  1 binary for the Beacon Chain and 1 binary for the validator (so 2 different services)
+  1 binary for the Beacon Chain and 1 binary for the validator (so 2 different services). 
 
+  If you are using a prior release please upgrade and take into account that you need to 
+  run 2 Systemd services.
+
+  
 :guilabel:`Nimbus` is a full Consensus Layer client written in Nim.
 
 .. csv-table::
@@ -424,17 +428,7 @@ Nimbus
 
 You need to open the 9000 port (both UDP and TCP)
 
-2.- Import the validator keys (only necessary for staking, skip this step for running an Ethereum full node)
-
-We need to import the validator keys. Run under the ethereum account (only necessary for staking, skip this step for running an Ethereum full node):
-
-.. prompt:: bash $
-
-  nimbus_beacon_node deposits import /home/ethereum/validator_keys --data-dir=/home/ethereum/.nimbus --log-file=/home/ethereum/.nimbus/nimbus.log
-
-Enter the password previously defined.
-
-3. Start the Beacon Chain (and the Validator if set in the previous step). Copy and paste your Ethereum Address for 
+2. Copy and paste your Ethereum Address for 
 receiving tips and set the fee recipient flag:
 
 .. prompt:: bash $
@@ -447,7 +441,7 @@ receiving tips and set the fee recipient flag:
 
   sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/nimbus.conf
 
-4. Enable Checkpoint Sync. 
+3. Enable Checkpoint Sync. 
 
 We need to run a command before the **Checkpoint Sync** gets started:
 
@@ -457,10 +451,26 @@ We need to run a command before the **Checkpoint Sync** gets started:
 
 Wait for the command to finish.
 
-5. Start the Nimbus service:
+4. Start the Nimbus Beacon Chain service:
 
 .. prompt:: bash $
 
-  sudo systemctl start nimbus
+  sudo systemctl start nimbus-beacon
 
-The Nimbus Beacon Chain and Validator (if set) are now running.
+The Nimbus Beacon Chain is now running.
+
+5.- Enable your validator(s) (optional).
+
+We need to import your validator keys. Run under the ethereum account:
+
+.. prompt:: bash $
+
+  nimbus_beacon_node deposits import /home/ethereum/validator_keys --data-dir=/home/ethereum/.nimbus --log-file=/home/ethereum/.nimbus/nimbus.log
+
+Enter the password previously defined.
+
+Start the Nimbus Validator:
+
+.. prompt:: bash $
+
+  sudo systemctl start nimbus-validator

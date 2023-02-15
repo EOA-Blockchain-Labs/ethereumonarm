@@ -1,0 +1,6 @@
+#!/bin/sh
+set -e
+
+[ ! -d "/home/ethereum/.heimdall" ] && sudo -u ethereum heimdalld init --chain=mainnet --home /home/ethereum/.heimdall && sed -i 's/seeds = ""/seeds = "f4f605d60b8ffaaf15240564e58a81103510631c@159.203.9.164:26656,4fb1bc820088764a564d4f66bba1963d47d82329@44.232.55.71:26656"/g' /home/ethereum/.heimdall/config/config.toml
+
+exit 0

@@ -1,0 +1,10 @@
+[Unit]
+  Description=heimdalld
+[Service]
+  EnvironmentFile=/etc/ethereum/heimdall.conf
+  ExecStart=/usr/bin/heimdalld $ARGS
+  Restart=on-failure
+  RestartSec=5s
+  User=ethereum
+[Install]
+  WantedBy=multi-user.target

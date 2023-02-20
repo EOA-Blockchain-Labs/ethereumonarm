@@ -4,7 +4,6 @@
 SHELL := /bin/bash
 
 ERIGON_VERSION := $(shell curl -s "https://api.github.com/repos/ledgerwatch/erigon/releases/latest" | jq -r '.tag_name' | tr -d "v")
-ERIGON_DHASH :=$(shell curl -s "https://api.github.com/repos/ledgerwatch/erigon/tags" | jq -c 'map(select(.name | contains("$(ERIGON_VERSION)")))' | jq -r '.[0].commit.sha' | cut -c1-8)
 
 PKG_RELEASE := 0
 PKG_NAME := erigon
@@ -40,12 +39,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(ERIGON_VERSION) --license $(PKG_LICEN
 all: prepare deb clean
 
 prepare: ## Download the latest binary and prepare the package files
-	sudo gem install --no-document fpm
-	mkdir -p /tmp/erigon_tmp
-	 ## Clone GIT repo, add flags for crosscompilation and compile 
-	cd /tmp/erigon_tmp ; git clone --recurse-submodules -j8 https://github.com/ledgerwatch/erigon.git ; cd erigon ; git checkout v$(ERIGON_VERSION); sed -i 's/GOBUILD = $(CGO_CFLAGS)/GOBUILD = $(CGO_CFLAGS) CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 /' Makefile ; make erigon ; make rpcdaemon
-	cp /tmp/erigon_tmp/erigon/build/bin/erigon sources/usr/bin/ ; cp /tmp/erigon_tmp/erigon/build/bin/rpcdaemon sources/usr/bin/
-	rm -rf /tmp/erigon_tmp
+		wget  https://github.com/ledgerwatch/erigon/releases/download/v$(ERIGON_VERSION)/erigon_$(ERIGON_VERSION)_linux_arm64.tar.gz -O - | tar -xz -C sources/usr/bin/  erigon
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)
@@ -56,7 +50,6 @@ rpm: ## Create rpm package
 .PHONY: clean
 clean: ## Clean up
 	rm sources/usr/bin/erigon
-	rm sources/usr/bin/rpcdaemon
 
 help:  ## List targets.
 	"$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

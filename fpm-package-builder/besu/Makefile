@@ -29,7 +29,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(BESU_VERSION) --license $(PKG_LICENSE
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 	--deb-systemd extras/besu.service --deb-systemd extras/besu-goerli.service\
-	--depends openjdk-11-jre-headless\
+	--depends openjdk-17-jre-headless\
 	--depends libsecp256k1-0\
 	--depends merge-config\
 	--depends libjemalloc-dev\

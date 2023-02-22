@@ -147,8 +147,8 @@ Unzip and flash the image (we are using here the Rock 5B image):
 
 .. prompt:: bash $
 
-   unzip ethonarm_rock5b_22.12.00.img.zip
-   sudo dd bs=1M if=ethonarm_rock5b_22.12.00.img of=/dev/mmcblk0 conv=fdatasync status=progress
+   unzip ethonarm_rock5b_22.12.02.img.zip
+   sudo dd bs=1M if=ethonarm_rock5b_22.12.02.img of=/dev/mmcblk0 conv=fdatasync status=progress
 
 Insert MicroSD
 --------------

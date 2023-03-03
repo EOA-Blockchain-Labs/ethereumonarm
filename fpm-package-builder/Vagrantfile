@@ -10,13 +10,12 @@ Vagrant.configure("2") do |config|
   end
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update
-    apt-get install -y software-properties-common clang pkg-config file make cmake gcc-aarch64-linux-gnu g++-aarch64-linux-gnu ruby ruby-dev rubygems build-essential rpm vim git jq curl wget python3-pip
+    apt-get install -y software-properties-common docker.io docker-ce docker clang pkg-config file make cmake gcc-aarch64-linux-gnu g++-aarch64-linux-gnu ruby ruby-dev rubygems build-essential rpm vim git jq curl wget python3-pip
     gem install --no-document fpm
     add-apt-repository ppa:longsleep/golang-backports
     apt-get update
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F6BC817356A3D45E
     apt-get -y install golang-go
-    sed -i '22a \t: # Ensure this if-clause is not empty. If it were empty, and we had an 'else', then it is an error in shell syntax' /var/lib/gems/2.7.0/gems/fpm-1.12.0/templates/deb/postinst_upgrade.sh.erb
     su - vagrant -c "curl https://sh.rustup.rs -sSf | sh -s -- -y"
     su - vagrant -c 'cat <<EOF >> ~/.cargo/config
 [target.aarch64-unknown-linux-gnu]

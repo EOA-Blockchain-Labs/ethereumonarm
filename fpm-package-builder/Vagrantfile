@@ -10,7 +10,7 @@ Vagrant.configure("2") do |config|
   end
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update
-    apt-get install -y software-properties-common docker.io docker-compose clang pkg-config file make cmake gcc-aarch64-linux-gnu g++-aarch64-linux-gnu ruby ruby-dev rubygems build-essential rpm vim git jq curl wget python3-pip
+    apt-get install -y libssl-dev:arm64 pkg-config-aarch64-linux-gnu software-properties-common docker.io docker-compose clang pkg-config file make cmake gcc-aarch64-linux-gnu g++-aarch64-linux-gnu ruby ruby-dev rubygems build-essential rpm vim git jq curl wget python3-pip
     gem install --no-document fpm
     add-apt-repository ppa:longsleep/golang-backports
     apt-get update

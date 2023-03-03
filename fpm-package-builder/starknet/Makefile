@@ -38,8 +38,6 @@ all: prepare deb clean
 
 prepare: ## Donwload the latest binary and compile the package files
 	mkdir -p /tmp/papyrus_tmp
-	sudo apt-get install pkg-config-aarch64-linux-gnu
-	sudo apt install libssl-dev:arm64
 	cd /tmp/papyrus_tmp ; git clone https://github.com/starkware-libs/papyrus.git
 	cd /tmp/papyrus_tmp/papyrus ; PKG_CONFIG=/usr/bin/aarch64-linux-gnu-pkg-config PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig/ cargo build --release --package papyrus_node --bin papyrus_node --target aarch64-unknown-linux-gnu 
 	cp /tmp/papyrus_tmp/papyrus/target/aarch64-unknown-linux-gnu/release/papyrus_node sources/usr/bin/

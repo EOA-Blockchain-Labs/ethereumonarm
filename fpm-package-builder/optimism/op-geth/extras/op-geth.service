@@ -1,0 +1,16 @@
+[Unit]
+  Description=bor
+  StartLimitIntervalSec=500
+  StartLimitBurst=5
+
+[Service]
+  EnvironmentFile=/etc/ethereum/op-geth.conf
+  Restart=on-failure
+  RestartSec=5s
+  ExecStart=/usr/bin/op-geth $ARGS
+  Type=simple
+  User=ethereum
+  TimeoutStopSec=120
+
+[Install]
+  WantedBy=multi-user.target

@@ -5,7 +5,8 @@ SHELL := /bin/bash
 
 NITRO_VERSION := $(shell curl -s "https://api.github.com/repos/OffchainLabs/nitro/releases/latest" | jq -r '.tag_name' | tr -d "v")
 #NITRO_DHASH :=$(shell curl -s "https://api.github.com/repos/ethereum/go-ethereum/tags" | jq -c 'map(select(.name | contains("$(NITRO_VERSION)")))' | jq -r '.[0].commit.sha' | cut -c1-8)
-DOCKER_CONTAINER := "offchainlabs/nitro-node:v2.0.10-73224e3"
+#DOCKER_CONTAINER := "offchainlabs/nitro-node:v2.0.10-73224e3"
+DOCKER_CONTAINER := $(shell curl -s "https://api.github.com/repos/OffchainLabs/nitro/releases/latest" | jq -r '.body' |  sed -n "s/.*at \`\(.*\)\`/\1/p")
 
 PKG_RELEASE := 0
 PKG_NAME := arbitrum-nitro
@@ -58,8 +59,10 @@ rpm: ## Create rpm package
 clean: ## Clean up
 	set -e ;\
 	rm sources/usr/bin/nitro ;\
-	DOCKER_CONTAINER_ID=$$(docker ps -q | head -n 1) ;\
-	docker stop $$DOCKER_CONTAINER_ID && docker rm $$DOCKER_CONTAINER_ID ;\
+	docker stop $$(docker ps -aq) && docker rm $$(docker ps -aq) ;\
+
+##DOCKER_CONTAINER_ID=$$(docker ps -qa | head -n 1) ;\	
+##docker stop $$DOCKER_CONTAINER_ID && docker rm $$DOCKER_CONTAINER_ID ;\
 
 help:  ## List targets.
 	"$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

@@ -1,19 +1,31 @@
 SHELL := /bin/bash
-SUBDIRS := $(wildcard */.)
+
+# Find all subdirectories in the current directory recursively that contain a Makefiles
+SUBDIRS := $(shell find . -type f -name "Makefile" -exec dirname {} \;)
+
+# Define the default target 'all', which depends on 'prepare', 'deb', and 'clean'
 all: prepare deb clean
 
-prepare: ## Donwload the latest binary and prepare the package files
+# Define the 'prepare' target, which downloads the latest binary and prepares package files
+prepare:
+# Loop over all subdirectories and execute 'make prepare' if a Makefile exists in that directory
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir prepare; \
 	done
 
-deb: ## Create deb package
+# Define the 'deb' target, which creates a Debian package
+deb:
+# Loop over all subdirectories and execute 'make deb' if a Makefile exists in that directory
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir deb; \
 	done
 
-.PHONY: clean
-clean: ## Clean up
+# Define the 'clean' target, which cleans up any temporary files
+clean:
+# Loop over all subdirectories and execute 'make clean' if a Makefile exists in that directory
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir clean; \
 	done
+
+# Mark the 'clean' target as a phony target, since it doesn't produce an output file
+.PHONY: cleans

@@ -20,7 +20,7 @@ PKG_LICENSE := "BSD 3-Clause License"
 PKG_ARCH_DEB := arm64
 PKG_ARCH_RPM := arm64
 
-SOURCESDIR := sources/
+SOURCESDIR := sources
 OUTPUTDIR := ../../packages
 
 PKG_RPM := $(PKG_NAME)-$(BEE_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_RPM).rpm

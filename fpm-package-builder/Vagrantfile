@@ -2,19 +2,19 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "bento/ubuntu-20.04"
+  config.vm.box = "bento/ubuntu-22.04"
   config.vm.synced_folder ".", "/home/vagrant/ethereumonarm"
   config.vm.provider "virtualbox" do |vb|
     vb.cpus = 2
-    vb.memory = "5096"
+    vb.memory = "8192"
   end
   config.vm.provision "shell", inline: <<-SHELL
   # Set up the Ubuntu package repositories with the appropriate architecture
   # For x86_64 architecture:
-  echo "deb [arch=amd64] mirror://mirrors.ubuntu.com/mirrors.txt $(lsb_release -cs) main restricted universe multiverse" > /etc/apt/sources.list
-  echo "deb [arch=amd64] mirror://mirrors.ubuntu.com/mirrors.txt $(lsb_release -cs)-updates main restricted universe multiverse" >> /etc/apt/sources.list
-  echo "deb [arch=amd64] mirror://mirrors.ubuntu.com/mirrors.txt $(lsb_release -cs)-security main restricted universe multiverse" >> /etc/apt/sources.list
-  echo "deb [arch=amd64] mirror://mirrors.ubuntu.com/mirrors.txt $(lsb_release -cs)-backports main restricted universe multiverse" >> /etc/apt/sources.list
+  echo "deb [arch=amd64] http://us.archive.ubuntu.com/ubuntu/ $(lsb_release -cs) main restricted universe multiverse" > /etc/apt/sources.list
+  echo "deb [arch=amd64] http://us.archive.ubuntu.com/ubuntu/ $(lsb_release -cs)-updates main restricted universe multiverse" >> /etc/apt/sources.list
+  echo "deb [arch=amd64] http://us.archive.ubuntu.com/ubuntu/ $(lsb_release -cs)-security main restricted universe multiverse" >> /etc/apt/sources.list
+  echo "deb [arch=amd64] http://us.archive.ubuntu.com/ubuntu/ $(lsb_release -cs)-backports main restricted universe multiverse" >> /etc/apt/sources.list
 
   # For ARM64 architecture:
   echo "deb [arch=arm64] http://ports.ubuntu.com/ $(lsb_release -cs) main restricted universe multiverse" >> /etc/apt/sources.list
@@ -22,10 +22,14 @@ Vagrant.configure("2") do |config|
   echo "deb [arch=arm64] http://ports.ubuntu.com/ $(lsb_release -cs)-security main restricted universe multiverse" >> /etc/apt/sources.list
   echo "deb [arch=arm64] http://ports.ubuntu.com/ $(lsb_release -cs)-backports main restricted universe multiverse" >> /etc/apt/sources.list
 
+  # Add arm64 architecture
+  dpkg --add-architecture arm64
+  
   # Update the package lists for all repositories
+  echo 'Acquire::http::Pipeline-Depth "0";' > /etc/apt/apt.conf.d/90localsettings
   apt-get update
   # Install development tools and dependencies
-  apt-get install -y libssl-dev:arm64 pkg-config-aarch64-linux-gnu software-properties-common docker.io docker-compose clang pkg-config file make cmake gcc-aarch64-linux-gnu g++-aarch64-linux-gnu ruby ruby-dev rubygems build-essential rpm vim git jq curl wget python3-pip
+  apt-get install -y libssl-dev:arm64 pkg-config software-properties-common docker.io docker-compose clang pkg-config file make cmake gcc-aarch64-linux-gnu g++-aarch64-linux-gnu ruby ruby-dev rubygems build-essential rpm vim git jq curl wget python3-pip
 
   # Install the fpm package management tool for Ruby
   gem install --no-document fpm
@@ -55,6 +59,10 @@ Vagrant.configure("2") do |config|
 
   # Add the aarch64 architecture as a Rust target
   su - vagrant -c "rustup target add aarch64-unknown-linux-gnu"
+  cat <<EOF > ~/.cargo/config
+  [target.aarch64-unknown-linux-gnu]
+  linker = "aarch64-linux-gnu-gcc"
+  EOF
 
   SHELL
 end

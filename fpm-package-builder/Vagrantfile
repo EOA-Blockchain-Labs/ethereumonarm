@@ -51,18 +51,15 @@ Vagrant.configure("2") do |config|
   # Install Rustup, the Rust toolchain installer, as the vagrant user
   su - vagrant -c "curl https://sh.rustup.rs -sSf | sh -s -- -y"
 
-  # Add a configuration file for Rustup, setting the linker to use for the aarch64 architecture
-  su - vagrant -c "add_rust_linker_config"
-
   # Reload the vagrant user's shell environment to pick up the changes made by Rustup
   su - vagrant -c "source ~/.cargo/env"
 
   # Add the aarch64 architecture as a Rust target
   su - vagrant -c "rustup target add aarch64-unknown-linux-gnu"
-  cat <<EOF > ~/.cargo/config
-  [target.aarch64-unknown-linux-gnu]
-  linker = "aarch64-linux-gnu-gcc"
-  EOF
+  sudo -u vagrant bash -c 'cat <<EOF > /home/vagrant/.cargo/config
+[target.aarch64-unknown-linux-gnu]
+linker = "aarch64-linux-gnu-gcc"
+EOF'
 
   SHELL
 end

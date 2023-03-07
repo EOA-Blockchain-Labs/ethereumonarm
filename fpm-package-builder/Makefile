@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 # Find all subdirectories in the current directory recursively that contain a Makefiles
-SUBDIRS := $(shell find . -type f -name "Makefile" -exec dirname {} \;)
+SUBDIRS := $(shell find . -mindepth 2 -type f -name "Makefile" -exec dirname {} \;)
 
 # Define the default target 'all', which depends on 'prepare', 'deb', and 'clean'
 all: prepare deb clean

@@ -44,7 +44,7 @@ Vagrant.configure("2") do |config|
   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F6BC817356A3D45E
 
   # Install the Go programming language
-  apt-get -y install golang-go
+  apt-get -y install golang-go golang-1.18
   # Add the vagrant user to the docker group
   adduser vagrant docker
 
@@ -57,9 +57,9 @@ Vagrant.configure("2") do |config|
   # Add the aarch64 architecture as a Rust target
   su - vagrant -c "rustup target add aarch64-unknown-linux-gnu"
   sudo -u vagrant bash -c 'cat <<EOF > /home/vagrant/.cargo/config
-[target.aarch64-unknown-linux-gnu]
-linker = "aarch64-linux-gnu-gcc"
-EOF'
+  [target.aarch64-unknown-linux-gnu]
+  linker = "aarch64-linux-gnu-gcc"
+  EOF'
 
   SHELL
 end

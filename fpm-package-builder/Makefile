@@ -2,30 +2,49 @@ SHELL := /bin/bash
 
 # Find all subdirectories in the current directory recursively that contain a Makefiles
 SUBDIRS := $(shell find . -mindepth 2 -type f -name "Makefile" -exec dirname {} \;)
+L1CLIENTS := $(shell find l1-clients -mindepth 2 -type f -name "Makefile" -exec dirname {} \;)
+L2CLIENTS := $(shell find l2-clients -mindepth 2 -type f -name "Makefile" -exec dirname {} \;)
+UTILS := $(shell find utils -mindepth 2 -type f -name "Makefile" -exec dirname {} \;)
+WEB3 := $(shell find web3 -mindepth 2 -type f -name "Makefile" -exec dirname {} \;)
+INFRA := $(shell find infra -mindepth 2 -type f -name "Makefile" -exec dirname {} \;)
 
-# Define the default target 'all', which depends on 'prepare', 'deb', and 'clean'
-all: prepare deb clean
-
-# Define the 'prepare' target, which downloads the latest binary and prepares package files
-prepare:
-# Loop over all subdirectories and execute 'make prepare' if a Makefile exists in that directory
+all:	
 	for dir in $(SUBDIRS); do \
-		$(MAKE) -C $$dir prepare; \
+		$(MAKE) -C $$dir all || true; \
 	done
 
-# Define the 'deb' target, which creates a Debian package
-deb:
-# Loop over all subdirectories and execute 'make deb' if a Makefile exists in that directory
-	for dir in $(SUBDIRS); do \
-		$(MAKE) -C $$dir deb; \
-	done
-
-# Define the 'clean' target, which cleans up any temporary files
 clean:
-# Loop over all subdirectories and execute 'make clean' if a Makefile exists in that directory
 	for dir in $(SUBDIRS); do \
-		$(MAKE) -C $$dir clean; \
+		$(MAKE) -C $$dir clean || true; \
 	done
 
-# Mark the 'clean' target as a phony target, since it doesn't produce an output file
-.PHONY: cleans
+l1-clients:
+
+	for dir in $(L1CLIENTS); do \
+		$(MAKE) -C $$dir all || true; \
+	
+l2-clients:
+
+	for dir in $(L2CLIENTS); do \
+		$(MAKE) -C $$dir all || true; \
+	done
+
+web3:
+
+	for dir in $(WEB3); do \
+		$(MAKE) -C $$dir all || true; \
+	done
+infra:
+
+	for dir in $(INFRA); do \
+		$(MAKE) -C $$dir all || true; \
+	done
+
+utils:
+
+	for dir in $(UTILS); do \
+		$(MAKE) -C $$dir || true; \
+	done
+		
+
+.PHONY: all clean l1-clients l2-clients infra utils web3

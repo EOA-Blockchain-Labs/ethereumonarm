@@ -37,7 +37,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(TEKU_VERSION) --license $(PKG_LICENSE
 	-a $(PKG_ARCH_RPM) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep
 
 
-all: prepare deb clean
+all: prepare deb clean test
 
 prepare: ## Donwload the latest binary and prepare the package files
 	mkdir /tmp/teku_temp
@@ -56,3 +56,11 @@ rpm: ## Create rpm package
 clean: ## Clean up
 	rm sources/usr/share/teku/lib/*
 	rm sources/usr/bin/teku
+
+test:
+	@if [ -f $(OUTPUTDIR)/$(PKG_DEB) ]; then \
+        printf "\033[32mPackage $(PKG_DEB) successfully created\033[0m\n"; \
+    else \
+        printf "\033[31mError: Package $(PKG_DEB) not found\033[0m\n"; \
+        exit 1; \
+    fi

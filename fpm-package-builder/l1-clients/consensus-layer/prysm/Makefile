@@ -23,8 +23,8 @@ PKG_ARCH_RPM := arm64
 SOURCESDIR := sources/
 OUTPUTDIR := ../../../packages
 
-PKG_RPM := ${pkg_name}-${prysm_version}-${pkg_release}_${pkg_arch_rpm}.rpm
-PKG_DEB := ${pkg_name}_${prysm_version}-${pkg_release}_${pkg_arch_deb}.deb
+PKG_RPM := ${PKG_NAME}-${PRYSM_VERSION}-${PKG_RELEASE}_${PKG_ARCH_RPM}.rpm
+PKG_DEB := ${PKG_NAME}_${PRYSM_VERSION}-${PKG_RELEASE}_${PKG_ARCH_DEB}.deb
 
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\
@@ -43,7 +43,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENS
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\
 	-a $(PKG_ARCH_RPM) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep
 
-all: prepare deb clean
+all: prepare deb clean test
 
 prepare: ## Donwload the latest binary and prepare the package files
 	wget https://github.com/prysmaticlabs/prysm/releases/download/v$(PRYSM_VERSION)/beacon-chain-v$(PRYSM_VERSION)-linux-arm64 -O sources/usr/bin/beacon-chain
@@ -58,3 +58,11 @@ rpm: ## Create rpm package
 .PHONY: clean
 clean: ## Clean up
 	rm sources/usr/bin/*
+
+test:
+	@if [ -f $(OUTPUTDIR)/$(PKG_DEB) ]; then \
+        printf "\033[32mPackage $(PKG_DEB) successfully created\033[0m\n"; \
+    else \
+        printf "\033[31mError: Package $(PKG_DEB) not found\033[0m\n"; \
+        exit 1; \
+    fi

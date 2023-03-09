@@ -43,7 +43,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(MERGE_CONFIG_VERSION) --license $(PKG
 	--url $(WEB_URL) -p $(OUTPUTDIR)
 
 
-all: prepare deb clean
+all: prepare deb clean test
 
 prepare: ## Download the latest binary and prepare the package files
 	mkdir -p sources/etc/ethereum/
@@ -58,6 +58,14 @@ rpm: ## Create rpm package
 .PHONY: clean
 clean: ## Clean up
 	rm -rf  sources/etc/ethereum/
+
+test:
+	@if [ -f $(OUTPUTDIR)/$(PKG_DEB) ]; then \
+        printf "\033[32mPackage $(PKG_DEB) successfully created\033[0m\n"; \
+    else \
+        printf "\033[31mError: Package $(PKG_DEB) not found\033[0m\n"; \
+        exit 1; \
+    fi
 
 help:  ## List targets.
 	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

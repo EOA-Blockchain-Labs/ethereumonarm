@@ -21,6 +21,7 @@ all: deb test
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_OPTS) --depends grafana --depends prometheus --depends prometheus-node-exporter --depends ufw
 
+.PHONY: test
 test:
 	@if [ -f $(OUTPUTDIR)/$(PKG_DEB) ]; then \
         printf "\033[32mPackage $(PKG_DEB) successfully created\033[0m\n"; \

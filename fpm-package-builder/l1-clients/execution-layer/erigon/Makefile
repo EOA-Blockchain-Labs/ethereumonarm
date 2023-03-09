@@ -47,7 +47,7 @@ deb: ## Create deb package
 rpm: ## Create rpm package
 	fpm -t rpm -p $(PKG_RPM) $(FPM_RPM_OPTS)
 
-.PHONY: clean
+.PHONY: clean test
 clean: ## Clean up
 	rm sources/usr/bin/erigon
 

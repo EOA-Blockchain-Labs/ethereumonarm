@@ -55,5 +55,13 @@ clean: ## Clean up
 	rm sources/usr/bin/op-geth
 	rm -rf /tmp/op-geth_tmp/
 
+test:
+	@if [ -f $(OUTPUTDIR)/$(PKG_DEB) ]; then \
+        printf "\033[32mPackage $(PKG_DEB) successfully created\033[0m\n"; \
+    else \
+        printf "\033[31mError: Package $(PKG_DEB) not found\033[0m\n"; \
+        exit 1; \
+    fi
+	
 help:  ## List targets.
 	"$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

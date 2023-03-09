@@ -37,7 +37,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(PKG_VERSION) --license $(PKG_LICENSE)
 	-a $(PKG_ARCH_RPM) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep
 
 
-all: prepare deb clean
+all: prepare deb clean test
 
 prepare: ## Donwload the latest binary and prepare the package files
 	wget https://github.com/ipfs/kubo/releases/download/v$(IPFS_VERSION)/kubo_v$(IPFS_VERSION)_linux-arm64.tar.gz -O - | tar -xz -C sources/usr/bin/ --wildcards --absolute-names --no-anchored --strip-components 1 '*/ipfs'
@@ -52,6 +52,14 @@ rpm: ## Create rpm package
 .PHONY: clean
 clean: ## Clean up
 	rm sources/usr/bin/ipfs
+
+test:
+	@if [ -f $(OUTPUTDIR)/$(PKG_DEB) ]; then \
+        printf "\033[32mPackage $(PKG_DEB) successfully created\033[0m\n"; \
+    else \
+        printf "\033[31mError: Package $(PKG_DEB) not found\033[0m\n"; \
+        exit 1; \
+    fi
 
 help:  ## List targets.
 	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

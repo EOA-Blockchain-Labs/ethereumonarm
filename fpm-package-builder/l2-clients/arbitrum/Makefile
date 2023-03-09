@@ -40,7 +40,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(NITRO_VERSION) --license $(PKG_LICENS
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_RPM)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 
-all: prepare deb clean
+all: prepare deb clean test
 
 prepare: ## Donwload the latest binary and prepare the package files
 	set -e ;\
@@ -63,6 +63,13 @@ clean: ## Clean up
 
 ##DOCKER_CONTAINER_ID=$$(docker ps -qa | head -n 1) ;\	
 ##docker stop $$DOCKER_CONTAINER_ID && docker rm $$DOCKER_CONTAINER_ID ;\
+test:
+	@if [ -f $(OUTPUTDIR)/$(PKG_DEB) ]; then \
+        printf "\033[32mPackage $(PKG_DEB) successfully created\033[0m\n"; \
+    else \
+        printf "\033[31mError: Package $(PKG_DEB) not found\033[0m\n"; \
+        exit 1; \
+    fi
 
 help:  ## List targets.
 	"$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

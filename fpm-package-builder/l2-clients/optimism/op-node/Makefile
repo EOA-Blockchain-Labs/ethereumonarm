@@ -38,7 +38,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(OP-NODE_VERSION) --license $(PKG_LICE
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_RPM)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 
-all: prepare deb clean
+all: prepare deb clean test
 
 prepare: ## Donwload the latest binary and prepare the package files
 	mkdir -p /tmp/op-node_tmp
@@ -55,6 +55,14 @@ rpm: ## Create rpm package
 clean: ## Clean up
 	rm sources/usr/bin/op-node
 	rm -rf /tmp/op-node_tmp
+
+test:
+	@if [ -f $(OUTPUTDIR)/$(PKG_DEB) ]; then \
+        printf "\033[32mPackage $(PKG_DEB) successfully created\033[0m\n"; \
+    else \
+        printf "\033[31mError: Package $(PKG_DEB) not found\033[0m\n"; \
+        exit 1; \
+    fi
 
 help:  ## List targets.
 	"$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

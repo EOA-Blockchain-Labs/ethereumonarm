@@ -3,22 +3,25 @@
 
 set -e
 
-# Check if the nimbus service is running
-
-if pgrep -f "nimbus_beacon_node" > /dev/null
-then
-    echo "Nimbus service is running, please stop it before upgrading Nimbus"
-    exit 1
-fi
-
+# Check for a legacy Nimbus config
 if [ -d /home/ethereum/.nimbus ]
 then
-    mv /home/ethereum/.nimbus /home/ethereum/.nimbus-beacon
-fi
-
-if [ -d /home/ethereum/.nimbus-beacon/validators ]; then
-    mkdir -p /home/ethereum/.nimbus-validator/
-    chown -R ethereum:ethereum /home/ethereum/.nimbus-validator/
-    mv /home/ethereum/.nimbus-beacon/secrets /home/ethereum/.nimbus-validator
-    mv /home/ethereum/.nimbus-beacon/validators /home/ethereum/.nimbus-validator
+    if pgrep -f "nimbus_beacon_node" > /dev/null
+    then
+        echo "Nimbus service is running, please stop it before upgrading Nimbus"
+        exit 1
+    elif [ -d /home/ethereum/.nimbus/secrets ]
+    then
+        mkdir -p /home/ethereum/.nimbus-validator/
+        chown -R ethereum:ethereum /home/ethereum/.nimbus-validator/
+        mv /home/ethereum/.nimbus/secrets /home/ethereum/.nimbus-validator
+        mv /home/ethereum/.nimbus/validators /home/ethereum/.nimbus-validator
+        mv /home/ethereum/.nimbus /home/ethereum/.nimbus-beacon
+    elif [ -d /home/ethereum/.nimbus/validators ]
+    then
+        mkdir -p /home/ethereum/.nimbus-validator/
+        chown -R ethereum:ethereum /home/ethereum/.nimbus-validator
+        mv /home/ethereum/.nimbus/validators /home/ethereum/.nimbus-validator
+        mv /home/ethereum/.nimbus /home/ethereum/.nimbus-beacon
+    fi
 fi

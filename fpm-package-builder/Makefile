@@ -22,6 +22,7 @@ l1-clients:
 
 	for dir in $(L1CLIENTS); do \
 		$(MAKE) -C $$dir all || true; \
+	done
 	
 l2-clients:
 

@@ -3,6 +3,7 @@ Description=Statusd daemon
 After=network.target
 
 [Service]
+WorkingDirectory=/home/ethereum
 EnvironmentFile=/etc/ethereum/statusd.conf
 ExecStart=/usr/bin/statusd $ARGS
 Restart=always

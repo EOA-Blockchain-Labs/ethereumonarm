@@ -20,7 +20,7 @@ PKG_ARCH_DEB := arm64
 PKG_ARCH_RPM := arm64
 
 SOURCESDIR := sources/
-OUTPUTDIR := ../../packages
+OUTPUTDIR := ../../../packages
 
 PKG_RPM := $(PKG_NAME)-$(PAPYRUS_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_RPM).rpm
 PKG_DEB := $(PKG_NAME)_$(PAPYRUS_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb

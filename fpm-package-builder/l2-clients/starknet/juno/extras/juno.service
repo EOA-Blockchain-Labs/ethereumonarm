@@ -1,0 +1,12 @@
+[Unit]
+Description=Juno StarkNet node
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/juno.conf
+ExecStart=/usr/bin/juno $ARGS
+Restart=always
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target

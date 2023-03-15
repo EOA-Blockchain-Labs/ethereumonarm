@@ -37,7 +37,7 @@ data-dir: /home/ethereum/.bee
 ## password for decrypting keys
 # password: ""
 ## path to a file that contains password for decrypting keys
-password-file: /var/lib/bee/password
+password-file: /etc/ethereum/jwtsecret
 ## amount in BZZ below the peers payment threshold when we initiate settlement (default 10000)
 # payment-early: 10000
 ## threshold in BZZ where you expect to get paid from your peers (default 100000)
@@ -51,7 +51,7 @@ password-file: /var/lib/bee/password
 ## enable swap (default true)
 # swap-enable: true
 ## swap ethereum blockchain endpoint (default "http://localhost:8545")
-# swap-endpoint: http://localhost:8545
+swap-endpoint: https://rpc.gnosischain.com/
 ## swap factory address
 # swap-factory-address: ""
 ## initial deposit if deploying a new chequebook (default 100000000)

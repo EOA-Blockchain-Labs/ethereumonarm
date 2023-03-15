@@ -39,8 +39,9 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(MEV_VERSION) --license $(PKG_LICENSE)
 all: prepare deb clean test
 
 prepare: ## Download the latest binary and prepare the package files
-	 ## Download binary
-	wget https://github.com/flashbots/mev-boost/releases/download/v$(MEV_VERSION)/mev-boost_$(MEV_VERSION)_linux_arm64.tar.gz -O - | tar -xz -C sources/usr/bin/ --wildcards --absolute-names --no-anchored  'mev-boost'
+	mkdir -p /tmp/mev-boost
+	cd /tmp/mev-boost; git clone https://github.com/flashbots/mev-boost ; cd mev-boost ; git checkout v$(MEV_VERSION); env GO111MODULE=on CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 go build -trimpath -ldflags "-s -X 'github.com/flashbots/mev-boost/config.Version=$(MEV_VERSION)'" -v -o ./build/bin/mev-boost
+	cp /tmp/mev-boost/mev-boost/build/bin/mev-boost sources/usr/bin
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)

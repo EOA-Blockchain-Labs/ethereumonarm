@@ -4,6 +4,7 @@ After=network.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/nitro.conf
+ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.arbitrum/arb1/nitro && mkdir -p /home/ethereum/.arbitrum/arb1/nitro'
 ExecStart=/usr/bin/nitro $ARGS
 Restart=always
 User=ethereum

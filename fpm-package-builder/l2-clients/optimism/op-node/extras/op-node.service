@@ -1,6 +1,7 @@
 [Unit]
   Description=op-node
 [Service]
+  WorkingDirectory=/home/ethereum
   EnvironmentFile=/etc/ethereum/op-node.conf
   ExecStart=/usr/bin/op-node $ARGS
   Restart=on-failure

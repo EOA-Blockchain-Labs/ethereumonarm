@@ -1,16 +1,17 @@
 [Unit]
-  Description=bor
+  Description=Optimism op-geth Service
   StartLimitIntervalSec=500
   StartLimitBurst=5
 
 [Service]
+  ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.op-geth && /usr/bin/op-geth-preinstall'
   EnvironmentFile=/etc/ethereum/op-geth.conf
   Restart=on-failure
   RestartSec=5s
   ExecStart=/usr/bin/op-geth $ARGS
   Type=simple
   User=ethereum
-  TimeoutStopSec=120
+  TimeoutSec=0
 
 [Install]
   WantedBy=multi-user.target

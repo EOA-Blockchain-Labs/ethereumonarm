@@ -13,7 +13,7 @@ syncmode = "full"
 
 [p2p]
     maxpeers = 50
-    port = 30314
+    port = 30303
     # maxpendpeers = 50
     # bind = "0.0.0.0"
     # nodiscover = false

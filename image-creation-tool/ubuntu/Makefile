@@ -27,7 +27,12 @@ rock5b_iso := Armbian_23.02.2_Rock-5b_jammy_legacy_5.10.110.img
 rock5b_offset := 285212672
 rock5b_rclocal := rock5b
 
-all: rpi rock5b
+orangepi5_url := https://es-mirror.bret.dk/armbian/dl/orangepi5/archive/Armbian_23.02.2_Orangepi5_jammy_legacy_5.10.110.img.xz
+orangepi5_iso := Armbian_23.02.2_Orangepi5_jammy_legacy_5.10.110.img
+orangepi5_offset := 285212672
+orangepi5_rclocal := orangepi5
+
+all: rpi rock5b orangepi5
 
 rpi:
 	$(call download_image,$(rpi_url))
@@ -36,3 +41,7 @@ rpi:
 rock5b:
 	$(call download_image,$(rock5b_url))
 	$(call modify_image,$(rock5b_iso),$(rock5b_offset),$(rock5b_rclocal))
+
+orangepi5:
+	$(call download_image,$(orangepi5_url))
+	$(call modify_image,$(orangepi5_iso),$(orangepi5_offset),$(orangepi5_rclocal))

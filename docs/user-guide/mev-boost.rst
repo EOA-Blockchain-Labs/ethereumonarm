@@ -103,11 +103,18 @@ Add the flag ``--enable-builder`` at the end of the file.
 Nimbus
 ~~~~~~
 
-Edit the Nimbus config file:
+Edit the Beacon config file:
 
 .. prompt:: bash $
 
-  sudo vim /etc/ethereum/nimbus.conf
+  sudo vim /etc/ethereum/nimbus-beacon.conf
 
-Add the flags ``--payload-builder=true --payload-builder-url=http://localhost:18550`` 
-at the end of the file.
+Add the flags ``--payload-builder=true --payload-builder-url=http://localhost:18550`` at the end of the file.
+
+Edit the Validator config file:
+
+.. prompt:: bash $
+
+  sudo vim /etc/ethereum/nimbus-validator.conf
+
+Add the flag ``--payload-builder=true`` at the end of the file.

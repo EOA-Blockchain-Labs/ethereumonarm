@@ -81,11 +81,11 @@ if [ ! -f $FLAG ]; then
 
   # Modify hostname (ethereumonarm-$MAC-HASH-CHUNK)
   echo Changing hostname
-  MAC_HASH=$(sha256sum </sys/class/net/enP4p65s0/address | awk '{print substr($0,0,9)}')
+  MAC_HASH=$(sha256sum </sys/class/net/eth0/address | awk '{print substr($0,0,9)}')
   echo ethereumonarm-orangepi5-$MAC_HASH >/etc/hostname
-  sed -i "s/127.0.0.1   localhost/127.0.0.1   localhost ethereumonarm-$MAC_HASH/g" /etc/hosts
-  sed -i "s/orangepi5/ethereumonarm-$MAC_HASH/g" /etc/hosts
-
+  sed -i "s/orangepi5/ethereumonarm-orangepi5-$MAC_HASH/g" /etc/hosts
+  sed -i "s/127.0.0.1   localhost/127.0.0.1   localhost ethereumonarm-orangepi5-$MAC_HASH/g" /etc/hosts
+  
   # Create Ethereum account
   echo "Creating ethereum user"
   if ! id -u ethereum >/dev/null 2>&1; then
@@ -122,7 +122,7 @@ if [ ! -f $FLAG ]; then
   add-apt-repository -y -n "deb http://apt.ethraspbian.com focal main"
 
   # Put kernel package on hold
-  #apt-mark hold linux-image-legacy-rockchip-rk3588
+  apt-mark hold linux-image-legacy-rockchip-rk3588
 
   # Install Ethereum packages
   echo Installing Ethereum packages
@@ -136,20 +136,20 @@ sudo apt-get update
 sudo apt-get install geth nethermind erigon besu prysm lighthouse nimbus teku staking-deposit-cli'
 EOF
   # Install monitoring packages
-  apt-get -y install gpg wget
-  wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
-  echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
-  apt-get -y update
-  apt-get -y install grafana
-  systemctl enable grafana-server
-  useradd -m prometheus
-  mkdir -p /home/prometheus/node-exporter/
-  chown -R prometheus:prometheus /home/prometheus/
-  apt-get install -y prometheus prometheus-node-exporter prometheus-pushgateway
+  #apt-get -y install gpg wget
+  #wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+  #echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+  #apt-get -y update
+  #apt-get -y install grafana
+  #systemctl enable grafana-server
+  #useradd -m prometheus
+  #mkdir -p /home/prometheus/node-exporter/
+  #chown -R prometheus:prometheus /home/prometheus/
+  #apt-get install -y prometheus prometheus-node-exporter prometheus-pushgateway
 
   # install Ethereum on ARM monitoring config
-  apt-get -y install ethereumonarm-monitoring-extras
-  set-ethereunonarm-monitoring-extras -o
+  #apt-get -y install ethereumonarm-monitoring-extras
+  #set-ethereunonarm-monitoring-extras -o
 
   # Install MEV Boost with no censorship relays
   apt-get -y install mev-boost

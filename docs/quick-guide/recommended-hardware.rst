@@ -4,11 +4,11 @@
 Recommended Hardware
 ====================
 
-In order to run an Ethereum node with our images, you will need a Raspberry Pi 4, an Odroid M1 or a
+In order to run an Ethereum node with our images, you will need a Raspberry Pi 4, an Orange Pi 5, an Odroid M1 or a
 Rock 5B Board with some additional components.
 
 .. tip::
-  We strongly recommend the **Rock 5B** board to run an Ethereum full/staking node. 
+  We strongly recommend **Rock 5B** or **Orange Pi 5** boards or to run an Ethereum full/staking node. 
 
 This is the recommended hardware to run an **Execution Layer client** + **Consensus Layer client**. 
 If you don't know what an Ethereum node is, please visit the :doc:`User Guide section </user-guide/about-user-guide>`.
@@ -18,13 +18,25 @@ If you don't know what an Ethereum node is, please visit the :doc:`User Guide se
 
   .. tab:: Radxa Rock 5B
 
-    Recommended hardware and settings for running an Ethereum full/staking node on a Rock 5B board
-    
+    Recommended hardware and settings for running an Ethereum full/staking node on a Rock 5B board    
 
     * **Rock 5B board** (16GB RAM)
     * **MicroSD Card** (16 GB Class 10 minimum)
     * **NVMe disk** 2 TB minimum
     * **Power supply** (Radxa official)
+    * **Ethernet cable**
+    * **Port forwarding** (see clients for further info)
+    * **A case with passive heatsinkn**
+    * USB keyboard, Monitor and HDMI cable (full size) (Optional)
+
+  .. tab:: Orange Pi 5
+
+    Recommended hardware and settings for running an Ethereum full/staking node on a Rock 5B board
+
+    * **Orange Pi 5 board** (16GB RAM)
+    * **MicroSD Card** (16 GB Class 10 minimum)
+    * **NVMe disk** 2 TB minimum (2230 & 2242. 2280 if your case is hollow)
+    * **Power supply**
     * **Ethernet cable**
     * **Port forwarding** (see clients for further info)
     * **A case with passive heatsinkn**
@@ -45,8 +57,8 @@ If you don't know what an Ethereum node is, please visit the :doc:`User Guide se
     
   .. tab:: Odroid M1
     
-    Recommended hardware and settings for running an Ethereum 1.0 
-    + Ethereum 2.0 node (both running in the same Raspberry Pi 4).
+    Recommended hardware and settings for running a Consensus Layer 
+    + Execution Layer node.
 
     * **Odroid M1 board** (8 GB RAM)
     * **MicroSD Card** (16 GB Class 10 minimum)

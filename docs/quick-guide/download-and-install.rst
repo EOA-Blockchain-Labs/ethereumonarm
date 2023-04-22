@@ -4,7 +4,7 @@
 Download and Install
 ====================
 
-There are 3 images available for  **Rock 5B**, **Raspberry Pi 4** and **Odroid M1** boards.
+There are 4 images available for  **Rock 5B**, **Orange Pi 5**, **Raspberry Pi 4** and **Odroid M1** boards.
 
 Getting the hardware
 --------------------
@@ -23,6 +23,27 @@ You will need a **MicroSD** and an **NVME** or **USB3 disk** as well (we recomme
 .. _Rock 5B board 16 GB: https://shop.allnetchina.cn/products/rock5-model-b?variant=39514839515238
 .. _Acrylic protector with passive heatsink: https://shop.allnetchina.cn/products/rock5-b-acrylic-protector?variant=39877626396774
 .. _Radxa power supply: https://shop.allnetchina.cn/products/radxa-power-pd-30w?variant=39929851904102
+
+Orange Pi 5
+~~~~~~~~~~~
+
+You can acquire the Orange Pi 5 from several distributors. Go to the official page and pick one at the top right corner 
+(make sure you are getting the 16 GB RAM model).
+
+* `Orange Pi 5 official page`_
+
+Try to find a set that includes the power supply as well. It is also recommended to get a proper case with a heatsink. 
+For example:
+
+* `Case with heatsink`_
+
+You will need a **MicroSD** and an **NVME** as well.
+
+Regarding the NVMe disk, take into account there are 2 NVME M.2 types that fit perfectly into the board: 2230 and 2242. 
+You can use a M.2 2280 as well but keep in mind that you will need a hollow enclosure because the drive does not fit on the board.
+
+.. _Orange Pi 5 official page: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-5.html
+.. _Case with heatsink: https://aliexpress.com/item/1005005115126370.html
 
 Raspberry Pi 4
 ~~~~~~~~~~~~~~
@@ -80,6 +101,25 @@ By running:
 .. prompt:: bash $
 
   sha256sum ethonarm_rock5b_22.12.00.img.zip
+
+Orange Pi 5
+~~~~~~~~~~~
+
+Download link:
+
+ethonarm_orangepi5_23.04.00.img.zip_
+
+.. _ethonarm_orangepi5_23.04.00.img.zip: https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/ERnQkdoTs8lLmifXFI2vVK0BCW-16R764yr_2pxX7QIrqg?download=1
+
+You can verify the file with the following ``SHA256`` Hash:
+
+``SHA256 6b3a1e2cb55465a9076a7b57a21e23ce1c2e9e5e5852b9a7b6d925f68470f520``
+
+By running:
+
+.. prompt:: bash $
+
+  sha256sum ethonarm_orangepi5_23.04.00.img.zip
 
 Raspberry Pi 4
 ~~~~~~~~~~~~~~

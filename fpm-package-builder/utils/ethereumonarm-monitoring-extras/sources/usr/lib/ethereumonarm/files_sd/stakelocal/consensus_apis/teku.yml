@@ -1,0 +1,7 @@
+    - targets: ['127.0.0.1:5051']
+      labels:
+        network: 'Mainnet'
+        host: 'Default Host'
+        service: 'Teku'
+        group: 'Default Group'
+        explorer: 'beaconcha.in'

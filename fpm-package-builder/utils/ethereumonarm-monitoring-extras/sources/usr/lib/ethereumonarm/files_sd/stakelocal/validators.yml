@@ -1,0 +1,9 @@
+    - targets: []
+      labels:
+        network: 'Mainnet'
+        host: 'Default Host'
+        service: ''
+        group: 'Default Group'
+        instance: '127.0.0.1:3500'
+        explorer: 'beaconcha.in'
+ 

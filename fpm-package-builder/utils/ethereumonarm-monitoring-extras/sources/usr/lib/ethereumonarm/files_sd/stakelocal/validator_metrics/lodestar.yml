@@ -1,0 +1,6 @@
+    - targets: ['127.0.0.1:5064']
+      labels:
+        network: 'Mainnet'
+        host: 'Default Host'
+        service: 'Lodestar Validator'
+        group: 'Default Group'

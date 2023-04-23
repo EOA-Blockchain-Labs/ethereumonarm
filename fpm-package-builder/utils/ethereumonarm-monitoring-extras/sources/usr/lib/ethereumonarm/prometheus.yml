@@ -1,47 +1,935 @@
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
-  external_labels:
-    monitor: example
-alerting:
-  alertmanagers:
-    - static_configs:
-        - targets:
-            - 'localhost:9093'
-rule_files: null
+
+rule_files:
+    - "/etc/prometheus/rules.d/stakelocal_rules.yml"
+
 scrape_configs:
-  - job_name: prometheus
-    scrape_interval: 5s
-    scrape_timeout: 5s
-    static_configs:
-      - targets:
-          - 'localhost:9090'
-  - job_name: node
-    static_configs:
-      - targets:
-          - '127.0.0.1:9100'
+
+  ###
+  ### Consensus Client Metrics
+  ###
+
+  ##
+  ## Lighthouse Consensus Client Metrics
+  ##
+
+  - job_name: lighthouse_beacon
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/consensus_metrics/lighthouse*.yml'
+    metric_relabel_configs:
+    - action: replace
+      source_labels: [ __name__ ]
+      regex: 'lighthouse_info'
+      target_label: client
+      replacement: 'Lighthouse'
+
+  ##
+  ## Nimbus Consensus Client Metrics
+  ##
+
+  - job_name: nimbus
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/consensus_metrics/nimbus*.yml'
+    metric_relabel_configs:
+    - action: replace
+      source_labels: [ __name__ ]
+      regex: 'version'
+      target_label: client
+      replacement: 'Nimbus'
+
+  ##
+  ## Lodestar Consensus Client Metrics
+  ##
+
+  - job_name: lodestar_beacon
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/consensus_metrics/lodestar*.yml'
+    metric_relabel_configs:
+    - action: replace
+      source_labels: [ __name__ ]
+      regex: 'lodestar_version'
+      target_label: client
+      replacement: 'Lodestar'
+
+  ##
+  ##
+  ## Prysm Consensus Client Metrics
+  ##
+
+  - job_name: prysm_beacon
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/consensus_metrics/prysm*.yml'
+    metric_relabel_configs:
+    - action: replace
+      source_labels: [ __name__ ]
+      regex: 'prysm_version'
+      target_label: client
+      replacement: 'Prysm'
+
+  ##
+  ## Teku Consensus Client Metrics
+  ##
+
+  - job_name: teku
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/consensus_metrics/teku*.yml'
+    metric_relabel_configs:
+    - action: replace
+      source_labels: [ __name__ ]
+      regex: 'beacon_teku_version'
+      target_label: client
+      replacement: 'Teku'
+
+  ###
+  ### Execution Client Metrics
+  ###
+
+  ##
+  ## Besu Execution Client Metrics
+  ##
+
+  - job_name: besu
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/execution_metrics/besu*.yml'
+
+  ##
+  ## Erigon Execution Client Metrics
+  ##
+
+  - job_name: erigon
+    metrics_path: '/debug/metrics/prometheus'
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/execution_metrics/erigon*.yml'
+
+  ##
+  ## Geth Execution Client Metrics
+  ##
+
   - job_name: geth
     metrics_path: /debug/metrics/prometheus
-    static_configs:
-      - targets:
-          - 'localhost:6060'
-  - job_name: besu-dev
-    metrics_path: /metrics
-    static_configs:
-      - targets:
-          - 'localhost:9545'
-  - job_name: pushgateway
-    honor_labels: true
-    static_configs:
-      - targets:
-          - 'localhost:9091'
-  - job_name: local-lighthouse
-    metrics_path: /metrics
-    static_configs:
-      - targets:
-          - 'localhost:5054'
-  - job_name: nimbus
-    metrics_path: /metrics
-    static_configs:
-      - targets:
-          - 'localhost:8008'
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/execution_metrics/geth*.yml'
+
+  ##
+  ## Nethermind Execution Client Metrics
+  ##
+
+  - job_name: nethermind
+    metrics_path: '/metrics'
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/execution_metrics/nethermind*.yml'
+
+  ###
+  ### Validator Client Metrics
+  ###
+
+  ##
+  ## Lighthouse Validator Client Metrics
+  ##
+
+  - job_name: lighthouse_validator
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/validator_metrics/lighthouse*.yml'
+    metric_relabel_configs:
+    - action: replace
+      source_labels: [ __name__ ]
+      regex: 'lighthouse_info'
+      target_label: client
+      replacement: 'Lighthouse'
+
+  ##
+  ## Lodestar Validator Client Metrics
+  ##
+
+  - job_name: lodestar_validator
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/validator_metrics/lodestar*.yml'
+    metric_relabel_configs:
+    - action: replace
+      source_labels: [ __name__ ]
+      regex: 'lodestar_version'
+      target_label: client
+      replacement: 'Lodestar'
+
+  ##
+  ## Prysm Validator Client Metrics
+  ##
+
+  - job_name: prysm_validator
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/validator_metrics/prysm*.yml'
+    metric_relabel_configs:
+    - action: replace
+      source_labels: [ __name__ ]
+      regex: 'prysm_version'
+      target_label: client
+      replacement: 'Prysm'
+    - action: replace
+      source_labels: [ pubkey ]
+      regex: ^(.{12}).*$
+      target_label: pubkey_short
+
+  ###
+  ### Other Metrics
+  ###
+
+  ##
+  ## job_name: github_latest_release
+  ##
+  ## Job to pull Ethereum fee address balances from local
+  ## Execution Layer client.
+  ##
+  ## Update the "instance" label to be the address and port
+  ## of your local Execution Layer client (e.g. "192.168.1.10:8545").
+  ##
+
+  - job_name: 'github_latest_release'
+    scrape_interval: 30m
+    metrics_path: /probe
+    params:
+      module: [github_latest_release]
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/other/github.yml'
+    relabel_configs:
+    - action: replace
+      source_labels: [ __address__ ]
+      target_label: repo
+    - action: replace
+      target_label: __tmp_api_endpoint
+      replacement: 'https://api.github.com/repos/'
+    - action: replace
+      target_label: __tmp_api_releases_latest
+      replacement: '/releases/latest'
+    - action: replace
+      source_labels: [ __tmp_api_endpoint, repo, __tmp_api_releases_latest, ]
+      separator: ''
+      target_label: __param_target
+    - action: replace
+      target_label: __address__
+      replacement: '127.0.0.1:7979'
+
+  ##
+  ## Ping
+  ##
+
+  - job_name: 'ping'
+    metrics_path: /probe
+    params:
+      module: [icmp]
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/other/ping*.yml'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [ __param_target ]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115  # The blackbox exporter's real hostname:port.
+
+  ###
+  ### Reporting Tools
+  ###
+
+  ##
+  ## job_name: Prometheus
+  ##
+  ## Job to pull metrics on the Prometheus service itself.
+  ##
+  ## Note: This section can be safely removed at this time. These metrics are
+  ## not currently used.
+  ##
+  - job_name: 'prometheus'
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/other/prometheus*.yml'
+
+  ##
+  ## Blackbox Exporter
+  ##
+
+  - job_name: blackbox_exporter
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/other/blackbox_exporter*.yml'
+
+  ##
+  ## Ethereum Metrics Exporter
+  ##
+
+  - job_name: eth-metrics
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/other/eth-metrics*.yml'
+    metric_relabel_configs:
+    - action: replace
+      source_labels: [ __name__, node_name ]
+      separator: ';'
+      target_label: __tmp_name_node_name
+    - action: replace
+      source_labels: [ __tmp_name_node_name ]
+      regex: '(eth_con|eth_exe).*;(.*)'
+      target_label: service
+      replacement: '$2'
+    - action: replace
+      source_labels: [ __tmp_name_node_name ]
+      regex: '(eth_con|eth_exe).*;(\w*)\s*\w*'
+      target_label: client
+      replacement: '$2'
+    - action: labeldrop
+      regex: '__tmp_name_node_name'
+
+  ##
+  ## Grafana
+  ##
+  - job_name: grafana
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/other/grafana*.yml'
+
+  ##
+  ## JSON Exporter
+  ##
+
+  - job_name: json_exporter
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/other/json_exporter*.yml'
+
+  ##
+  ## Node Exporter
+  ##
+
+  - job_name: 'node_exporter'
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/other/node_exporter*.yml'
+  ###
+  ### Consensus Client API Calls
+  ###
+
+  ##
+  ## job_name: consensus_beacon_states_head_validators
+  ##
+  ## Job to pull Ethereum fee address balances from local
+  ## Execution Layer client.
+  ##
+  ## Update the "instance" label to be the address and port
+  ## of your local Execution Layer client (e.g. "192.168.1.10:8545").
+  ##
+
+  - job_name: 'consensus_beacon_states_head_validators'
+    metrics_path: /probe
+    params:
+      module: [consensus_beacon_states_head_validators]
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/validators.yml'
+    relabel_configs:
+    - action: replace
+      target_label: __tmp_scheme
+      replacement: 'http://'
+    - action: replace
+      target_label: __tmp_api_endpoint
+      replacement: '/eth/v1/beacon/states/head/validators/'
+    - action: replace
+      source_labels: [__tmp_scheme, instance, __tmp_api_endpoint, __address__]
+      separator: ''
+      target_label: __param_target
+    - action: replace
+      target_label: __address__
+      replacement: '127.0.0.1:7979'
+    metric_relabel_configs:
+    - action: replace
+      source_labels: [pubkey]
+      regex: ^(.{12}).*$
+      target_label: pubkey_short
+
+  ##
+  ## job_name: consensus_node_version
+  ##
+  ## Job to pull Ethereum fee address balances from local
+  ## Execution Layer client.
+  ##
+  ## Update the "instance" label to be the address and port
+  ## of your local Execution Layer client (e.g. "192.168.1.10:8545").
+  ##
+
+  - job_name: 'consensus_node_version'
+    metrics_path: /probe
+    params:
+      module: [consensus_node_version]
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/consensus_apis/*.yml'
+    relabel_configs:
+    - action: replace
+      target_label: __tmp_api_endpoint
+      replacement: '/eth/v1/node/version'
+    - action: replace
+      target_label: __tmp_scheme
+      replacement: 'http://'
+    - action: replace
+      source_labels: [ __address__ ]
+      target_label: instance
+    - action: replace
+      source_labels: [__tmp_scheme, __address__, __tmp_api_endpoint]
+      separator: ''
+      target_label: __param_target
+    - action: replace
+      target_label: __address__
+      replacement: '127.0.0.1:7979'
+
+  ##
+  ## job_name: consensus_beacon_headers_finalized
+  ##
+  ## Job to pull Ethereum fee address balances from local
+  ## Execution Layer client.
+  ##
+  ## Update the "instance" label to be the address and port
+  ## of your local Execution Layer client (e.g. "192.168.1.10:8545").
+  ##
+
+  - job_name: 'consensus_beacon_headers_finalized'
+    metrics_path: /probe
+    params:
+      module: [consensus_beacon_headers_finalized]
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/consensus_apis/*.yml'
+    relabel_configs:
+    - action: replace
+      target_label: __tmp_scheme
+      replacement: 'http://'
+    - action: replace
+      target_label: __tmp_api_endpoint
+      replacement: '/eth/v1/beacon/headers/finalized'
+    - action: replace
+      source_labels: [ __address__ ]
+      target_label: instance
+    - action: replace
+      source_labels: [__tmp_scheme, __address__, __tmp_api_endpoint]
+      separator: ''
+      target_label: __param_target
+    - action: replace
+      target_label: __address__
+      replacement: '127.0.0.1:7979'
+
+  ##
+  ## job_name: consensus_node_peer_count
+  ##
+  ## Job to pull Ethereum fee address balances from local
+  ## Execution Layer client.
+  ##
+  ## Update the "instance" label to be the address and port
+  ## of your local Execution Layer client (e.g. "192.168.1.10:8545").
+  ##
+
+  - job_name: 'consensus_node_peer_count'
+    metrics_path: /probe
+    params:
+      module: [consensus_node_peer_count]
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/consensus_apis/*.yml'
+    relabel_configs:
+    - action: replace
+      target_label: __tmp_scheme
+      replacement: 'http://'
+    - action: replace
+      target_label: __tmp_api_endpoint
+      replacement: '/eth/v1/node/peer_count'
+    - action: replace
+      source_labels: [ __address__ ]
+      target_label: instance
+    - action: replace
+      source_labels: [__tmp_scheme, __address__, __tmp_api_endpoint]
+      separator: ''
+      target_label: __param_target
+    - action: replace
+      target_label: __address__
+      replacement: '127.0.0.1:7979'
+
+  ##
+  ## job_name: consensus_beacon_genesis
+  ##
+  ## Job to pull genesis details.
+  ##
+  ## Update the "instance" label to be the address and port
+  ## of your local Consensus Layer client (e.g. "192.168.1.10:4000").
+  ##
+
+  - job_name: 'consensus_beacon_genesis'
+    metrics_path: /probe
+    scrape_interval: 1h
+    params:
+      module: [consensus_beacon_genesis]
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/consensus_apis/*.yml'
+    relabel_configs:
+    - action: replace
+      target_label: __tmp_scheme
+      replacement: 'http://'
+    - action: replace
+      target_label: __tmp_api_endpoint
+      replacement: '/eth/v1/beacon/genesis'
+    - action: replace
+      source_labels: [ __address__ ]
+      target_label: instance
+    - action: replace
+      source_labels: [__tmp_scheme, __address__, __tmp_api_endpoint]
+      separator: ''
+      target_label: __param_target
+    - action: replace
+      target_label: __address__
+      replacement: '127.0.0.1:7979'
+    metric_relabel_configs:
+    - action: replace
+      source_labels: [is_syncing]
+      regex: 'true'
+      replacement: 1
+      target_label: is_syncing
+    - action: replace
+      source_labels: [is_syncing]
+      regex: 'false'
+      replacement: 0
+      target_label: is_syncing
+
+  ##
+  ## job_name: consensus_node_syncing
+  ##
+  ## Job to pull Ethereum fee address balances from local
+  ## Execution Layer client.
+  ##
+  ## Update the "instance" label to be the address and port
+  ## of your local Execution Layer client (e.g. "192.168.1.10:8545").
+  ##
+
+  - job_name: 'consensus_node_syncing'
+    metrics_path: /probe
+    params:
+      module: [consensus_node_syncing]
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/consensus_apis/*.yml'
+    relabel_configs:
+    - action: replace
+      target_label: __tmp_scheme
+      replacement: 'http://'
+    - action: replace
+      target_label: __tmp_api_endpoint
+      replacement: '/eth/v1/node/syncing'
+    - action: replace
+      source_labels: [ __address__ ]
+      target_label: instance
+    - action: replace
+      source_labels: [__tmp_scheme, __address__, __tmp_api_endpoint]
+      separator: ''
+      target_label: __param_target
+    - action: replace
+      target_label: __address__
+      replacement: '127.0.0.1:7979'
+    metric_relabel_configs:
+    - action: replace
+      source_labels: [is_syncing]
+      regex: 'true'
+      replacement: 1
+      target_label: is_syncing
+    - action: replace
+      source_labels: [is_syncing]
+      regex: 'false'
+      replacement: 0
+      target_label: is_syncing
+
+  ###
+  ### Execution Client API Calls
+  ###
+
+  ## job_name: execution_txpool_status_int
+  ##
+  ## Job to pull Execution Layer node info from execution
+  ## client APIs that return integer results.
+  ##
+  ## Configure: network, service, group
+  ##
+  ## Supported by: Nethermind
+  ## Required by: Nethermind
+  ## Not Supported by: Geth, Nethermind, Besu
+  ##
+
+  - job_name: 'execution_txpool_status_int'
+    metrics_path: /probe
+    params:
+      module: [execution_txpool_status_int]
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/execution_apis/nethermind*.yml'
+    relabel_configs:
+    - action: replace
+      target_label: __tmp_scheme
+      replacement: 'http://'
+    - action: replace
+      source_labels: [ __address__ ]
+      target_label: instance
+    - action: replace
+      source_labels: [__tmp_scheme, __address__]
+      separator: ''
+      target_label: __param_target
+    - action: replace
+      target_label: __address__
+      replacement: '127.0.0.1:7979'
+    metric_relabel_configs:
+    - action: labeldrop
+      regex: 'client'
+
+  ##
+  ## job_name: execution_txpool_status_hex
+  ##
+  ## Job to pull Execution Layer node info from execution
+  ## client APIs that return hexadecimal results.
+  ##
+  ## This job can be disabled without affecting
+  ## dashboard functionality, because this information
+  ## is also available through the metrics of supported
+  ## clients.
+  ##
+  ## Supported by: Geth, Erigon
+  ## Required by: None
+  ## Not supported by: Nethermind, Besu
+  ##
+
+  - job_name: 'execution_txpool_status_hex'
+    metrics_path: /probe
+    params:
+      module: [execution_txpool_status_hex]
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/execution_apis/erigon*.yml'
+      - '/etc/prometheus/files_sd/stakelocal/execution_apis/geth*.yml'
+    relabel_configs:
+    - action: replace
+      target_label: __tmp_scheme
+      replacement: 'http://'
+    - action: replace
+      source_labels: [ __address__ ]
+      target_label: instance
+    - action: replace
+      source_labels: [__tmp_scheme, __address__]
+      separator: ''
+      target_label: __param_target
+    - action: replace
+      target_label: __address__
+      replacement: '127.0.0.1:7979'
+    metric_relabel_configs:
+    - action: labeldrop
+      regex: 'client'
+
+  ##
+  ## job_name: execution_admin_nodeInfo
+  ##
+  ## Job to pull Execution Layer node info.
+  ##
+
+  - job_name: 'execution_web3_clientVersion'
+    metrics_path: /probe
+    params:
+      module: [execution_web3_clientVersion]
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/execution_apis/*.yml'
+    relabel_configs:
+    - action: replace
+      target_label: __tmp_scheme
+      replacement: 'http://'
+    - action: replace
+      source_labels: [ __address__ ]
+      target_label: instance
+    - action: replace
+      source_labels: [__tmp_scheme, __address__]
+      separator: ''
+      target_label: __param_target
+    - action: replace
+      target_label: __address__
+      replacement: '127.0.0.1:7979'
+
+  ##
+  ## job_name: execution_eth_maxPriorityFeePerGas
+  ##
+  ## Job to pull Execution Layer fee history information.
+  ##
+
+  - job_name: 'execution_eth_maxPriorityFeePerGas'
+    metrics_path: /probe
+    params:
+      module: [execution_eth_maxPriorityFeePerGas]
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/execution_apis/nethermind*.yml'
+      - '/etc/prometheus/files_sd/stakelocal/execution_apis/geth*.yml'
+      - '/etc/prometheus/files_sd/stakelocal/execution_apis/erigon*.yml'
+    relabel_configs:
+    - action: replace
+      target_label: __tmp_scheme
+      replacement: 'http://'
+    - action: replace
+      source_labels: [ __address__ ]
+      target_label: instance
+    - action: replace
+      source_labels: [__tmp_scheme, __address__]
+      separator: ''
+      target_label: __param_target
+    - action: replace
+      target_label: __address__
+      replacement: '127.0.0.1:7979'
+
+  ##
+  ## job_name: execution_eth_feeHistory
+  ##
+  ## Job to pull Execution Layer fee history information.
+  ##
+
+  - job_name: 'execution_eth_feeHistory'
+    metrics_path: /probe
+    params:
+      module: [execution_eth_feeHistory]
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/execution_apis/*.yml'
+    relabel_configs:
+    - action: replace
+      target_label: __tmp_scheme
+      replacement: 'http://'
+    - action: replace
+      source_labels: [ __address__ ]
+      target_label: instance
+    - action: replace
+      source_labels: [__tmp_scheme, __address__]
+      separator: ''
+      target_label: __param_target
+    - action: replace
+      target_label: __address__
+      replacement: '127.0.0.1:7979'
+
+  ##
+  ## job_name: execution_eth_blockNumber
+  ##
+  ## Job to pull Execution Layer last block number.
+  ##
+#
+#  - job_name: 'execution_eth_blockNumber'
+#    metrics_path: /probe
+#    params:
+#      module: [execution_eth_blockNumber]
+#    file_sd_configs:
+#    - files:
+#      - '/etc/prometheus/files_sd/stakelocal/execution_apis/*.yml'
+#    relabel_configs:
+#    - action: replace
+#      target_label: __tmp_scheme
+#      replacement: 'http://'
+#    - action: replace
+#      source_labels: [ __address__ ]
+#      target_label: instance
+#    - action: replace
+#      source_labels: [__tmp_scheme, __address__]
+#      separator: ''
+#      target_label: __param_target
+#    - action: replace
+#      target_label: __address__
+#      replacement: '127.0.0.1:7979'
+
+  ##
+  ## job_name: execution_eth_syncing
+  ##
+  ## Job to pull Execution Layer syncing status.
+  ##
+
+  - job_name: 'execution_eth_syncing'
+    metrics_path: /probe
+    params:
+      module: [execution_eth_syncing]
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/execution_apis/*.yml'
+    relabel_configs:
+    - action: replace
+      target_label: __tmp_scheme
+      replacement: 'http://'
+    - action: replace
+      source_labels: [ __address__ ]
+      target_label: instance
+    - action: replace
+      source_labels: [__tmp_scheme, __address__]
+      separator: ''
+      target_label: __param_target
+    - action: replace
+      target_label: __address__
+      replacement: '127.0.0.1:7979'
+    metric_relabel_configs:
+    - action: labeldrop
+      regex: 'client'
+
+  ##
+  ## job_name: execution_net_peerCount
+  ##
+  ## Job to pull Execution Layer peer counts.
+  ##
+
+  - job_name: 'execution_net_peerCount'
+    metrics_path: /probe
+    params:
+      module: [execution_net_peerCount]
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/execution_apis/*.yml'
+    relabel_configs:
+    - action: replace
+      target_label: __tmp_scheme
+      replacement: 'http://'
+    - action: replace
+      source_labels: [ __address__ ]
+      target_label: instance
+    - action: replace
+      source_labels: [__tmp_scheme, __address__]
+      separator: ''
+      target_label: __param_target
+    - action: replace
+      target_label: __address__
+      replacement: '127.0.0.1:7979'
+    metric_relabel_configs:
+    - action: labeldrop
+      regex: 'client'
+
+  ##
+  ## job_name: execution_finalized_block
+  ##
+  ## Job to pull finalized block information from Besu execution client.
+  ##
+  ## Required by: Besu
+  ## Works with: Besu, Geth
+  ##
+  ## Configure: network, host, service, group
+  ##
+
+  - job_name: 'execution_finalized_block'
+    metrics_path: /probe
+    params:
+      module: [execution_finalized_block]
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/execution_apis/*.yml'
+    relabel_configs:
+    - action: replace
+      target_label: __tmp_scheme
+      replacement: 'http://'
+    - action: replace
+      source_labels: [ __address__ ]
+      target_label: instance
+    - action: replace
+      source_labels: [__tmp_scheme, __address__]
+      separator: ''
+      target_label: __param_target
+    - action: replace
+      target_label: __address__
+      replacement: '127.0.0.1:7979'
+    metric_relabel_configs:
+    - action: labeldrop
+      regex: 'client'
+
+  ##
+  ## job_name: execution_eth_getBalance
+  ##
+  ## Job to pull Ethereum fee address balances from local
+  ## Execution Layer client.
+  ##
+  ## Update the "instance" label to be the address and port
+  ## of your local Execution Layer client (e.g. "192.168.1.10:8545").
+  ##
+
+  - job_name: 'execution_eth_getBalance'
+    metrics_path: /probe
+    params:
+      module: [execution_eth_getBalance]
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/addresses.yml'
+    relabel_configs:
+    - action: replace
+      target_label: __tmp_scheme
+      replacement: 'http://'
+    - action: replace
+      source_labels: [__address__]
+      target_label: __param_pubkey
+    - action: replace
+      source_labels: [__address__]
+      target_label: pubkey
+    - action: replace
+      source_labels: [__tmp_scheme, instance]
+      separator: ''
+      target_label: __param_target
+    - action: replace
+      target_label: __address__
+      replacement: '127.0.0.1:7979'
+    metric_relabel_configs:
+    - action: labeldrop
+      regex: 'client'
+    - action: replace
+      source_labels: [pubkey]
+      regex: ^(.{12}).*$
+      target_label: pubkey_short
+
+  ###
+  ### External API Calls
+  ###
+
+  ##
+  ## job_name: coingecko_eth_price
+  ##
+  ## Job to query json_exporter with a target URL that pulls the
+  ## ETHUSD price from CoinGecko.
+  ##
+  - job_name: 'coingecko_eth_price'
+    metrics_path: /probe
+    params:
+      module: ['coingecko_eth_price']
+    file_sd_configs:
+    - files:
+      - '/etc/prometheus/files_sd/stakelocal/other/coingecko.yml'
+    relabel_configs:
+    - action: replace
+      target_label: __tmp_api_endpoint
+      replacement: 'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies='
+    - action: replace
+      source_labels: [ __tmp_api_endpoint, __address__ ]
+      separator: ''
+      target_label: __param_target
+    - action: replace
+      target_label: instance
+      replacement: 'api.coingecko.com'
+    - target_label: __address__
+      replacement: 127.0.0.1:7979
+    metric_relabel_configs:
+    - action: replace
+      source_labels: [__name__]
+      regex: 'eth_(.*)'
+      target_label: cur
+      replacement: '$1'
+    - action: replace
+      target_label: __name__
+      replacement: 'ethprice'

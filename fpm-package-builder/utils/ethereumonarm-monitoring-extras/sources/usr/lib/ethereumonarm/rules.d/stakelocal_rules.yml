@@ -1,0 +1,176 @@
+groups:
+  - name: custom_rules
+    rules:
+
+      ##
+      ## Summarizes increase in critical errors, errors, and warnings over one minute.
+      ##
+      - record: log_entries_total:critical:per_minute
+        expr:   label_replace((crit_total or vector(0)) - (crit_total offset 1m) or on() vector(0), "level", "critical", "", "")
+
+      - record: log_entries_total:errors:per_minute
+        expr:   label_replace((log_entries_total{level="error"} or error_total or vector(0)) - (log_entries_total{level="error"} offset 1m or error_total offset 1m) or on() vector(0), "level", "error", "", "")
+
+      - record: log_entries_total:warnings:per_minute
+        expr:   label_replace((log_entries_total{level="warning"} or warn_total or vector(0)) - (log_entries_total{level="warning"} offset 1m or warn_total offset 1m) or on() vector(0), "level", "warning", "", "")
+
+      ##
+      ## Calculates the number of successful proposales, attestations, and aggregations per minute.
+      ##
+      - record: validator_successful_proposals:per_minute
+        expr:   (sum by (group,service,network) (validator_successful_proposals)     or vector(0)) - (sum by (group,service,network) (validator_successful_proposals    offset 1m)) or on() vector(0)
+
+      - record: validator_successful_attestations:per_minute
+        expr:   (sum by (group,service,network) (validator_successful_attestations)  or vector(0)) - (sum by (group,service,network) (validator_successful_attestations offset 1m)) or on() vector(0)
+
+      - record: validator_successful_aggregations:per_minute
+        expr:   ((sum by (group,service,network) (validator_successful_aggregations) or vector(0)) - (sum by (group,service,network) (validator_successful_aggregations offset 1m)) or on() vector(0)) > 0 or on() vector(0)
+
+      ##
+      ## Calculates the total number of active local validators at a given moment in time.
+      ##
+      - record: total_local_validators:active
+        expr:   (count by (group,service,network) (count by (group,service,network,pubkey) (validator_balance > 16 and validator_statuses == 3)))
+
+      - record: total_consensus_validators:active
+        expr:   (count by (group,service,network) (count by (group,service,network,pubkey) (consensus_validator_balance:ETH)))
+
+      ##
+      ## Convert consensus validator balances from gwei to ETH
+      ##
+      - record: consensus_validator_balance:ETH
+        expr:   consensus_validator_balance/1000000000
+
+      ##
+      ## Calculate increase in consensus validator balance over various time periods using "offset".
+      ## These rules support all validators via API calls to consensus client.
+      ##
+      - record: consensus_validator_balance:ETH:increase:384s
+        expr:   label_replace(sum by (network,group,service) (consensus_validator_balance:ETH - consensus_validator_balance:ETH offset   384s != 0) - on(network,group,service) group_left() ((total_consensus_validators:active - total_consensus_validators:active offset   384s) * 32), "period", "384s", "", "")
+
+      - record: consensus_validator_balance:ETH:increase:1h
+        expr:   label_replace(sum by (network,group,service) (consensus_validator_balance:ETH - consensus_validator_balance:ETH offset   1h != 0) - on(network,group,service) group_left() ((total_consensus_validators:active - total_consensus_validators:active offset   1h) * 32), "period", "1h", "", "")
+
+      - record: consensus_validator_balance:ETH:increase:1d
+        expr:   label_replace(sum by (network,group,service) (consensus_validator_balance:ETH - consensus_validator_balance:ETH offset   1d != 0) - on(network,group,service) group_left() ((total_consensus_validators:active - total_consensus_validators:active offset   1d) * 32), "period", "1d", "", "")
+
+      - record: consensus_validator_balance:ETH:increase:7d
+        expr:   label_replace(sum by (network,group,service) (consensus_validator_balance:ETH - consensus_validator_balance:ETH offset   7d != 0) - on(network,group,service) group_left() ((total_consensus_validators:active - total_consensus_validators:active offset   7d) * 32), "period", "7d", "", "")
+
+      - record: consensus_validator_balance:ETH:increase:30d
+        expr:   label_replace(sum by (network,group,service) (consensus_validator_balance:ETH - consensus_validator_balance:ETH offset  30d != 0) - on(network,group,service) group_left() ((total_consensus_validators:active - total_consensus_validators:active offset  30d) * 32), "period", "30d", "", "")
+
+      - record: consensus_validator_balance:ETH:increase:365d
+        expr:   label_replace(sum by (network,group,service) (consensus_validator_balance:ETH - consensus_validator_balance:ETH offset 365d != 0) - on(network,group,service) group_left() ((total_consensus_validators:active - total_consensus_validators:active offset 365d) * 32), "period", "365d", "", "")
+
+      ##
+      ## Convert Ethereum address balances from wei to ETH
+      ##
+      - record: address_balance:ETH
+        expr:   address_balance/1000000000000000000
+
+      ##
+      ## Calculate increase in Etherum address balances over various time periods.
+      ##
+      - record: address_balance:ETH:increase:384s
+        expr:   label_replace(sum by (network,group,service) (address_balance:ETH - address_balance:ETH offset 384s   != 0), "period", "384s",   "", "")
+
+      - record: address_balance:ETH:increase:1h
+        expr:   label_replace(sum by (network,group,service) (address_balance:ETH - address_balance:ETH offset 1h   != 0), "period", "1h",   "", "")
+
+      - record: address_balance:ETH:increase:1d
+        expr:   label_replace(sum by (network,group,service) (address_balance:ETH - address_balance:ETH offset 1d   != 0), "period", "1d",   "", "")
+
+      - record: address_balance:ETH:increase:7d
+        expr:   label_replace(sum by (network,group,service) (address_balance:ETH - address_balance:ETH offset 7d   != 0), "period", "7d",   "", "")
+
+      - record: address_balance:ETH:increase:30d
+        expr:   label_replace(sum by (network,group,service) (address_balance:ETH - address_balance:ETH offset 30d  != 0), "period", "30d",  "", "")
+
+      - record: address_balance:ETH:increase:365d
+        expr:   label_replace(sum by (network,group,service) (address_balance:ETH - address_balance:ETH offset 365d != 0), "period", "365d", "", "")
+
+      ##
+      ## Calculate increase in consensus validator balance over various time periods using "offset".
+      ## These rules support Prysm.
+      ##
+      - record: validator_balance:increase:384s
+        expr:   label_replace(sum by (network,group,service) (validator_balance - validator_balance offset   384s != 0) - on(network,group,service) group_left() ((total_local_validators:active - total_local_validators:active offset   384s) * 32), "period", "384s", "", "")
+
+      - record: validator_balance:increase:1h
+        expr:   label_replace(sum by (network,group,service) (validator_balance - validator_balance offset   1h != 0) - on(network,group,service) group_left() ((total_local_validators:active - total_local_validators:active offset   1h) * 32), "period", "1h", "", "")
+
+      - record: validator_balance:increase:1d
+        expr:   label_replace(sum by (network,group,service) (validator_balance - validator_balance offset   1d != 0) - on(network,group,service) group_left() ((total_local_validators:active - total_local_validators:active offset   1d) * 32), "period", "1d", "", "")
+
+      - record: validator_balance:increase:7d
+        expr:   label_replace(sum by (network,group,service) (validator_balance - validator_balance offset   7d != 0) - on(network,group,service) group_left() ((total_local_validators:active - total_local_validators:active offset   7d) * 32), "period", "7d", "", "")
+
+      - record: validator_balance:increase:30d
+        expr:   label_replace(sum by (network,group,service) (validator_balance - validator_balance offset  30d != 0) - on(network,group,service) group_left() ((total_local_validators:active - total_local_validators:active offset  30d) * 32), "period", "30d", "", "")
+
+      - record: validator_balance:increase:365d
+        expr:   label_replace(sum by (network,group,service) (validator_balance - validator_balance offset 365d != 0) - on(network,group,service) group_left() ((total_local_validators:active - total_local_validators:active offset 365d) * 32), "period", "365d", "", "")
+
+      ##
+      ## Average of locally staked ETH over time.
+      ##
+      - record: total_staked_ETH:avg_over_time:384s
+        expr: label_replace(32 * (sum by (group) (sum_over_time(total_consensus_validators:active[384s]))/sum by (group) (count_over_time(total_consensus_validators:active[384s]))) or (sum by (group) (sum_over_time(total_local_validators:active[384s]))/sum by (group) (count_over_time(total_local_validators:active[384s]))), "period", "384s", "", "")
+
+      - record: total_staked_ETH:avg_over_time:1h
+        expr: label_replace(32 * (sum by (group) (sum_over_time(total_consensus_validators:active[1h]))/sum by (group) (count_over_time(total_consensus_validators:active[1h]))) or (sum by (group) (sum_over_time(total_local_validators:active[1h]))/sum by (group) (count_over_time(total_local_validators:active[1h]))), "period", "1h", "", "")
+
+      - record: total_staked_ETH:avg_over_time:1d
+        expr: label_replace(32 * (sum by (group) (sum_over_time(total_consensus_validators:active[1d]))/sum by (group) (count_over_time(total_consensus_validators:active[1d]))) or (sum by (group) (sum_over_time(total_local_validators:active[1d]))/sum by (group) (count_over_time(total_local_validators:active[1d]))), "period", "1d", "", "")
+
+      - record: total_staked_ETH:avg_over_time:7d
+        expr: label_replace(32 * (sum by (group) (sum_over_time(total_consensus_validators:active[7d]))/sum by (group) (count_over_time(total_consensus_validators:active[7d]))) or (sum by (group) (sum_over_time(total_local_validators:active[7d]))/sum by (group) (count_over_time(total_local_validators:active[7d]))), "period", "7d", "", "")
+
+      - record: total_staked_ETH:avg_over_time:30d
+        expr: label_replace(32 * (sum by (group) (sum_over_time(total_consensus_validators:active[30d]))/sum by (group) (count_over_time(total_consensus_validators:active[30d]))) or (sum by (group) (sum_over_time(total_local_validators:active[30d]))/sum by (group) (count_over_time(total_local_validators:active[30d]))), "period", "30d", "", "")
+
+      - record: total_staked_ETH:avg_over_time:365d
+        expr: label_replace(32 * (sum by (group) (sum_over_time(total_consensus_validators:active[365d]))/sum by (group) (count_over_time(total_consensus_validators:active[365d]))) or (sum by (group) (sum_over_time(total_local_validators:active[365d]))/sum by (group) (count_over_time(total_local_validators:active[365d]))), "period", "365d", "", "")
+
+      ##
+      ## Summarizes network traffic across all non-loopback ("lo") devices.
+      ##
+      - record: node_network_transmit_bytes_total:non_loopback:increase:1m
+        expr:   sum by (group,host,job) ((node_network_transmit_bytes_total{device!="lo"} or vector(0)) - (node_network_transmit_bytes_total{device!="lo"} offset 1m) or on() vector(0))
+
+      - record: node_network_receive_bytes_total:non_loopback:increase:1m
+        expr:   sum by (group,host,job) ((node_network_receive_bytes_total{device!="lo"} or vector(0)) - (node_network_receive_bytes_total{device!="lo"} offset 1m) or on() vector(0))
+
+      ##
+      ## Summarizes CPU use into categories used on dashboard.
+      ##
+      - record: node_memory_apps_bytes
+        expr:   sum by (group,host,job) (node_memory_MemTotal_bytes - node_memory_MemFree_bytes - node_memory_Buffers_bytes - node_memory_Cached_bytes - node_memory_SwapCached_bytes - node_memory_Slab_bytes - node_memory_PageTables_bytes - node_memory_VmallocUsed_bytes)
+
+      - record: node_cpu_seconds_total:user:percent
+        expr:   (sum by (group,host,job) (node_cpu_seconds_total{mode="user"}) - sum by (group,host,job) (node_cpu_seconds_total{mode="user"} offset 1m)) / (sum by (group,host,job) (node_cpu_seconds_total) - sum by (group,host,job) (node_cpu_seconds_total offset 1m))
+
+      - record: node_cpu_seconds_total:guest:percent
+        expr:   (sum by (group,host,job) (node_cpu_seconds_total{mode="guest"}) - sum by (group,host,job) (node_cpu_seconds_total{mode="guest"} offset 1m)) / (sum by (group,host,job) (node_cpu_seconds_total) - sum by (group,host,job) (node_cpu_seconds_total offset 1m))
+
+      - record: node_cpu_seconds_total:nice:percent
+        expr:   (sum by (group,host,job) (node_cpu_seconds_total{mode="nice"}) - sum by (group,host,job) (node_cpu_seconds_total{mode="nice"} offset 1m)) / (sum by (group,host,job) (node_cpu_seconds_total) - sum by (group,host,job) (node_cpu_seconds_total offset 1m))
+
+      - record: node_cpu_seconds_total:steal:percent
+        expr:   (sum by (group,host,job) (node_cpu_seconds_total{mode="steal"}) - sum by (group,host,job) (node_cpu_seconds_total{mode="steal"} offset 1m)) / (sum by (group,host,job) (node_cpu_seconds_total) - sum by (group,host,job) (node_cpu_seconds_total offset 1m))
+
+      - record: node_cpu_seconds_total:irq:percent
+        expr:   (sum by (group,host,job) (node_cpu_seconds_total{mode="irq"}) - sum by (group,host,job) (node_cpu_seconds_total{mode="irq"} offset 1m)) / (sum by (group,host,job) (node_cpu_seconds_total) - sum by (group,host,job) (node_cpu_seconds_total offset 1m))
+
+      - record: node_cpu_seconds_total:iowait:percent
+        expr:   (sum by (group,host,job) (node_cpu_seconds_total{mode="iowait"}) - sum by (group,host,job) (node_cpu_seconds_total{mode="iowait"} offset 1m)) / (sum by (group,host,job) (node_cpu_seconds_total) - sum by (group,host,job) (node_cpu_seconds_total offset 1m))
+
+      - record: node_cpu_seconds_total:system:percent
+        expr:   (sum by (group,host,job) (node_cpu_seconds_total{mode="system"}) - sum by (group,host,job) (node_cpu_seconds_total{mode="system"} offset 1m)) / (sum by (group,host,job) (node_cpu_seconds_total) - sum by (group,host,job) (node_cpu_seconds_total offset 1m))
+
+      - record: node_cpu_seconds_total:softirq:percent
+        expr:   (sum by (group,host,job) (node_cpu_seconds_total{mode="softirq"}) - sum by (group,host,job) (node_cpu_seconds_total{mode="softirq"} offset 1m)) / (sum by (group,host,job) (node_cpu_seconds_total) - sum by (group,host,job) (node_cpu_seconds_total offset 1m))
+
+      - record: node_cpu_seconds_total:idle:percent
+        expr:   (sum by (group,host,job) (node_cpu_seconds_total{mode="idle"}) - sum by (group,host,job) (node_cpu_seconds_total{mode="idle"} offset 1m)) / (sum by (group,host,job) (node_cpu_seconds_total) - sum by (group,host,job) (node_cpu_seconds_total offset 1m))

@@ -1,0 +1,7 @@
+    - targets: ['127.0.0.1:3500']
+      labels:
+        network: 'Mainnet'
+        host: 'Default Host'
+        service: 'Prysm Beacon'
+        group: 'Default Group'
+        explorer: 'beaconcha.in'

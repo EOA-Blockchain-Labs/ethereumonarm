@@ -1,0 +1,20 @@
+[Unit]
+Description=Ethereum metrics exporter daemon
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+
+ExecStart=/usr/local/bin/ethereum-metrics-exporter \
+                --config /etc/ethereum/eth-metrics.yml \
+                --metrics-port 9095
+
+Restart=always
+RestartSec=5
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target
+
+
+

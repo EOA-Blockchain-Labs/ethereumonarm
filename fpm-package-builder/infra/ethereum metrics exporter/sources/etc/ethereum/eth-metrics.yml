@@ -1,0 +1,40 @@
+consensus:
+  enabled: true
+  # Uncomment the desired consensus client URL and name
+  # Lighthouse
+  # url: "http://localhost:5052/"
+  # name: "Lighthouse Beacon"
+  # Lodestar
+  # url: "http://localhost:9596/"
+  # name: "Lodestar Beacon"
+  # Nimbus
+  url: "http://localhost:5052/"
+  name: "Nimbus"
+  # Prysm
+  # url: "http://localhost:3500/"
+  # name: "Prysm Beacon"
+  # Teku
+  # url: "http://localhost:5051/"
+  # name: "Teku"
+
+execution:
+  enabled: true
+  # Uncomment the desired execution client URL and name
+  url: "http://localhost:8545/"
+  # Besu
+  # name: "Besu"
+  # Erigon
+  # name: "Erigon"
+  # Geth
+  # name: "Geth"
+  # Nethermind
+  # name: "Nethermind"
+
+  modules:
+    - "eth"
+    - "net"
+    - "web3"
+    - "txpool"
+
+pair:
+  enabled: true

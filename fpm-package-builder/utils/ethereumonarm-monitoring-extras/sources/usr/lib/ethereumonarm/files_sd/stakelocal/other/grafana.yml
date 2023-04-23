@@ -1,0 +1,5 @@
+    - targets: ['127.0.0.1:3000']
+      labels:
+        host: 'Default Host'
+        service: 'Grafana'
+        client: 'Grafana'

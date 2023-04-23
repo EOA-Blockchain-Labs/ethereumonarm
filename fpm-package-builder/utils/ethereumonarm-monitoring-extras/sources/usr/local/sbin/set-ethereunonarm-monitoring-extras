@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 override(){
-  systemctl stop grafana-server prometheus prometheus-node-exporter prometheus-pushgateway|| true
+  systemctl stop grafana-server prometheus prometheus-node-exporter || true
 
   # Configure Grafana
   cp /usr/lib/ethereumonarm/grafana.db /var/lib/grafana/grafana.db
@@ -9,13 +9,14 @@ override(){
   #Configure prometheus
   cp /usr/lib/ethereumonarm/prometheus /etc/default/
   cp /usr/lib/ethereumonarm/prometheus-node-exporter /etc/default/
-  cp /usr/lib/ethereumonarm/prometheus-pushgateway /etc/default/
   cp /usr/lib/ethereumonarm/prometheus.yml /etc/prometheus/
+  cp -a /usr/lib/ethereumonarm/prometheus/files.d /etc/prometheus/
+  cp -a /usr/lib/ethereumonarm/prometheus/rules.d /etc/prometheus/
 
   #A basic set of ufw rules WIP
   cp /usr/lib/ethereumonarm/user.rules /etc/ufw/
 
-  systemctl start grafana-server prometheus prometheus-node-exporter prometheus-pushgateway || true
+  systemctl start grafana-server prometheus prometheus-node-exporter || true
 
 }
 

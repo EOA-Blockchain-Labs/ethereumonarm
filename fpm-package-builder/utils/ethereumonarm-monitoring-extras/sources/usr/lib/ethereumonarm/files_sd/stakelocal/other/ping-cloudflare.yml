@@ -1,0 +1,4 @@
+      - targets: ['1.1.1.1']
+        labels:
+          host: 'Default Host'
+          destination: 'Cloudflare'

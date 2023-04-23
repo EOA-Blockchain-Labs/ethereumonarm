@@ -1,0 +1,51 @@
+    - targets: [ 'ledgerwatch/erigon' ]
+      labels:
+        client: 'Erigon'
+    - targets: [ 'nethermindeth/nethermind' ]
+      labels:
+        client: 'Nethermind'
+    - targets: [ 'ethereum/go-ethereum' ]
+      labels:
+        client: 'Geth'
+    - targets: [ 'hyperledger/besu' ]
+      labels:
+        client: 'Besu'
+    - targets: [ 'prysmaticlabs/prysm' ]
+      labels:
+        client: 'Prysm'
+    - targets: [ 'consensys/teku' ]
+      labels:
+        client: 'Teku'
+    - targets: [ 'status-im/nimbus-eth2' ]
+      labels:
+        client: 'Nimbus'
+    - targets: [ 'sigp/lighthouse' ]
+      labels:
+        client: 'Lighthouse'
+    - targets: [ 'attestantio/dirk' ]
+      labels:
+        client: 'Dirk'
+    - targets: [ 'attestantio/vouch' ]
+      labels:
+        client: 'Vouch'
+    - targets: [ 'chainsafe/lodestar' ]
+      labels:
+        client: 'Lodestar'
+    - targets: [ 'prometheus/prometheus' ]
+      labels:
+        client: 'Prometheus'
+    - targets: [ 'prometheus/node_exporter' ]
+      labels:
+        client: 'Node Exporter'
+    - targets: [ 'prometheus/blackbox_exporter' ]
+      labels:
+        client: 'Blackbox Exporter'
+    - targets: [ 'prometheus-community/json_exporter' ]
+      labels:
+        client: 'JSON Exporter'
+    - targets: [ 'ethpandaops/ethereum-metrics-exporter' ]
+      labels:
+        client: 'Ethereum Metrics Exporter'
+    - targets: [ 'grafana/grafana' ]
+      labels:
+        client: 'Grafana'

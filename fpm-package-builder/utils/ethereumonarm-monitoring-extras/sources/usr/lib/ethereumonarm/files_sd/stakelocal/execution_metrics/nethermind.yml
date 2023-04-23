@@ -1,0 +1,7 @@
+    - targets: ['127.0.0.1:8080']
+      labels:
+        network: 'Mainnet'
+        host: 'Default Host'
+        service: 'Nethermind'
+        group: 'Default Group'
+        explorer: 'etherscan.io'

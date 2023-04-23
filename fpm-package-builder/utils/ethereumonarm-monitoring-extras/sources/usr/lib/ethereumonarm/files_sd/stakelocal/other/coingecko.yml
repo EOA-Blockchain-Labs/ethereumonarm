@@ -1,0 +1,3 @@
+    - targets: ['usd,eur,jpy,gbp,aud,cad,chf,cny,hkd,nzd,ils,krw,mxn,rub,sgd,twd,inr']
+      labels:
+        source: 'CoinGecko'

@@ -99,13 +99,17 @@ Updating Clients
 
 .. note::
 
-  If you have an old Ethereum on ARM image, please update the APT repository to focal by running:
+  If you see this warning running the ``apt``:
+  
+  ``Key is stored in legacy trusted.gpg keyring (/etc/apt/trusted.gpg), see the DEPRECATION section in apt-key(8) for details``
+  
+  run the following command:
 
   .. prompt:: bash $
 
-     sudo add-apt-repository -r -n "deb http://apt.ethraspbian.com bionic main"
-     sudo add-apt-repository -n "deb http://apt.ethraspbian.com focal main"
-     sudo apt-get update
+    wget -q -O - http://apt.ethereumonarm.com/eoa.apt.keyring.gpg| sudo tee 
+    /etc/apt/trusted.gpg.d/eoa.apt.keyring.gpg > /dev/null
+    
 
 **Ethereum on ARM** comes with a custom ``APT`` repository which allows users to easily
 update the Ethereum software. For instance, to update the :guilabel:`Geth` client run:

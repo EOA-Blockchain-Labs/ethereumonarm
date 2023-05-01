@@ -97,9 +97,12 @@ For changes to take effect, you need to restart the client:
 Updating Clients
 ----------------
 
+APT repository
+~~~~~~~~~~~~~~
+
 .. note::
 
-  If you see this warning running the ``apt``:
+  If you see this warning running APT:
   
   ``Key is stored in legacy trusted.gpg keyring (/etc/apt/trusted.gpg), see the DEPRECATION section in apt-key(8) for details``
   
@@ -125,19 +128,72 @@ If you want to run the new version, restart the service by running:
 
   sudo systemctl restart geth
 
+**You can downgrade a client as well** by setting a specific version. This is particularly useful if 
+a bug is found in the current version and you need to keep running the client. For example:
+
+.. prompt:: bash $
+
+  sudo apt install geth=1.9.25-2
+
+The APT repository is browsable so you can download a package manually:
+
+`https://apt.ethereumonarm.com/pool/main`_
+
+.. _https://apt.ethereumonarm.com/pool/main: https://apt.ethereumonarm.com/pool/main/
+
+Available Packages
+~~~~~~~~~~~~~~~~~~
+
 These are the available packages:
+
+**L1 clients**
+
+*Execution Layer clients*
 
 * geth
 * nethermind
 * erigon
 * besu
+
+*Consensus Layer clients*
+
 * lighthouse
 * prysm
 * teku
 * nimbus
-* staking-deposit-cli
-* ipfs
+
+**L2 clients**
+
+*Polygon*
+
+* polygon-heimdall
+* polygon-bor
+
+*Optimism*
+
+* optimism-l2geth
+* optimism-op-geth
+* optimism-op-node
+
+*Arbitrum*
+
+* arbitrum-nitro
+
+*Starknet*
+
+* papyrus
+* juno
+
+**Web 3**
+
+* bee
 * kubo
+* status
+
+**Infra**
+
+* staking-deposit-cli
+* mev-boost
 
 .. note::
   The `APT` command will install the last version available in the repository. Most clients 

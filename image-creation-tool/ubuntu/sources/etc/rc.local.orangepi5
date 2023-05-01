@@ -118,8 +118,8 @@ if [ ! -f $FLAG ]; then
   # Add APT EthRaspbian repository
   sleep 5
   echo "Adding Ethereum repositories"
-  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8A584409D327B0A5
-  add-apt-repository -y -n "deb http://apt.ethraspbian.com focal main"
+  wget -q -O - http://apt.ethereumonarm.com/eoa.apt.keyring.gpg| sudo tee /etc/apt/trusted.gpg.d/eoa.apt.keyring.gpg > /dev/null
+  add-apt-repository -y -n "deb http://apt.ethereumonarm.com jammy main"
 
   # Put kernel package on hold
   apt-mark hold linux-image-legacy-rockchip-rk3588

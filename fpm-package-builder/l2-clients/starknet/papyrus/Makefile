@@ -6,7 +6,7 @@ SHELL := /bin/bash
 PAPYRUS_VERSION := $(shell date +"%y%m%d")
 
 PKG_RELEASE := 0
-PKG_NAME := papyrus
+PKG_NAME := starknet-papyrus
 
 PKG_DESCRIPTION := "StarkNet Papyrus node"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"

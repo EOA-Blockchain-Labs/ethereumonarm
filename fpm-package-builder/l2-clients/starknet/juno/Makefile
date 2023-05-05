@@ -6,7 +6,7 @@ SHELL := /bin/bash
 JUNO_VERSION := $(shell curl -s "https://api.github.com/repos/NethermindEth/juno/releases/latest" | jq -r '.tag_name' | tr -d "v")
 
 PKG_RELEASE := 0
-PKG_NAME := juno
+PKG_NAME := starknet-juno
 
 PKG_DESCRIPTION := "StarkNet Juno node by Nethermind"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"

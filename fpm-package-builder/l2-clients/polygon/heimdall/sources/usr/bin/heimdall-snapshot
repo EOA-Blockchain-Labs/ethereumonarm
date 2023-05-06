@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Check if the script is running as root
+if [ "$(id -u)" -eq 0 ]; then
+  echo "This script should be run as ethereum user. Exiting..."
+  exit 1
+fi
+
+# Check for necessary packages
+packages="zstd pv"
+need_install=false
+for package in $packages; do
+  if ! dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"; then
+    echo "$package is not installed."
+    need_install=true
+  fi
+done
+
+if $need_install; then
+  echo "Installing necessary packages"
+  sudo apt-get update
+  sudo apt-get install -y $packages
+fi
+
+# Polygon URL
+URL="https://snapshots.polygon.technology/"
+
+# Use curl to download the webpage CONTENT
+CONTENT=$(curl -s $URL)
+
+# Extract download links
+HEIMDALL_SNAPSHOT_URL=$(echo "$CONTENT" | grep -oP 'https://snapshot-download\.polygon\.technology/heimdall-mainnet-fullnode[^"]+' | sed 's/<\/td>//')
+HEIMDALL_SNAPSHOT_FILE=$(basename $HEIMDALL_SNAPSHOT_URL)
+
+echo "Downloading Heimdall Snapshot... This will take >4 hours"
+mkdir -p /home/ethereum/.heimdall/data/
+wget -c $HEIMDALL_SNAPSHOT_URL
+echo "Decompressing Heimdall Snapshot..."
+pv $HEIMDALL_SNAPSHOT_FILE | tar -I zstd -xf - -C /home/ethereum/.heimdall/data/
+rm -f $HEIMDALL_SNAPSHOT_FILE
+echo "Done. Start the Heimdall service and wait for Heimdall to sync. Once synced, start the Bor service"

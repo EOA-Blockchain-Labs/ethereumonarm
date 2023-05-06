@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 STATUS_VERSION := $(shell curl -s "https://api.github.com/repos/status-im/status-go/releases/latest" | jq -r .tag_name | tr -d "v")
 
-PKG_RELEASE := 1
+PKG_RELEASE := 0
 PKG_NAME := statusd
 
 PKG_DESCRIPTION := "Description: Status is a messenger, crypto wallet, and Web3 browser built with state of the art technology. This is a Status Node, an Ethereum client for supporting the Status network"
@@ -50,7 +50,7 @@ prepare: ## Donwload the latest binary and prepare the package files
 
 	mkdir -p /tmp/status_tmp
 	sudo ln -sf ../lib/go-1.18/bin/go /usr/bin/go
-	cd /tmp/status_tmp ; git clone https://github.com/status-im/status-go.git ; cd status-go ; sed -i 's/\(go build -mod=vendor -i\)/go build -mod=vendor/g' Makefile; sed -i 's/\(go \)/ env CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 \1/' Makefile; make statusgo;
+	cd /tmp/status_tmp ; git clone https://github.com/status-im/status-go.git ; cd status-go ; git checkout v$(STATUS_VERSION); sed -i 's/\(go build -mod=vendor -i\)/go build -mod=vendor/g' Makefile; sed -i 's/\(go \)/ env CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 \1/' Makefile; make statusgo;
 	cp /tmp/status_tmp/status-go/build/bin/statusd sources/usr/bin/
 	sudo ln -sf ../lib/go-1.20/bin/go /usr/bin/go
 	rm -rf /tmp/status_tmp

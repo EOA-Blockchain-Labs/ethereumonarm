@@ -197,7 +197,7 @@ Insert MicroSD
   The image will wipe out your NVME/USB SSD disk, so be careful if you already have data
   on it.
 
-Insert de MicroSD into the board. Connect an Ethernet cable and attach 
+Insert the MicroSD into the board. Connect an Ethernet cable and attach 
 the disk (make sure you are using a blue port which if your connecting a USB disk).
 
 Power on

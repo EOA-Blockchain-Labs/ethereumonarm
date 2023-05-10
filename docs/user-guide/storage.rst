@@ -11,7 +11,7 @@ Raspberry Pi 4
 --------------
 
 You will need an SSD to run an Ethereum node 
-(without an SSD drive there’s absolutely no chance 
+(without an SSD drive there's absolutely no chance 
 of syncing the Ethereum blockchain). There are 2 options:
 
   * Use an USB portable SSD disk such as the Samsung Portable T5 SSDs.

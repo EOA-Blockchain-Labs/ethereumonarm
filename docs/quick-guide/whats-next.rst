@@ -4,7 +4,7 @@
 What's Next
 ===========
 
-Awesome!, You are now running an Ethereum node!
+Awesome! You are now running an Ethereum node!
 
 The next step is to get your client synced and more familiar with your
 node.

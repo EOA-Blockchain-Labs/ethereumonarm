@@ -434,13 +434,13 @@ receiving tips and set the fee recipient flag:
 
 .. prompt:: bash $
 
-  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/nimbus-beacon.conf
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/nimbus-validator.conf
 
   For instance:
 
 .. prompt:: bash $
 
-  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/nimbus-beacon.conf
+  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/nimbus-validator.conf
 
 3. Enable Checkpoint Sync. 
 

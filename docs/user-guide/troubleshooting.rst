@@ -25,7 +25,7 @@ We will include it by default in the next images release. From now, you can inst
 
   sudo apt-get update && sudo apt-get install ethereumonarm-utils
 
-Usage is quite simple. type the following command in order to run all checks locally: 
+Usage is quite simple. Type the following command in order to run all checks locally: 
 
 .. prompt:: bash $
 

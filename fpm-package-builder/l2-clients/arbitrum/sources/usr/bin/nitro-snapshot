@@ -10,10 +10,10 @@ fi
 
 # arbitrum URL
 NITRO_URL="https://snapshot.arbitrum.io/mainnet/nitro.tar"
-NITRO_FILE=$(basename https://snapshot.arbitrum.io/mainnet/nitro.tar"
+NITRO_FILE=$(basename https://snapshot.arbitrum.io/mainnet/nitro.tar)
 
-echo "Downloading Bor Snapshot... This will take a few minutes please be patient"
-mkdir -p /home/ethereum/.arbitrum/arb1
+echo "Downloading Nitro Snapshot... This will take a few minutes please be patient"
+mkdir -p /home/ethereum/.arbitrum/arb1/nitro
 wget -c $NITRO_URL
-echo "Decompressing Bor Snapshot... This will take a few minutes. Please be patient"
-tar -xvf $NITRO_FILE -C /home/ethereum/.arbitrum/arb1
+echo "Decompressing Nitro Snapshot... This will take a few minutes. Please be patient"
+tar -xvf $NITRO_FILE -C /home/ethereum/.arbitrum/arb1/nitro

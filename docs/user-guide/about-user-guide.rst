@@ -8,9 +8,12 @@ This User Guide explains in detail how to run an Ethereum node **post-merge** (b
 to manage them through Systemd services. You will find here:
 
   * How to manage the Ethereum client Systemd services and other common tasks
+  * What is an Ethereum node and what types nodes are there
   * Detailed info about the Execution Layer clients (formerly known as Ethereum 1.0 clients) and how to run them
   * Detailed info about the Consensus Layer clients (formerly known as Ethereum 2.0 clients) and how to run them
-  * How to run and configure other Ethereum related software
+  * Detailed info about how to set up a Validator (Staking)
+  * How to run an Ethereum L2 node
+  * How to run and configure Web 3 clients
 
 .. warning::
 

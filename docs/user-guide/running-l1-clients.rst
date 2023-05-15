@@ -61,7 +61,7 @@ Checkpoint Sync
 get the Beacon Chain synced in just a few minutes.
 
 Supported Clients
-"""""""""""""""""
+~~~~~~~~~~~~~~~~~
 
 Ethereum on ARM supports the main Consensus Layer clients available.
 
@@ -80,7 +80,7 @@ Ethereum on ARM supports the main Consensus Layer clients available.
 
 
 Lighthouse
-""""""""""
+~~~~~~~~~~
 
 :guilabel:`Lighthouse` is a full CL client written in Rust.
 
@@ -108,7 +108,7 @@ is enabled by default.**
 The Lighthouse beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 
 Prysm
-"""""
+~~~~~
 
 :guilabel:`Prysm` is a full Consensus Layer client written in Go.
 
@@ -136,7 +136,7 @@ is enabled by default.**
 The Prysm beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 
 Teku
-""""
+~~~~
 
 :guilabel:`Teku` is a full Consensus Layer client written in Java.
 
@@ -167,7 +167,7 @@ Copy and paste your Ethereum Address for receiving through the fee recipient fla
 The Teku beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 
 Nimbus
-""""""
+~~~~~~
 
 .. warning::
 
@@ -386,10 +386,12 @@ Additionally, the Ethereum Foundation developed a web Launchpad to walk you thro
 Here you can upload the Deposit Json file and make the 32 ETH transaction 
 with your wallet or a web3 wallet (such as Metamask or Wallet Connect).
 
-Validator setup and 32 ETH deposit
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Validator setup
+~~~~~~~~~~~~~~~
+.. note::
+  Remember that you need 32 ETH for each validator you want to run.
 
-The validator setup is client agnostic so it will be valid for all CL clients.
+The validator setup is client agnostic so it will be valid for all Consensus Layer clients.
 
 .. note::
   At this point, you should have an Execution Layer + Consensus Layer clients combo in sync (both clients 

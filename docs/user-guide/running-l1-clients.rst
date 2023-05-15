@@ -23,7 +23,7 @@ Very briefly, you have to:
 See below for further details.
 
 Consensus Layer Nodes
-=====================
+---------------------
 
 The Consensus Layer node consists of two separate clients:
 
@@ -42,7 +42,7 @@ of the chain, so, without it, the Execution Client would be lost and it could no
   a synced Execution Client running along with a synced Consensus Layer Beacon Chain.
 
 Beacon Chain
-------------
+~~~~~~~~~~~~
 
 The Beacon Chain is a bridge between the Execution Layer and the Consensus Layer clients. 
 It connects the Validator to the Execution Layer so the Validator can detect the 
@@ -54,14 +54,14 @@ In order to propose (create) blocks in Ethereum you need an Execution Client in 
 with a Beacon Chain in sync and a Validator (the Beacon chain and the Validator are both 
 part of the Consensus Layer Client).
 
-CheckPoint sync
-~~~~~~~~~~~~~~~
+Checkpoint Sync
+"""""""""""""""
 
 **All Consensus Layer clients are configured to use CheckPoint Sync by default** that will 
 get the Beacon Chain synced in just a few minutes.
 
-Supported clients
-~~~~~~~~~~~~~~~~~
+Supported Clients
+"""""""""""""""""
 
 Ethereum on ARM supports the main Consensus Layer clients available.
 
@@ -80,7 +80,7 @@ Ethereum on ARM supports the main Consensus Layer clients available.
 
 
 Lighthouse
-~~~~~~~~~~
+""""""""""
 
 :guilabel:`Lighthouse` is a full CL client written in Rust.
 
@@ -108,7 +108,7 @@ is enabled by default.**
 The Lighthouse beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 
 Prysm
-~~~~~
+"""""
 
 :guilabel:`Prysm` is a full Consensus Layer client written in Go.
 
@@ -136,7 +136,7 @@ is enabled by default.**
 The Prysm beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 
 Teku
-~~~~
+""""
 
 :guilabel:`Teku` is a full Consensus Layer client written in Java.
 
@@ -167,7 +167,7 @@ Copy and paste your Ethereum Address for receiving through the fee recipient fla
 The Teku beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 
 Nimbus
-~~~~~~
+""""""
 
 .. warning::
 
@@ -222,13 +222,13 @@ Wait for the command to finish.
 The Nimbus Beacon Chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 
 Execution Layer nodes
-=====================
+---------------------
 
 The **Execution Clients**  are the clients responsible for 
 executing transactions and storing the blockchain global state among other operations.
 
 Supported clients
------------------
+~~~~~~~~~~~~~~~~~
 
 Ethereum on ARM supports all available Execution Layer clients.
 
@@ -360,7 +360,7 @@ The validator client is included in all Consensus Layer clients along with the B
   **You will be slashed**.
 
 Staking Requirements
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 In order to stake and run a validator you will need:
 

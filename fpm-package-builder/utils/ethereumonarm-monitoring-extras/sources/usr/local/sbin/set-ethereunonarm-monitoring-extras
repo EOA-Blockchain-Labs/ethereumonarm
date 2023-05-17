@@ -10,8 +10,8 @@ override(){
   cp /usr/lib/ethereumonarm/prometheus /etc/default/
   cp /usr/lib/ethereumonarm/prometheus-node-exporter /etc/default/
   cp /usr/lib/ethereumonarm/prometheus.yml /etc/prometheus/
-  cp -a /usr/lib/ethereumonarm/prometheus/files.d /etc/prometheus/
-  cp -a /usr/lib/ethereumonarm/prometheus/rules.d /etc/prometheus/
+  cp -a /usr/lib/ethereumonarm/files_sd /etc/prometheus/
+  cp -a /usr/lib/ethereumonarm/rules.d /etc/prometheus/
 
   #A basic set of ufw rules WIP
   cp /usr/lib/ethereumonarm/user.rules /etc/ufw/

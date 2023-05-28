@@ -114,11 +114,16 @@ if [ ! -f $FLAG ]; then
   # Disable ZRAM
   sed -i "s/ENABLED=true/ENABLED=false/g" /etc/default/armbian-zram-config
 
+  # Optimize swappiness for Ethereum node
+  echo "Optimizing swappiness for Ethereum node..."
+  echo "vm.swappiness=10" >>/etc/sysctl.conf
+  sysctl -p
+
   # Ethereum software installation
   # Add APT EthRaspbian repository
   sleep 5
   echo "Adding Ethereum repositories"
-  wget -q -O - http://apt.ethereumonarm.com/eoa.apt.keyring.gpg| sudo tee /etc/apt/trusted.gpg.d/eoa.apt.keyring.gpg > /dev/null
+  wget -q -O - http://apt.ethereumonarm.com/eoa.apt.keyring.gpg | sudo tee /etc/apt/trusted.gpg.d/eoa.apt.keyring.gpg >/dev/null
   add-apt-repository -y -n "deb http://apt.ethereumonarm.com focal main"
 
   # Put kernel package on hold

@@ -1,17 +1,17 @@
 #!/bin/bash
 
-URL="https://storage.googleapis.com/oplabs-goerli-data/goerli-bedrock.tar"
+URL="https://storage.googleapis.com/oplabs-mainnet-data/mainnet-bedrock.tar"
 DEST_DIR="/home/ethereum/.op-geth-tmp"
 OPGETH_DIR="/home/ethereum/.op-geth"
 
 mkdir -p $DEST_DIR
 
 echo "Downloading $URL to $DEST_DIR ..."
-curl --progress-bar --location --output "$DEST_DIR/goerli-bedrock.tar" "$URL"
+curl --progress-bar --location --output "$DEST_DIR/mainnet-bedrock.tar" "$URL"
 
 # extract the downloaded file
-echo "Extracting $DEST_DIR/goerli-bedrock.tar ..."
-tar -xf "$DEST_DIR/goerli-bedrock.tar" -C "$DEST_DIR"
+echo "Extracting $DEST_DIR/mainnet-bedrock.tar ..."
+tar -xf "$DEST_DIR/mainnet-bedrock.tar" -C "$DEST_DIR"
 mv "$DEST_DIR/geth/" "$OPGETH_DIR"
 
 # clean up

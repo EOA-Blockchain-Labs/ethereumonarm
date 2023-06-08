@@ -61,7 +61,7 @@ usb_disk_model=$(smartctl -a /dev/sda | grep "Device Model" | awk '{ $1=$2="";$0
 jwtsecret_file=/etc/ethereum/jwtsecret
 
 #Service lists
-consensus_layer="prysm-beacon teku lighthouse-beacon nimbus"
+consensus_layer="prysm-beacon teku lighthouse-beacon nimbus-beacon"
 execution_layer="geth erigon besu nethermind"
 
 #Execution port

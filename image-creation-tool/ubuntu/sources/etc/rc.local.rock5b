@@ -147,7 +147,9 @@ EOF
   apt-get -y update
   apt-get -y install grafana
   systemctl enable grafana-server
-  useradd -m prometheus
+  adduser --quiet --system --home /home/prometheus --no-create-home --group --gecos "Prometheus daemon" prometheus
+  mkdir -p /home/prometheus/metrics2 >/dev/null
+  chown prometheus:prometheus /home/prometheus/metrics2
   mkdir -p /home/prometheus/node-exporter/
   chown -R prometheus:prometheus /home/prometheus/
   apt-get install -y prometheus prometheus-node-exporter prometheus-pushgateway

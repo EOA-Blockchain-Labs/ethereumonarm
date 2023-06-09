@@ -11,8 +11,7 @@ curl --progress-bar --location --output "$DEST_DIR/mainnet-bedrock.tar" "$URL"
 
 # extract the downloaded file
 echo "Extracting $DEST_DIR/mainnet-bedrock.tar ..."
-tar -xf "$DEST_DIR/mainnet-bedrock.tar" -C "$DEST_DIR"
-mv "$DEST_DIR/geth/" "$OPGETH_DIR"
+tar -xf "$DEST_DIR/mainnet-bedrock.tar" -C "$OPGETH_DIR" --strip-components=1
 
 # clean up
 echo "Cleaning up ..."

@@ -1,0 +1,70 @@
+#!/bin/sh
+# kFreeBSD do not accept scripts as interpreters, using #!/bin/sh and sourcing.
+if [ true != "$INIT_D_SCRIPT_SOURCED" ] ; then
+    set "$0" "$@"; INIT_D_SCRIPT_SOURCED=true . /lib/init/init-d-script
+fi
+### BEGIN INIT INFO
+# Provides:          prometheus
+# Required-Start:    $remote_fs
+# Required-Stop:     $remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Monitoring system and time series database
+# Description:       Prometheus is a systems and services monitoring system. It
+#                    collects metrics from configured targets at given
+#                    intervals, evaluates rule expressions, displays the
+#                    results, and can trigger alerts if some condition is
+#                    observed to be true.
+### END INIT INFO
+
+# Author: Martina Ferrari <tina@debian.org>
+# Author: Guillem Jover <gjover@sipwise.com>
+
+DESC="monitoring system and time series database"
+NAME=prometheus
+USER=$NAME
+GROUP=$NAME
+DAEMON=/usr/bin/$NAME
+PIDFILE=/run/$NAME/$NAME.pid
+LOGFILE=/var/log/$NAME/$NAME.log
+CFGFILE=/etc/$NAME/$NAME.yml
+
+START_ARGS="--no-close --background --make-pidfile"
+STOP_ARGS="--remove-pidfile"
+
+config_check()
+{
+    retcode=0
+    errors="$(/usr/bin/promtool check config $CFGFILE 2>&1)" || retcode=$?
+    if [ $retcode -ne 0 ]; then
+        log_failure_msg
+        echo "Configuration test failed. Output of config test was:" >&2
+        echo "$errors" >&2
+        exit $retcode
+    fi
+}
+
+do_start_prepare()
+{
+    config_check
+    mkdir -p $(dirname $PIDFILE)
+    ulimit -n 8192
+}
+
+do_start_cmd_override()
+{
+    start-stop-daemon --start --quiet --oknodo \
+        --exec $DAEMON --pidfile $PIDFILE --user $USER --group $GROUP \
+        --chuid $USER:$GROUP $START_ARGS -- $ARGS >>$LOGFILE 2>&1
+}
+
+do_stop_cmd_override() {
+    start-stop-daemon --stop --quiet --oknodo --retry=TERM/30/KILL/5 \
+        --exec $DAEMON --pidfile $PIDFILE --user $USER $STOP_ARGS
+}
+
+do_reload_prepare()
+{
+    config_check
+}
+alias do_reload=do_reload_sigusr1

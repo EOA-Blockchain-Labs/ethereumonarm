@@ -1,0 +1,2 @@
+# Due to embedded string "Viet Nam" from indirect build-dep golang-github-asaskevich-govalidator
+prometheus: spelling-error-in-binary usr/bin/prometheus Nam Name

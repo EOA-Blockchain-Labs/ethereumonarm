@@ -1,0 +1,7 @@
+Place here console templates for Prometheus.
+
+In /usr/share/doc/prometheus/examples/ are sample templates that show what can
+be done with Prometheus' templating language. They only cover some generic
+cases, and you are encouraged to modify and expand them.
+
+See http://prometheus.io/docs/visualization/consoles/ for more information.

@@ -16,7 +16,7 @@ override(){
   #A basic set of ufw rules WIP
   cp /usr/lib/ethereumonarm/user.rules /etc/ufw/
 
-  systemctl start grafana-server prometheus prometheus-node-exporter || true
+  systemctl start grafana-server prometheus prometheus-node-exporter ethereum-metrics-exporter json-exporter || true
 
 }
 

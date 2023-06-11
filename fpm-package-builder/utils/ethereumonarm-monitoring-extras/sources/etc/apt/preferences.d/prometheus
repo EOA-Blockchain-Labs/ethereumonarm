@@ -1,0 +1,7 @@
+Package: prometheus
+Pin: origin "apt.ethereumonarm.com"
+Pin-Priority: 700
+
+Package: prometheus
+Pin: release *
+Pin-Priority: -1

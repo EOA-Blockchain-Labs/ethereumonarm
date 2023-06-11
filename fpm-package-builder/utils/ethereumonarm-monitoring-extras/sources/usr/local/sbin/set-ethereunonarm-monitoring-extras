@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 override(){
-  systemctl stop grafana-server prometheus prometheus-node-exporter || true
+  systemctl stop grafana-server prometheus prometheus-node-exporter ethereum-metrics-exporter json-exporter || true
 
   # Configure Grafana
   cp /usr/lib/ethereumonarm/grafana.db /var/lib/grafana/grafana.db

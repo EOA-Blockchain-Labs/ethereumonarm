@@ -149,11 +149,10 @@ EOF
   apt-get -y install grafana
   systemctl enable grafana-server
   adduser --quiet --system --home /home/prometheus --no-create-home --group --gecos "Prometheus daemon" prometheus
-  mkdir -p /home/prometheus/metrics2 >/dev/null
-  chown prometheus:prometheus /home/prometheus/metrics2
-  mkdir -p /home/prometheus/node-exporter/
-  chown -R prometheus:prometheus /home/prometheus/
-  apt-get install -y prometheus prometheus-node-exporter prometheus-pushgateway
+  mkdir -p /home/prometheus/{metrics2,node-exporter}
+  chown -R prometheus:prometheus /home/prometheus/{metrics2,node-exporter}
+  apt-get install -y prometheus prometheus-node-exporter ethereum-metrics-exporter json-exporter
+  systemctl enable prometheus prometheus-node-exporter ethereum-metrics-exporter json-exporter
 
   # install Ethereum on ARM monitoring config
   apt-get -y install ethereumonarm-monitoring-extras

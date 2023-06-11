@@ -40,14 +40,13 @@ if [ ! -f $FLAG ]; then
 
   # Format NVMe disk and mount it as /home
   echo "Looking for NVMe drive"
-  if stat  /dev/nvme0n1 > /dev/null 2>&1;
-  then
+  if stat /dev/nvme0n1 >/dev/null 2>&1; then
     echo "NVMe disk found"
     echo "Partitioning and formatting Drive..."
     wipefs -a /dev/nvme0n1
     sgdisk -n 0:0:0 /dev/nvme0n1
     mkfs.ext4 -F /dev/nvme0n1p1
-    echo '/dev/nvme0n1p1 /home ext4 defaults 0 2' >> /etc/fstab && mount /home
+    echo '/dev/nvme0n1p1 /home ext4 defaults 0 2' >>/etc/fstab && mount /home
   else
     echo "no SDD detected"
     echo "Stopping the installation, an NVMe disk is needed"
@@ -57,7 +56,7 @@ if [ ! -f $FLAG ]; then
   # Modify hostname (ethereumonarm-$MAC-HASH-CHUNK)
   echo Changing hostname
   MAC_HASH=$(sha256sum </sys/class/net/eth0/address | awk '{print substr($0,0,9)}')
-  echo ethereumonarm-odroidm1-$MAC_HASH > /etc/hostname
+  echo ethereumonarm-odroidm1-$MAC_HASH >/etc/hostname
   sed -i "s/127.0.0.1.*/127.0.0.1\tethereumonarm-odroidm1-$MAC_HASH/g" /etc/hosts
 
   # Create Ethereum account
@@ -78,7 +77,7 @@ if [ ! -f $FLAG ]; then
   # Add APT EthRaspbian repository
   sleep 5
   echo "Adding Ethereum repositories"
-  wget -q -O - http://apt.ethereumonarm.com/eoa.apt.keyring.gpg| sudo tee /etc/apt/trusted.gpg.d/eoa.apt.keyring.gpg > /dev/null
+  wget -q -O - http://apt.ethereumonarm.com/eoa.apt.keyring.gpg | sudo tee /etc/apt/trusted.gpg.d/eoa.apt.keyring.gpg >/dev/null
   add-apt-repository -y -n "deb http://apt.ethereumonarm.com focal main"
 
   # Install Ethereum packages
@@ -87,7 +86,7 @@ if [ ! -f $FLAG ]; then
   apt-get -y install ethereumonarm-armbian-extras ethereumonarm-utils geth nethermind erigon besu prysm lighthouse nimbus teku staking-deposit-cli
 
   # Create an alias for package updates
-  cat <<EOF >> /etc/bash.bashrc
+  cat <<EOF >>/etc/bash.bashrc
   alias update-ethereum='
 sudo apt-get update
 sudo apt-get install geth nethermind erigon besu prysm lighthouse nimbus teku staking-deposit-cli'
@@ -98,10 +97,11 @@ EOF
   apt-get -y update
   apt-get -y install grafana
   systemctl enable grafana-server
-  useradd -m prometheus
-  mkdir -p /home/prometheus/node-exporter/
-  chown -R prometheus:prometheus /home/prometheus/
-  apt-get install -y prometheus prometheus-node-exporter prometheus-pushgateway
+  adduser --quiet --system --home /home/prometheus --no-create-home --group --gecos "Prometheus daemon" prometheus
+  mkdir -p /home/prometheus/{metrics2,node-exporter}
+  chown -R prometheus:prometheus /home/prometheus/{metrics2,node-exporter}
+  apt-get install -y prometheus prometheus-node-exporter ethereum-metrics-exporter json-exporter
+  systemctl enable prometheus prometheus-node-exporter ethereum-metrics-exporter json-exporter
 
   # install Ethereum on ARM monitoring config
   apt-get -y install ethereumonarm-monitoring-extras

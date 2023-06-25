@@ -3,7 +3,7 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-OP-NODE_VERSION := $(shell date +"%y%m%d")
+OP-NODE_VERSION := $(shell curl -s "https://api.github.com/repos/ethereum-optimism/optimism/releases/latest" | jq -r '.tag_name' | tr -d "v" | cut -d "/" -f 2)
 
 PKG_RELEASE := 0
 PKG_NAME := optimism-op-node

@@ -1,18 +1,16 @@
 #!/bin/bash
 
 URL="https://storage.googleapis.com/oplabs-mainnet-data/mainnet-bedrock.tar"
-DEST_DIR="/home/ethereum/.op-geth-tmp"
 OPGETH_DIR="/home/ethereum/.op-geth"
 
-mkdir -p $DEST_DIR
-
-echo "Downloading $URL to $DEST_DIR ..."
-curl --progress-bar --location --output "$DEST_DIR/mainnet-bedrock.tar" "$URL"
+echo "Downloading Op-Geth Snapshot ..."
+wget -c -P "$OPGETH_DIR" "$URL"
 
 # extract the downloaded file
-echo "Extracting $DEST_DIR/mainnet-bedrock.tar ..."
-tar -xf "$DEST_DIR/mainnet-bedrock.tar" -C "$OPGETH_DIR" --strip-components=1
+echo "Extracting mainnet-bedrock.tar ..."
+tar -xf "$OPGETH_DIR/mainnet-bedrock.tar" --strip-components=2 -C "$OPGETH_DIR"
 
 # clean up
 echo "Cleaning up ..."
-rm -rf "$DEST_DIR"
+rm -rf "$OPGETH_DIR/mainnet-bedrock.tar"
+echo "Download complete. Please start the op-geth and op-node services"

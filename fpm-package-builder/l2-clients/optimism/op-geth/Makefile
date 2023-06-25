@@ -3,8 +3,8 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-OP-GETH_VERSION := $(shell date +"%y%m%d")
-
+#OP-GETH_VERSION := $(shell date +"%y%m%d")
+OP-GETH_VERSION := $(shell curl -s "https://api.github.com/repos/ethereum-optimism/op-geth/releases/latest" | jq -r '.tag_name' | tr -d "v")
 PKG_RELEASE := 0
 PKG_NAME := optimism-op-geth
 

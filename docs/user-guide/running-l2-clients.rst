@@ -22,14 +22,14 @@ It is important to keep both L1 and L2 nodes as decentralized as possible and th
 means run nodes.
 
 .. note::
-  If you have an Ethereum on ARM image installed prior to May 2023 you need to install the clients manually. Otherwise 
+  If you have an Ethereum on ARM image installed prior to June 2023 you need to install the clients manually. Otherwise 
   you can skip this step:
 
 .. prompt:: bash $
 
   sudo apt-get update
   sudo apt-get install polygon-bor polygon-heimdall arbitrum-nitro starknet-juno starknet-papyrus 
-  optimism-l2geth optimism-op-geth optimism-op-node
+  optimism-op-geth optimism-op-node
 
 Polygon
 -------
@@ -199,4 +199,82 @@ Remember to forward the default ports: `9000` and `30303`
 Optimism
 --------
 
-Coming soon, right after the Bedrock upgrade
+Optimism is a Layer 2 scaling solution for Ethereum that increases the network's scalability by leveraging a 
+technology called Optimistic Rollups.
+
+Optimism aims to address Ethereum's high gas costs and slow transaction speeds by moving most transactions off 
+the Ethereum mainnet while still maintaining a high level of security.
+
+.. note::
+
+  1. We will sync Optimism using an :guilabel:`Op-Geth` Snapshot. Take into account that this is a large snapshot and 
+  it will take a few hours to download and decompress so, please, be patient.
+
+  2. You need access to a synced Ethereum L1 node.
+
+In order to run an Optimism node you need to:
+
+1. Download :guilabel:`Op-Geth` Snapshot
+2. Decompress and remove the snapshot
+3. Set the L1 node IP
+4. Start and sync the :guilabel:`Op-Geth` client
+5. Start and sync the :guilabel:`Op-Node` client
+6. (Optional) Start the :guilabel:`L2Geth` client (not available yet)
+
+Snapshots
+~~~~~~~~~
+
+We included 1 script that download and decompress the :guilabel:`Op-Geth` Snapshot automatically. The recommended steps are as follows:
+
+Run the ``screen`` utility in order to make sure the process continues to run even if you are 
+disconnected from the console (this is particularly useful if you are accessing through SSH):
+
+.. prompt:: bash $
+
+  screen
+
+.. note::
+  Press ``CONTROL+A  D`` to deattach the console and run the command ``screen -r`` to attach the console again
+
+Once inside screen, run the download script as the ``ethereum`` user:
+
+.. prompt:: bash $
+
+  op-geth-preinstall
+
+This will download the :guilabel:`Op-Geth` snapshot. Once downloaded it will be decompressed into the 
+correct directory.
+
+Clients
+~~~~~~~
+
+Set the synced IP L1 ethereum node:
+
+.. prompt:: bash $
+
+  sudo sed -i "s/changeme/YOUR_IP/" /etc/ethereum/op-node.conf
+
+For example:
+
+.. prompt:: bash $
+
+  sudo sed -i "s/changeme/192.168.0.10/" /etc/ethereum/op-node.conf
+
+Start the :guilabel:`Op-Geth` service and check the logs:
+
+.. prompt:: bash $
+
+  systemctl start op-geth
+  journalctl -u op-geth -f
+
+.. note::
+  The order is importante. Please run :guilabel:`Op-Geth` first.
+
+Now, start the :guilabel:`Op-Node` client:
+
+.. prompt:: bash $
+
+  systemctl start op-node
+  journalctl -u op-node -f
+
+Congrats, you are now running an Optimism Bedrock node.

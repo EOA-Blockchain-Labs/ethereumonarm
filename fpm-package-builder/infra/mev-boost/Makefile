@@ -52,7 +52,7 @@ rpm: ## Create rpm package
 .PHONY: clean
 clean: ## Clean up
 	rm sources/usr/bin/mev-boost
-
+	rm -rf /tmp/mev-boost
 test:
 	@if [ -f $(OUTPUTDIR)/$(PKG_DEB) ]; then \
         printf "\033[32mPackage $(PKG_DEB) successfully created\033[0m\n"; \

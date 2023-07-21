@@ -208,7 +208,8 @@ the Ethereum mainnet while still maintaining a high level of security.
 .. note::
 
   1. We will sync Optimism using an :guilabel:`Op-Geth` Snapshot. Take into account that this is a large snapshot and 
-  it will take a few hours to download and decompress so, please, be patient.
+  it will take a few hours to download and decompress so, please, be patient. You will need a 1TB SSD to be able to 
+  download the snapshot and extract it.
 
   2. You need access to a synced Ethereum L1 node.
 
@@ -265,16 +266,16 @@ Start the :guilabel:`Op-Geth` service and check the logs:
 .. prompt:: bash $
 
   systemctl start op-geth
-  journalctl -u op-geth -f
+  sudo journalctl -u op-geth -f
 
 .. note::
-  The order is importante. Please run :guilabel:`Op-Geth` first.
+  The order is important. Please run :guilabel:`Op-Geth` first.
 
 Now, start the :guilabel:`Op-Node` client:
 
 .. prompt:: bash $
 
   systemctl start op-node
-  journalctl -u op-node -f
+  sudo journalctl -u op-node -f
 
 Congrats, you are now running an Optimism Bedrock node.

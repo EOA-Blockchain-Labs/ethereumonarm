@@ -53,9 +53,13 @@ if [ ! -f $FLAG ]; then
     exit 1
   fi
 
-  # Modify hostname (ethereumonarm-$MAC-HASH-CHUNK)
+  # Modify hostname and /etc/hosts (ethereumonarm-$MAC-HASH-CHUNK)
   echo Changing hostname
-  MAC_HASH=$(sha256sum </sys/class/net/eth0/address | awk '{print substr($0,0,9)}')
+  # Get the network interface
+  ACTIVE_INTERFACE=$(ip route get 8.8.8.8 | awk '/dev/ {print $5}')
+  # Get the MAC address for the active network interface
+  MAC_ADDRESS=$(cat /sys/class/net/$ACTIVE_INTERFACE/address)
+  MAC_HASH=$(echo $MAC_ADDRESS | sha256sum  | awk '{print substr($0,0,9)}')
   echo ethereumonarm-odroidm1-$MAC_HASH >/etc/hostname
   sed -i "s/127.0.0.1.*/127.0.0.1\tethereumonarm-odroidm1-$MAC_HASH/g" /etc/hosts
 

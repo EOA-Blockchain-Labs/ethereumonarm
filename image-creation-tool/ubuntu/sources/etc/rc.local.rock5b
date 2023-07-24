@@ -79,12 +79,15 @@ if [ ! -f $FLAG ]; then
     echo "There is already an NVMe disk mounted as /home"
   fi
 
-  # Modify hostname (ethereumonarm-$MAC-HASH-CHUNK)
+  # Modify hostname and /etc/hosts (ethereumonarm-$MAC-HASH-CHUNK)
   echo Changing hostname
-  MAC_HASH=$(sha256sum </sys/class/net/enP4p65s0/address | awk '{print substr($0,0,9)}')
+  # Get the network interface
+  ACTIVE_INTERFACE=$(ip route get 8.8.8.8 | awk '/dev/ {print $5}')
+  # Get the MAC address for the active network interface
+  MAC_ADDRESS=$(cat /sys/class/net/$ACTIVE_INTERFACE/address)
+  MAC_HASH=$(echo $MAC_ADDRESS | sha256sum  | awk '{print substr($0,0,9)}')
   echo ethereumonarm-rock5b-$MAC_HASH >/etc/hostname
-  sed -i "s/127.0.0.1   localhost/127.0.0.1   localhost ethereumonarm-$MAC_HASH/g" /etc/hosts
-  sed -i "s/rock-5b/ethereumonarm-$MAC_HASH/g" /etc/hosts
+  sed -i "s/rock5b/ethereumonarm-rock5b-$MAC_HASH/g" /etc/hosts
 
   # Create Ethereum account
   echo "Creating ethereum user"

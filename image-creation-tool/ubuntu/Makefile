@@ -32,7 +32,13 @@ orangepi5_iso := Armbian_23.02.2_Orangepi5_jammy_legacy_5.10.110.img
 orangepi5_offset := 285212672
 orangepi5_rclocal := orangepi5
 
-all: rpi rock5b orangepi5
+# There is not an Armbian image for downloading yet
+#nanopct6_url := 
+nanopct6_iso := Armbian_23.08.0-trunk_Nanopct6_jammy_legacy_5.10.160.img
+nanopct6_offset := 285212672
+nanopct6_rclocal := nanopct6
+
+all: rpi rock5b orangepi5 nanopct6
 
 rpi:
 	$(call download_image,$(rpi_url))

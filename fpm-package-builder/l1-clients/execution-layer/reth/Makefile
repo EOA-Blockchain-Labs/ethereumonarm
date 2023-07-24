@@ -3,6 +3,7 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
+RETH_VERSION_GIT := $(shell curl -s "https://api.github.com/repos/paradigmxyz/reth/releases/latest" | jq -r '.tag_name')
 RETH_VERSION := $(shell curl -s "https://api.github.com/repos/paradigmxyz/reth/releases/latest" | jq -r '.tag_name' | tr -d "v" | sed -E 's/([a-z]+)\.([0-9]+)/\1\2/')
 
 PKG_RELEASE := 0
@@ -41,7 +42,7 @@ all: prepare deb clean test
 
 prepare: ## Donwload the latest binary and prepare the package files
 	mkdir -p /tmp/reth_tmp
-	cd /tmp/reth_tmp ; git clone https://github.com/paradigmxyz/reth.git
+	cd /tmp/reth_tmp ; git clone https://github.com/paradigmxyz/reth.git ; cd reth ; git checkout $(RETH_VERSION_GIT) 
 	cd /tmp/reth_tmp/reth ; PKG_CONFIG=/usr/bin/aarch64-linux-gnu-pkg-config PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig/ cargo build --profile maxperf --target aarch64-unknown-linux-gnu 
 	cp /tmp/reth_tmp/reth/target/aarch64-unknown-linux-gnu/maxperf/reth sources/usr/bin/
 	rm -rf /tmp/reth_tmp

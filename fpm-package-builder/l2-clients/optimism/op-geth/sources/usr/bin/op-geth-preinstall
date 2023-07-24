@@ -1,6 +1,6 @@
 #!/bin/bash
 
-URL="https://storage.googleapis.com/oplabs-mainnet-data/mainnet-bedrock.tar"
+URL="https://datadirs.optimism.io/mainnet-bedrock.tar.zst"
 OPGETH_DIR="/home/ethereum/.op-geth"
 
 echo "Downloading Op-Geth Snapshot ..."
@@ -8,6 +8,7 @@ wget -c -P "$OPGETH_DIR" "$URL"
 
 # extract the downloaded file
 echo "Extracting mainnet-bedrock.tar ..."
+unzstd "$OPGETH_DIR/mainnet-bedrock.tar.zst --output-dir-flat $OPGETH_DIR/
 tar -xf "$OPGETH_DIR/mainnet-bedrock.tar" --strip-components=2 -C "$OPGETH_DIR"
 
 # clean up

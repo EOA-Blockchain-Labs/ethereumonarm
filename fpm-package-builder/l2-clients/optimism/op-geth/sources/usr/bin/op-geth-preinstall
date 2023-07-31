@@ -8,8 +8,8 @@ wget -c -P "$OPGETH_DIR" "$URL"
 
 # extract the downloaded file
 echo "Extracting mainnet-bedrock.tar ..."
-unzstd "$OPGETH_DIR/mainnet-bedrock.tar.zst --output-dir-flat $OPGETH_DIR/
-tar -xf "$OPGETH_DIR/mainnet-bedrock.tar" --strip-components=2 -C "$OPGETH_DIR"
+unzstd --rm "$OPGETH_DIR/mainnet-bedrock.tar.zst" --output-dir-flat $OPGETH_DIR
+tar -xf "$OPGETH_DIR/mainnet-bedrock.tar" -C "$OPGETH_DIR"
 
 # clean up
 echo "Cleaning up ..."

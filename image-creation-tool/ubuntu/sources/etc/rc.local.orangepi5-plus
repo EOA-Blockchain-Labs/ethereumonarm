@@ -86,8 +86,8 @@ if [ ! -f $FLAG ]; then
   # Get the MAC address for the active network interface
   MAC_ADDRESS=$(cat /sys/class/net/$ACTIVE_INTERFACE/address)
   MAC_HASH=$(echo $MAC_ADDRESS | sha256sum  | awk '{print substr($0,0,9)}')
-  echo ethereumonarm-rock5b-$MAC_HASH >/etc/hostname
-  sed -i "s/rock5b/ethereumonarm-rock5b-$MAC_HASH/g" /etc/hosts
+  echo ethereumonarm-orangepi5-plus-$MAC_HASH >/etc/hostname
+  sed -i "s/orangepi5-plus/ethereumonarm-orangepi5-plus-$MAC_HASH/g" /etc/hosts
 
   # Create Ethereum account
   echo "Creating ethereum user"
@@ -127,7 +127,7 @@ if [ ! -f $FLAG ]; then
   sleep 5
   echo "Adding Ethereum repositories"
   wget -q -O - http://apt.ethereumonarm.com/eoa.apt.keyring.gpg | sudo tee /etc/apt/trusted.gpg.d/eoa.apt.keyring.gpg >/dev/null
-  add-apt-repository -y -n "deb http://apt.ethereumonarm.com focal main"
+  add-apt-repository -y -n "deb http://apt.ethereumonarm.com jammy main"
 
   # Put kernel package on hold
   apt-mark hold linux-image-legacy-rockchip-rk3588
@@ -146,6 +146,7 @@ if [ ! -f $FLAG ]; then
 sudo apt-get update
 sudo apt-get install geth nethermind erigon besu prysm lighthouse nimbus teku staking-deposit-cli'
 EOF
+
   # Install monitoring packages
   apt-get -y install gpg wget
   wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
@@ -177,9 +178,6 @@ EOF
 
   #Disable root user
   passwd -l root
-
-  #Delete rock user
-  #deluser rock
 
   #the next line creates an empty file so it won't run on next boot
   touch $FLAG

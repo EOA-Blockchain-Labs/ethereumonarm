@@ -135,7 +135,10 @@ if [ ! -f $FLAG ]; then
   # Install Ethereum packages
   echo Installing Ethereum packages
   apt-get update
+    # Install Layer 1
   apt-get -y install geth nethermind erigon besu prysm lighthouse nimbus teku staking-deposit-cli
+  # install Layer 2
+  apt-get -y install arbitrum-nitro optimism-op-geth optimism-op-node polygon-bor polygon-heimdall starknet-juno
 
   # Create an alias for package updates
   cat <<EOF >>/etc/bash.bashrc

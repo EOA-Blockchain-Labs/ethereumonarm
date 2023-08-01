@@ -35,12 +35,12 @@ orangepi5_rclocal := orangepi5
 orangepi5-plus_url := https://armbian.site-meganet.com/dl/orangepi5-plus/archive/Armbian_23.5.5_Orangepi5-plus_jammy_legacy_5.10.160.img.xz
 orangepi5-plus_iso := Armbian_23.5.5_Orangepi5-plus_jammy_legacy_5.10.160.img
 orangepi5-plus_offset := 285212672
-orangepi5-plus_rclocal := orangepi5
+orangepi5-plus_rclocal := orangepi5-plus
 
 # There is not an Armbian image for downloading yet
 #nanopct6_url := 
 nanopct6_iso := Armbian_23.05.1_Nanopct6_jammy_legacy_5.10.160.img
-nanopct6_offset := Armbian_23.05.1_Nanopct6_jammy_legacy_5.10.160.img
+nanopct6_offset := 285212672
 nanopct6_rclocal := nanopct6
 
 all: rpi rock5b orangepi5 orangepi5-plus nanopct6

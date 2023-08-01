@@ -127,16 +127,13 @@ if [ ! -f $FLAG ]; then
   sleep 5
   echo "Adding Ethereum repositories"
   wget -q -O - http://apt.ethereumonarm.com/eoa.apt.keyring.gpg | sudo tee /etc/apt/trusted.gpg.d/eoa.apt.keyring.gpg >/dev/null
-  add-apt-repository -y -n "deb http://apt.ethereumonarm.com focal main"
-
-  # Put kernel package on hold
-  apt-mark hold linux-image-legacy-rockchip-rk3588
+  add-apt-repository -y -n "deb http://apt.ethereumonarm.com jammy main"
 
   # Install Ethereum packages
   echo Installing Ethereum packages
   apt-get update
     # Install Layer 1
-  apt-get -y install geth nethermind erigon besu prysm lighthouse nimbus teku staking-deposit-cli
+  apt-get -y install geth nethermind erigon reth besu prysm lighthouse nimbus teku staking-deposit-cli
   # install Layer 2
   apt-get -y install arbitrum-nitro optimism-op-geth optimism-op-node polygon-bor polygon-heimdall starknet-juno
 

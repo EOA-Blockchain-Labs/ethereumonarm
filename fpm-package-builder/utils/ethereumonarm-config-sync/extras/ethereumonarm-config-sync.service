@@ -1,0 +1,6 @@
+[Unit]
+Description=Ethereum configuration directory sync service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/local/sbin/ethereumonarm-config-sync.sh

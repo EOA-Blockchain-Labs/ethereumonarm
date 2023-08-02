@@ -12,55 +12,6 @@
 # By default this script does nothing.
 # This script turns the Ubuntu 64 bit image into an Ethereum on ARM image
 #
-# Function to format and a disk as /home/ethereum
-format_disk() {
-  local DISK="$1"
-  # Different partition naming convention for NVMe drives
-  if [[ "$DISK" == "/dev/nvme0n1" ]]; then
-    local PARTITION="${DISK}p1"
-  else
-    local PARTITION="${DISK}1"
-  fi
-
-  # Mount the disk to a temporary directory using mktemp
-  TMP_DIR=$(mktemp -d)
-  mount "$PARTITION" "$TMP_DIR" || {
-    echo "Unable to mount $PARTITION in $TMP_DIR"
-    return 1
-  }
-
-  # Check if the path /home/ethereum exists on the mounted disk
-  if [ -d "$TMP_DIR/ethereum" ]; then
-    echo "/home/ethereum already exists on the disk."
-
-    # Check if the .format_me file exists in the /home/ethereum path
-    if [ -f "$TMP_DIR/ethereum/.format_me" ]; then
-      echo "The .format_me file was found in /home/ethereum. Formatting and mounting..."
-      PROCEED_WITH_FORMAT=true
-    else
-      echo "The .format_me file was not found in /home/ethereum. Skipping format and mount."
-      PROCEED_WITH_FORMAT=false
-    fi
-  else
-    echo "The path /home/ethereum does not exist on the disk. Formatting and mounting..."
-    PROCEED_WITH_FORMAT=true
-  fi
-
-  # Unmount the disk from the temporary directory
-  umount "$TMP_DIR"
-  rm -r "$TMP_DIR"
-
-  if [ "$PROCEED_WITH_FORMAT" = true ]; then
-    # Create a new partition and format it as ext4
-    echo "Creating new partition and formatting disk: $DISK..."
-    wipefs -a "$DISK"
-    sgdisk -n 0:0:0 "$DISK"
-    mkfs.ext4 -F "$PARTITION" || {
-      echo "Unable to format $PARTITION"
-      return 1
-    }
-  fi
-}
 
 FLAG="/root/first-run.flag"
 if [ ! -f $FLAG ]; then
@@ -92,13 +43,40 @@ if [ ! -f $FLAG ]; then
     echo "NVMe disk found"
 
     # Partition and format NVMe drive
-    format_disk /dev/nvme0n1
+    echo "Partitioning and formatting NVMe drive..."
+    wipefs -a /dev/nvme0n1
+    sgdisk -n 0:0:0 /dev/nvme0n1
+    mkfs.ext4 -F /dev/nvme0n1p1
 
     # Mount NVMe drive as /home
     echo "Mounting NVMe disk as /home"
     echo '/dev/nvme0n1p1 /home ext4 defaults 0 2' >>/etc/fstab && mount /home
+    NVME_HOME=1
   else
     echo "No NVMe disk detected"
+    NVME_HOME=0
+  fi
+
+  # Check for USB drive
+  echo "Looking for USB drive"
+  if stat /dev/sda >/dev/null 2>&1; then
+    echo "USB disk found"
+
+    # Partition and format USB drive
+    echo "Partitioning and formatting USB drive..."
+    wipefs -a /dev/sda
+    sgdisk -n 0:0:0 /dev/sda
+    mkfs.ext4 -F /dev/sda1
+  else
+    echo "No USB disk detected"
+  fi
+
+  # If no NVMe disk, mount USB drive as /home
+  if [ $NVME_HOME -eq 0 ]; then
+    echo "Mounting USB disk as /home"
+    echo '/dev/sda1 /home ext4 defaults 0 2' >>/etc/fstab && mount /home
+  else
+    echo "There is already an NVMe disk mounted as /home"
   fi
 
   # Modify hostname and /etc/hosts (ethereumonarm-$MAC-HASH-CHUNK)
@@ -106,10 +84,10 @@ if [ ! -f $FLAG ]; then
   # Get the network interface
   ACTIVE_INTERFACE=$(ip route get 8.8.8.8 | awk '/dev/ {print $5}')
   # Get the MAC address for the active network interface
-  MAC_ADDRESS=$(cat /sys/class/net/"$ACTIVE_INTERFACE"/address)
-  MAC_HASH=$(echo "$MAC_ADDRESS" | sha256sum | awk '{print substr($0,0,9)}')
-  echo ethereumonarm-nanopct6-"$MAC_HASH" >/etc/hostname
-  sed -i "s/nanopct6/ethereumonarm-nanopct6-$MAC_HASH/g" /etc/hosts
+  MAC_ADDRESS=$(cat /sys/class/net/$ACTIVE_INTERFACE/address)
+  MAC_HASH=$(echo $MAC_ADDRESS | sha256sum  | awk '{print substr($0,0,9)}')
+  echo ethereumonarm-rock5b-$MAC_HASH >/etc/hostname
+  sed -i "s/rock5b/ethereumonarm-rock5b-$MAC_HASH/g" /etc/hosts
 
   # Create Ethereum account
   echo "Creating ethereum user"
@@ -155,7 +133,7 @@ if [ ! -f $FLAG ]; then
   echo Installing Ethereum packages
   apt-get update
   # Install Layer 1
-  apt-get -y install geth nethermind erigon reth besu prysm lighthouse nimbus teku staking-deposit-cli
+  apt-get -y install geth nethermind erigon besu prysm lighthouse nimbus teku staking-deposit-cli
   # install Layer 2
   apt-get -y install arbitrum-nitro optimism-op-geth optimism-op-node polygon-bor polygon-heimdall starknet-juno
 
@@ -163,7 +141,7 @@ if [ ! -f $FLAG ]; then
   cat <<EOF >>/etc/bash.bashrc
   alias update-ethereum='
 sudo apt-get update
-sudo apt-get install geth nethermind erigon besu prysm lighthouse nimbus teku staking-deposit-cli'
+sudo apt-get install geth nethermind erigon reth besu prysm lighthouse nimbus teku staking-deposit-cli'
 EOF
   # Install monitoring packages
   apt-get -y install gpg wget

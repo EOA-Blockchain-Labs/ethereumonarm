@@ -35,6 +35,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(BOR_VERSION) --license $(PKG_LICENSE)
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_RPM)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
+--depends pv --depends aria2
 
 all: prepare deb clean test
 

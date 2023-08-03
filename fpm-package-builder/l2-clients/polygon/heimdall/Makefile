@@ -32,6 +32,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(HEIMDALL_VERSION) --license $(PKG_LIC
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 --after-install $(PKG_AFTER_INSTALL) --deb-systemd extras/heimdalld.service\
+--depends pv --depends aria2
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(HEIMDALL_VERSION) --license $(PKG_LICENSE)\
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\

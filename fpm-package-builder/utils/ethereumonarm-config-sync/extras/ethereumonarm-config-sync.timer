@@ -1,9 +1,0 @@
-[Unit]
-Description=Runs ethereumonarm-config-sync every hour
-
-[Timer]
-OnBootSec=5min
-OnUnitActiveSec=1h
-
-[Install]
-WantedBy=timers.target

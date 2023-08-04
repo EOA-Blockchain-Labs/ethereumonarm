@@ -24,7 +24,7 @@ format_disk() {
 
   # Mount the disk to a temporary directory using mktemp
   TMP_DIR=$(mktemp -d)
-  mount "$PARTITION" "$TMP_DIR" || { 
+  mount "$PARTITION" "$TMP_DIR" || {
     echo "Unable to mount $PARTITION in $TMP_DIR"
     return 1
   }
@@ -105,7 +105,7 @@ if [ ! -f $FLAG ]; then
   ACTIVE_INTERFACE=$(ip route get 8.8.8.8 | awk '/dev/ {print $5}')
   # Get the MAC address for the active network interface
   MAC_ADDRESS=$(cat /sys/class/net/$ACTIVE_INTERFACE/address)
-  MAC_HASH=$(echo $MAC_ADDRESS | sha256sum  | awk '{print substr($0,0,9)}')
+  MAC_HASH=$(echo $MAC_ADDRESS | sha256sum | awk '{print substr($0,0,9)}')
   echo ethereumonarm-rock5b-$MAC_HASH >/etc/hostname
   sed -i "s/rock5b/ethereumonarm-rock5b-$MAC_HASH/g" /etc/hosts
 
@@ -197,6 +197,10 @@ EOF
 
   #Delete rock user
   #deluser rock
+
+  if [ -d "/home/ethereum/.etc/ethereum/" ]; then
+    rsync -avz "/home/ethereum/.etc/ethereum/" "/eth/ethereum/"
+  fi
 
   #the next line creates an empty file so it won't run on next boot
   touch $FLAG

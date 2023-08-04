@@ -4,4 +4,4 @@
 SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
-0 * * * * root test -x /usr/sbin/ethereumonarm-config-sync.sh && /usr/sbin/ethereumonarm-config-sync.sh
+0 * * * * root test -x /usr/local/sbin/ethereumonarm-config-sync.sh && /usr/local/sbin/ethereumonarm-config-sync.sh

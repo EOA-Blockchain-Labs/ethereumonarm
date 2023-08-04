@@ -196,8 +196,9 @@ EOF
   #Disable root user
   passwd -l root
 
+  # Restore clients configuration if a previous one exists
   if [ -d "/home/ethereum/.etc/ethereum/" ]; then
-    rsync -avz "/home/ethereum/.etc/ethereum/" "/eth/ethereum/"
+    rsync -avz "/home/ethereum/.etc/ethereum/" "/etc/ethereum/"
   fi
 
   #the next line creates an empty file so it won't run on next boot

@@ -20,7 +20,8 @@ PKG_DEB := ${PKG_NAME}_${PKG_VERSION}-${PKG_RELEASE}_${PKG_ARCH}.deb
 FPM_OPTS := -s dir -n $(PKG_NAME) -v $(PKG_VERSION) --iteration $(PKG_RELEASE)\
 	-C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\
 	-a $(PKG_ARCH) -p $(OUTPUTDIR) -x */.gitkeep\
-	--deb-systemd extras/ethereumonarm-config-sync.service --deb-systemd extras/ethereumonarm-config-sync.timer
+	--deb-systemd extras/ethereumonarm-config-sync.service 
+	
 all: deb test
 
 deb: ## Create deb package

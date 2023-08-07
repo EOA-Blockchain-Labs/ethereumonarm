@@ -6,7 +6,7 @@ SHELL := /bin/bash
 PKG_NAME := ethereumonarm-config-sync
 PKG_DESCRIPTION := "Ethereumonarm directory synchronization script"
 
-PKG_VERSION := 0.1
+PKG_VERSION := 0.3
 PKG_RELEASE := 0
 
 PKG_MAINTAINER := "Fernando Collado <fernando@ethereumonarm.com>"

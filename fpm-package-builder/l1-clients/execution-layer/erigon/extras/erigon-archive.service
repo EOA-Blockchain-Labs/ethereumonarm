@@ -3,6 +3,7 @@ Description=Ethereum Erigon client daemon
 After=network.target
 
 [Service]
+Environment="GODEBUG=netdns=go"
 EnvironmentFile=/etc/ethereum/erigon-archive.conf
 ExecStart=/usr/bin/erigon $ARGS
 Restart=always

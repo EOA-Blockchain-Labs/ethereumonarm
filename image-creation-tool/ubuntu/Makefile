@@ -10,6 +10,7 @@ endef
 define modify_image
 	sudo mount -o loop,offset=$(2) $(notdir $1) /tmp/ubuntu_iso
 	sudo cp -a sources/etc/rc.local.$(3) /tmp/ubuntu_iso/etc/rc.local
+	sudo cp -a sources/usr/local/sbin/check_install /tmp/ubuntu_iso/usr/local/sbin
 	sudo sed -i 's/1/0/' /tmp/ubuntu_iso/etc/apt/apt.conf.d/20auto-upgrades
 	sync
 	sudo umount /tmp/ubuntu_iso

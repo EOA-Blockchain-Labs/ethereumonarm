@@ -12,6 +12,7 @@ define modify_image
 	sudo cp -a sources/etc/rc.local.$(3) /tmp/ubuntu_iso/etc/rc.local
 	sudo cp -a sources/usr/local/sbin/check_install /tmp/ubuntu_iso/usr/local/sbin
 	sudo sed -i 's/1/0/' /tmp/ubuntu_iso/etc/apt/apt.conf.d/20auto-upgrades
+	sudo test -f "/tmp/ubuntu_iso/root/.not_logged_in_yet" && sudo rm -f /tmp/ubuntu_iso/root/.not_logged_in_yet
 	sync
 	sudo umount /tmp/ubuntu_iso
 	mv $(notdir $1) ethonarm_$(3)_$(DATE).$(RELEASE).img

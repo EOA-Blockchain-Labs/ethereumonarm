@@ -42,15 +42,16 @@ on next boot.
 
 These are the list of services available for all clients:
 
-.. csv-table:: Ethereum 1.0 Systemd Services
+.. csv-table:: Execution layer Systemd Services
    :header: Client, Systemd Service
 
    `Geth`, `geth`
    `Nethermind`, `nethermind`
    `Erigon`,`erigon`
+   `Reth`, `reth`
    `Hyperledger Besu`, `besu`
 
-.. csv-table:: Ethereum 2.0 Systemd Services
+.. csv-table:: Consensus Layer Systemd Services
    :header: Client, Systemd Services
 
    `Lighthouse`, `lighthouse-beacon` `lighthouse-validator` 
@@ -154,6 +155,7 @@ These are the available packages:
 * nethermind
 * erigon
 * besu
+* reth
 
 *Consensus Layer clients*
 

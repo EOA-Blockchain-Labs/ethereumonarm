@@ -7,6 +7,16 @@ Storage
 **You need at least 2 TB SSD** in order to run a Full Ethereum node. Again, there is no chance of 
 syncing the blockchain with an HDD disk.
 
+NanoPC T4, Rock 5B and Orange Pi 5 plus
+---------------------------------------
+
+These boards includes 4x M.2 2280 NVMe disk support.
+
+Orange Pi 5
+-----------
+
+This board includes 1x M.2 2245 NVMe disk support.
+
 Raspberry Pi 4
 --------------
 
@@ -33,18 +43,6 @@ and it can drastically affect the node performance (and sync times).
 Keep in mind that you need to plug the disk to an USB 3.0 port (in blue).
 
 .. warning::
-  Take into account that, even with a curated hardware list, there is a chance of getting into
-  issues.
+  Remember that the Raspberry Pi 4 can barely run a node after The Merge. Choose a board from the 
+  above list if possible.
 
-Rock 5B
--------
-
-This board includes a 4x M.2 2280 NVMe disk.
-
-You can use a USB SSD as well (same as Raspberry Pi 4). The installation script will detect the 
-disk attached, format and mount it as /home. The default /home will be the NVMe disk.
-
-Odroid M1
----------
-
-This board includes a 2x M.2 2280 NVMe disk.

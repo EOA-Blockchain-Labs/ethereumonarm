@@ -62,7 +62,7 @@ or simply and reliably test your own transactions set without mining them using 
 * This data represents units of terabytes, which makes archive nodes less attractive for 
 average users but can be handy for services like block explorers, wallet vendors, and chain analytics.
 
-If you want to start an archive node you need to run the :guilabel:`Erigon` client. Take into account 
+If you want to start an archive node you need to run :guilabel:`Erigon` or  :guilabel:`Reth` client. Take into account 
 that you will need a 4 TB SSD disk and the sync time will take several days.
 
 Staking node

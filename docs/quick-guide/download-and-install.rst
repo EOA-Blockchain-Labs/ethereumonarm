@@ -198,12 +198,12 @@ By running:
   sha256sum ethonarm_22.04.00.img.zip
 
 Image installation
-------------------
+==================
 
 Once you have the Image download and decompressed you need to flash it
 
 Flashing the image
-==================
+------------------
 
 Insert the microSD in your Desktop / Laptop and flash the image.
 
@@ -233,12 +233,12 @@ Unzip and flash the image (we are using here the Rock 5B image):
    sudo dd bs=1M if=ethonarm_nanopct6_23.08.00.img of=/dev/mmcblk0 conv=fdatasync status=progress
 
 Insert MicroSD
-==============
+--------------
 
 Insert the MicroSD into the board. Make sure you have your SSD disk and Ethernet cable connected.
 
 Power on
-========
+--------
 
 The Ubuntu OS will boot up in less than one minute and the installation script will start to perform the necessary tasks
 to turn the device into a full Ethereum node.
@@ -248,7 +248,7 @@ to turn the device into a full Ethereum node.
   You need to wait for about 10-15 minutes to allow the script to install and configure all the software.
 
 Log in
-======
+------
 
 Once the device is available, You can log in through SSH or using the console (if you have a monitor 
 and keyboard attached) using the ``ethereum`` account::
@@ -286,7 +286,7 @@ Through SSH:
   You will be prompted to change the password on first login, so you will need to log in twice.
 
 Image Upgrade
--------------
+=============
 
 If you are already running an Ethereum on ARM node you can upgrade to the new image by following these steps:
 
@@ -310,7 +310,7 @@ clients config.
 Once logged in, restart the clients you were running.
 
 Image re-installation
----------------------
+=====================
 
 If you are already running an Ethereum on ARM node and you want a fresh install (disk wipe out), follow these steps:
 

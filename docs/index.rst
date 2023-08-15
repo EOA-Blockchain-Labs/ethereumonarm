@@ -33,7 +33,7 @@ in order to get further info on Ethereum and how to manage the clients.
 
 .. note::
 
-  We are currently supporting 3 devices:
+  We are currently supporting 5 devices:
 
   * **NanoPC T6 (16 GB RAM). RECOMMENDED** 
   * **Radxa Rock 5B (16 GB RAM). RECOMMENDED**

@@ -35,11 +35,12 @@ in order to get further info on Ethereum and how to manage the clients.
 
   We are currently supporting 3 devices:
 
+  * **NanoPC T6 (16 GB RAM). RECOMMENDED** 
   * **Radxa Rock 5B (16 GB RAM). RECOMMENDED**
-  * **Orangi Pi 5 (16 GM RAM). RECOMMENDED**
-  * Raspberry Pi 4 (8 GB RAM + external USB Disk)
-  * Hardkernel Odroid M1
-  
+  * **Orangi Pi 5 Plus (16 GM RAM). RECOMMENDED**
+  * Orangi Pi 5 (16 GM RAM).
+  * Raspberry Pi 4 (8 GB RAM + external USB Disk). Currently outdated.
+
 Quick Start Guide
 -----------------
 

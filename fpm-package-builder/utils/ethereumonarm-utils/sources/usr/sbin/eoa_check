@@ -1,15 +1,29 @@
 #!/usr/bin/env bash
 
-use_colors=true
-show_summary=true
+source /usr/lib/ethereumonarm/eoa-config/variables.sh
 
-while getopts "ns" opt; do
+USE_COLORS=true
+SHOW_SUMMARY=true
+SHOW_LOGS=false
+
+# Check if the user is root
+if [ "$(id -u)" != "0" ]; then
+	# If the user is not root, print an error message and exit
+	echo -e "Error: ${RED}You must be Root to run this script${NC}. please run sudo eoa_check.sh"
+	exit 1
+
+fi
+
+while getopts "nsl" opt; do
 	case ${opt} in
 	n)
-		use_colors=false
+		USE_COLORS=false
 		;;
 	s)
-		show_summary=false
+		SHOW_SUMMARY=false
+		;;
+	l)
+		SHOW_LOGS=true
 		;;
 	\?)
 		echo "Invalid option: -$OPTARG" >&2
@@ -18,28 +32,30 @@ while getopts "ns" opt; do
 done
 
 #Colors
-if [ "$use_colors" = true ]; then
-	red='\033[0;91m'
-	green='\033[0;92m'
-	orange='\033[0;33m'
-	bold='\033[1m'
-	nc='\033[0m'
+if [ "$USE_COLORS" = true ]; then
+	RED='\033[0;91m'
+	BLUE='\033[1;34m'
+	GREEN='\033[0;92m'
+	ORANGE='\033[0;33m'
+	BOLD='\033[1m'
+	NC='\033[0m'
 else
-	red=''
-	green=''
-	orange=''
-	bold=''
-	nc=''
+	RED=''
+	BLUE=''
+	GREEN=''
+	ORANGE=''
+	BOLD=''
+	NC=''
 fi
 
 # Show script summary
 if [ "$show_summary" = true ]; then
-	echo -e "${bold}This script will check various system information such as hardware, software, and service status.${nc}"
+	echo -e "${BOLD}This script will check various system information such as hardware, software, and service status.${NC}"
 	echo -e "It will check for the following: "
-	echo -e "- Board model"
+	echo -e "- Board Model"
 	echo -e "- RAM size"
-	echo -e "- Disk model"
-	echo -e "- Service status of consensus and execution layer"
+	echo -e "- Disk Model"
+	echo -e "- Ethereum clients"
 	echo -e "- Execution port number"
 	echo -e "- jwtsecret file"
 	echo
@@ -50,33 +66,6 @@ if [ "$show_summary" = true ]; then
 	fi
 fi
 
-#Board model
-model=$(tr -d '\0' </sys/firmware/devicetree/base/model)
-
-#Disks
-nvme_disk=false
-usb_disk=false
-nvme_disk_model=$(smartctl -a /dev/nvme0n1 | grep "Model Number" | awk '{ $1=$2="";$0=$0;} NF=NF')
-usb_disk_model=$(smartctl -a /dev/sda | grep "Device Model" | awk '{ $1=$2="";$0=$0;} NF=NF')
-jwtsecret_file=/etc/ethereum/jwtsecret
-
-#Service lists
-consensus_layer="prysm-beacon teku lighthouse-beacon nimbus-beacon"
-execution_layer="geth erigon besu nethermind"
-
-#Execution port
-execution_port=8551
-
-#Service status
-consensus_is_running=false
-execution_is_running=false
-
-# Get the total RAM size in bytes
-total_ram=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
-
-# Convert bytes to gigabytes
-total_ram_gb=$(awk "BEGIN {print $total_ram/1024/1024}")
-
 section() {
 	printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' "#"
 }
@@ -85,62 +74,56 @@ separator() {
 	printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 }
 
-# Check if the user is root
-if [ "$(id -u)" != "0" ]; then
-	# If the user is not root, print an error message and exit
-	echo -e "Error: ${red}You must be Root to run this script${nc}. please run sudo eoa_check.sh"
-	exit 1
 
-fi
 
 # Hardware tests
 # Print separator
 
 echo
-echo -e "${bold}HARDWARE${nc}"
+echo -e "${BOLD}HARDWARE${NC}"
 section
 separator
-echo -e "${bold}BOARD${nc}"
-echo -e "You are running a $model board"
+echo -e "${BOLD}BOARD_MODEL${NC}"
+echo -e "You are running a ${BLUE}$BOARD_MODEL${NC} board"
 separator
-echo -e "${bold}RAM${nc}"
+echo -e "${BOLD}RAM${NC}"
 # Check RAM size and output result
-if [ "$(echo "$total_ram_gb < 7" | bc)" -eq 1 ]; then
-	echo -e "RAM size check ${red}FAIL${nc} Total RAM is less than 8GB"
-elif [ "$(echo "$total_ram_gb >= 7 && $total_ram_gb < 15" | bc)" -eq 1 ]; then
-	echo -e "RAM size check ${orange}WARNING${nc} Total RAM is 8GB"
+if [ "$(echo "$TOTAL_RAM_GB < 7" | bc)" -eq 1 ]; then
+	echo -e "RAM size check ${RED}FAIL${NC} Total RAM is less than 8GB"
+elif [ "$(echo "$TOTAL_RAM_GB >= 7 && $TOTAL_RAM_GB < 15" | bc)" -eq 1 ]; then
+	echo -e "RAM size check ${ORANGE}WARNING${NC} Total RAM is 8GB"
 else
-	echo -e "RAM size check ${green}PASS${nc} Total RAM is 16GB or more"
+	echo -e "RAM size check ${GREEN}PASS${NC} Total RAM is 16GB or more"
 fi
 
 # Print separator
 separator
 
-echo -e "${bold}DISKS${nc}"
+echo -e "${BOLD}DISKS${NC}"
 # Check if device '/dev/nvme0n1' exists
 if [ -e "/dev/nvme0n1" ]; then
-	nvme_disk=true
+	NVME_DISK=true
 fi
 
 # Check if device '/dev/sda' exists
 if [ -e "/dev/sda" ]; then
-	usb_disk=true
+	USB_DISK=true
 fi
 
 # Check if there are any SSD disks present or mounted
-if [ $usb_disk ] || [ $nvme_disk ]; then
-	echo -e "Disk check ${green}PASS${nc} External disk detected"
+if [ $USB_DISK ] || [ $NVME_DISK ]; then
+	echo -e "Disk check ${GREEN}PASS${NC} External disk detected"
 else
-	echo -e "${red}Error: There are no SSD disks present or mounted${nc}. Please review your set up or /etc/fstab config."
+	echo -e "${RED}Error: There are no SSD disks present or mounted${NC}. Please review your set up or /etc/fstab config."
 
 fi
 
-if $nvme_disk; then
-	echo -e "Your NVMe Disk model is $nvme_disk_model"
+if $NVME_DISK; then
+	echo -e "Your NVMe Disk MODEL is $NVME_DISK_MODEL"
 fi
 
-if $usb_disk; then
-	echo -e "Your USB Disk model is $usb_disk_model"
+if $USB_DISK; then
+	echo -e "Your USB Disk MODEL is $USB_DISK_MODEL"
 fi
 
 echo "Swap file info:"
@@ -149,149 +132,109 @@ swapon -s
 # Print separator
 separator
 
-echo -e "${bold}TEMPERATURE AND POWER INFO${nc}"
+echo -e "${BOLD}TEMPERATURE${NC}"
 
-if grep -q 'ROCK' /sys/firmware/devicetree/base/model; then
-	echo "Voltage: $(awk '{printf ("%0.2f\n",$1/172.41); }' </sys/devices/iio_sysfs_trigger/subsystem/devices/iio:device0/in_voltage6_raw)v"
-fi
-echo "Temperature: $(awk '{printf ("%0.2f\n",$1/1000); }' </sys/class/thermal/thermal_zone0/temp)ºC"
+echo "Temperature: $BOARD_TEMP ºC"
 
 # Print separator
 separator
 
-echo -e "${bold}SPEEDTEST${nc}"
-
-which speedtest-cli >/dev/null 2>&1 || apt-get -f -qq -y install speedtest-cli >/dev/null 2>&1
-output=$(speedtest-cli --csv)
-download_speed=$(echo "$output" | awk -F , '{print $7}')
-upload_speed=$(echo "$output" | awk -F , '{print $8}')
-
-#Convert bits to human readable format
-download_human=$(numfmt --to=iec-i --suffix=B/s "$download_speed")
-upload_human=$(numfmt --to=iec-i --suffix=B/s "$upload_speed")
-
-#Check download speed
-if (($(echo "$download_speed < 100000000" | awk '{print ($1<100000000)}'))); then
-	echo -e "Your download speed is ${orange}less than 100 Mbits/s${nc}, probably not enough to keep in sync. Download Speed: $download_human"
-else
-	echo -e "Your download speed is ${green}above 100 Mbits/s${nc}. Download Speed: $download_human"
-fi
-echo -e "Upload Speed: $upload_human"
-
 echo
-echo -e "${bold}SYSTEM${nc}"
+echo -e "${BOLD}SYSTEM${NC}"
 section
 separator
-echo -e "${bold}USER CONFIG${nc}"
+echo -e "${BOLD}USER CONFIG${NC}"
 # Check Ethereum account
 if id "ethereum" >/dev/null 2>&1; then
-	echo -e "Ethereum account check ${green}PASS${nc} ethereum user exists"
+	echo -e "Ethereum account check ${GREEN}PASS${NC} ethereum user exists"
 else
-	echo -e "${red}User ethereum does not exist, installation failed${nc}. Please see /var/log for more info"
+	echo -e "${RED}User ethereum does not exist, installation failed${NC}. Please see /var/log for more info"
 fi
 
 echo
-echo -e "${bold}ETHEREUM${nc}"
+echo -e "${BOLD}ETHEREUM${NC}"
 section
 separator
-echo -e "${bold}ETHEREUM CLIENTS${nc}"
-
-# Check consensus layer
-for c in ${consensus_layer}; do
-	if (systemctl is-active "$c" >/dev/null 2>&1); then
-		echo -e "Consensus Layer check ${green}PASS${nc} $c service is running"
-		consensus_is_running=true
-		continue
-	fi
-done
-
-# Check execution layer
-for e in ${execution_layer}; do
-	if (systemctl is-active "$e" >/dev/null 2>&1); then
-		echo -e "Execution Layer check ${green}PASS${nc} $e service is running"
-		execution_is_running=true
-		continue
-	fi
-done
+echo -e "${BOLD}ETHEREUM CLIENTS${NC}"
 
 # Print error and exit if no consensus client is running
-if [ "${consensus_is_running}" = false ]; then
-	echo -e "Error: ${red}No Consensus Client is running${nc}. Please, start a Consensus Layer client and run eoa_check.sh again"
-
-fi
+#if [ "${consensus_is_running}" = false ]; then
+#	echo -e "Error: ${RED}No Consensus Client is running${NC}. Please, start a Consensus Layer client and run eoa_check.sh again"
+#
+#fi
 
 # Print error and exit if no execution client is running
-if [ "${execution_is_running}" = false ]; then
-	echo -e "${red}No Execution Client is running${nc}. Please, start an Execution Layer client and run eoa_check.sh again"
-
-fi
+#if [ "${execution_is_running}" = false ]; then
+#	echo -e "${RED}No Execution Client is running${NC}. Please, start an Execution Layer client and run eoa_check.sh again"
+#
+#fi
 
 # Print separator
 separator
-echo -e "${bold}JWT FILE${nc}"
+echo -e "${BOLD}JWT FILE${NC}"
 
 # Check JWT file
 if test -s "$jwtsecret_file"; then
-	echo -e "JWT secret file check ${green}PASS${nc} File exists and it is not empty"
+	echo -e "JWT secret file check ${GREEN}PASS${NC} File exists and it is not empty"
 else
-	echo -e "${red}The file $jwtsecret_file does not exist or it is empty${nc}"
+	echo -e "${RED}The file $jwtsecret_file does not exist or it is empty${NC}"
 
 fi
 
 # Print separator
 separator
-echo -e "${bold}JWT PORT${nc}"
+echo -e "${BOLD}JWT PORT${NC}"
 
 # Check $execution_port port
-if nc -z localhost $execution_port; then
-	echo -e "Port $execution_port check ${green}PASS${nc} Port is listening and accepting connections"
+if NC -z localhost $execution_port; then
+	echo -e "Port $execution_port check ${GREEN}PASS${NC} Port is listening and accepting connections"
 else
-	echo -e "${red}Port $execution_port is not open. Execution Layer and Consensus Layer cannot communicate${nc}"
+	echo -e "${RED}Port $execution_port is not open. Execution Layer and Consensus Layer cannot communicate${NC}"
 
 fi
 
 # Print separator
 separator
-echo -e "${bold}FORWARDED PORTS${nc}"
+echo -e "${BOLD}FORWARDED PORTS${NC}"
 
 if (curl -s ifconfig.co/port/30303 -w "\n" | grep -c "\"reachable\": true" >/dev/null 2>&1); then
-	echo -e "Port 30303 check ${green}PASS${nc} Port is open"
+	echo -e "Port 30303 check ${GREEN}PASS${NC} Port is open"
 else
-	echo -e "Port 30303 check ${red}FAIL${nc}, please open it in your router or firewall ${nc}"
+	echo -e "Port 30303 check ${RED}FAIL${NC}, please open it in your router or firewall ${NC}"
 fi
 
 if (curl -s ifconfig.co/port/9000 -w "\n" | grep -c "\"reachable\": true" >/dev/null 2>&1); then
-	echo -e "Port 9000 check ${green}PASS${nc} Port is open"
+	echo -e "Port 9000 check ${GREEN}PASS${NC} Port is open"
 else
-	echo -e "Port 9000 check ${red}FAIL${nc}, please open it in your router or firewall ${nc}"
+	echo -e "Port 9000 check ${RED}FAIL${NC}, please open it in your router or firewall ${NC}"
 fi
 
 # Print separator
 separator
-echo -e "${bold}INSTALLED PACKAGES${nc}"
+echo -e "${BOLD}INSTALLED PACKAGES${NC}"
 grep -hoP '(?<=Package: ).+' /var/lib/apt/lists/apt.ethraspbian.com_dists_focal_* | xargs dpkg-query -f '${binary:Package}\n' -W 2>/dev/null
 echo ""
 
 # Print separator
 echo
-echo -e "${bold}LOGS${nc}"
+echo -e "${BOLD}LOGS${NC}"
 section
 separator
-echo -e "${bold}PROCESSES${nc}"
+echo -e "${BOLD}PROCESSES${NC}"
 top -bcn 1
 
 # Print separator
 separator
-echo -e "${bold}LISTENING PORTS${nc}"
+echo -e "${BOLD}LISTENING PORTS${NC}"
 ss -tunlp
 
 # Print separator
 separator
-echo -e "${bold}SYSLOG${nc}"
-tail -n 100 /var/log/syslog
+echo -e "${BOLD}SYSLOG${NC}"
+tail -n 50 /var/log/syslog
 
 separator
-echo -e "${bold}RC.LOCAL${nc}"
+echo -e "${BOLD}RC.LOCAL${NC}"
 cat /root/first-run.flag
 
 # Exit with success

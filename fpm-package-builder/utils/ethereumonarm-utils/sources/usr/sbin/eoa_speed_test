@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+source /usr/lib/eoa/eoa-check-lib.sh
+
+echo -e "${bold}SPEEDTEST${nc}"
+
+which speedtest-cli >/dev/null 2>&1 || apt-get -f -qq -y install speedtest-cli >/dev/null 2>&1
+output=$(speedtest-cli --csv)
+download_speed=$(echo "$output" | awk -F , '{print $7}')
+upload_speed=$(echo "$output" | awk -F , '{print $8}')
+
+#Convert bits to human readable format
+download_human=$(numfmt --to=iec-i --suffix=B/s "$download_speed")
+upload_human=$(numfmt --to=iec-i --suffix=B/s "$upload_speed")
+
+#Check download speed
+if (($(echo "$download_speed < 100000000" | awk '{print ($1<100000000)}'))); then
+	echo -e "Your download speed is ${orange}less than 100 Mbits/s${nc}, probably not enough to keep in sync. Download Speed: $download_human"
+else
+	echo -e "Your download speed is ${green}above 100 Mbits/s${nc}. Download Speed: $download_human"
+fi
+echo -e "Upload Speed: $upload_human"
+
+exit 0

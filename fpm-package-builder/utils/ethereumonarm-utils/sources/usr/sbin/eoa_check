@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 source /usr/lib/ethereumonarm/eoa-config/variables.sh
+source /usr/lib/ethereumonarm/eoa-config/l1_node.sh
 
 USE_COLORS=true
 SHOW_SUMMARY=true

@@ -22,12 +22,11 @@ format_disk() {
     local PARTITION="${DISK}1"
   fi
 
-  # Mount the disk to a temporary directory using mktemp
-  TMP_DIR=$(mktemp -d)
-  mount "$PARTITION" "$TMP_DIR" || {
-    echo "Unable to mount $PARTITION in $TMP_DIR"
-    return 1
-  }
+  # Mount nvme0n1p1 if it exists and is a Linux partition
+  if [[ -b "$PARTITION" && $(file -s "$PARTITION" | grep -oP 'Linux.*filesystem') ]]; then
+    TMP_DIR=$(mktemp -d)
+    mount "$PARTITION" "$TMP_DIR"
+  fi
 
   # Check if the path /home/ethereum exists on the mounted disk
   if [ -d "$TMP_DIR/ethereum" ]; then
@@ -47,8 +46,10 @@ format_disk() {
   fi
 
   # Unmount the disk from the temporary directory
-  umount "$TMP_DIR"
-  rm -r "$TMP_DIR"
+  if mountpoint -q "$TMP_DIR"; then
+    umount "$TMP_DIR"
+    rm -r "$TMP_DIR"
+  fi
 
   if [ "$PROCEED_WITH_FORMAT" = true ]; then
     # Create a new partition and format it as ext4
@@ -66,25 +67,15 @@ FLAG="/root/first-run.flag"
 if [ ! -f $FLAG ]; then
   # Wait for the interface to link up
   sleep 15
-  apt-get update && apt-get -y install netcat
-  n=0
-  until [ "$n" -ge 3 ]; do
-
-    if nc -z apt.ethraspbian.com 80 >/dev/null 2>&1; then
-      break
-    else
-      n=$((n + 1))
-      sleep 5
-    fi
-  done
-
-  if [ "$n" -eq 3 ]; then
-    echo "Stopping the installation, access to apt.ethraspbian.com is needed"
+  # Check for internet connection (Borrowed from Armbian)
+  wget -q -t 1 --timeout=30 --spider http://github.com
+  if [[ $? -ne 0 ]]; then
+    echo "Stopping the installation, internet access is necessary"
     exit 1
   fi
 
   # Install some necessary deps
-  apt-get -y install gdisk software-properties-common apt-utils
+  apt-get -y install gdisk software-properties-common apt-utils file vim net-tools
 
   # Check for NVMe drive
   echo "Looking for NVMe drive"

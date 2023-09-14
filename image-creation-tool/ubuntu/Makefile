@@ -8,10 +8,14 @@ define download_image
 endef
 
 define modify_image
+	# Copy device rc.local
 	sudo mount -o loop,offset=$(2) $(notdir $1) /tmp/ubuntu_iso
 	sudo cp -a sources/etc/rc.local.$(3) /tmp/ubuntu_iso/etc/rc.local
 	sudo cp -a sources/usr/local/sbin/check_install /tmp/ubuntu_iso/usr/local/sbin
-	sudo sed -i 's/1/0/' /tmp/ubuntu_iso/etc/apt/apt.conf.d/20auto-upgrades
+	# Disable Armbian autologin
+	sudo rm -f /tmp/ubuntu_iso/etc/systemd/system/getty@.service.d/override.conf
+	sudo rm -f /tmp/ubuntu_iso/etc/systemd/system/serial-getty@.service.d/override.conf
+
 	sudo test -f "/tmp/ubuntu_iso/root/.not_logged_in_yet" && sudo rm -f /tmp/ubuntu_iso/root/.not_logged_in_yet
 	sync
 	sudo umount /tmp/ubuntu_iso
@@ -24,24 +28,24 @@ rpi_iso := ubuntu-22.04.2-preinstalled-server-arm64+raspi.img
 rpi_offset := 269484032
 rpi_rclocal := rpi
 
-rock5b_url := https://es-mirror.bret.dk/armbian/dl/rock-5b/archive/Armbian_23.5.1_Rock-5b_jammy_legacy_5.10.160.img.xz
-rock5b_iso := Armbian_23.5.1_Rock-5b_jammy_legacy_5.10.160.img
+rock5b_url := https://mirror.yandex.ru/mirrors/armbian/dl/rock-5b/archive/Armbian_23.8.1_Rock-5b_jammy_legacy_5.10.160_minimal.img.xz
+rock5b_iso := Armbian_23.8.1_Rock-5b_jammy_legacy_5.10.160_minimal.img
 rock5b_offset := 285212672
 rock5b_rclocal := rock5b
 
-orangepi5_url := https://es-mirror.bret.dk/armbian/dl/orangepi5/archive/Armbian_23.5.5_Orangepi5_jammy_legacy_5.10.160.img.xz
-orangepi5_iso := Armbian_23.5.5_Orangepi5_jammy_legacy_5.10.160.img
+orangepi5_url := https://mirror.yandex.ru/mirrors/armbian/dl/orangepi5/archive/Armbian_23.8.1_Orangepi5_jammy_legacy_5.10.160_minimal.img.xz
+orangepi5_iso := Armbian_23.8.1_Orangepi5_jammy_legacy_5.10.160_minimal.img
 orangepi5_offset := 285212672
 orangepi5_rclocal := orangepi5
 
-orangepi5-plus_url := https://armbian.site-meganet.com/dl/orangepi5-plus/archive/Armbian_23.5.5_Orangepi5-plus_jammy_legacy_5.10.160.img.xz
-orangepi5-plus_iso := Armbian_23.5.5_Orangepi5-plus_jammy_legacy_5.10.160.img
+orangepi5-plus_url := https://armbian.site-meganet.com/dl/orangepi5-plus/archive/Armbian_23.8.1_Orangepi5-plus_jammy_legacy_5.10.160.img.xz
+orangepi5-plus_iso := Armbian_23.8.1_Orangepi5-plus_jammy_legacy_5.10.160.img
 orangepi5-plus_offset := 285212672
 orangepi5-plus_rclocal := orangepi5-plus
 
 # There is not an Armbian image for downloading yet
 #nanopct6_url := 
-nanopct6_iso := Armbian_23.05.1_Nanopct6_jammy_legacy_5.10.160.img
+nanopct6_iso := Armbian_23.08.0-trunk_Nanopct6_jammy_legacy_5.10.160.img
 nanopct6_offset := 285212672
 nanopct6_rclocal := nanopct6
 

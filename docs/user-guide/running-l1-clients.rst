@@ -141,28 +141,21 @@ Teku
 :guilabel:`Teku` is a full Consensus Layer client written in Java.
 
 .. csv-table::
-  :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
+  :header: Systemd Services , Home Directory, Config File, Default TCP/UDP Port
 
-  `teku`, `/home/ethereum/.teku/data_teku`, `/etc/ethereum/teku.conf`, `9000`
+  `teku-beacon teku-validator`, `/home/ethereum/.teku/beacon /home/ethereum/.teku/validator`, `/etc/ethereum/teku-beacon.conf /etc/ethereum/teku-validator.conf`, `9000`
 
 1.- Port forwarding
 
 You need to open the 9000 port (both UDP and TCP)
 
-2.- Start the Beacon Chain and the Validator
+2.- Start the beacon chain
 
-Copy and paste your Ethereum Address for receiving through the fee recipient flag:
-
-.. prompt:: bash $
-
-  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/teku.conf
-
-  For instance, your command should look like this:
+Under the ethereum account, run:
 
 .. prompt:: bash $
 
-  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/teku.conf
-
+  sudo systemctl start teku-beacon
 
 The Teku beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 

@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/besu.conf
-Environment="JAVA_OPTS=-Xmx3g"
+Environment="JAVA_OPTS=-Xmx5g"
 ExecStart=/usr/bin/besu $ARGS
 Restart=always
 User=ethereum

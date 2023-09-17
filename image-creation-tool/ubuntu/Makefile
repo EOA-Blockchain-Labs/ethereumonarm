@@ -28,18 +28,18 @@ rpi_iso := ubuntu-22.04.2-preinstalled-server-arm64+raspi.img
 rpi_offset := 269484032
 rpi_rclocal := rpi
 
-rock5b_url := https://mirror.yandex.ru/mirrors/armbian/dl/rock-5b/archive/Armbian_23.8.1_Rock-5b_jammy_legacy_5.10.160_minimal.img.xz
-rock5b_iso := Armbian_23.8.1_Rock-5b_jammy_legacy_5.10.160_minimal.img
+rock5b_url := https://armbian.site-meganet.com/dl/rock-5b/archive/Armbian_23.8.1_Rock-5b_jammy_legacy_5.10.160.img.xz
+rock5b_iso := Armbian_23.8.1_Rock-5b_jammy_legacy_5.10.160.img
 rock5b_offset := 285212672
 rock5b_rclocal := rock5b
 
-orangepi5_url := https://mirror.yandex.ru/mirrors/armbian/dl/orangepi5/archive/Armbian_23.8.1_Orangepi5_jammy_legacy_5.10.160_minimal.img.xz
-orangepi5_iso := Armbian_23.8.1_Orangepi5_jammy_legacy_5.10.160_minimal.img
+orangepi5_url := https://armbian.site-meganet.com/dl/orangepi5/archive/Armbian_23.8.1_Orangepi5_jammy_legacy_5.10.160.img.xz
+orangepi5_iso := Armbian_23.8.1_Orangepi5_jammy_legacy_5.10.160.img
 orangepi5_offset := 285212672
 orangepi5_rclocal := orangepi5
 
-orangepi5-plus_url := https://armbian.site-meganet.com/dl/orangepi5-plus/archive/Armbian_23.8.1_Orangepi5-plus_jammy_legacy_5.10.160.img.xz
-orangepi5-plus_iso := Armbian_23.8.1_Orangepi5-plus_jammy_legacy_5.10.160.img
+orangepi5-plus_url := https://armbian.site-meganet.com/dl/orangepi5-plus/archive/Armbian_23.8.2_Orangepi5-plus_jammy_legacy_5.10.160.img.xz
+orangepi5-plus_iso := Armbian_23.8.2_Orangepi5-plus_jammy_legacy_5.10.160.img
 orangepi5-plus_offset := 285212672
 orangepi5-plus_rclocal := orangepi5-plus
 

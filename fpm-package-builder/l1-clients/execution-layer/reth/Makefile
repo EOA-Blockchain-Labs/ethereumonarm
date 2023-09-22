@@ -41,11 +41,8 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(RETH_VERSION) --license $(PKG_LICENSE
 all: prepare deb clean test
 
 prepare: ## Donwload the latest binary and prepare the package files
-	mkdir -p /tmp/reth_tmp
-	cd /tmp/reth_tmp ; git clone https://github.com/paradigmxyz/reth.git ; cd reth ; git checkout $(RETH_VERSION_GIT) 
-	cd /tmp/reth_tmp/reth ; PKG_CONFIG=/usr/bin/aarch64-linux-gnu-pkg-config PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig/ cargo build --profile maxperf --target aarch64-unknown-linux-gnu 
-	cp /tmp/reth_tmp/reth/target/aarch64-unknown-linux-gnu/maxperf/reth sources/usr/bin/
-	rm -rf /tmp/reth_tmp
+
+	wget https://github.com/paradigmxyz/reth/releases/download/$(RETH_VERSION_GIT)/reth-$(RETH_VERSION_GIT)-aarch64-unknown-linux-gnu.tar.gz -O - | tar -xz -C sources/usr/bin/ reth
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)

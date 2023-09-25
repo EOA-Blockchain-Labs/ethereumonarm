@@ -29,7 +29,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(OP-GETH_VERSION) --license $(PKG_LICE
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
---deb-systemd extras/op-geth.service\
+--deb-systemd extras/op-geth.service --deb-systemd extras/op-geth-base.service\
 --depends zstd
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(OP-GETH_VERSION) --license $(PKG_LICENSE)\

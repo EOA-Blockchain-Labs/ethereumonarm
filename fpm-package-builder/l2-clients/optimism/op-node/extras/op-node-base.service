@@ -1,0 +1,12 @@
+[Unit]
+  Description=Optimism op-node Service
+[Service]
+  ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.op-node-base && mkdir -p /home/ethereum/.op-node-base'
+  WorkingDirectory=/home/ethereum
+  EnvironmentFile=/etc/ethereum/op-node-base.conf
+  ExecStart=/usr/bin/op-node $ARGS
+  Restart=on-failure
+  RestartSec=5s
+  User=ethereum
+[Install]
+  WantedBy=multi-user.target

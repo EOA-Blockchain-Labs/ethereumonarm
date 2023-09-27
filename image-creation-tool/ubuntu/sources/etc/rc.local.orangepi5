@@ -75,7 +75,7 @@ if [ ! -f $FLAG ]; then
   fi
 
   # Install some necessary deps
-  apt-get -y install gdisk software-properties-common apt-utils file vim net-tools
+  apt-get -y install gdisk software-properties-common apt-utils file vim net-tools telnet
 
   # Check for NVMe drive
   echo "Looking for NVMe drive"

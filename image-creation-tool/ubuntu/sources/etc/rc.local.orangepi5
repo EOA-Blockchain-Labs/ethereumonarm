@@ -84,10 +84,12 @@ if [ ! -f $FLAG ]; then
 
     # Partition and format NVMe drive
     format_disk /dev/nvme0n1
+    # Remove FS reserved blocks
+    tune2fs -m 0 /dev/nvme0n1p1
 
     # Mount NVMe drive as /home
     echo "Mounting NVMe disk as /home"
-    echo '/dev/nvme0n1p1 /home ext4 defaults 0 2' >>/etc/fstab && mount /home
+    echo '/dev/nvme0n1p1 /home ext4 defaults,noatime 0 2' >>/etc/fstab && mount /home
   fi
 
   # Modify hostname and /etc/hosts (ethereumonarm-$MAC-HASH-CHUNK)

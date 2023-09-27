@@ -161,21 +161,22 @@ sudo apt-get install geth nethermind erigon besu prysm lighthouse nimbus teku st
 EOF
 
   # Install monitoring packages
-  apt-get -y install gpg wget
-  wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
-  echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
-  apt-get -y update
-  apt-get -y install grafana
-  systemctl enable grafana-server
-  adduser --quiet --system --home /home/prometheus --no-create-home --group --gecos "Prometheus daemon" prometheus
-  mkdir -p /home/prometheus/{metrics2,node-exporter}
-  chown -R prometheus:prometheus /home/prometheus/{metrics2,node-exporter}
-  apt-get install -y prometheus prometheus-node-exporter ethereum-metrics-exporter json-exporter
-  systemctl enable prometheus prometheus-node-exporter ethereum-metrics-exporter json-exporter
+  # On hold until working out monitoring issues
+  #apt-get -y install gpg wget
+  #wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+  #echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+  #apt-get -y update
+  #apt-get -y install grafana
+  #systemctl enable grafana-server
+  #adduser --quiet --system --home /home/prometheus --no-create-home --group --gecos "Prometheus daemon" prometheus
+  #mkdir -p /home/prometheus/{metrics2,node-exporter}
+  #chown -R prometheus:prometheus /home/prometheus/{metrics2,node-exporter}
+  #apt-get install -y prometheus prometheus-node-exporter ethereum-metrics-exporter json-exporter
+  #systemctl enable prometheus prometheus-node-exporter ethereum-metrics-exporter json-exporter
 
   # install Ethereum on ARM monitoring config
-  apt-get -y install ethereumonarm-monitoring-extras
-  set-ethereunonarm-monitoring-extras -o
+  #apt-get -y install ethereumonarm-monitoring-extras
+  #set-ethereunonarm-monitoring-extras -o
 
   # Install MEV Boost with no censorship relays
   apt-get -y install mev-boost

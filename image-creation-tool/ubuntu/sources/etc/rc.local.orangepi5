@@ -90,6 +90,9 @@ if [ ! -f $FLAG ]; then
     # Mount NVMe drive as /home
     echo "Mounting NVMe disk as /home"
     echo '/dev/nvme0n1p1 /home ext4 defaults,noatime 0 2' >>/etc/fstab && mount /home
+  else
+    echo "No NVMe disk found. You need a disk to run an Ethereum node, stopping the installation"
+    exit 1
   fi
 
   # Modify hostname and /etc/hosts (ethereumonarm-$MAC-HASH-CHUNK)

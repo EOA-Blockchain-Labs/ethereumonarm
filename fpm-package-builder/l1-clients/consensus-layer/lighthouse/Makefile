@@ -31,6 +31,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(LIGHTHOUSE_VERSION) --license $(PKG_L
 	-a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 	--deb-systemd extras/lighthouse-beacon.service --deb-systemd extras/lighthouse-beacon-prater.service\
 	--deb-systemd extras/lighthouse-validator.service --deb-systemd extras/lighthouse-validator-prater.service\
+	--deb-systemd extras/lighthouse-beacon-holesky.service --deb-systemd extras/lighthouse-validator-holesky.service\
 	--deb-systemd extras/lighthouse-beacon-gnosis.service --deb-systemd extras/lighthouse-validator-gnosis.service\
 	--depends merge-config
 

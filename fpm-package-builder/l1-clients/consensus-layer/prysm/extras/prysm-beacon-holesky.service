@@ -1,0 +1,13 @@
+[Unit]
+Description=Prysm Beacon chain daemon
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/prysm-beacon-holesky.conf
+ExecStart=/usr/bin/beacon-chain $ARGS
+Restart=always
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target
+

@@ -31,6 +31,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENS
 	-a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 	--deb-systemd extras/prysm-beacon.service --deb-systemd extras/prysm-beacon-prater.service\
 	--deb-systemd extras/prysm-validator.service --deb-systemd extras/prysm-validator-prater.service\
+	--deb-systemd extras/prysm-beacon-holesky.service --deb-systemd extras/prysm-validator-holesky.service\
 	--conflicts prysm-beacon\
 	--conflicts prysm-validator\
 	--provides prysm-beacon\

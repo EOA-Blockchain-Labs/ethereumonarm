@@ -32,6 +32,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICEN
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 	--before-upgrade extras/preinst --after-upgrade extras/postinst \
 	--deb-systemd extras/nimbus-beacon.service --deb-systemd extras/nimbus-validator.service\
+	--deb-systemd extras/nimbus-beacon-holesky.service --deb-systemd extras/nimbus-validator-holesky.service\
 	--depends merge-config
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICENSE)\

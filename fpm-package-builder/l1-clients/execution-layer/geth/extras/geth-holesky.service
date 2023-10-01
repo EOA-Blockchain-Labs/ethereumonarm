@@ -1,0 +1,15 @@
+[Unit]
+Description=Ethereum geth client daemon by The Ethereum Foundation (merge test)
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/geth-holesky.conf
+ExecStart=/usr/bin/geth $ARGS
+Restart=always
+User=ethereum
+KillSignal=SIGTERM 
+TimeoutStopSec=600
+
+[Install]
+WantedBy=multi-user.target
+

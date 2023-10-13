@@ -279,3 +279,85 @@ Now, start the :guilabel:`Op-Node` client:
   sudo journalctl -u op-node -f
 
 Congrats, you are now running an Optimism Bedrock node.
+
+Base
+----
+
+Base, developed by Coinbase, is a new Layer-Two (L2) blockchain built on Optimism, aimed at scaling Ethereum.
+
+While initially centralized in block production, plans to leverage Optimism's "superchain" concept, 
+enhancing interoperability and reducing transaction fees.
+
+.. note::
+
+  1. We will sync Base using an :guilabel:`Op-Geth-Base` Snapshot. Take into account that this is a large snapshot and 
+  it will take a few hours to download and decompress so, please, be patient. You will need a 2TB SSD to be able to 
+  download the snapshot and extract it.
+
+  2. You need access to a synced Ethereum L1 node.
+
+In order to run an Optimism node you need to:
+
+1. Download :guilabel:`Op-Geth-Base` Snapshot
+2. Decompress and remove the snapshot
+3. Set the L1 node IP
+4. Start and sync the :guilabel:`Op-Geth-Base` client
+5. Start and sync the :guilabel:`Op-Node-Base` client
+
+Snapshots
+~~~~~~~~~
+
+We included 1 script that downloads and decompress the :guilabel:`Op-Geth` Snapshot automatically. The recommended steps are as follows:
+
+Run the ``screen`` utility in order to make sure the process continues to run even if you are 
+disconnected from the console (this is particularly useful if you are accessing through SSH):
+
+.. prompt:: bash $
+
+  screen
+
+.. note::
+  Press ``CONTROL+A  D`` to deattach the console and run the command ``screen -r`` to attach the console again
+
+Once inside screen, run the download script as the ``ethereum`` user:
+
+.. prompt:: bash $
+
+  op-geth-base-preinstall
+
+This will download the :guilabel:`Op-Geth-Base` snapshot. Once downloaded it will be decompressed into the 
+correct directory.
+
+Clients
+~~~~~~~
+
+Set the synced IP L1 ethereum node:
+
+.. prompt:: bash $
+
+  sudo sed -i "s/changeme/YOUR_IP/" /etc/ethereum/op-node-base.conf
+
+For example:
+
+.. prompt:: bash $
+
+  sudo sed -i "s/changeme/192.168.0.10/" /etc/ethereum/op-node-base.conf
+
+Start the :guilabel:`Op-Geth-Base` service and check the logs:
+
+.. prompt:: bash $
+
+  sudo systemctl start op-geth-base
+  sudo journalctl -u op-geth-base -f
+
+.. note::
+  The order is important. Please run :guilabel:`Op-Geth-Base` first.
+
+Now, start the :guilabel:`Op-Node-Base` client:
+
+.. prompt:: bash $
+
+  sudo systemctl start op-node-base
+  sudo journalctl -u op-node-base -f
+
+Congrats, you are now running a Base node.

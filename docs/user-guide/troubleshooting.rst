@@ -48,5 +48,5 @@ you don't know what the ``eoa_check`` output means. This is our channel:
 
 `EOA Discord channel`_
 
-.. _EOA Discord channel: https://discord.com/channels/822548812472123404
+.. _EOA Discord channel: http://discord.gg/ve2Z8fxz5N
 

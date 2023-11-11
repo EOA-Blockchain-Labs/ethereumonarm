@@ -487,3 +487,144 @@ and start the service (check the specific client documentation above for further
 
 Congrats!, you just started your validator activation process.
 
+Running Validator Client
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Once the Beacon Change is syncronized and we have our keys and deposit created, we need to start the Validator Client. These 
+are the instructions for each client, pick the one that are already running the Beacon Chain.
+
+Lighthouse
+++++++++++
+
+First, we need to import the previously generated validator keys and set the set Fee Recipient flag. Run under the ethereum account:
+
+.. prompt:: bash $
+
+  lighthouse account validator import --directory=/home/ethereum/validator_keys
+
+Then, type your previously defined password and copy and paste your Ethereum Address for receiving tips and set the set the fee recipient flag:
+
+.. prompt:: bash $
+
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/lighthouse-validator.conf
+
+  For instance:
+
+.. prompt:: bash $
+
+  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/lighthouse-validator.conf
+
+.. prompt:: bash $
+
+  sudo systemctl start lighthouse-validator
+
+The Lighthouse Validator is now started.
+
+Prysm
++++++
+
+Import the validator keys. Run under the ethereum account:
+
+.. prompt:: bash $
+
+  validator accounts import --keys-dir=/home/ethereum/validator_keys
+
+Accept the default wallet path and enter a password for your wallet. Now enter 
+the password previously defined.
+
+Now, copy and paste your Ethereum Address for receiving tips and set the set the fee recipient flag:
+
+.. prompt:: bash $
+
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/prysm-validator.conf
+
+  For instance, your command should look like this::
+
+.. prompt:: bash $
+
+  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/prysm-validator.conf
+
+Lastly, set up your password and start the client:
+
+.. prompt:: bash $
+
+  echo "$YOUR_PASSWORD" > /home/ethereum/validator_keys/prysm-password.txt
+  sudo systemctl start prysm-validator
+
+The Prysm  validator is now enabled.
+
+Nimbus
+++++++
+
+We need to import your validator keys. Run under the ethereum account:
+
+.. prompt:: bash $
+
+  nimbus_beacon_node deposits import /home/ethereum/validator_keys --data-dir=/home/ethereum/.nimbus-validator --log-file=/home/ethereum/.nimbus-validator/nimbus.log
+
+Enter the password previously defined.
+
+Now, copy and paste your Ethereum Address for receiving tips and set the set the fee recipient flag:
+
+.. prompt:: bash $
+
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/nimbus-validator.conf
+
+  For instance, your command should look like this::
+
+.. prompt:: bash $
+
+  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/nimbus-validator.conf
+
+Start the Nimbus Validator:
+
+.. prompt:: bash $
+
+  sudo systemctl start nimbus-validator
+
+Teku
+++++
+
+You need to create a file for each validator. The file will have the same name as the keystore but with 
+the .txt extension. Remember that the keystore json files are located in the ``/home/ethereum/validator_keys`` 
+directory.
+
+You can see your current keystore name(s) by running:
+
+.. prompt:: bash $
+
+  ls /home/ethereum/validator_keys
+
+Create a txt file with the same name of the json one and write the filestore password (replace 
+$KEYSTORE_NAME for your file name. $PASSWORD is the one set in the previous section) "Validator setup and 32 ETH deposit":
+
+.. prompt:: bash $
+
+  echo "$YOUR_PASSWORD" > validator_keys/$KEYSTORE_NAME.txt
+
+now, you should see something like this in your validator_keys directory (for each keystore):
+
+.. prompt:: bash $
+
+  keystore-m_12381_3600_0_0_0-1661710189.json
+  keystore-m_12381_3600_0_0_0-1661710189.txt
+
+Copy and paste your Ethereum Address for receiving tips and set the set the fee recipient flag:
+
+.. prompt:: bash $
+
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/teku-validator.conf
+
+  For instance, your command should look like this::
+
+.. prompt:: bash $
+
+  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/teku-validator.conf
+
+Start the Teku Validator:
+
+.. prompt:: bash $
+
+  sudo systemctl start teku-validator
+
+The Teku Validator is now enabled.

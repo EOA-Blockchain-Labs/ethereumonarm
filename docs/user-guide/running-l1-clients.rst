@@ -493,8 +493,7 @@ Running Validator Client
 Once the Beacon Change is syncronized and we have our keys and deposit created, we need to start the Validator Client. These 
 are the instructions for each client, pick the one that are already running the Beacon Chain.
 
-Lighthouse
-^^^^^^^^^^
+**LIGHTHOUSE**
 
 First, we need to import the previously generated validator keys and set the set Fee Recipient flag. Run under the ethereum account:
 
@@ -520,8 +519,7 @@ Then, type your previously defined password and copy and paste your Ethereum Add
 
 The Lighthouse Validator is now started.
 
-Prysm
-^^^^^
+**PRYSM**
 
 Import the validator keys. Run under the ethereum account:
 
@@ -553,8 +551,7 @@ Lastly, set up your password and start the client:
 
 The Prysm  validator is now enabled.
 
-Nimbus
-^^^^^^
+**NIMBUS**
 
 We need to import your validator keys. Run under the ethereum account:
 
@@ -582,8 +579,7 @@ Start the Nimbus Validator:
 
   sudo systemctl start nimbus-validator
 
-Teku
-^^^^
+**TEKU**
 
 You need to create a file for each validator. The file will have the same name as the keystore but with 
 the .txt extension. Remember that the keystore json files are located in the ``/home/ethereum/validator_keys`` 

@@ -1,5 +1,0 @@
-    - targets: ['127.0.0.1:7979']
-      labels:
-        host: 'Default Host'
-        service: 'JSON Exporter'
-        client: 'JSON Exporter'

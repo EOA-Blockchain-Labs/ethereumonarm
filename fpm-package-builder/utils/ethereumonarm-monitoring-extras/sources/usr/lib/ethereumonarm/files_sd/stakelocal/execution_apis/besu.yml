@@ -1,9 +1,0 @@
-    - targets: ['127.0.0.1:8545']
-      labels:
-        network: 'Mainnet'
-        host: 'Default Host'
-        service: 'Besu'
-        group: 'Default Group'
-        explorer: 'etherscan.io'
-        json_exporter: '127.0.0.1:7979'
-        client: 'Besu'

@@ -1,5 +1,5 @@
 #!/bin/sh
 set -e
-systemctl stop 'chrony.service' >/dev/null || true
+systemctl stop 'chrony.service' >/dev/null 2>&1 || true
 exit 0
 

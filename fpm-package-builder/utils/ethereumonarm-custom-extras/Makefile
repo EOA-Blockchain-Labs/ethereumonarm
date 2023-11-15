@@ -25,7 +25,7 @@ FPM_OPTS := -s dir -n $(PKG_NAME) -v $(PKG_VERSION) --iteration $(PKG_RELEASE)\
 	-C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\
 	--after-install $(PKG_AFTER_INSTALL) --before-remove $(PKG_BEFPRE_REMOVE)\
 	--after-remove $(PKG_AFTER_REMOVE) -a $(PKG_ARCH) -p $(OUTPUTDIR) -x */.gitkeep\
-	--depends	chrony
+	--depends chrony
 all: deb test
 
 deb: ## Create deb package

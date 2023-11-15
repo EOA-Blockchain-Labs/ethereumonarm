@@ -1,7 +1,0 @@
-    - targets: ['127.0.0.1:6060']
-      labels:
-        network: 'Mainnet'
-        service: 'Erigon'
-        host: 'Default Host'
-        group: 'Default Group'
-        explorer: 'etherscan.io'

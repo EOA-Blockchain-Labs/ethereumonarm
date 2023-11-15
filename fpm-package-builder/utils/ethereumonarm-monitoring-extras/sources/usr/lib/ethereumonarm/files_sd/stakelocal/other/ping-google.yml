@@ -1,4 +1,0 @@
-      - targets: ['8.8.8.8']
-        labels:
-          host: 'Default Host'
-          destination: 'Google'

@@ -1,5 +1,0 @@
-    - targets: ['127.0.0.1:9115']
-      labels:
-        service: 'Blackbox Exporter'
-        client: 'Blackbox Exporter'
-        host: 'Default Host'

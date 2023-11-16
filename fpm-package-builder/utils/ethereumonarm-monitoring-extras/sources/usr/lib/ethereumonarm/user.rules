@@ -1,3 +1,7 @@
+### START UFW CONFIGURATION FOR ETHEREUM NODE ###
+
+# Default policies: typically set to deny incoming and allow outgoing traffic to secure the server
+# Ensures that the node is not accessible unless a port is explicitly opened
 *filter
 :ufw-user-input - [0:0]
 :ufw-user-output - [0:0]
@@ -15,92 +19,58 @@
 :ufw-logging-allow - [0:0]
 :ufw-user-limit - [0:0]
 :ufw-user-limit-accept - [0:0]
-### RULES ###
 
-### tuple ### allow tcp 22 0.0.0.0/0 any 0.0.0.0/0 in
+# Allow SSH (port 22) for remote server management
 -A ufw-user-input -p tcp --dport 22 -j ACCEPT
 
-### tuple ### allow tcp 9000 0.0.0.0/0 any 0.0.0.0/0 in
--A ufw-user-input -p tcp --dport 9000 -j ACCEPT
+# Custom Ethereum Node Ports:
+# Include specific ports needed for your Ethereum node's operation and other services
 
-### tuple ### allow udp 9000 0.0.0.0/0 any 0.0.0.0/0 in
+# Allow TCP and UDP traffic on port 9000
+-A ufw-user-input -p tcp --dport 9000 -j ACCEPT
 -A ufw-user-input -p udp --dport 9000 -j ACCEPT
 
-### tuple ### allow tcp 9090 0.0.0.0/0 any 0.0.0.0/0 in
--A ufw-user-input -p tcp --dport 9090 -j ACCEPT
+# Allow TCP and UDP traffic on port 9001
+-A ufw-user-input -p tcp --dport 9001 -j ACCEPT
+-A ufw-user-input -p udp --dport 9001 -j ACCEPT
 
-### tuple ### allow udp 9090 0.0.0.0/0 any 0.0.0.0/0 in
+# Allow TCP and UDP traffic on port 9090
+-A ufw-user-input -p tcp --dport 9090 -j ACCEPT
 -A ufw-user-input -p udp --dport 9090 -j ACCEPT
 
-### tuple ### allow tcp 9100 0.0.0.0/0 any 0.0.0.0/0 in
+# Allow TCP and UDP traffic on port 9100
 -A ufw-user-input -p tcp --dport 9100 -j ACCEPT
-
-### tuple ### allow udp 9100 0.0.0.0/0 any 0.0.0.0/0 in
 -A ufw-user-input -p udp --dport 9100 -j ACCEPT
 
-### tuple ### allow tcp 13000 0.0.0.0/0 any 0.0.0.0/0 in
+# Allow TCP traffic on port 13000
 -A ufw-user-input -p tcp --dport 13000 -j ACCEPT
 
-### tuple ### allow udp 12000 0.0.0.0/0 any 0.0.0.0/0 in
+# Allow UDP traffic on port 12000
 -A ufw-user-input -p udp --dport 12000 -j ACCEPT
 
-### tuple ### allow tcp 30607 0.0.0.0/0 any 0.0.0.0/0 in
+# Allow TCP traffic on port 30607
 -A ufw-user-input -p tcp --dport 30607 -j ACCEPT
 
-### tuple ### allow tcp 30303 0.0.0.0/0 any 0.0.0.0/0 in
+# Default Ethereum P2P Port:
+# Allow TCP and UDP traffic on port 30303 for Ethereum node P2P communication
 -A ufw-user-input -p tcp --dport 30303 -j ACCEPT
-
-### tuple ### allow udp 30303 0.0.0.0/0 any 0.0.0.0/0 in
 -A ufw-user-input -p udp --dport 30303 -j ACCEPT
 
-### tuple ### allow tcp 3000 0.0.0.0/0 any 0.0.0.0/0 in
+# Allow TCP traffic on port 3000
 -A ufw-user-input -p tcp --dport 3000 -j ACCEPT
 
-### END RULES ###
-
+# Logging and Rate Limiting Configuration
 ### LOGGING ###
 -A ufw-after-logging-input -j LOG --log-prefix "[UFW BLOCK] " -m limit --limit 3/min --limit-burst 10
 -A ufw-after-logging-forward -j LOG --log-prefix "[UFW BLOCK] " -m limit --limit 3/min --limit-burst 10
 -I ufw-logging-deny -m conntrack --ctstate INVALID -j RETURN -m limit --limit 3/min --limit-burst 10
 -A ufw-logging-deny -j LOG --log-prefix "[UFW BLOCK] " -m limit --limit 3/min --limit-burst 10
 -A ufw-logging-allow -j LOG --log-prefix "[UFW ALLOW] " -m limit --limit 3/min --limit-burst 10
-### END LOGGING ###
 
 ### RATE LIMITING ###
 -A ufw-user-limit -m limit --limit 3/minute -j LOG --log-prefix "[UFW LIMIT BLOCK] "
 -A ufw-user-limit -j REJECT
 -A ufw-user-limit-accept -j ACCEPT
-### END RATE LIMITING ###
--A ufw-user-input -p tcp --dport 13000 -j ACCEPT
 
-### tuple ### allow udp 12000 0.0.0.0/0 any 0.0.0.0/0 in
--A ufw-user-input -p udp --dport 12000 -j ACCEPT
-
-### tuple ### allow tcp 30607 0.0.0.0/0 any 0.0.0.0/0 in
--A ufw-user-input -p tcp --dport 30607 -j ACCEPT
-
-### tuple ### allow tcp 30303 0.0.0.0/0 any 0.0.0.0/0 in
--A ufw-user-input -p tcp --dport 30303 -j ACCEPT
-
-### tuple ### allow udp 30303 0.0.0.0/0 any 0.0.0.0/0 in
--A ufw-user-input -p udp --dport 30303 -j ACCEPT
-
-### tuple ### allow tcp 3000 0.0.0.0/0 any 0.0.0.0/0 in
--A ufw-user-input -p tcp --dport 3000 -j ACCEPT
-
-### END RULES ###
-
-### LOGGING ###
--A ufw-after-logging-input -j LOG --log-prefix "[UFW BLOCK] " -m limit --limit 3/min --limit-burst 10
--A ufw-after-logging-forward -j LOG --log-prefix "[UFW BLOCK] " -m limit --limit 3/min --limit-burst 10
--I ufw-logging-deny -m conntrack --ctstate INVALID -j RETURN -m limit --limit 3/min --limit-burst 10
--A ufw-logging-deny -j LOG --log-prefix "[UFW BLOCK] " -m limit --limit 3/min --limit-burst 10
--A ufw-logging-allow -j LOG --log-prefix "[UFW ALLOW] " -m limit --limit 3/min --limit-burst 10
-### END LOGGING ###
-
-### RATE LIMITING ###
--A ufw-user-limit -m limit --limit 3/minute -j LOG --log-prefix "[UFW LIMIT BLOCK] "
--A ufw-user-limit -j REJECT
--A ufw-user-limit-accept -j ACCEPT
-### END RATE LIMITING ###
 COMMIT
+### END UFW CONFIGURATION FOR ETHEREUM NODE ###

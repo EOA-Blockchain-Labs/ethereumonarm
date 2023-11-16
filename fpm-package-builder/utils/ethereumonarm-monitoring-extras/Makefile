@@ -19,7 +19,7 @@ FPM_OPTS := -s dir -n $(PKG_NAME) -v $(PKG_VERSION) --iteration $(PKG_RELEASE) -
 all: deb test
 
 deb: ## Create deb package
-	fpm -t deb -p $(PKG_DEB) $(FPM_OPTS) --depends grafana --depends prometheus --depends prometheus-node-exporter --depends ufw --replaces ethereum-metrics-exporter --replaces json-exporter
+	fpm -t deb -p $(PKG_DEB) $(FPM_OPTS) --depends grafana --depends prometheus --depends prometheus-node-exporter --depends ufw
 
 .PHONY: test
 test:

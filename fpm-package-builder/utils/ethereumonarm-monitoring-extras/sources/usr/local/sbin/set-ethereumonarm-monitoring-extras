@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
-override(){
+override() {
   systemctl stop grafana-server prometheus prometheus-node-exporter || true
+
+  # Stop and disable ethereum-metrics-exporter service silently
+  systemctl stop ethereum-metrics-exporter >/dev/null 2>&1
+  systemctl disable ethereum-metrics-exporter >/dev/null 2>&1
+
+  # Stop and disable json-exporter service silently
+  systemctl stop json-exporter >/dev/null 2>&1
+  systemctl disable json-exporter >/dev/null 2>&1
 
   # Configure Grafana
   cp /usr/lib/ethereumonarm/grafana.db /var/lib/grafana/grafana.db
@@ -19,34 +27,33 @@ override(){
 }
 
 confirm() {
-# call with a prompt string or use a default
-read -p "Return to default config, Are you sure? " -n 1 -r REPLY
+  # call with a prompt string or use a default
+  read -p "Return to default config, Are you sure? " -n 1 -r REPLY
 
-if [[ ! $REPLY =~ ^[Yy]$ ]]
-  then
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     exit 0
   else
     override
-fi
+  fi
 }
 
 while getopts 'o' OPTION; do
   case "$OPTION" in
-    o)
-      override
-      ;;
-    :)
-     confirm
-     ;;
-    ?)
-      echo "script usage: $(basename $0) [-o] (Dont as for confirmation)" >&2
-      exit 1
-      ;;
+  o)
+    override
+    ;;
+  :)
+    confirm
+    ;;
+  ?)
+    echo "script usage: $(basename $0) [-o] (Dont as for confirmation)" >&2
+    exit 1
+    ;;
   esac
 done
 
-if (( $OPTIND == 1 )); then
-   confirm
+if (($OPTIND == 1)); then
+  confirm
 fi
 
-shift "$(($OPTIND -1))"
+shift "$(($OPTIND - 1))"

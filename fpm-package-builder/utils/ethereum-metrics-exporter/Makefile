@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 EME_VERSION := $(shell curl -s https://api.github.com/repos/ethpandaops/ethereum-metrics-exporter/releases/latest | jq -r '.tag_name' | tr -d "v")
 
-PKG_RELEASE := 3
+PKG_RELEASE := 4
 PKG_NAME := ethereum-metrics-exporter
 
 PKG_DESCRIPTION := "Provides a client-agnostic set of metrics for monitoring the health and performance of Ethereum nodes across multiple client implementations, by relying on well-defined APIs"

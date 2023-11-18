@@ -1,77 +1,75 @@
 global:
-  scrape_interval: 15s  # Default frequency for scraping metrics from targets
-  evaluation_interval: 15s  # Frequency for evaluating alerting rules
+  scrape_interval: 15s  # Sets default interval for scraping metrics
+  evaluation_interval: 15s  # Sets interval for evaluating rules
 
 scrape_configs:
-  # Node Exporter - Provides essential system metrics like CPU, memory, disk usage
-  - job_name: "node"
-    static_configs:
-      - targets: ["127.0.0.1:9100"]
-
-  # Geth - Go Ethereum client, an execution client for the Ethereum network
-  - job_name: "geth"
+  # Ethereum Execution Clients
+  - job_name: "geth"  # Geth: Go Ethereum client
     metrics_path: "/debug/metrics/prometheus"
     static_configs:
       - targets: ["127.0.0.1:6060"]
 
-  # Erigon - Advanced Go Ethereum client, focusing on performance and scalability
-  - job_name: "erigon"
+  - job_name: "erigon"  # Erigon: Advanced Ethereum client for performance
     metrics_path: "/debug/metrics/prometheus"
     static_configs:
       - targets: ["127.0.0.1:5050"]
 
-  # Nethermind - .NET based Ethereum client, known for its modularity
-  - job_name: "nethermind"
+  - job_name: "nethermind"  # Nethermind: .NET Ethereum client
     static_configs:
       - targets: ["127.0.0.1:7070"]
 
-  # Besu - Java based Ethereum client, supports both Mainnet and test networks
-  - job_name: "besu"
+  - job_name: "besu"  # Besu: Java Ethereum client
     static_configs:
       - targets: ["127.0.0.1:9545"]
 
-  # Reth - Rust Ethereum client, focused on performance and security
-  - job_name: "reth"
+  - job_name: "reth"  # Reth: Rust Ethereum client
     metrics_path: "/"
     static_configs:
       - targets: ["127.0.0.1:9001"]
 
-  # Lighthouse Validator - Ethereum 2.0 client focusing on validators
-  - job_name: "lighthouse_validator"
+  # Ethereum 2.0 Clients and Validators
+  - job_name: "lighthouse_validator"  # Lighthouse Validator for ETH 2.0
     static_configs:
       - targets: ["127.0.0.1:5054"]
 
-  # Nimbus - Ethereum 2.0 client designed for resource-restricted devices
-  - job_name: "nimbus"
+  - job_name: "nimbus"  # Nimbus: ETH 2.0 client for restricted resources
     static_configs:
       - targets: ["127.0.0.1:8008"]
 
-  # Prysm Validator - Part of Prysmatic Labs' suite for Ethereum 2.0
-  - job_name: 'validator'
+  - job_name: "validator"  # Prysm Validator for ETH 2.0
     static_configs:
       - targets: ["127.0.0.1:8081"]
 
-  # Prysm Beacon Node - Core component of the Prysm client for Ethereum 2.0
-  - job_name: 'beacon node'
+  - job_name: "beacon node"  # Prysm Beacon Node for ETH 2.0
     static_configs:
       - targets: ["127.0.0.1:8080"]
 
-  # Prysm Slasher - Detects and reports slashable offenses in Ethereum 2.0 network
-  - job_name: 'slasher'
+  - job_name: "slasher"  # Prysm Slasher for ETH 2.0
     static_configs:
       - targets: ["127.0.0.1:8082"]
 
-  # Teku Development - Ethereum 2.0 client designed for enterprise use
-  - job_name: "teku-dev"
+  - job_name: "teku-dev"  # Teku Development client for ETH 2.0
     static_configs:
       - targets: ["127.0.0.1:8009"]
 
-  # Prometheus - Monitors itself for operational metrics
-  - job_name: "prometheus"
+  - job_name: "lodestart-beacon"  # Lodestar Beacon for ETH 2.0
+    static_configs:
+      - targets: ["localhost:4040"]
+
+  - job_name: "lodestart-validator"  # Lodestar Validator for ETH 2.0
+    static_configs:
+      - targets: ["localhost:5064"]
+
+  # System Metrics and Monitoring
+  - job_name: "node"  # Node Exporter for system metrics
+    static_configs:
+      - targets: ["127.0.0.1:9100"]
+
+  - job_name: "prometheus"  # Prometheus for self-monitoring
     static_configs:
       - targets: ["127.0.0.1:9090"]
-      
-  # A Prometheus metrics exporter for Ethereum execution & consensus nodes
-  - job_name: "ethereum-metrics-exporter"
+
+  # Miscellaneous Services
+  - job_name: "ethereum-metrics-exporter"  # Metrics exporter for ETH nodes
     static_configs:
       - targets: ["127.0.0.1:9095"]

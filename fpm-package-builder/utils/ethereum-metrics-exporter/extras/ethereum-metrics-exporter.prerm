@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+systemctl stop ethereum-metrics-exporter >/dev/null 2>&1 || true
+exit 0
+

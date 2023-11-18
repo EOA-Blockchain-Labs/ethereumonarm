@@ -5,8 +5,8 @@ SHELL := /bin/bash
 
 PKG_NAME := ethereumonarm-monitoring-extras
 PKG_DESCRIPTION := "Ethereum on ARM monitoring config"
-PKG_VERSION := 1.2.0
-PKG_RELEASE := 1
+PKG_VERSION := 1.2.2
+PKG_RELEASE := 0
 PKG_MAINTAINER := "Fernando Collado <fcollado@ethereumonarm.com>"
 PKG_ARCH := all
 SOURCESDIR := sources/
@@ -19,7 +19,7 @@ FPM_OPTS := -s dir -n $(PKG_NAME) -v $(PKG_VERSION) --iteration $(PKG_RELEASE) -
 all: deb test
 
 deb: ## Create deb package
-	fpm -t deb -p $(PKG_DEB) $(FPM_OPTS) --depends grafana --depends prometheus --depends prometheus-node-exporter --depends ufw
+	fpm -t deb -p $(PKG_DEB) $(FPM_OPTS) --depends grafana --depends prometheus --depends prometheus-node-exporter --depends ufw --depends ethereum-metrics-exporter
 
 .PHONY: test
 test:

@@ -1,40 +1,20 @@
+# Consensus Client Configuration
 consensus:
-  enabled: true
-  # Uncomment the desired consensus client URL and name
-  # Lighthouse
-  # url: "http://localhost:5052/"
-  # name: "Lighthouse Beacon"
-  # Lodestar
-  # url: "http://localhost:9596/"
-  # name: "Lodestar Beacon"
-  # Nimbus
-  url: "http://localhost:5052/"
-  name: "Nimbus"
-  # Prysm
-  # url: "http://localhost:3500/"
-  # name: "Prysm Beacon"
-  # Teku
-  # url: "http://localhost:5051/"
-  # name: "Teku"
+  enabled: true  # This enables the consensus client
+  url: "http://localhost:5052"  # URL of the consensus client
+  name: "consensus-client"  # Name of the consensus client
 
+# Execution Client Configuration
 execution:
-  enabled: true
-  # Uncomment the desired execution client URL and name
-  url: "http://localhost:8545/"
-  # Besu
-  # name: "Besu"
-  # Erigon
-  # name: "Erigon"
-  # Geth
-  # name: "Geth"
-  # Nethermind
-  # name: "Nethermind"
+  enabled: true  # This enables the execution client
+  url: "http://localhost:8545"  # URL of the execution client
+  name: "execution-client"  # Name of the execution client
 
+  # List of modules enabled in the execution client
   modules:
-    - "eth"
-    - "net"
-    - "web3"
-    - "txpool"
-
+    - "eth"  # Ethereum-specific operations
+    - "net"  # Network information
+    - "web3"  # Web3 interface for Ethereum blockchain interaction
+    - "txpool"  # Transaction pool management
 pair:
   enabled: true

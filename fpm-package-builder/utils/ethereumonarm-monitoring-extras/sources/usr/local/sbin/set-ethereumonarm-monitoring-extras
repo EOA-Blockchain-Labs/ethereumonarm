@@ -2,10 +2,6 @@
 override() {
   systemctl stop grafana-server prometheus prometheus-node-exporter || true
 
-  # Stop and disable ethereum-metrics-exporter service silently
-  systemctl stop ethereum-metrics-exporter >/dev/null 2>&1
-  systemctl disable ethereum-metrics-exporter >/dev/null 2>&1
-
   # Stop and disable json-exporter service silently
   systemctl stop json-exporter >/dev/null 2>&1
   systemctl disable json-exporter >/dev/null 2>&1

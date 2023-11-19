@@ -54,15 +54,13 @@ If you don't know what an Ethereum node is, please visit the :doc:`User Guide se
 
     BOARD
 
-    `Rock 5B board 16 GB <https://shop.allnetchina.cn/products/rock5-model-b?variant=39514839515238>`_
-
-    `Radxa power supply <https://shop.allnetchina.cn/products/radxa-power-pd-30w?variant=39929851904102>`_
+    * `Rock 5B board 16 GB <https://shop.allnetchina.cn/products/rock5-model-b?variant=39514839515238>`_
+    * `Radxa power supply <https://shop.allnetchina.cn/products/radxa-power-pd-30w?variant=39929851904102>`_
 
     CASES (Choose one)
 
-    `Acrylic protector with passive heatsink <https://shop.allnetchina.cn/products/rock5-b-acrylic-protector?variant=39877626396774>`_
-
-    `Aluminum case with passive/active cooling <https://shop.allnetchina.cn/collections/rock5-model-b/products/ecopi-5b-aluminum-housing-for-rock5-model-b?variant=47101353361724>`_
+    * `Acrylic protector with passive heatsink <https://shop.allnetchina.cn/products/rock5-b-acrylic-protector?variant=39877626396774>`_
+    * `Aluminum case with passive/active cooling <https://shop.allnetchina.cn/collections/rock5-model-b/products/ecopi-5b-aluminum-housing-for-rock5-model-b?variant=47101353361724>`_
 
   .. tab:: Orange Pi 5 Plus
 
@@ -79,9 +77,8 @@ If you don't know what an Ethereum node is, please visit the :doc:`User Guide se
 
     **Buy Links**
 
-    `Orange Pi 5 Plus official page <http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-5-plus.html>`_
-
-    `Orange Pi 5 Plus Case with heatsink <https://aliexpress.com/item/1005005728553439.html>`_
+    * `Orange Pi 5 Plus official page <http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-5-plus.html>`_
+    * `Orange Pi 5 Plus Case with heatsink <https://aliexpress.com/item/1005005728553439.html>`_
 
   .. tab:: Orange Pi 5
 
@@ -98,9 +95,8 @@ If you don't know what an Ethereum node is, please visit the :doc:`User Guide se
 
     **Buy Links**
     
-    `Orange Pi 5 official page <http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-5.html>`_
-
-    `Case with heatsink <https://aliexpress.com/item/1005005115126370.html>`_
+    * `Orange Pi 5 official page <http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-5.html>`_
+    * `Case with heatsink <https://aliexpress.com/item/1005005115126370.html>`_
 
 The key components are the NVMe disk and the RAM memory. Please, make sure **you get a board with 16 GB of RAM**.
 

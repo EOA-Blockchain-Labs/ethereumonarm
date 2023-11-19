@@ -1,0 +1,12 @@
+[Unit]
+Description=Lodestar Beacon chain daemon
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/lodestart.conf
+ExecStart=/usr/bin/lodestar  $ARGS
+Restart=always
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target

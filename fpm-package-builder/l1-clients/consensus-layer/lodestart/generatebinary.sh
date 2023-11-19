@@ -21,22 +21,22 @@ NODE_VERSION=${NODE_VERSION#v}
 TARBALL_NAME="node-v$NODE_VERSION-linux-arm64.tar.xz"
 
 # Check if the Node.js tarball already exists
-if [ ! -f $TARBALL_NAME ]; then
+if [ ! -f "$TARBALL_NAME" ]; then
     # Download the Node.js version for Linux x64
-    wget https://nodejs.org/dist/v$NODE_VERSION/$TARBALL_NAME
+    wget https://nodejs.org/dist/v"$NODE_VERSION"/"$TARBALL_NAME"
 fi
 
 # Create a directory for Node.js installation
 sudo mkdir -p /usr/local/lib/nodejs
 
 # Extract the downloaded tarball into the created directory, silently
-sudo tar -xJf $TARBALL_NAME -C /usr/local/lib/nodejs
+sudo tar -xJf "$TARBALL_NAME" -C /usr/local/lib/nodejs
 
 # Update .bashrc for the current user with Node.js environment variables
-echo "export PATH=/usr/local/lib/nodejs/node-v$NODE_VERSION-linux-arm64/bin:$PATH" >> /home/$USER/.bashrc
+echo "export PATH=/usr/local/lib/nodejs/node-v$NODE_VERSION-linux-arm64/bin:$PATH" >> /home/"$USER"/.bashrc
 
 # Source the updated .bashrc to apply changes
-source /home/$USER/.bashrc
+source /home/"$USER"/.bashrc
 
 # Check if yarn is installed, install if not
 if ! command -v yarn > /dev/null; then
@@ -52,12 +52,12 @@ LODESTAR_DIR="/home/$USER/lodestar"
 # Check if the lodestar repository is already cloned
 if [ -d "$LODESTAR_DIR" ]; then
     # Update the repository
-    cd $LODESTAR_DIR
+    cd "$LODESTAR_DIR" || exit
     git pull
 else
     # Clone the lodestar repository
-    git clone https://github.com/ChainSafe/lodestar.git $LODESTAR_DIR
-    cd $LODESTAR_DIR
+    git clone https://github.com/ChainSafe/lodestar.git "$LODESTAR_DIR"
+    cd "$LODESTAR_DIR" || exit
 fi
 
 # Install dependencies and build using yarn

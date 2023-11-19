@@ -10,7 +10,6 @@ In order to run an Ethereum node with our images, you will need one of these dev
 * Rock 5B
 * Orange Pi 5 Plus
 * Orange Pi 5
-* Raspberry Pi 4
 
 .. tip::
   We strongly recommend **NanoPC T6, Rock 5B or Orange Pi 5 Plus** boards to run an Ethereum full/staking node. 
@@ -36,8 +35,7 @@ If you don't know what an Ethereum node is, please visit the :doc:`User Guide se
 
     **Buy links**
 
-    `NanoPC T6 board 16 GB`_
-    .. _NanoPC T6 board 16 GB: https://www.friendlyelec.com/index.php?route=product/product&product_id=292
+    `NanoPC T6 board 16 GB <https://www.friendlyelec.com/index.php?route=product/product&product_id=292>`_
 
   .. tab:: Radxa Rock 5B
 

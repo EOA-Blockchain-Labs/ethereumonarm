@@ -4,7 +4,8 @@
 sudo apt-get update
 
 # Install required packages
-sudo apt-get install -y make gcc g++ jq
+sudo apt-get install -y make gcc g++ jq ruby ruby-dev rubygems build-essential rpm
+gem install --no-document fpm
 
 # Set a default Node.js version
 DEFAULT_NODE_VERSION="v20.9.0"
@@ -17,7 +18,7 @@ NODE_VERSION=${NODE_VERSION:-$DEFAULT_NODE_VERSION}
 NODE_VERSION=${NODE_VERSION#v}
 
 # Define the Node.js tarball name
-TARBALL_NAME="node-v$NODE_VERSION-linux-x64.tar.xz"
+TARBALL_NAME="node-v$NODE_VERSION-linux-arm64.tar.xz"
 
 # Check if the Node.js tarball already exists
 if [ ! -f $TARBALL_NAME ]; then
@@ -32,7 +33,7 @@ sudo mkdir -p /usr/local/lib/nodejs
 sudo tar -xJf $TARBALL_NAME -C /usr/local/lib/nodejs
 
 # Update .bashrc for the current user with Node.js environment variables
-echo "export PATH=/usr/local/lib/nodejs/node-v$NODE_VERSION-linux-x64/bin:$PATH" >> /home/$USER/.bashrc
+echo "export PATH=/usr/local/lib/nodejs/node-v$NODE_VERSION-linux-arm64/bin:$PATH" >> /home/$USER/.bashrc
 
 # Source the updated .bashrc to apply changes
 source /home/$USER/.bashrc

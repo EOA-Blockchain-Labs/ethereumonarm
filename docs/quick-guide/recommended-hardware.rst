@@ -34,6 +34,11 @@ If you don't know what an Ethereum node is, please visit the :doc:`User Guide se
     * **A case with passive heatsinkn**
     * USB keyboard, Monitor and HDMI cable (Optional)
 
+    **Buy links**
+
+    `NanoPC T6 board 16 GB`_
+    .. _NanoPC T6 board 16 GB: https://www.friendlyelec.com/index.php?route=product/product&product_id=292
+
   .. tab:: Radxa Rock 5B
 
     Recommended hardware and settings for running an Ethereum full/staking node on a Rock 5B board    
@@ -72,19 +77,6 @@ If you don't know what an Ethereum node is, please visit the :doc:`User Guide se
     * **Port forwarding** (see clients for further info)
     * **A case with passive heatsinkn**
     * USB keyboard, Monitor and HDMI cable (Optional)
-
-  .. tab:: Raspberry Pi 4
-
-    Recommended hardware and settings for running an Ethereum full/staking node on a Raspberry Pi 4
-
-    * **Raspberry 4 board** (8GB RAM)
-    * **MicroSD Card** (16 GB Class 10 minimum)
-    * **USB 3.0 disk** or a SSD with an USB to SATA case (2 TB Minimum) (see :doc:`Storage </user-guide/storage>` section).
-    * **Power supply**
-    * **Ethernet cable**
-    * **Port forwarding** (see clients for further info)
-    * **A case with heatsink and fan**
-    * USB keyboard, Monitor and HDMI cable (micro-HDMI) (Optional)
     
 
-The key components are the SDD disk and the RAM memory. Please, get the boards with 16 GB of RAM.
+The key components are the SDD disk and the RAM memory. Please, make sure **you get a board with 16 GB of RAM**.

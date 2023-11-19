@@ -101,9 +101,9 @@ if [ ! -f $FLAG ]; then
   # Get the network interface
   ACTIVE_INTERFACE=$(ip route get 8.8.8.8 | awk '/dev/ {print $5}')
   # Get the MAC address for the active network interface
-  MAC_ADDRESS=$(cat /sys/class/net/$ACTIVE_INTERFACE/address)
-  MAC_HASH=$(echo $MAC_ADDRESS | sha256sum | awk '{print substr($0,0,9)}')
-  echo ethereumonarm-orangepi5-$MAC_HASH >/etc/hostname
+  MAC_ADDRESS=$(cat /sys/class/net/"$ACTIVE_INTERFACE"/address)
+  MAC_HASH=$(echo "$MAC_ADDRESS" | sha256sum | awk '{print substr($0,0,9)}')
+  echo ethereumonarm-orangepi5-"$MAC_HASH" >/etc/hostname
   sed -i "s/orangepi5/ethereumonarm-orangepi5-$MAC_HASH/g" /etc/hosts
 
   # Create Ethereum account

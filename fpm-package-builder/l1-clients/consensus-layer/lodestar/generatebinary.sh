@@ -68,4 +68,4 @@ yarn install --frozen-lockfile
 yarn build
 
 # Package the application using caxa
-npx caxa --input . --output "lodestar.bin" -- "{{caxa}}/node_modules/.bin/node" "--max-old-space-size=4096" "{{caxa}}/node_modules/.bin/lodestar"
+npx caxa --input . --output "lodestar.bin" -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/node_modules/.bin/lodestar"

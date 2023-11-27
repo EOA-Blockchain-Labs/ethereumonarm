@@ -44,7 +44,7 @@ if ! command -v yarn > /dev/null; then
 fi
 
 # Install caxa
-npm install --save-dev caxa
+yarn global add caxa
 
 # Define the lodestar repository directory
 LODESTAR_DIR="/home/$USER/lodestar"
@@ -53,15 +53,18 @@ LODESTAR_DIR="/home/$USER/lodestar"
 if [ -d "$LODESTAR_DIR" ]; then
     # Update the repository
     cd "$LODESTAR_DIR" || exit
-    git pull
+    git fetch
 else
     # Clone the lodestar repository
     git clone https://github.com/ChainSafe/lodestar.git "$LODESTAR_DIR"
     cd "$LODESTAR_DIR" || exit
 fi
 
+# Switch to tag of latest release
+git checkout $(curl -s "https://api.github.com/repos/ChainSafe/lodestar/releases/latest" | jq '.tag_name' | tr -d  '"')
+
 # Install dependencies and build using yarn
-yarn install
+yarn install --frozen-lockfile
 yarn build
 
 # Package the application using caxa

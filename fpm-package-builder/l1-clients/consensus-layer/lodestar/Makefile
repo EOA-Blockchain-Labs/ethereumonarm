@@ -13,7 +13,7 @@ PKG_DESCRIPTION := "Ethereum 2.0 Lodestar implementation"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
 
 CATEGORY := science
-WEB_URL :=  https://lodestar.team/ # Update this with the appropriate URL for lodestar
+WEB_URL :=  https://github.com/ChainSafe/lodestar
 
 PKG_VENDOR := "Ethereum on ARM"
 PKG_LICENSE := Apache License 2.0

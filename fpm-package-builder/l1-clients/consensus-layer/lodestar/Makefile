@@ -3,7 +3,7 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-LODESTAR_VERSION := $(shell curl -s https://api.github.com/repos/nodejs/node/releases | jq -r '[.[] | select(.name | contains("LTS"))][0].tag_name')
+LODESTAR_VERSION := $(shell curl -s "https://api.github.com/repos/ChainSafe/lodestar/releases/latest" | jq '.tag_name' | tr -d  '"'| tr -d "v")
 LODESTAR_BIN_PATH := "lodestar.bin" # Update this to the path where your lodestarbin is located
 
 PKG_RELEASE := 0

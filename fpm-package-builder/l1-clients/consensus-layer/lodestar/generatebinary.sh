@@ -8,7 +8,7 @@ sudo apt-get install -y make gcc g++ jq ruby ruby-dev rubygems build-essential r
 gem install --no-document fpm
 
 # Set a default Node.js version
-DEFAULT_NODE_VERSION="v20.9.0"
+DEFAULT_NODE_VERSION="v20.10.0"
 
 # Fetch the latest LTS version of Node.js, use default if the command fails
 NODE_VERSION=$(curl -s https://api.github.com/repos/nodejs/node/releases | jq -r '[.[] | select(.name | contains("LTS"))][0].tag_name')

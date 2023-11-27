@@ -19,7 +19,7 @@
       "name": "VAR_VALIDATOR_JOB",
       "type": "constant",
       "label": "Validator client job name",
-      "value": "lodestart-validator",
+      "value": "lodestar-validator",
       "description": ""
     }
   ],
@@ -3304,7 +3304,7 @@
     "Beacon",
     "Consensus",
     "Validator",
-    "Lodestart"
+    "lodestar"
   ],
   "templating": {
     "list": [

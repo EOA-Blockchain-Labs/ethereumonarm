@@ -52,11 +52,11 @@ scrape_configs:
     static_configs:
       - targets: ["127.0.0.1:8009"]
 
-  - job_name: "lodestart-beacon"  # Lodestar Beacon for ETH 2.0
+  - job_name: "lodestar-beacon"  # Lodestar Beacon for ETH 2.0
     static_configs:
       - targets: ["localhost:4040"]
 
-  - job_name: "lodestart-validator"  # Lodestar Validator for ETH 2.0
+  - job_name: "lodestar-validator"  # Lodestar Validator for ETH 2.0
     static_configs:
       - targets: ["localhost:5064"]
 

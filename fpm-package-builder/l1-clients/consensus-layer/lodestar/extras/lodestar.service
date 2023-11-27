@@ -3,7 +3,7 @@ Description=Lodestar Beacon chain daemon
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/lodestart.conf
+EnvironmentFile=/etc/ethereum/lodestar.conf
 ExecStart=/usr/bin/lodestar  $ARGS
 Restart=always
 User=ethereum

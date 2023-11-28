@@ -44,7 +44,7 @@ if ! command -v yarn > /dev/null; then
 fi
 
 # Install caxa
-yarn global add caxa
+yarn global add caxa@3.0.1
 
 # Define the lodestar repository directory
 LODESTAR_DIR="/home/$USER/lodestar"

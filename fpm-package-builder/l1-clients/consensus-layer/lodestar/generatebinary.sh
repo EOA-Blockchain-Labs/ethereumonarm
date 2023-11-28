@@ -40,7 +40,7 @@ source /home/"$USER"/.bashrc
 
 # Check if yarn is installed, install if not
 if ! command -v yarn > /dev/null; then
-    npm install -g yarn
+    npm install -g yarn@1.22.21
 fi
 
 # Install caxa

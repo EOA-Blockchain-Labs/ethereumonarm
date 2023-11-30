@@ -8,7 +8,7 @@ sudo apt-get install -y make gcc g++ jq ruby ruby-dev rubygems build-essential r
 gem install --no-document fpm
 
 # Set a default Node.js version
-DEFAULT_NODE_VERSION="v20.9.0"
+DEFAULT_NODE_VERSION="v20.10.0"
 
 # Fetch the latest LTS version of Node.js, use default if the command fails
 NODE_VERSION=$(curl -s https://api.github.com/repos/nodejs/node/releases | jq -r '[.[] | select(.name | contains("LTS"))][0].tag_name')
@@ -40,11 +40,11 @@ source /home/"$USER"/.bashrc
 
 # Check if yarn is installed, install if not
 if ! command -v yarn > /dev/null; then
-    npm install -g yarn
+    npm install -g yarn@1.22.21
 fi
 
 # Install caxa
-npm install --save-dev caxa
+npm install -g caxa@3.0.1
 
 # Define the lodestar repository directory
 LODESTAR_DIR="/home/$USER/lodestar"
@@ -53,15 +53,18 @@ LODESTAR_DIR="/home/$USER/lodestar"
 if [ -d "$LODESTAR_DIR" ]; then
     # Update the repository
     cd "$LODESTAR_DIR" || exit
-    git pull
+    git fetch
 else
     # Clone the lodestar repository
     git clone https://github.com/ChainSafe/lodestar.git "$LODESTAR_DIR"
     cd "$LODESTAR_DIR" || exit
 fi
 
+# Switch to tag of latest release
+git checkout $(curl -s "https://api.github.com/repos/ChainSafe/lodestar/releases/latest" | jq '.tag_name' | tr -d  '"')
+
 # Install dependencies and build using yarn
-yarn install
+yarn install --frozen-lockfile
 yarn build
 
 # Package the application using caxa

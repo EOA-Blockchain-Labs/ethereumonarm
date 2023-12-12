@@ -4,3 +4,4 @@ fpm-package-builder/packages/
 image-creation-tool/ubuntu/*.img
 image-creation-tool/ubuntu/*.zip
 image-creation-tool/ubuntu-rescue/*.img
+fpm-package-builder/l1-clients/consensus-layer/lodestar/lodestar.bin

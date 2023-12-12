@@ -214,6 +214,30 @@ Wait for the command to finish.
 
 The Nimbus Beacon Chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 
+Lodestar
+~~~~~~~~
+
+:guilabel:`Lodestar` is a full Consensus Layer client written in Type Script.
+
+.. csv-table::
+  :header: Systemd Services , Home Directory, Config File, Default TCP/UDP Port
+
+  `lodestar-beacon lodestar-validator`, `/home/ethereum/.lodestar`, `/etc/ethereum/lodestar-beacon.conf /etc/ethereum/lodestar-validator.conf`, `9000`
+
+1.- Port forwarding
+
+You need to open the 9000 port (both UDP and TCP)
+
+2.- Start the beacon chain
+
+Under the ethereum account, run:
+
+.. prompt:: bash $
+
+  sudo systemctl start lodestar-beacon
+
+The Lodestar beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
+
 Execution Layer nodes
 ---------------------
 
@@ -624,3 +648,31 @@ Start the Teku Validator:
   sudo systemctl start teku-validator
 
 The Teku Validator is now enabled.
+
+**LODESTAR**
+
+We need to import the validator keys. Run under the ethereum account:
+
+.. prompt:: bash $
+
+  lodestar validator import --importKeystores /home/ethereum/validator_keys --dataDir /home/ethereum/.lodestar
+
+Enter the password previously defined.
+
+Now, copy and paste your Ethereum Address for receiving tips and set the set the fee recipient flag:
+
+.. prompt:: bash $
+
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/lodestar-validator.conf
+
+  For instance, your command should look like this::
+
+.. prompt:: bash $
+
+  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/lodestar-validator.conf
+
+Start the Lodestar Validator service:
+
+.. prompt:: bash $
+
+  sudo systemctl start lodestar-validator

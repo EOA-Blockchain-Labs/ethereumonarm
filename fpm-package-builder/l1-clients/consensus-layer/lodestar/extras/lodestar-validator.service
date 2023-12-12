@@ -1,9 +1,9 @@
 [Unit]
-Description=Lodestar Beacon chain daemon
+Description=Lodestar Validator daemon
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/lodestar.conf
+EnvironmentFile=/etc/ethereum/lodestar-validator.conf
 ExecStart=/usr/bin/lodestar  $ARGS
 Restart=always
 User=ethereum

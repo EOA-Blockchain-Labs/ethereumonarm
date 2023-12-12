@@ -16,20 +16,20 @@ CATEGORY := science
 WEB_URL :=  https://github.com/ChainSafe/lodestar
 
 PKG_VENDOR := "Ethereum on ARM"
-PKG_LICENSE := Apache License 2.0
+PKG_LICENSE := "GNU Lesser General Public License v3.0"
 
 PKG_ARCH_DEB := arm64
 PKG_ARCH_RPM := arm64
 
 SOURCESDIR := sources/
-OUTPUTDIR := .
+OUTPUTDIR := ../../../packages
 
 PKG_DEB := $(PKG_NAME)_$(LODESTAR_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
 
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(LODESTAR_VERSION) --license $(PKG_LICENSE)\
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-	--deb-systemd extras/lodestar.service
+	--deb-systemd extras/lodestar-beacon.service --deb-systemd extras/lodestar-validator.service
 
 
 all: prepare deb clean test

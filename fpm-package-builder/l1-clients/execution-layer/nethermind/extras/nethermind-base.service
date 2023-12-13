@@ -1,0 +1,14 @@
+[Unit]
+Description=Nethermind Ethereum Optimism ECL Daemon
+After=network.target
+
+[Service]
+User=ethereum
+EnvironmentFile=/etc/ethereum/nethermind-base.conf
+ExecStart=/usr/bin/nethermind $ARGS
+Restart=on-failure
+WorkingDirectory=/home/ethereum
+LimitNOFILE=1000000
+
+[Install]
+WantedBy=default.target

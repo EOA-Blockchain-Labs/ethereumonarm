@@ -205,6 +205,9 @@ technology called Optimistic Rollups.
 Optimism aims to address Ethereum's high gas costs and slow transaction speeds by moving most transactions off 
 the Ethereum mainnet while still maintaining a high level of security.
 
+Official Clients
+~~~~~~~~~~~~~~~~
+
 .. note::
 
   1. We will sync Optimism using an :guilabel:`Op-Geth` Snapshot. Take into account that this is a large snapshot and 
@@ -222,8 +225,7 @@ In order to run an Optimism node you need to:
 5. Start and sync the :guilabel:`Op-Node` client
 6. (Optional) Start the :guilabel:`L2Geth` client (not available yet)
 
-Snapshots
-~~~~~~~~~
+**SNAPSHOTS**
 
 We included 1 script that download and decompress the :guilabel:`Op-Geth` Snapshot automatically. The recommended steps are as follows:
 
@@ -245,9 +247,6 @@ Once inside screen, run the download script as the ``ethereum`` user:
 
 This will download the :guilabel:`Op-Geth` snapshot. Once downloaded it will be decompressed into the 
 correct directory.
-
-Clients
-~~~~~~~
 
 Set the synced IP L1 ethereum node:
 
@@ -280,6 +279,44 @@ Now, start the :guilabel:`Op-Node` client:
 
 Congrats, you are now running an Optimism Bedrock node.
 
+Nethermind Execution Client 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can use the :guilabel:`Nethermind` Execution Layer implementation along with :guilabel:`Op-Node` client.
+
+In this case, :guilabel:`Nethermind` takes care of downloading and decompressing the Snapshot so just need 
+to set the L1 address and start the Systemd services:
+
+.. prompt:: bash $
+
+  sudo sed -i "s/changeme/YOUR_IP/" /etc/ethereum/op-node.conf
+
+For example:
+
+.. prompt:: bash $
+
+  sudo sed -i "s/changeme/192.168.0.10/" /etc/ethereum/op-node.conf
+
+Now, start the :guilabel:`Nethermind` service:
+
+.. prompt:: bash $
+
+  systemctl start op-nethermind
+
+Wait for the Snapshot to download and decompress, you can monitor the progress by running:
+
+.. prompt:: bash $
+
+  sudo journalctl -u op-nethermind -f
+
+And start the :guilabel:`Op-Node` service:
+
+.. prompt:: bash $
+
+  systemctl start op-node
+  sudo journalctl -u op-node -f
+  
+
 Base
 ----
 
@@ -287,6 +324,9 @@ Base, developed by Coinbase, is a new Layer-Two (L2) blockchain built on Optimis
 
 While initially centralized in block production, plans to leverage Optimism's "superchain" concept, 
 enhancing interoperability and reducing transaction fees.
+
+Official Clients
+~~~~~~~~~~~~~~~~
 
 .. note::
 
@@ -304,8 +344,7 @@ In order to run an Optimism node you need to:
 4. Start and sync the :guilabel:`Op-Geth-Base` client
 5. Start and sync the :guilabel:`Op-Node-Base` client
 
-Snapshots
-~~~~~~~~~
+**SNAPSHOTS**
 
 We included 1 script that downloads and decompress the :guilabel:`Op-Geth` Snapshot automatically. The recommended steps are as follows:
 
@@ -327,9 +366,6 @@ Once inside screen, run the download script as the ``ethereum`` user:
 
 This will download the :guilabel:`Op-Geth-Base` snapshot. Once downloaded it will be decompressed into the 
 correct directory.
-
-Clients
-~~~~~~~
 
 Set the synced IP L1 ethereum node:
 
@@ -361,3 +397,40 @@ Now, start the :guilabel:`Op-Node-Base` client:
   sudo journalctl -u op-node-base -f
 
 Congrats, you are now running a Base node.
+
+Nethermind Execution Client 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can use the :guilabel:`Nethermind` Execution Layer implementation along with :guilabel:`Op-Node` client.
+
+In this case, :guilabel:`Nethermind` takes care of downloading and decompressing the Base Snapshot so just need 
+to set the L1 address and start the Systemd services:
+
+.. prompt:: bash $
+
+  sudo sed -i "s/changeme/YOUR_IP/" /etc/ethereum/op-node-base.conf
+
+For example:
+
+.. prompt:: bash $
+
+  sudo sed -i "s/changeme/192.168.0.10/" /etc/ethereum/op-node-base.conf
+
+Now, start the :guilabel:`Nethermind` Base service:
+
+.. prompt:: bash $
+
+  systemctl start base-nethermind
+
+Wait for the Snapshot to download and decompress, you can monitor the progress by running:
+
+.. prompt:: bash $
+
+  sudo journalctl -u base-nethermind -f
+
+And start the :guilabel:`Op-Node` service:
+
+.. prompt:: bash $
+
+  systemctl start op-node-base
+  sudo journalctl -u op-node-base -f

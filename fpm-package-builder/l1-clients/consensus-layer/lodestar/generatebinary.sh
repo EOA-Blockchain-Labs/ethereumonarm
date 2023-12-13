@@ -5,7 +5,7 @@ sudo apt-get update
 
 # Install required packages
 sudo apt-get install -y make gcc g++ jq ruby ruby-dev rubygems build-essential rpm
-gem install --no-document fpm
+sudo gem install --no-document fpm
 
 # Set a default Node.js version
 DEFAULT_NODE_VERSION="v20.10.0"

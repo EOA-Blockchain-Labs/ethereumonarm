@@ -403,8 +403,10 @@ Nethermind Execution Client
 
 You can use the :guilabel:`Nethermind` Execution Layer implementation along with :guilabel:`Op-Node` client.
 
-In this case, :guilabel:`Nethermind` takes care of downloading and decompressing the Base Snapshot so just need 
-to set the L1 address and start the Systemd services:
+.. note::
+  There is no support for downloading a Snapshot in the Base layer.
+
+Set the L1 client IP:
 
 .. prompt:: bash $
 
@@ -422,7 +424,7 @@ Now, start the :guilabel:`Nethermind` Base service:
 
   systemctl start base-nethermind
 
-Wait for the Snapshot to download and decompress, you can monitor the progress by running:
+Logs here:
 
 .. prompt:: bash $
 

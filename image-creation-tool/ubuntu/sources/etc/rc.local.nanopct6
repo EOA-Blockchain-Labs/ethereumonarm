@@ -150,7 +150,7 @@ if [ ! -f $FLAG ]; then
   echo Installing Ethereum packages
   apt-get update
   # Install Layer 1
-  apt-get -y install geth nethermind erigon reth besu prysm lighthouse nimbus teku staking-deposit-cli
+  apt-get -y install geth nethermind erigon reth besu prysm lighthouse nimbus teku lodestar staking-deposit-cli
   # install Layer 2
   apt-get -y install arbitrum-nitro optimism-op-geth optimism-op-node polygon-bor polygon-heimdall starknet-juno
 
@@ -199,6 +199,13 @@ EOF
   if [ -d "/home/ethereum/.etc/ethereum/" ]; then
     rsync --min-size=1 -avz "/home/ethereum/.etc/ethereum/" "/etc/ethereum/"
   fi
+
+  # Add EOA Release version
+  EOA_RELEASE_FILE="/etc/eoa-release"
+  EOA_MINOR_VERSION=${EOA_MINOR_VERSION:-0}
+  EOA_MAJOR_VERSION=$(date +"%y"."%m")
+  EOA_VERSION="Ethereum on ARM $EOA_MAJOR_VERSION.$EOA_MINOR_VERSION"
+  echo "$EOA_VERSION" > "$EOA_RELEASE_FILE"
 
   #the next line creates an empty file so it won't run on next boot
   touch $FLAG

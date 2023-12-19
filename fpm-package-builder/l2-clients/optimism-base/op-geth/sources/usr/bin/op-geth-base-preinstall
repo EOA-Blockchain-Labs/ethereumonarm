@@ -1,7 +1,7 @@
 #!/bin/bash
 
-OPGETH_SNAPSHOT=$(curl https://base-mainnet-archive-snapshots.s3.us-east-1.amazonaws.com/latest)
-URL="https://base-mainnet-archive-snapshots.s3.us-east-1.amazonaws.com/$OPGETH_SNAPSHOT"
+OPGETH_SNAPSHOT=$(curl https://base-snapshots-mainnet-archive.s3.amazonaws.com/latest)
+URL="https://base-snapshots-mainnet-archive.s3.amazonaws.com/$OPGETH_SNAPSHOT"
 OPGETH_DIR="/home/ethereum/.op-geth-base"
 
 echo "Downloading Base Snapshot ..."
@@ -9,7 +9,7 @@ wget -c -P "$OPGETH_DIR" "$URL"
 
 # extract the downloaded file
 echo "Extracting Base snapshot ..."
-tar -xzf "$OPGETH_DIR/$OPGETH_SNAPSHOT" --strip-components=1 -C "$OPGETH_DIR"
+tar -xzf "$OPGETH_DIR/$OPGETH_SNAPSHOT" --strip-components=3 -C "$OPGETH_DIR"
 
 # clean up
 echo "Cleaning up ..."

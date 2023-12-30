@@ -422,13 +422,13 @@ Now, start the :guilabel:`Nethermind` Base service:
 
 .. prompt:: bash $
 
-  systemctl start base-nethermind
+  systemctl start nethermind-base
 
 Logs here:
 
 .. prompt:: bash $
 
-  sudo journalctl -u base-nethermind -f
+  sudo journalctl -u nethermind-base -f
 
 And start the :guilabel:`Op-Node` service:
 

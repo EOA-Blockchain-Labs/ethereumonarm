@@ -301,13 +301,13 @@ Now, start the :guilabel:`Nethermind` service:
 
 .. prompt:: bash $
 
-  systemctl start op-nethermind
+  systemctl start nethermind-op
 
 Wait for the Snapshot to download and decompress, you can monitor the progress by running:
 
 .. prompt:: bash $
 
-  sudo journalctl -u op-nethermind -f
+  sudo journalctl -u nethermind-op -f
 
 And start the :guilabel:`Op-Node` service:
 

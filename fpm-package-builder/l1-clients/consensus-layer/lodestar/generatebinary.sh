@@ -4,7 +4,7 @@
 sudo apt-get update
 
 # Install required packages
-sudo apt-get install -y make gcc g++ jq ruby ruby-dev rubygems build-essential rpm
+sudo apt-get install -y make gcc g++ jq ruby ruby-dev rubygems build-essential rpm npm
 sudo gem install --no-document fpm
 
 # Set a default Node.js version
@@ -40,7 +40,7 @@ source /home/"$USER"/.bashrc
 
 # Check if yarn is installed, install if not
 if ! command -v yarn > /dev/null; then
-    npm install -g yarn@1.22.21
+    sudo npm install -g yarn@1.22.21
 fi
 
 # Install caxa

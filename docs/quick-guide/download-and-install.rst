@@ -225,7 +225,7 @@ You should see a device named ``mmcblk0`` or ``sd(x)``.
   The ``dd`` command will completely erase your MicroSD device so make sure you are targeting 
   the correct one.
 
-Unzip and flash the image (we are using here the Rock 5B image):
+Unzip and flash the image (we are using here the NanoPC image):
 
 .. prompt:: bash $
 

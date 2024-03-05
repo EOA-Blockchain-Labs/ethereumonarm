@@ -3,7 +3,7 @@ Description=Nimbus Beacon chain daemon
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/nimbus-beacon.conf
+EnvironmentFile=/etc/ethereum/nimbus-beacon-holesky.conf
 ExecStart=/usr/bin/nimbus_beacon_node $ARGS
 Restart=always
 User=ethereum

@@ -1,7 +1,7 @@
 [Unit]
   Description=Optimism op-node Service
 [Service]
-  ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.op-node-base && mkdir -p /home/ethereum/.op-node-base'
+  ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.op-geth-base && op-geth init /etc/ethereum/genesis-l2.json --datadir=/home/ethereum/.op-geth-base'
   WorkingDirectory=/home/ethereum
   EnvironmentFile=/etc/ethereum/op-node-base.conf
   ExecStart=/usr/bin/op-node $ARGS

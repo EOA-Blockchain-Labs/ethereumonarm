@@ -4,7 +4,6 @@
   StartLimitBurst=5
 
 [Service]
-  ExecStartPre=-/bin/bash -c '/usr/bin/test ! -d /home/ethereum/.op-geth-base && /usr/bin/op-geth-base-preinstall'
   EnvironmentFile=/etc/ethereum/op-geth-base.conf
   Restart=on-failure
   RestartSec=5s

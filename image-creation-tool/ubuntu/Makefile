@@ -16,7 +16,7 @@ define modify_image
 	sudo rm -f /tmp/ubuntu_iso/etc/systemd/system/getty@.service.d/override.conf
 	sudo rm -f /tmp/ubuntu_iso/etc/systemd/system/serial-getty@.service.d/override.conf
 
-	sudo test -f "/tmp/ubuntu_iso/root/.not_logged_in_yet" && sudo rm -f /tmp/ubuntu_iso/root/.not_logged_in_yet
+	sudo test -f "/tmp/ubuntu_iso/root/.not_logged_in_yet" && sudo rm -f /tmp/ubuntu_iso/root/.not_logged_in_yet || echo no armbian release detected
 	sync
 	sudo umount /tmp/ubuntu_iso
 	mv $(notdir $1) ethonarm_$(3)_$(DATE).$(RELEASE).img
@@ -32,6 +32,11 @@ rock5b_url := https://fi.mirror.armbian.de/archive/rock-5b/archive/Armbian_23.8.
 rock5b_iso := Armbian_23.8.1_Rock-5b_jammy_legacy_5.10.160.img
 rock5b_offset := 285212672
 rock5b_rclocal := rock5b
+
+rock5b32_url := https://github.com/radxa-build/rock-5b/releases/download/b39/rock-5b_ubuntu_jammy_cli_b39.img.xz
+rock5b32_iso := rock-5b_ubuntu_jammy_cli_b39.img
+rock5b32_offset := 348127232
+rock5b32_rclocal := rock5b32
 
 orangepi5_url := https://fi.mirror.armbian.de/archive/orangepi5/archive/Armbian_23.8.1_Orangepi5_jammy_legacy_5.10.160.img.xz
 orangepi5_iso := Armbian_23.8.1_Orangepi5_jammy_legacy_5.10.160.img
@@ -58,6 +63,10 @@ rpi:
 rock5b:
 	$(call download_image,$(rock5b_url))
 	$(call modify_image,$(rock5b_iso),$(rock5b_offset),$(rock5b_rclocal))
+
+rock5b32:
+	$(call download_image,$(rock5b32_url))
+	$(call modify_image,$(rock5b32_iso),$(rock5b32_offset),$(rock5b32_rclocal))
 
 orangepi5:
 	$(call download_image,$(orangepi5_url))

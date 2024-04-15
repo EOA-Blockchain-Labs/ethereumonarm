@@ -16,7 +16,7 @@
 format_disk() {
   local DISK="$1"
   # Different partition naming convention for drives
-  local PARTITION="${DISK}2"
+  local PARTITION="${DISK}1"
 
   # Mount partition if it exists and is a Linux partition
   if [[ -b "$PARTITION" && $(file -s "$PARTITION" | grep -oP 'Linux.*filesystem') ]]; then
@@ -74,11 +74,11 @@ if [ ! -f $FLAG ]; then
     # Partition and format NVMe drive
     format_disk /dev/sda
     # Remove FS reserved blocks
-    tune2fs -m 0 /dev/sda2
+    tune2fs -m 0 /dev/sda1
 
     # Mount  drive as /home
     echo "Mounting disk as /home"
-    echo '/dev/sda2 /home ext4 defaults,noatime 0 2' >>/etc/fstab && mount /home
+    echo '/dev/sda1 /home ext4 defaults,noatime 0 2' >>/etc/fstab && mount /home
   else
     echo "No disk found. You need a disk to run an Ethereum node, stopping the installation"
     exit 1

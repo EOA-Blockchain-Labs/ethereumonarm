@@ -741,4 +741,4 @@ Lastly, set up your password and start the client:
   echo "$YOUR_PASSWORD" > /home/ethereum/validator_keys/grandine-password.txt
   sudo systemctl start grandine-validator
 
-The Grandine validator is now enabled. Wait for the **Beacon Chain** to sync and check the logs for further info.
+The **Grandine validator** is now enabled. Wait for the **Beacon Chain** to sync and check the logs for further info.

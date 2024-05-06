@@ -238,6 +238,40 @@ Under the ethereum account, run:
 
 The Lodestar beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 
+Grandine
+~~~~~~~~
+
+:guilabel:`Prysm` is a full Consensus Layer client written in Rust.
+
+.. csv-table::
+  :header: Systemd Services, Home Directory, Config Files, Default TCP/UDP Port
+
+  `grandine-beacon grandine-validator`, `/home/ethereum/.grandine`, `/etc/ethereum/grandine-beacon.conf /etc/ethereum/grandine-validator.conf`, `9000`
+
+1.- Port forwarding
+
+You need to open the 9000 (TCP/UDP) ports in your router/firewall
+
+.. warning::
+
+  Curently, :guilabel:`Grandine` runs in one instance, so if you want to stake you will need to 
+  configure the **Validator** file config and run the **grandine-validator** service that will start both 
+  Beacon and Validator processes,. 
+
+2.- Start the beacon chain (if you want to run a validator, skip this step and go to staking section)
+
+Under the ethereum account, run:
+
+.. prompt:: bash $
+
+  sudo systemctl start grandine-beacon
+
+This will start to sync the Beacon Chain. **This may take just some minutes as Checkpoint sync 
+is enabled by default.**
+
+
+The Grandine beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
+
 Execution Layer nodes
 ---------------------
 
@@ -554,7 +588,7 @@ Import the validator keys. Run under the ethereum account:
 Accept the default wallet path and enter a password for your wallet. Now enter 
 the password previously defined.
 
-Now, copy and paste your Ethereum Address for receiving tips and set the set the fee recipient flag:
+Now, copy and paste your Ethereum Address for receiving tips and set the fee recipient flag:
 
 .. prompt:: bash $
 
@@ -676,3 +710,30 @@ Start the Lodestar Validator service:
 .. prompt:: bash $
 
   sudo systemctl start lodestar-validator
+
+  **GRANDINE**
+
+.. warning::
+
+  Make sure you are NOT running the **grandine-beacon** service before starting **grandine-validator** 
+
+First, copy and paste your Ethereum Address for receiving tips and set the fee recipient flag:
+
+.. prompt:: bash $
+
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/grandine-validator.conf
+
+  For instance, your command should look like this::
+
+.. prompt:: bash $
+
+  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/grandine-validator.conf
+
+Lastly, set up your password and start the client:
+
+.. prompt:: bash $
+
+  echo "$YOUR_PASSWORD" > /home/ethereum/validator_keys/grandine-password.txt
+  sudo systemctl start grandine-validator
+
+The Grandine validator is now enabled. Wait for the **Beacon Chain** to sync and check the logs for further info.

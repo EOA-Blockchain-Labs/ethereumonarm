@@ -245,7 +245,7 @@ The Lodestar beacon chain is now started. Wait for it to get in sync. Choose an 
 Grandine
 ~~~~~~~~
 
-:guilabel:`Prysm` is a full Consensus Layer client written in Rust.
+:guilabel:`Grandine` is a full Consensus Layer client written in Rust.
 
 .. csv-table::
   :header: Systemd Services, Home Directory, Config Files, Default TCP/UDP Port

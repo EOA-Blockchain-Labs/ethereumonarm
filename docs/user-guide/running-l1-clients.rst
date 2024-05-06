@@ -715,7 +715,8 @@ Start the Lodestar Validator service:
 
   sudo systemctl start lodestar-validator
 
-  **GRANDINE**
+
+**GRANDINE**
 
 .. warning::
 

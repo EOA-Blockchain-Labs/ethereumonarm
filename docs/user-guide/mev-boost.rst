@@ -67,7 +67,7 @@ Edit the Validator config file:
 
   sudo vim /etc/ethereum/lighthouse-validator.conf
 
-Add the flag ``--builder-proposals``at the end of the file.
+Add the flag ``--builder-proposals`` at the end of the file.
 
 Teku
 ~~~~

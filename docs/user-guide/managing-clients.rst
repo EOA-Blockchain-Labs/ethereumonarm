@@ -56,8 +56,10 @@ These are the list of services available for all clients:
 
    `Lighthouse`, `lighthouse-beacon` `lighthouse-validator` 
    `prysm`, `prysm-beacon` `prysm-validator`
-   `Nimbus`, `nimbus`
-   `Teku`, `teku`
+   `Nimbus`, `nimbus-beacon` `nimbus-validator`
+   `Teku`, `teku-beacon` `teku-validator`
+   `Lodestar`, `lodestar-beacon` `lodestar-validator`
+   `Grandine`, `grandine-beacon`
 
 
 Changing Parameters
@@ -163,6 +165,8 @@ These are the available packages:
 * prysm
 * teku
 * nimbus
+* lodestar
+* grandine
 
 **L2 clients**
 

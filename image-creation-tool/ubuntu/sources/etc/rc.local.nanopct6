@@ -207,6 +207,9 @@ EOF
   EOA_VERSION="Ethereum on ARM $EOA_MAJOR_VERSION.$EOA_MINOR_VERSION"
   echo "$EOA_VERSION" > "$EOA_RELEASE_FILE"
 
+  # Correct ethereum home permissions if /home already exists
+  chown -R ethereum:ethereum /home/ethereum/
+
   #the next line creates an empty file so it won't run on next boot
   touch $FLAG
   grep "rc.local" /var/log/syslog >>$FLAG

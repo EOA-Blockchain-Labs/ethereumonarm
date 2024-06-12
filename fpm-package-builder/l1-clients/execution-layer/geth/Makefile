@@ -41,7 +41,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(GETH_VERSION) --license $(PKG_LICENSE
 
 all: prepare deb clean test
 
-prepare: ## Donwload the latest binary and prepare the package files
+prepare: ## Download the latest binary and prepare the package files
 	wget https://gethstore.blob.core.windows.net/builds/geth-linux-$(PKG_ARCH_DEB)-$(GETH_VERSION)-$(GETH_DHASH).tar.gz -O - | tar -xz -C sources/usr/bin/ --wildcards --absolute-names --no-anchored --strip-components 1 '*/geth'
 
 deb: ## Create deb package

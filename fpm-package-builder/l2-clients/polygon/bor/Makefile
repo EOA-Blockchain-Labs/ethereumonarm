@@ -39,7 +39,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(BOR_VERSION) --license $(PKG_LICENSE)
 
 all: prepare deb clean test
 
-prepare: ## Donwload the latest binary and prepare the package files
+prepare: ## Download the latest binary and prepare the package files
 	mkdir -p /tmp/bor_tmp
 	wget https://github.com/maticnetwork/bor/releases/download/v$(BOR_VERSION)/bor-v$(BOR_VERSION)-arm64.deb -O - | dpkg -x - /tmp/bor_tmp/bor
 	cp /tmp/bor_tmp/bor/usr/bin/bor sources/usr/bin

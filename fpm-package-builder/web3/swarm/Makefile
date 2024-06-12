@@ -39,7 +39,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(BEE_VERSION) --license $(PKG_LICENSE)
 
 all: prepare deb clean test
 
-prepare: ## Donwload the latest binary and prepare the package files
+prepare: ## Download the latest binary and prepare the package files
 	wget https://github.com/ethersphere/bee/releases/download/v$(BEE_VERSION)/bee-linux-arm64 -O $(SOURCESDIR)/usr/bin/bee
 	chmod 755  $(SOURCESDIR)/usr/bin/bee
 

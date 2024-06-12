@@ -36,7 +36,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(PAPYRUS_VERSION) --license $(PKG_LICE
 
 all: prepare deb clean test
 
-prepare: ## Donwload the latest binary and compile the package files
+prepare: ## Download the latest binary and compile the package files
 	mkdir -p /tmp/papyrus_tmp
 	cd /tmp/papyrus_tmp ; git clone https://github.com/starkware-libs/papyrus.git
 	cd /tmp/papyrus_tmp/papyrus ; PKG_CONFIG=/usr/bin/aarch64-linux-gnu-pkg-config PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig/ cargo build --release --package papyrus_node --bin papyrus_node --target aarch64-unknown-linux-gnu 

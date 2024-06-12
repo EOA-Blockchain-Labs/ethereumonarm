@@ -39,7 +39,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(GRANDINE_VERSION) --license $(PKG_LIC
 
 all: prepare deb clean test
 
-prepare: ## Donwload the latest binary and prepare the package files
+prepare: ## Download the latest binary and prepare the package files
 	wget  https://github.com/grandinetech/grandine/releases/download/$(GRANDINE_VERSION)/grandine-$(GRANDINE_VERSION)-arm64 -O sources/usr/bin/grandine
 	chmod +x sources/usr/bin/grandine
 

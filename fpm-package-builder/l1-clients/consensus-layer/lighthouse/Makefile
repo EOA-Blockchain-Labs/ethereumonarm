@@ -41,7 +41,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(LIGHTHOUSE_VERSION) --license $(PKG_L
 
 all: prepare deb clean test
 
-prepare: ## Donwload the latest binary and prepare the package files
+prepare: ## Download the latest binary and prepare the package files
 	wget  https://github.com/sigp/lighthouse/releases/download/v$(LIGHTHOUSE_VERSION)/lighthouse-v$(LIGHTHOUSE_VERSION)-aarch64-unknown-linux-gnu.tar.gz -O - | tar -xz -C sources/usr/bin/  lighthouse
 
 deb: ## Create deb package

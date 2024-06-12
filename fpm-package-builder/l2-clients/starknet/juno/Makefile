@@ -36,7 +36,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(JUNO_VERSION) --license $(PKG_LICENSE
 
 all: prepare deb clean test
 
-prepare: ## Donwload the latest binary and compile the package files
+prepare: ## Download the latest binary and compile the package files
 	mkdir -p /tmp/juno_tmp
 	cd /tmp/juno_tmp ; wget https://github.com/NethermindEth/juno/releases/download/v$(JUNO_VERSION)/juno-v$(JUNO_VERSION)-Linux-arm64.zip ; unzip juno-v$(JUNO_VERSION)-Linux-arm64.zip; chmod +x juno-v$(JUNO_VERSION)-Linux-arm64
 	cp /tmp/juno_tmp/juno-v$(JUNO_VERSION)-Linux-arm64 sources/usr/bin/juno

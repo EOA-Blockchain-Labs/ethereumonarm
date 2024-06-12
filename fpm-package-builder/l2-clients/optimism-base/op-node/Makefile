@@ -41,7 +41,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(OP-NODE_VERSION) --license $(PKG_LICE
 
 all: prepare deb clean test
 
-prepare: ## Donwload the latest binary and prepare the package files
+prepare: ## Download the latest binary and prepare the package files
 	mkdir -p /tmp/op-node_tmp
 	cd /tmp/op-node_tmp; git clone https://github.com/ethereum-optimism/optimism.git ; cd optimism/op-node ; git checkout v$(OP-NODE_VERSION) ; env GO111MODULE=on CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 go build  -o ./build/bin/op-node ./cmd/main.go
 	cp /tmp/op-node_tmp/optimism/op-node/build/bin/op-node sources/usr/bin/op-node

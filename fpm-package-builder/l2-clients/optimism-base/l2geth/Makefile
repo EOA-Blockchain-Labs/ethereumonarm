@@ -38,7 +38,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(L2GETH_VERSION) --license $(PKG_LICEN
 
 all: prepare deb clean test
 
-prepare: ## Donwload the latest binary and prepare the package files
+prepare: ## Download the latest binary and prepare the package files
 	mkdir -p /tmp/l2geth_tmp
 	cd /tmp/l2geth_tmp; git clone https://github.com/ethereum-optimism/optimism.git ; cd optimism/l2geth ; env GO111MODULE=on CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 go build  -o ./build/bin/l2geth ./cmd/geth
 	cp /tmp/l2geth_tmp/optimism/l2geth/build/bin/l2geth sources/usr/bin

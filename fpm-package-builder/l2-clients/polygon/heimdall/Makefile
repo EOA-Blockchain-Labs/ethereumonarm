@@ -41,7 +41,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(HEIMDALL_VERSION) --license $(PKG_LIC
 
 all: prepare deb clean test
 
-prepare: ## Donwload the latest binary and prepare the package files
+prepare: ## Download the latest binary and prepare the package files
 	mkdir -p /tmp/heimdall_tmp
 	wget https://github.com/maticnetwork/heimdall/releases/download/v$(HEIMDALL_VERSION)/heimdalld-v$(HEIMDALL_VERSION)-arm64.deb -O - | dpkg -x - /tmp/heimdall_tmp/heimdall
 	cp /tmp/heimdall_tmp/heimdall/usr/bin/heimdalld sources/usr/bin

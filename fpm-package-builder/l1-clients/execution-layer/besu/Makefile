@@ -44,7 +44,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(BESU_VERSION) --license $(PKG_LICENSE
 
 all: prepare deb clean test
 
-prepare: ## Donwload the latest binary and prepare the package files
+prepare: ## Download the latest binary and prepare the package files
 	mkdir /tmp/besu_temp
 	wget  https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/$(BESU_VERSION)/besu-$(BESU_VERSION).zip -P /tmp/besu_temp
 	unzip /tmp/besu_temp/besu-$(BESU_VERSION).zip -d /tmp/besu_temp

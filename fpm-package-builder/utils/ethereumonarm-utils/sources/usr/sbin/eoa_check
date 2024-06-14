@@ -1,20 +1,16 @@
 #!/usr/bin/env bash
 
-source /usr/lib/ethereumonarm/eoa-config/variables.sh
-source /usr/lib/ethereumonarm/eoa-config/l1_node.sh
-
 USE_COLORS=true
 SHOW_SUMMARY=true
-SHOW_LOGS=false
+SHOW_LOGS=true
 
-# Check if the user is root
+# Ensure the script is run as root
 if [ "$(id -u)" != "0" ]; then
-	# If the user is not root, print an error message and exit
-	echo -e "Error: ${RED}You must be Root to run this script${NC}. please run sudo eoa_check.sh"
+	echo -e "Error: You must be root to run this script. Please run sudo eoa_check.sh"
 	exit 1
-
 fi
 
+# Securely handle command-line options
 while getopts "nsl" opt; do
 	case ${opt} in
 	n)
@@ -28,11 +24,12 @@ while getopts "nsl" opt; do
 		;;
 	\?)
 		echo "Invalid option: -$OPTARG" >&2
+		exit 1
 		;;
 	esac
 done
 
-#Colors
+# Colors
 if [ "$USE_COLORS" = true ]; then
 	RED='\033[0;91m'
 	BLUE='\033[1;34m'
@@ -49,18 +46,27 @@ else
 	NC=''
 fi
 
-# Show script summary
-if [ "$show_summary" = true ]; then
+# Show script summary with a confirmation prompt
+if [ "$SHOW_SUMMARY" = true ]; then
 	echo -e "${BOLD}This script will check various system information such as hardware, software, and service status.${NC}"
 	echo -e "It will check for the following: "
 	echo -e "- Board Model"
 	echo -e "- RAM size"
 	echo -e "- Disk Model"
+	echo -e "- CPU Information"
+	echo -e "- Disk Usage"
+	echo -e "- Network Configuration"
+	echo -e "- Security Checks"
+	echo -e "- OS and Kernel Information"
+	echo -e "- Log File Size"
+	echo -e "- Pending Updates"
 	echo -e "- Ethereum clients"
 	echo -e "- Execution port number"
 	echo -e "- jwtsecret file"
+	echo -e "- Services with listening ports"
+	echo -e "- Internet Speed Test"
 	echo
-	read -p "Do you want to continue? (y/n) " -n 1 -r
+	read -rp "Do you want to continue? (y/n) " -n 1 -r
 	echo
 	if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 		exit 1
@@ -75,71 +81,164 @@ separator() {
 	printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 }
 
+# Function to validate and install command if missing
+validate_and_install_command() {
+	local cmd=$1
+	local pkg=$2
+	if ! command -v "$cmd" &>/dev/null; then
+		echo -e "${ORANGE}Warning: $cmd command not found. Attempting to install $pkg package.${NC}"
+		apt-get update && apt-get install -y "$pkg"
+		if ! command -v "$cmd" &>/dev/null; then
+			echo -e "${RED}Error: Failed to install $pkg package. Please install it manually before running this script.${NC}"
+			exit 1
+		fi
+	fi
+}
 
+# Validate and install necessary commands
+validate_and_install_command "tr" "coreutils"
+validate_and_install_command "free" "procps"
+validate_and_install_command "awk" "gawk"
+validate_and_install_command "bc" "bc"
+validate_and_install_command "lscpu" "util-linux"
+validate_and_install_command "uptime" "procps"
+validate_and_install_command "df" "coreutils"
+validate_and_install_command "ip" "iproute2"
+validate_and_install_command "ufw" "ufw"
+validate_and_install_command "lsb_release" "lsb-release"
+validate_and_install_command "uname" "coreutils"
+validate_and_install_command "du" "coreutils"
+validate_and_install_command "find" "findutils"
+validate_and_install_command "apt-get" "apt"
+validate_and_install_command "id" "coreutils"
+validate_and_install_command "systemctl" "systemd"
+validate_and_install_command "nc" "netcat"
+validate_and_install_command "curl" "curl"
+validate_and_install_command "ss" "iproute2"
+validate_and_install_command "numfmt" "coreutils"
 
 # Hardware tests
-# Print separator
+BOARD_MODEL=$(tr </sys/firmware/devicetree/base/model -d '\0' 2>/dev/null || echo "Unknown")
+TOTAL_RAM_GB=$(free -g | awk '/^Mem:/{print $2}')
+NVME_DISK_MODEL=$(tr </sys/class/nvme/nvme0/model -d '\0' 2>/dev/null || echo "Unknown")
+USB_DISK_MODEL=$(lsblk -o MODEL /dev/sda 2>/dev/null | tail -n 1 | tr -d '\0' || echo "Unknown")
+BOARD_TEMP=$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null || echo "Unknown")
+BOARD_TEMP=$(echo "$BOARD_TEMP / 1000" | bc -l)
 
 echo
 echo -e "${BOLD}HARDWARE${NC}"
 section
 separator
-echo -e "${BOLD}BOARD_MODEL${NC}"
+echo -e "${BOLD}BOARD MODEL${NC}"
 echo -e "You are running a ${BLUE}$BOARD_MODEL${NC} board"
 separator
 echo -e "${BOLD}RAM${NC}"
 # Check RAM size and output result
-if [ "$(echo "$TOTAL_RAM_GB < 7" | bc)" -eq 1 ]; then
+if [ "$TOTAL_RAM_GB" -lt 8 ]; then
 	echo -e "RAM size check ${RED}FAIL${NC} Total RAM is less than 8GB"
-elif [ "$(echo "$TOTAL_RAM_GB >= 7 && $TOTAL_RAM_GB < 15" | bc)" -eq 1 ]; then
+elif [ "$TOTAL_RAM_GB" -eq 8 ]; then
 	echo -e "RAM size check ${ORANGE}WARNING${NC} Total RAM is 8GB"
 else
 	echo -e "RAM size check ${GREEN}PASS${NC} Total RAM is 16GB or more"
 fi
 
-# Print separator
 separator
-
 echo -e "${BOLD}DISKS${NC}"
+NVME_DISK=false
+USB_DISK=false
+
 # Check if device '/dev/nvme0n1' exists
 if [ -e "/dev/nvme0n1" ]; then
 	NVME_DISK=true
+	NVME_DISK_MODEL=$(tr </sys/class/block/nvme0n1/device/model -d '\0' 2>/dev/null || echo "Unknown")
 fi
 
 # Check if device '/dev/sda' exists
 if [ -e "/dev/sda" ]; then
 	USB_DISK=true
+	USB_DISK_MODEL=$(tr </sys/class/block/sda/device/model -d '\0' 2>/dev/null || echo "Unknown")
 fi
 
 # Check if there are any SSD disks present or mounted
-if [ $USB_DISK ] || [ $NVME_DISK ]; then
+if [ "$USB_DISK" = true ] || [ "$NVME_DISK" = true ]; then
 	echo -e "Disk check ${GREEN}PASS${NC} External disk detected"
 else
-	echo -e "${RED}Error: There are no SSD disks present or mounted${NC}. Please review your set up or /etc/fstab config."
-
+	echo -e "${RED}Error: There are no SSD disks present or mounted${NC}. Please review your setup or /etc/fstab config."
 fi
 
-if $NVME_DISK; then
+if [ "$NVME_DISK" = true ]; then
 	echo -e "Your NVMe Disk MODEL is $NVME_DISK_MODEL"
 fi
 
-if $USB_DISK; then
+if [ "$USB_DISK" = true ]; then
 	echo -e "Your USB Disk MODEL is $USB_DISK_MODEL"
 fi
 
-echo "Swap file info:"
+echo -e "Swap file info:"
 swapon -s
 
-# Print separator
 separator
-
 echo -e "${BOLD}TEMPERATURE${NC}"
+BOARD_TEMP=$(printf "%.2f" $BOARD_TEMP)
+echo -e "Temperature: ${BLUE}$BOARD_TEMP ºC${NC}"
 
-echo "Temperature: $BOARD_TEMP ºC"
-
-# Print separator
 separator
+echo -e "${BOLD}CPU INFORMATION${NC}"
+CPU_MODEL=$(lscpu | grep "Model name:" | sed 's/Model name:[ \t]*//')
+CPU_CORES=$(lscpu | grep "^CPU(s):" | sed 's/CPU(s):[ \t]*//')
+LOAD_AVG=$(uptime | awk -F'[a-z]:' '{ print $2}')
+echo -e "CPU Model: ${BLUE}$CPU_MODEL${NC}"
+echo -e "Number of Cores: ${BLUE}$CPU_CORES${NC}"
+echo -e "Load Average: ${BLUE}$LOAD_AVG${NC}"
 
+separator
+echo -e "${BOLD}DISK USAGE${NC}"
+df -h
+
+separator
+echo -e "${BOLD}NETWORK CONFIGURATION${NC}"
+echo -e "${BOLD}IP ADDRESSES${NC}"
+ip -4 addr show | grep inet
+separator
+echo -e "${BOLD}ROUTING TABLE${NC}"
+ip route
+
+separator
+echo -e "${BOLD}SECURITY CHECKS${NC}"
+echo -e "${BOLD}FIREWALL STATUS${NC}"
+ufw status verbose
+
+separator
+echo -e "${BOLD}APPARMOR STATUS${NC}"
+if command -v aa-status >/dev/null 2>&1; then
+	aa-status
+else
+	echo "AppArmor not installed"
+fi
+
+separator
+echo -e "${BOLD}OS AND KERNEL INFORMATION${NC}"
+OS_INFO=$(lsb_release -a 2>/dev/null)
+KERNEL_INFO=$(uname -r)
+echo -e "$OS_INFO"
+echo -e "Kernel Version: ${BLUE}$KERNEL_INFO${NC}"
+
+separator
+echo -e "${BOLD}LOG FILE SIZE${NC}"
+LOG_FILES=$(find /var/log -type f -exec du -h {} + | sort -rh | head -n 10)
+echo -e "$LOG_FILES"
+
+separator
+echo -e "${BOLD}PENDING UPDATES${NC}"
+apt-get update >/dev/null
+UPDATES=$(apt-get --just-print upgrade 2>/dev/null | grep -Eo 'Inst [^ ]+')
+if [ -z "$UPDATES" ]; then
+	echo -e "No pending updates"
+else
+	echo -e "$UPDATES"
+fi
+
+separator
 echo
 echo -e "${BOLD}SYSTEM${NC}"
 section
@@ -158,45 +257,65 @@ section
 separator
 echo -e "${BOLD}ETHEREUM CLIENTS${NC}"
 
+# Service lists
+consensus_layer="grandine-beacon lodestar-beacon prysm-beacon teku-beacon lighthouse-beacon nimbus-beacon"
+execution_layer="reth geth erigon besu nethermind"
+
+consensus_is_running=false
+execution_is_running=false
+
+# Check consensus layer
+for c in ${consensus_layer}; do
+	if systemctl is-active "$c" >/dev/null 2>&1; then
+		echo -e "Consensus Layer check ${GREEN}PASS${NC} $c service is running"
+		consensus_is_running=true
+	fi
+done
+
+# Check execution layer
+for e in ${execution_layer}; do
+	if systemctl is-active "$e" >/dev/null 2>&1; then
+		echo -e "Execution Layer check ${GREEN}PASS${NC} $e service is running"
+		execution_is_running=true
+	fi
+done
+
 # Print error and exit if no consensus client is running
-#if [ "${consensus_is_running}" = false ]; then
-#	echo -e "Error: ${RED}No Consensus Client is running${NC}. Please, start a Consensus Layer client and run eoa_check.sh again"
-#
-#fi
+if [ "$consensus_is_running" = false ]; then
+	echo -e "Error: ${RED}No Consensus Client is running${NC}. Please, start a Consensus Layer client and run eoa_check.sh again."
+	exit 1
+fi
 
 # Print error and exit if no execution client is running
-#if [ "${execution_is_running}" = false ]; then
-#	echo -e "${RED}No Execution Client is running${NC}. Please, start an Execution Layer client and run eoa_check.sh again"
-#
-#fi
+if [ "$execution_is_running" = false ]; then
+	echo -e "Error: ${RED}No Execution Client is running${NC}. Please, start an Execution Layer client and run eoa_check.sh again."
+	exit 1
+fi
 
-# Print separator
 separator
 echo -e "${BOLD}JWT FILE${NC}"
 
 # Check JWT file
+jwtsecret_file="/path/to/jwtsecret" # Change this to the actual path
 if test -s "$jwtsecret_file"; then
 	echo -e "JWT secret file check ${GREEN}PASS${NC} File exists and it is not empty"
 else
 	echo -e "${RED}The file $jwtsecret_file does not exist or it is empty${NC}"
-
 fi
 
-# Print separator
 separator
 echo -e "${BOLD}JWT PORT${NC}"
-
+execution_port=8545 # Change this to the actual port
 # Check $execution_port port
-if NC -z localhost $execution_port; then
+if nc -z localhost $execution_port; then
 	echo -e "Port $execution_port check ${GREEN}PASS${NC} Port is listening and accepting connections"
 else
 	echo -e "${RED}Port $execution_port is not open. Execution Layer and Consensus Layer cannot communicate${NC}"
-
 fi
 
-# Print separator
 separator
 echo -e "${BOLD}FORWARDED PORTS${NC}"
+echo -e "Note: Port detection results may not be accurate. Ensure that your firewall and router settings are correctly configured."
 
 if (curl -s ifconfig.co/port/30303 -w "\n" | grep -c "\"reachable\": true" >/dev/null 2>&1); then
 	echo -e "Port 30303 check ${GREEN}PASS${NC} Port is open"
@@ -210,33 +329,53 @@ else
 	echo -e "Port 9000 check ${RED}FAIL${NC}, please open it in your router or firewall ${NC}"
 fi
 
-# Print separator
 separator
 echo -e "${BOLD}INSTALLED PACKAGES${NC}"
-grep -hoP '(?<=Package: ).+' /var/lib/apt/lists/apt.ethraspbian.com_dists_focal_* | xargs dpkg-query -f '${binary:Package}\n' -W 2>/dev/null
+grep -hoP '(?<=Package: ).+' /var/lib/apt/lists/apt.ethereumonarm.com_dists_* | xargs dpkg-query -f '${binary:Package}\n' -W 2>/dev/null
 echo ""
 
-# Print separator
-echo
-echo -e "${BOLD}LOGS${NC}"
-section
 separator
-echo -e "${BOLD}PROCESSES${NC}"
-top -bcn 1
-
-# Print separator
-separator
-echo -e "${BOLD}LISTENING PORTS${NC}"
-ss -tunlp
-
-# Print separator
-separator
-echo -e "${BOLD}SYSLOG${NC}"
-tail -n 50 /var/log/syslog
+echo -e "${BOLD}LISTENING PORTS AND SERVICES${NC}"
+ss -tunlp | awk '
+BEGIN { print "Proto\tLocal Address\t\tForeign Address\t\tPID/Program name" }
+NR>1 { gsub(/%lo/, "", $4); printf "%-6s\t%-22s\t%-22s\t%s\n", $1, $4, $5, $7 }
+'
 
 separator
-echo -e "${BOLD}RC.LOCAL${NC}"
-cat /root/first-run.flag
+echo -e "${BOLD}SPEEDTEST${NC}"
+validate_and_install_command "speedtest-cli" "speedtest-cli"
+output=$(speedtest-cli --csv)
+download_speed=$(echo "$output" | awk -F , '{print $7}')
+upload_speed=$(echo "$output" | awk -F , '{print $8}')
+
+# Convert bits to human readable format
+download_human=$(numfmt --to=iec-i --suffix=B/s <<<"$download_speed")
+upload_human=$(numfmt --to=iec-i --suffix=B/s <<<"$upload_speed")
+
+echo -e "Download Speed: ${BLUE}$download_human${NC}"
+echo -e "Upload Speed: ${BLUE}$upload_human${NC}"
+
+separator
+if [ "$SHOW_LOGS" = true ]; then
+	echo
+	echo -e "${BOLD}LOGS${NC}"
+	section
+	separator
+	echo -e "${BOLD}PROCESSES${NC}"
+	top -bcn 1
+
+	separator
+	echo -e "${BOLD}LISTENING PORTS${NC}"
+	ss -tunlp
+
+	separator
+	echo -e "${BOLD}SYSLOG${NC}"
+	tail -n 50 /var/log/syslog
+
+	separator
+	echo -e "${BOLD}RC.LOCAL${NC}"
+	cat /root/first-run.flag
+fi
 
 # Exit with success
 exit 0

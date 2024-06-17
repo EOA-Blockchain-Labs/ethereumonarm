@@ -314,19 +314,47 @@ else
 fi
 
 separator
-echo -e "${BOLD}FORWARDED PORTS${NC}"
-echo -e "Note: Port detection results may not be accurate. Ensure that your firewall and router settings are correctly configured."
+echo -e "${BOLD}NETWORK INFORMATION${NC}"
+echo -e "Fetching additional network information from ifconfig.co..."
 
-if (curl -s ifconfig.co/port/30303 -w "\n" | grep -c "\"reachable\": true" >/dev/null 2>&1); then
-	echo -e "Port 30303 check ${GREEN}PASS${NC} Port is open"
-else
-	echo -e "Port 30303 check ${RED}FAIL${NC}, please open it in your router or firewall ${NC}"
-fi
+# Fetch JSON data from ifconfig.co
+ifconfig_data=$(curl -s ifconfig.co/json)
 
-if (curl -s ifconfig.co/port/9000 -w "\n" | grep -c "\"reachable\": true" >/dev/null 2>&1); then
-	echo -e "Port 9000 check ${GREEN}PASS${NC} Port is open"
+# Parse relevant fields from JSON
+ip_address=$(echo "$ifconfig_data" | jq -r '.ip')
+country=$(echo "$ifconfig_data" | jq -r '.country')
+region=$(echo "$ifconfig_data" | jq -r '.region_name')
+city=$(echo "$ifconfig_data" | jq -r '.city')
+asn=$(echo "$ifconfig_data" | jq -r '.asn')
+asn_org=$(echo "$ifconfig_data" | jq -r '.asn_org')
+
+# Display network information with colors
+echo -e "${BOLD}IP Address:${NC} ${BLUE}$ip_address${NC}"
+echo -e "${BOLD}Country:${NC} ${BLUE}$country${NC}"
+echo -e "${BOLD}Region:${NC} ${BLUE}$region${NC}"
+echo -e "${BOLD}City:${NC} ${BLUE}$city${NC}"
+echo -e "${BOLD}ASN:${NC} ${BLUE}$asn${NC}"
+echo -e "${BOLD}ASN Organization:${NC} ${BLUE}$asn_org${NC}"
+
+# Check if IP address is IPv6
+if echo "$ip_address" | grep -qE '[0-9a-fA-F:]+:[0-9a-fA-F:]+:[0-9a-fA-F:]+:[0-9a-fA-F:]+:[0-9a-fA-F:]+:[0-9a-fA-F:]+:[0-9a-fA-F:]+:[0-9a-fA-F:]+'; then
+	echo -e "${BOLD}IPv6 detected. Skipping port checks.${NC}"
 else
-	echo -e "Port 9000 check ${RED}FAIL${NC}, please open it in your router or firewall ${NC}"
+	separator
+	echo -e "${BOLD}FORWARDED PORTS${NC}"
+	echo -e "Note: Port detection results may not be accurate. Ensure that your firewall and router settings are correctly configured."
+
+	if (curl -s ifconfig.co/port/30303 -w "\n" | grep -c "\"reachable\": true" >/dev/null 2>&1); then
+		echo -e "Port 30303 check ${GREEN}PASS${NC} Port is open"
+	else
+		echo -e "Port 30303 check ${RED}FAIL${NC}, please open it in your router or firewall ${NC}"
+	fi
+
+	if (curl -s ifconfig.co/port/9000 -w "\n" | grep -c "\"reachable\": true" >/dev/null 2>&1); then
+		echo -e "Port 9000 check ${GREEN}PASS${NC} Port is open"
+	else
+		echo -e "Port 9000 check ${RED}FAIL${NC}, please open it in your router or firewall ${NC}"
+	fi
 fi
 
 separator

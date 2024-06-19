@@ -7,8 +7,8 @@ Download and Install
 There are 5 images available for **NanoPC T6**,  **Rock 5B**, **Orange Pi 5 Plus**, **Orange Pi 5** and **Raspberry Pi 4**
 
 .. warning::
-  The Raspberry Pi 4 image is outdated and you may run into issues running the clients. While we will try to
-  update it soon, it is not our priority as this device can barely run an Ethereum node because of hardware limitations.
+  The Raspberry Pi 4 image is outdated and you may run into issues running the clients. This device can barely run an Ethereum node 
+  because of hardware limitations.
 
 Getting the hardware
 --------------------
@@ -43,9 +43,10 @@ Orange Pi 5 Plus
 ~~~~~~~~~~~~~~~~
 
 You can acquire the Orange Pi 5 plus from several distributors. Go to the official page and pick one at the top right corner 
-(make sure you are getting the 16 GB RAM model).
+(make sure you are getting the 16 GB RAM model at least. If you are running a Supernode, pick the 32 GB RAM one).
 
-* `Orange Pi 5 Plus official page`_
+* `Orange Pi 5 Plus 16 GB RAM`_
+* `Orange Pi 5 Plus 32 GB RAM`_
 
 Try to find a set that includes the power supply as well. It is also recommended to get a proper case with a heatsink. 
 For example:
@@ -54,7 +55,8 @@ For example:
 
 You will need a **MicroSD** and an M2.2280 **NVME** disk as well.
 
-.. _Orange Pi 5 Plus official page: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-5-plus.html
+.. _Orange Pi 5 Plus 16 GB RAM: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-5-plus.html
+.. _Orange Pi 5 Plus 32 GB RAM: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-5-plus-32GB.html
 .. _Orange Pi 5 Plus Case with heatsink: https://aliexpress.com/item/1005005728553439.html
 
 Orange Pi 5
@@ -144,19 +146,19 @@ Orange Pi 5 Plus
 
 Download link:
 
-ethonarm_orangepi5-plus_23.11.00.img.zip_
+ethonarm_orangepi5-plus_24.06.00.img.zip_
 
-.. _ethonarm_orangepi5-plus_23.11.00.img.zip: https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/EQFSHHN9a0hFvhnDHTjCfmYBXE-M-JpUI2WosTnifrKDpQ?download=1
+.. _ethonarm_orangepi5-plus_24.06.00.img.zip: https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/Ecmleamkm-hJkGoIQezdU_kBw8Tl0suJXUlb-kjsZpi67Q?download=1
 
 You can verify the file with the following ``SHA256`` Hash:
 
-``SHA256 8eac865a72938fac63c78247d9a4a1e61a432829c51d80e8c56753372e0a8d64``
+``SHA256 60b46fd88dc9b6cc6855a48087b8da88e0b2af670e1f1443d6ca0834c9af2125``
 
 By running:
 
 .. prompt:: bash $
 
-  sha256sum ethonarm_orangepi5-plus_23.11.00.img.zip
+  sha256sum ethonarm_orangepi5-plus_24.06.00.img.zip
 
 
 Orange Pi 5

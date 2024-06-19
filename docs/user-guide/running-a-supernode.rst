@@ -1,7 +1,7 @@
-SuperNode
-=========
+Running a Supernode
+===================
 
-We call **SuperNode** a node that **runs both L1+L2 nodes on the same ARM64 board**. This is achieved by first syncing an L1 and later an L2 client.
+We call **Supernode** a node that **runs both L1+L2 nodes on the same ARM64 board**. This is achieved by first syncing an L1 and later an L2 client.
 
 As a first approach, we are setting up an L1 and an :guilabel:`Optimism` node and will be adding more L2s step-by-step guides.
 
@@ -31,7 +31,7 @@ Optimism
 
 First, we need to change a couple of configuration parameters.
 
-As we are running a **SuperNode**, we will be using *localhost* as the L1 provider. Let's set *localhost* as our host:
+As we are running a **Supernode**, we will be using *localhost* as the L1 provider. Let's set *localhost* as our host:
 
 .. prompt:: bash $
 

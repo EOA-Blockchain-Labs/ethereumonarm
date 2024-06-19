@@ -29,7 +29,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(BESU_VERSION) --license $(PKG_LICENSE
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 	--deb-systemd extras/besu.service --deb-systemd extras/besu-goerli.service --deb-systemd extras/besu-holesky.service\
-	--depends openjdk-17-jre-headless\
+	--depends openjdk-21-jre-headless\
 	--depends libsecp256k1-0\
 	--depends merge-config\
 	--depends libjemalloc-dev\
@@ -46,7 +46,7 @@ all: prepare deb clean test
 
 prepare: ## Donwload the latest binary and prepare the package files
 	mkdir /tmp/besu_temp
-	wget  https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/$(BESU_VERSION)/besu-$(BESU_VERSION).zip -P /tmp/besu_temp
+	wget  https://github.com/hyperledger/besu/releases/download/$(BESU_VERSION)/besu-$(BESU_VERSION).zip -P /tmp/besu_temp
 	unzip /tmp/besu_temp/besu-$(BESU_VERSION).zip -d /tmp/besu_temp
 	cp /tmp/besu_temp/besu-$(BESU_VERSION)/bin/besu sources/usr/bin/
 	cp /tmp/besu_temp/besu-$(BESU_VERSION)/lib/*  sources/usr/share/besu/lib/

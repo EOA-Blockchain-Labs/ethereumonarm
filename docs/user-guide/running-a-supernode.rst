@@ -5,6 +5,11 @@ We call **Supernode** a node that **runs both L1+L2 nodes on the same ARM64 boar
 
 As a first approach, we are setting up an L1 and an :guilabel:`Optimism` node and will be adding more L2s step-by-step guides.
 
+.. warning::
+
+  In order to run a **Supernode** you will need a **32 GB RAM board**. We currently support the **Orange Pi 5 Plus** device. **Rock 5B** 32 GB will be 
+  supported any time soon.
+
 L1 sync
 -------
 

@@ -19,7 +19,7 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 project = 'Ethereum on ARM documentation'
-copyright = '2023, Diego Losada <dlosada@ethereumonarm.com>, Fernando Collado <fernando@ethereumonarm.com>'
+copyright = '2024, Diego Losada <dlosada@ethereumonarm.com>, Fernando Collado <fernando@ethereumonarm.com>'
 author = 'Diego Losada <dlosada@ethereumonarm.com>, Fernando Collado <fernando@ethereumonarm.com>'
 
 # The full version, including alpha/beta/rc tags

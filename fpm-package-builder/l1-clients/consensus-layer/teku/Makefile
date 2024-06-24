@@ -30,7 +30,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(TEKU_VERSION) --license $(PKG_LICENSE
 	-a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 	--deb-systemd extras/teku-beacon.service --deb-systemd extras/teku-validator.service --deb-systemd extras/teku-prater.service\
 	--deb-systemd extras/teku-beacon-holesky.service --deb-systemd extras/teku-validator-holesky.service\
-	--depends openjdk-11-jre-headless\
+	--depends openjdk-21-jre-headless\
 	--depends merge-config
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(TEKU_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\

@@ -72,7 +72,7 @@ Ethereum on ARM supports the main Consensus Layer clients available.
    `Prysm`, `Yes`, `Go`, docs.prylabs.network_
    `Nimbus`,`Yes`, `Nim`, nimbus.team_
    `Teku`, `Yes`, `Java`, consensys.net_
-   `Lodestar`, `No`, `Typescript`, lodestar.chainsafe.io_
+   `Lodestar`, `Yes`, `Typescript`, lodestar.chainsafe.io_
    `Grandine`, `Yes`, `Rust`, grandine.io_
 
 .. _lighthouse-book.sigmaprime.io: https://lighthouse-book.sigmaprime.io

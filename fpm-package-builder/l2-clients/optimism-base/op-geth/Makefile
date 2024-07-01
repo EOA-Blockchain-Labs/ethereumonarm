@@ -39,7 +39,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(OP-GETH_VERSION) --license $(PKG_LICE
 
 all: prepare deb clean
 
-prepare: ## Donwload the latest binary and prepare the package files
+prepare: ## Download the latest binary and prepare the package files
 	mkdir -p /tmp/op-geth_tmp
 	cd /tmp/op-geth_tmp/ ; git clone https://github.com/ethereum-optimism/op-geth.git ; cd op-geth ; git checkout v$(OP-GETH_VERSION);  env GO111MODULE=on CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 go build  -o ./build/bin/op-geth ./cmd/geth
 	cp /tmp/op-geth_tmp/op-geth/build/bin/op-geth sources/usr/bin/op-geth

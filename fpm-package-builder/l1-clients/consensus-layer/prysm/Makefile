@@ -46,7 +46,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENS
 
 all: prepare deb clean test
 
-prepare: ## Donwload the latest binary and prepare the package files
+prepare: ## Download the latest binary and prepare the package files
 	wget https://github.com/prysmaticlabs/prysm/releases/download/v$(PRYSM_VERSION)/beacon-chain-v$(PRYSM_VERSION)-linux-arm64 -O sources/usr/bin/beacon-chain
 	wget https://github.com/prysmaticlabs/prysm/releases/download/v$(PRYSM_VERSION)/validator-v$(PRYSM_VERSION)-linux-arm64 -O sources/usr/bin/validator
 	chmod +x sources/usr/bin/beacon-chain sources/usr/bin/validator 

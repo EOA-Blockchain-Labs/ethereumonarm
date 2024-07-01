@@ -40,7 +40,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(TEKU_VERSION) --license $(PKG_LICENSE
 
 all: prepare deb clean test
 
-prepare: ## Donwload the latest binary and prepare the package files
+prepare: ## Download the latest binary and prepare the package files
 	mkdir /tmp/teku_temp
 	wget https://artifacts.consensys.net/public/teku/raw/names/teku.tar.gz/versions/$(TEKU_VERSION)/teku-$(TEKU_VERSION).tar.gz -O - | tar -xz -C  /tmp/teku_temp --wildcards --absolute-names --no-anchored --strip-components 1
 	cp /tmp/teku_temp/bin/teku sources/usr/bin/

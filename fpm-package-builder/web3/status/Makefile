@@ -46,7 +46,7 @@ BUILD_ARCH := $(shell uname -p)
 
 all: prepare deb clean test
 
-prepare: ## Donwload the latest binary and prepare the package files
+prepare: ## Download the latest binary and prepare the package files
 
 	mkdir -p /tmp/status_tmp
 	sudo ln -sf ../lib/go-1.18/bin/go /usr/bin/go

@@ -52,7 +52,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(NETHERMIND_VERSION) --license $(PKG_L
 
 all: prepare deb clean test
 
-prepare: ## Donwload the latest binary and prepare the package files
+prepare: ## Download the latest binary and prepare the package files
 	mkdir -p /tmp/nethermind_tmp
 	mkdir -p sources/opt/nethermind/logs
 	wget $(NETHERMIND_URL) -P /tmp/nethermind_tmp

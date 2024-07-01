@@ -42,7 +42,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICEN
 
 all: prepare deb clean test
 
-prepare: ## Donwload the latest binary and prepare the package files
+prepare: ## Download the latest binary and prepare the package files
 	wget $(NIMBUS_URL) -O - | tar -xz -C sources/usr/bin/ --wildcards --absolute-names --no-anchored --strip-components 2 '*/nimbus_*'
 	rm sources/usr/bin/nimbus*.sha512sum
 

@@ -55,7 +55,7 @@ You can get the client logs by running:
 Execution Layer
 ---------------
 
-It is the former Ethereum 1.0 node and the original Ethereum chain. It needs to to communicate with a Consensus Layer Beacon chain 
+It is the former Ethereum 1.0 node and the original Ethereum chain. It needs to communicate with a Consensus Layer Beacon chain
 to follow the chain. This client validates and executes all transactions and stores the chain state.
 
 We will use the :guilabel:`Geth`. Follow these steps to start the client:

@@ -42,7 +42,7 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(NITRO_VERSION) --license $(PKG_LICENS
 
 all: prepare deb clean test
 
-prepare: ## Donwload the latest binary and prepare the package files
+prepare: ## Download the latest binary and prepare the package files
 	set -e ;\
 	docker pull --platform linux/arm64 $(DOCKER_CONTAINER) ;\
 	docker run --entrypoint /bin/bash --platform linux/arm64 -it -d $(DOCKER_CONTAINER) ;\

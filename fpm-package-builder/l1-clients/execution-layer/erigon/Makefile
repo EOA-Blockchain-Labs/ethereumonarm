@@ -1,4 +1,4 @@
-#install fpm
+#nstall fpm
 #apt-get install ruby ruby-dev rubygems build-essential rpm
 #gem install --no-document fpm
 SHELL := /bin/bash

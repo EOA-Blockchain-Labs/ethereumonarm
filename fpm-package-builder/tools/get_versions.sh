@@ -4,7 +4,7 @@
 fetch_github_release() {
     repo=$1
     # Fetch the latest release tag from GitHub API and remove the leading 'v' if present
-    latest_release=$(curl -s "https://api.github.com/repos/$repo/releases/latest" | jq -r '.tag_name' | tr -d 'v')
+    latest_release=$(curl -Ls "https://api.github.com/repos/$repo/releases/latest" | jq -r '.tag_name' | tr -d 'v')
     if [[ -z "$latest_release" ]]; then
         echo "Error: Unable to fetch release for $repo" >&2
     fi
@@ -37,10 +37,10 @@ BASE_URL="https://repo.ethereumonarm.com/pool/main/"
 get_latest_repo_version() {
     package=$1
     # Fetch the latest version of the package from the repository URL
-    latest_version=$(curl -s "${BASE_URL}" | grep -oP "$package"_'[^"]*\.deb' | sort -V | tail -n 1 | grep -oP '(?<=_)[^_]+(?=_)')
+    latest_version=$(curl -s "${BASE_URL}" | grep -oP "(?<=<a href=\")$package"_'[^"]*\.deb' | sort -V | tail -n 1 | grep -oP '(?<=_)[^_]+(?=_)')
     # Fallback if the initial regex pattern does not match
     if [[ -z $latest_version ]]; then
-        latest_version=$(curl -s "${BASE_URL}" | grep -oP "$package"_'[^"]*\.deb' | sort -V | tail -n 1 | grep -oP '(?<=_)[^_]+(?=\.deb)')
+        latest_version=$(curl -s "${BASE_URL}" | grep -oP "(?<=<a href=\")$package"_'[^"]*\.deb' | sort -V | tail -n 1 | grep -oP '(?<=_)[^_]+(?=\.deb)')
     fi
     if [[ -z $latest_version ]]; then
         echo "Error: Unable to fetch repo version for $package" >&2
@@ -53,5 +53,6 @@ for key in "${!projects[@]}"; do
     github_version=$(fetch_github_release "$key")
     repo_package="${projects[$key]}"
     repo_version=$(get_latest_repo_version "$repo_package")
+
     echo "$repo_package: GitHub Version = $github_version, Repository Version = $repo_version"
 done

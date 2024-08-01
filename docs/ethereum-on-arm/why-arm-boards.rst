@@ -11,4 +11,4 @@ ARM boards are a great choice for running an Ethereum Full/Archive/Staking node.
   * Efficient, resources are focused on 1 task: run the node
   * Low power consumption. An ARM64 boar consumes ~10w
   * Small factor size: Great for running at home as it fits in any corner
-  * Great for running 24/7: Small, affordable and low power comsuption
+  * Great for running 24/7: Small, affordable and low power consumption

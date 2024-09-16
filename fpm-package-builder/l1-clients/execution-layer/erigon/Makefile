@@ -3,7 +3,7 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-ERIGON_VERSION := $(shell curl -s "https://api.github.com/repos/ledgerwatch/erigon/releases/latest" | jq -r '.tag_name' | tr -d "v")
+ERIGON_VERSION := $(shell curl -s "https://api.github.com/repos/erigontech/erigon/releases/latest" | jq -r '.tag_name' | tr -d "v")
 
 PKG_RELEASE := 0
 PKG_NAME := erigon
@@ -11,7 +11,7 @@ PKG_NAME := erigon
 PKG_DESCRIPTION := "Erigon Go implementation of the Ethereum protocol"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
 CATEGORY := science
-WEB_URL := https://github.com/ledgerwatch/erigon
+WEB_URL := https://github.com/erigontech/erigon
 
 PKG_VENDOR := "Ethereum on ARM"
 PKG_LICENSE := "GNU Lesser General Public License v3.0"
@@ -40,7 +40,8 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(ERIGON_VERSION) --license $(PKG_LICEN
 all: prepare deb clean test
 
 prepare: ## Download the latest binary and prepare the package files
-		wget  https://github.com/ledgerwatch/erigon/releases/download/v$(ERIGON_VERSION)/erigon_$(ERIGON_VERSION)_linux_arm64.tar.gz -O - | tar -xz -C sources/usr/bin/  erigon
+#	wget https://github.com/erigontech/erigon/releases/download/$(ERIGON_VERSION)/erigon_$(ERIGON_VERSION)_linux_arm64.tar.gz -O - | tar -xz -C sources/usr/bin/  erigon
+	wget https://github.com/erigontech/erigon/releases/download/$(ERIGON_VERSION)/erigon_$(ERIGON_VERSION)_linux_arm64.tar.gz -O - | tar -xz -C sources/usr/bin --wildcards --absolute-names --no-anchored --strip-components 1 '*/erigon'
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)

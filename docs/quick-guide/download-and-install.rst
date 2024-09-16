@@ -127,19 +127,20 @@ Rock 5B
 
 Download link:
 
-ethonarm_rock5b_23.11.00.img.zip_
+ethonarm_rock5b_24.09.00.img.zip_
 
-.. _ethonarm_rock5b_23.11.00.img.zip: https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/EbuLXcC99EJBmrnM-GZo90MBGhVS3yTPCky0ot05r2P67Q?download=1
+.. _ethonarm_rock5b_24.09.00.img.zip: https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/EeYfOU29o3ZDgFv2yTCSjCQBkLb6_hjGF2GRzD65Ojpxag?download=1
+
 
 You can verify the file with the following ``SHA256`` Hash:
 
-``SHA256 9460652f68dcc91517faf19b6c27c7efdf7a015ccc42912dbfa59b30ce19fcba``
+``SHA256 849d44f6053d058216ea3138bce8455762edc5c7823d9734a8a8f5a62d26e612``
 
 By running:
 
 .. prompt:: bash $
 
-  sha256sum ethonarm_rock5b_23.11.00.img.zip
+  sha256sum ethonarm_rock5b_24.09.00.img.zip
 
 Orange Pi 5 Plus
 ~~~~~~~~~~~~~~~~

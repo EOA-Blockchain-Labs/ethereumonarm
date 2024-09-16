@@ -28,8 +28,8 @@ rpi_iso := ubuntu-22.04.2-preinstalled-server-arm64+raspi.img
 rpi_offset := 269484032
 rpi_rclocal := rpi
 
-rock5b_url := https://dl.armbian.com/rock-5b/archive/Armbian_24.5.1_Rock-5b_jammy_vendor_6.1.43.img.xz
-rock5b_iso := Armbian_24.5.1_Rock-5b_jammy_vendor_6.1.43.img
+rock5b_url := https://armbian.nardol.ovh/dl/rock-5b/archive/Armbian_24.8.1_Rock-5b_jammy_vendor_6.1.75.img.xz
+rock5b_iso := Armbian_24.8.1_Rock-5b_jammy_vendor_6.1.75.img
 rock5b_offset := 16777216
 rock5b_rclocal := rock5b
 

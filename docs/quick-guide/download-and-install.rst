@@ -108,19 +108,19 @@ NanoPC T6
 
 Download link:
 
-ethonarm_nanopct6_23.11.00.img.zip_
+ethonarm_nanopct6_24.09.00.img.zip_
 
-.. _ethonarm_nanopct6_23.11.00.img.zip: https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/Efuw4xjgrdFOm_Wi9qLsH-4BTRkY190KlCB_Gq0NRdXqyg?download=1
+.. _ethonarm_nanopct6_24.09.00.img.zip: https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/EQMVAPBxLqhLmR2yu-p8344B8iH2L4VU_i9K3vVSHZa0Dw?download=1
 
 You can verify the file with the following ``SHA256`` Hash:
 
-``SHA256 66d868bcf1d0e0e88c92a3776aeb8dc699a31f3c7f338d2aeca171064d94d9dd``
+``SHA256 7934114fcd70e140585542db6c5355181ade174882da22ff6f1d01df9240bd2b``
 
 By running:
 
 .. prompt:: bash $
 
-  sha256sum ethonarm_nanopct6_23.11.00.img.zip
+  sha256sum ethonarm_nanopct6_24.09.00.img.zip
 
 Rock 5B
 ~~~~~~~

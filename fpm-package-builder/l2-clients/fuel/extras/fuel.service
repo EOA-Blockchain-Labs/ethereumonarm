@@ -1,0 +1,15 @@
+[Unit]
+Description=Arbitrum Nitro client
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/fuel.conf
+ExecStart=/usr/bin/fuel-core run $ARGS
+Restart=always
+User=ethereum
+KillSignal=SIGTERM 
+TimeoutStopSec=600
+
+[Install]
+WantedBy=multi-user.target
+

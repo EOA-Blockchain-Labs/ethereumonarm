@@ -46,10 +46,10 @@ prepare: ## Download the latest binary and prepare the package files
 	cd /tmp/op-node_tmp; git clone https://github.com/ethereum-optimism/optimism.git ; cd optimism/op-node ; git checkout v$(OP-NODE_VERSION) ; env GO111MODULE=on CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 go build  -o ./build/bin/op-node ./cmd/main.go
 	cp /tmp/op-node_tmp/optimism/op-node/build/bin/op-node sources/usr/bin/op-node
 	# Get rollup.json and genesis file for Base
-	mkdir -p /tmp/op-node-base_tmp
-	cd /tmp/op-node_tmp; git clone https://github.com/base-org/node.git ; cd node ; git checkout v$(BASE-NODE_VERSION)
-	cp /tmp/op-node_tmp/node/mainnet/rollup.json sources/etc/ethereum 
-	cp /tmp/op-node_tmp/node/mainnet/genesis-l2.json sources/etc/ethereum
+	#mkdir -p /tmp/op-node-base_tmp
+	#cd /tmp/op-node_tmp; git clone https://github.com/base-org/node.git ; cd node ; git checkout v$(BASE-NODE_VERSION)
+	#cp /tmp/op-node_tmp/node/mainnet/rollup.json sources/etc/ethereum 
+	#cp /tmp/op-node_tmp/node/mainnet/genesis-l2.json sources/etc/ethereum
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)

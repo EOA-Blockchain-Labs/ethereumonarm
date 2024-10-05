@@ -1,0 +1,16 @@
+[Unit]
+  Description=Obol Charon Service
+  StartLimitIntervalSec=500
+  StartLimitBurst=5
+
+[Service]
+  EnvironmentFile=/etc/ethereum/ssv.conf
+  Restart=on-failure
+  RestartSec=5s
+  ExecStart=/usr/bin/ssv $ARGS
+  Type=simple
+  User=ethereum
+  TimeoutSec=0
+
+[Install]
+  WantedBy=multi-user.target

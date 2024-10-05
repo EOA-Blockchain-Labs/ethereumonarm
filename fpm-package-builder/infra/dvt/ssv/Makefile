@@ -3,15 +3,15 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-#CHARON_VERSION := $(shell date +"%y%m%d")
-CHARON_VERSION := $(shell curl -s "https://api.github.com/repos/ObolNetwork/charon/releases/latest" | jq -r '.tag_name' | tr -d "v")
+#SSV_VERSION := $(shell date +"%y%m%d")
+SSV_VERSION := $(shell curl -s "https://api.github.com/repos/ssvlabs/ssv/releases/latest" | jq -r '.tag_name' | tr -d "v")
 PKG_RELEASE := 0
-PKG_NAME := dvt-obol
+PKG_NAME := dvt-ssv
 
-PKG_DESCRIPTION := "Obol DVT client"
+PKG_DESCRIPTION := "SSV DVT client"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
 CATEGORY := science
-WEB_URL := https://github.com/ObolNetwork/charon
+WEB_URL := https://github.com/ObolNetwork/ssv
 
 PKG_VENDOR := "Ethereum on ARM"
 PKG_LICENSE := "GNU Lesser General Public License v3.0"
@@ -22,16 +22,16 @@ PKG_ARCH_RPM := arm64
 SOURCESDIR := sources/
 OUTPUTDIR := ../../../packages
 
-PKG_RPM := $(PKG_NAME)-$(CHARON_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_RPM).rpm
-PKG_DEB := $(PKG_NAME)_$(CHARON_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
+PKG_RPM := $(PKG_NAME)-$(SSV_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_RPM).rpm
+PKG_DEB := $(PKG_NAME)_$(SSV_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
 
-FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(CHARON_VERSION) --license $(PKG_LICENSE)\
+FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(SSV_VERSION) --license $(PKG_LICENSE)\
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
---deb-systemd extras/charon.service \
+--deb-systemd extras/ssv.service \
 
-FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(CHARON_VERSION) --license $(PKG_LICENSE)\
+FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(SSV_VERSION) --license $(PKG_LICENSE)\
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_RPM)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
@@ -39,9 +39,9 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(CHARON_VERSION) --license $(PKG_LICEN
 all: prepare deb clean
 
 prepare: ## Download the latest binary and prepare the package files
-	mkdir -p /tmp/charon_tmp
-	cd /tmp/charon_tmp/ ; git clone https://github.com/ObolNetwork/charon ; cd charon ; git checkout v$(CHARON_VERSION);  env GO111MODULE=on CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 go build -o charon
-	cp /tmp/charon_tmp/charon/charon sources/usr/bin/charon
+	mkdir -p /tmp/ssv_tmp
+	cd /tmp/ssv_tmp/ ; git clone https://github.com/ssvlabs/ssv.git ; cd ssv ; git checkout v$(SSV_VERSION);  env GO111MODULE=on CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 go build -o ./bin/ssvnode -ldflags "-X main.Commit=`git rev-parse HEAD` -X main.Version=`git describe --tags $(git rev-list --tags --max-count=1)`" ./cmd/ssvnode/
+	cp /tmp/ssv_tmp/ssv/bin/ssvnode sources/usr/bin/
 
 deb: ## Create deb package
 	echo $(PKG_DEB) $(FPM_DEB_OPTS)
@@ -52,8 +52,8 @@ rpm: ## Create rpm package
 
 .PHONY: clean test
 clean: ## Clean up
-	rm sources/usr/bin/charon
-	rm -rf /tmp/charon_tmp/
+	rm sources/usr/bin/ssvnode
+	rm -rf /tmp/ssv_tmp/
 
 test:
 	@if [ -f $(OUTPUTDIR)/$(PKG_DEB) ]; then \

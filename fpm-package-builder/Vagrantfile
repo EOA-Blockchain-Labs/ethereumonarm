@@ -59,7 +59,11 @@ Vagrant.configure("2") do |config|
   sudo -u vagrant bash -c 'cat <<EOF > /home/vagrant/.cargo/config
   [target.aarch64-unknown-linux-gnu]
   linker = "aarch64-linux-gnu-gcc"
-EOF'
+  EOF'
 
+  # Add nodejs and yarn installation for TS packages
+  su - vagrant -c "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash"
+  su - vagrant -c "nvm install 20"
+  su - vagrant -c "npm install -g yarn"
   SHELL
 end

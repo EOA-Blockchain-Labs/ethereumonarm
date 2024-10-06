@@ -5,6 +5,7 @@ SHELL := /bin/bash
 
 #SSV_VERSION := $(shell date +"%y%m%d")
 SSV_VERSION := $(shell curl -s "https://api.github.com/repos/ssvlabs/ssv/releases/latest" | jq -r '.tag_name' | tr -d "v")
+SSV_KEYS_VERSION := $(shell curl -s "https://api.github.com/repos/ssvlabs/ssv-keys/releases/latest" | jq -r '.tag_name' | tr -d "v")
 PKG_RELEASE := 0
 PKG_NAME := dvt-ssv
 
@@ -42,6 +43,12 @@ prepare: ## Download the latest binary and prepare the package files
 	mkdir -p /tmp/ssv_tmp
 	cd /tmp/ssv_tmp/ ; git clone https://github.com/ssvlabs/ssv.git ; cd ssv ; git checkout v$(SSV_VERSION);  env GO111MODULE=on CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 go build -o ./bin/ssvnode -ldflags "-X main.Commit=`git rev-parse HEAD` -X main.Version=`git describe --tags $(git rev-list --tags --max-count=1)`" ./cmd/ssvnode/
 	cp /tmp/ssv_tmp/ssv/bin/ssvnode sources/usr/bin/
+	# install ssv-keys
+	mkdir -p /tmp/ssv_keys_tmp
+	cd /tmp/ssv_keys_tmp/ ; git clone https://github.com/ssvlabs/ssv-keys.git ; cd ssv-keys ; git checkout v$(SSV_KEYS_VERSION);
+	cd /tmp/ssv_keys_tmp/ssv-keys ; sed -i '/"package-linux": "pkg dist\/tsc\/src\/cli-interactive.js --targets node14-linux-x64 --output bin\/linux\/ssv-keys-lin --compress GZip",/a \ \ "package-linux-arm64": "pkg dist/tsc/src/cli-interactive.js --targets node14-linux-arm64 --output bin/linux/ssv-keys-lin-arm64 --compress GZip",' package.json
+	cd /tmp/ssv_keys_tmp/ssv-keys ; yarn install --network-timeout 1000000 ; yarn package-linux-arm64
+	cp /tmp/ssv_keys_tmp/ssv-keys/bin/linux/ssv-keys-lin-arm64 sources/usr/bin/ssv-keys
 
 deb: ## Create deb package
 	echo $(PKG_DEB) $(FPM_DEB_OPTS)
@@ -52,7 +59,7 @@ rpm: ## Create rpm package
 
 .PHONY: clean test
 clean: ## Clean up
-	rm sources/usr/bin/ssvnode
+	rm sources/usr/bin/ssv*
 	rm -rf /tmp/ssv_tmp/
 
 test:

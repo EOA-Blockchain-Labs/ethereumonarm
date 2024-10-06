@@ -1,5 +1,5 @@
 [Unit]
-  Description=Obol Charon Service
+  Description=DVT SSV Network Service
   StartLimitIntervalSec=500
   StartLimitBurst=5
 
@@ -7,7 +7,7 @@
   EnvironmentFile=/etc/ethereum/ssv.conf
   Restart=on-failure
   RestartSec=5s
-  ExecStart=/usr/bin/ssv start-node $ARGS
+  ExecStart=/usr/bin/ssvnode start-node $ARGS
   Type=simple
   User=ethereum
   TimeoutSec=0

@@ -7,7 +7,7 @@
   EnvironmentFile=/etc/ethereum/ssv.conf
   Restart=on-failure
   RestartSec=5s
-  ExecStart=/usr/bin/ssv $ARGS
+  ExecStart=/usr/bin/ssv start-node $ARGS
   Type=simple
   User=ethereum
   TimeoutSec=0

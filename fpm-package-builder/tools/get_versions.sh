@@ -1,14 +1,61 @@
 #!/usr/bin/env bash
 
+# Check for required dependencies
+for cmd in curl jq; do
+    if ! command -v "$cmd" &>/dev/null; then
+        echo "Error: $cmd is not installed. Please install it and try again."
+        exit 1
+    fi
+done
+
+# GitHub API token (optional, to handle rate limits)
+GITHUB_TOKEN=""
+AUTH_HEADER=""
+if [[ -n "$GITHUB_TOKEN" ]]; then
+    AUTH_HEADER="-H Authorization: token $GITHUB_TOKEN"
+fi
+
 # Function to fetch the latest release version from GitHub
 fetch_github_release() {
-    repo=$1
-    # Fetch the latest release tag from GitHub API and remove the leading 'v' if present
-    latest_release=$(curl -Ls "https://api.github.com/repos/$repo/releases/latest" | jq -r '.tag_name' | tr -d 'v')
-    if [[ -z "$latest_release" ]]; then
+    local repo="$1"
+    local latest_release
+
+    # Fetch the latest release tag using GitHub API
+    latest_release=$(curl -sL $AUTH_HEADER "https://api.github.com/repos/$repo/releases/latest" | jq -r '.tag_name' 2>/dev/null | tr -d 'v')
+
+    # Normalize version (strip extra data like branch names)
+    latest_release=$(echo "$latest_release" | grep -oP '^[0-9]+\.[0-9]+\.[0-9]+')
+
+    if [[ -z "$latest_release" || "$latest_release" == "null" ]]; then
         echo "Error: Unable to fetch release for $repo" >&2
+        echo ""
+    else
+        echo "$latest_release"
     fi
-    echo -n "$latest_release"
+}
+
+# Function to get the latest version of a package from the repository
+get_latest_repo_version() {
+    local package="$1"
+    local latest_version
+
+    # Fetch the latest version from the repository's HTML
+    latest_version=$(curl -s "${BASE_URL}" | grep -oP "(?<=<a href=\")$package"_'[^"]*\.deb' | sort -V | tail -n 1 | grep -oP '(?<=_)[^_]+(?=_)')
+
+    # Fallback pattern if the initial regex fails
+    if [[ -z "$latest_version" ]]; then
+        latest_version=$(curl -s "${BASE_URL}" | grep -oP "(?<=<a href=\")$package"_'[^"]*\.deb' | sort -V | tail -n 1 | grep -oP '(?<=_)[^_]+(?=\.deb)')
+    fi
+
+    # Remove suffix (e.g., -0, -1)
+    latest_version=$(echo "$latest_version" | sed 's/-[0-9]*$//')
+
+    if [[ -z "$latest_version" ]]; then
+        echo "Error: Unable to fetch repo version for $package" >&2
+        echo ""
+    else
+        echo "$latest_version"
+    fi
 }
 
 # Define project repositories and corresponding package names
@@ -33,26 +80,25 @@ declare -A projects=(
 # Base URL of the repository
 BASE_URL="https://repo.ethereumonarm.com/pool/main/"
 
-# Function to get the latest version of a package from the repository
-get_latest_repo_version() {
-    package=$1
-    # Fetch the latest version of the package from the repository URL
-    latest_version=$(curl -s "${BASE_URL}" | grep -oP "(?<=<a href=\")$package"_'[^"]*\.deb' | sort -V | tail -n 1 | grep -oP '(?<=_)[^_]+(?=_)')
-    # Fallback if the initial regex pattern does not match
-    if [[ -z $latest_version ]]; then
-        latest_version=$(curl -s "${BASE_URL}" | grep -oP "(?<=<a href=\")$package"_'[^"]*\.deb' | sort -V | tail -n 1 | grep -oP '(?<=_)[^_]+(?=\.deb)')
-    fi
-    if [[ -z $latest_version ]]; then
-        echo "Error: Unable to fetch repo version for $package" >&2
-    fi
-    echo -n "$latest_version"
-}
+# Header for output
+printf "%-25s | %-15s | %-15s\n" "Package" "GitHub Version" "Repo Version"
+printf "%-25s | %-15s | %-15s\n" "-------------------------" "---------------" "---------------"
 
 # Compare and display results
-for key in "${!projects[@]}"; do
-    github_version=$(fetch_github_release "$key")
-    repo_package="${projects[$key]}"
-    repo_version=$(get_latest_repo_version "$repo_package")
+mismatches=0
+for repo in "${!projects[@]}"; do
+    package="${projects[$repo]}"
+    github_version=$(fetch_github_release "$repo")
+    repo_version=$(get_latest_repo_version "$package")
 
-    echo "$repo_package: GitHub Version = $github_version, Repository Version = $repo_version"
+    if [[ "$github_version" != "$repo_version" ]]; then
+        mismatches=$((mismatches + 1))
+        printf "\033[1;31m%-25s | %-15s | %-15s\033[0m\n" "$package" "${github_version:-N/A}" "${repo_version:-N/A}"
+    else
+        printf "%-25s | %-15s | %-15s\n" "$package" "${github_version:-N/A}" "${repo_version:-N/A}"
+    fi
 done
+
+# Summary
+echo
+echo "Total mismatches: $mismatches"

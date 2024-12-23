@@ -41,7 +41,7 @@ all: prepare deb clean test
 
 prepare: ## Download the latest binary and prepare the package files
 	wget https://github.com/FuelLabs/fuel-core/releases/download/v$(FUEL_VERSION)/fuel-core-$(FUEL_VERSION)-aarch64-unknown-linux-gnu.tar.gz -O - | tar -xz -C sources/usr/bin/ --wildcards --absolute-names --no-anchored --strip-components 1 '*/fuel*'
-
+	cp extras/fuel-core-pre.sh sources/usr/bin
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)
 

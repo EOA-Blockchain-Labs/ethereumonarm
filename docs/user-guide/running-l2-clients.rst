@@ -3,12 +3,14 @@ Running Layer 2 nodes
 
 You can choose several Layer 2 solutions to run an Ethereum L2 node:
 
+* Fuel_
 * Polygon_
 * Arbitrum_
 * Optimism_
 * Starknet_
 * Gnosis_
 
+.. _Fuel: https://fuel.network/
 .. _Polygon: https://polygon.technology/
 .. _Arbitrum: https://arbitrum.io/
 .. _Optimism: https://www.optimism.io/
@@ -30,6 +32,49 @@ means run nodes.
   sudo apt-get update
   sudo apt-get install polygon-bor polygon-heimdall arbitrum-nitro starknet-juno starknet-papyrus 
   optimism-op-geth optimism-op-node
+
+
+Fuel Network
+------------
+
+ **Fuel Network** is a modular execution layer designed to provide high-performance, scalable smart 
+ contract execution for blockchain applications. It leverages advanced technologies like optimistic rollups 
+ and UTXO-based design to achieve low fees, fast transactions, and secure interoperability 
+ with Ethereum.
+
+ In order to run a Fuel node you need to:
+
+1. Run and sync and Ethereum mainnet node
+2. Install the fuel-network package
+3. Start the Fuel Systemd Service
+
+1. Sync an Ethereum node.
+
+You can choose from any Consensus and Execution clients available. See our section "Running L1 Clients" 
+
+.. note::
+  The **Fuel** package **is configured to run with a local L1 node running and synced**. So first, you need to run and sync an Ethereum Node.
+  In case you want to run a Fuel node alone you need to configure the flag ``--relayer`` in ``/etc/ethereum/fuel/fuel.conf`` file.
+
+2. Installation
+
+ Run the apt command:
+
+ .. prompt:: bash $
+
+  sudo apt-get update && sudo apt-get install fuel-network
+
+3. Start the :guilabel:`Fuel Core` Service
+
+ .. prompt:: bash $
+
+  sudo systemctl start fuel
+
+You can check out the logs by running:
+
+ .. prompt:: bash $
+
+  sudo journalctl -u fuel -f
 
 Polygon
 -------

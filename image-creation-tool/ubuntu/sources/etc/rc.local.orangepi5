@@ -152,7 +152,7 @@ if [ ! -f $FLAG ]; then
   # Install Layer 1
   apt-get -y install geth nethermind erigon reth besu prysm lighthouse nimbus teku lodestar staking-deposit-cli
   # install Layer 2
-  apt-get -y install arbitrum-nitro optimism-op-geth optimism-op-node polygon-bor polygon-heimdall starknet-juno
+  apt-get -y install arbitrum-nitro optimism-op-geth optimism-op-node polygon-bor polygon-heimdall starknet-juno fuel-network
 
   # Create an alias for package updates
   cat <<EOF >>/etc/bash.bashrc

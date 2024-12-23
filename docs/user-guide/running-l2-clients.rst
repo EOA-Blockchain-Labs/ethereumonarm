@@ -37,12 +37,12 @@ means run nodes.
 Fuel Network
 ------------
 
- **Fuel Network** is a modular execution layer designed to provide high-performance, scalable smart 
- contract execution for blockchain applications. It leverages advanced technologies like optimistic rollups 
- and UTXO-based design to achieve low fees, fast transactions, and secure interoperability 
- with Ethereum.
+**Fuel Network** is a modular execution layer designed to provide high-performance, scalable smart 
+contract execution for blockchain applications. It leverages advanced technologies like optimistic rollups 
+and UTXO-based design to achieve low fees, fast transactions, and secure interoperability 
+with Ethereum.
 
- In order to run a Fuel node you need to:
+In order to run a Fuel node you need to:
 
 1. Run and sync and Ethereum mainnet node
 2. Install the fuel-network package

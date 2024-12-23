@@ -25,13 +25,13 @@ means run nodes.
 
 .. note::
   If you have an Ethereum on ARM image installed prior to June 2023 you need to install the clients manually. Otherwise 
-  you can skip this step:
+  you can skip this step
 
 .. prompt:: bash $
 
   sudo apt-get update
   sudo apt-get install polygon-bor polygon-heimdall arbitrum-nitro starknet-juno starknet-papyrus 
-  optimism-op-geth optimism-op-node
+  optimism-op-geth optimism-op-node fuel-network
 
 
 Fuel Network

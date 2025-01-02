@@ -21,12 +21,17 @@ fetch_github_release() {
     local latest_release
 
     # Fetch the latest release tag using GitHub API
-    latest_release=$(curl -sL $AUTH_HEADER "https://api.github.com/repos/$repo/releases/latest" | jq -r '.tag_name' 2>/dev/null | tr -d 'v')
+    latest_release=$(curl -sL $AUTH_HEADER "https://api.github.com/repos/$repo/releases/latest" | jq -r '.tag_name' 2>/dev/null)
 
-    # Normalize version (strip extra data like branch names)
-    latest_release=$(echo "$latest_release" | grep -oP '^[0-9]+\.[0-9]+\.[0-9]+')
+    # Normalize: Remove 'v' prefix and any branch names like "op-batcher/"
+    latest_release=$(echo "$latest_release" | sed -E 's/^v|.*\///')
 
+    # Fallback: Fetch the latest tag if releases are unavailable
     if [[ -z "$latest_release" || "$latest_release" == "null" ]]; then
+        latest_release=$(curl -sL $AUTH_HEADER "https://api.github.com/repos/$repo/tags" | jq -r '.[0].name' 2>/dev/null | sed 's/^v//')
+    fi
+
+    if [[ -z "$latest_release" ]]; then
         echo "Error: Unable to fetch release for $repo" >&2
         echo ""
     else
@@ -72,9 +77,11 @@ declare -A projects=(
     [NethermindEth/nethermind]="nethermind"
     [paradigmxyz/reth]="reth"
     [OffchainLabs/nitro]="arbitrum-nitro"
-    [ethereum-optimism/optimism]="optimism-op-geth"
+    [ethereum-optimism/op-geth]="optimism-op-geth"
     [maticnetwork/bor]="polygon-bor"
     [NethermindEth/juno]="starknet-juno"
+    [starkware-libs/sequencer]="starknet-sequencer"
+    [FuelLabs/fuel-core]="fuel-network"
 )
 
 # Base URL of the repository
@@ -102,3 +109,4 @@ done
 # Summary
 echo
 echo "Total mismatches: $mismatches"
+

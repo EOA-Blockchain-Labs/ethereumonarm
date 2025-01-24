@@ -15,9 +15,9 @@
 
 # Function to format a disk as /home/ethereum
 format_disk() {
-  local DISK="$1"
+  DISK="$1"
   # Different partition naming convention for drives
-  local PARTITION="${DISK}1"
+  PARTITION="${DISK}${PARTITION1}"
 
   # Create a temporary directory for mounting
   local TMP_DIR
@@ -75,8 +75,10 @@ if [ ! -f "$FLAG" ]; then
   echo "Detecting target disk..."
   if stat /dev/sda >/dev/null 2>&1; then
     TARGET_DISK="/dev/sda"
+    PARTITION1="1"
   elif stat /dev/nvme0n1 >/dev/null 2>&1; then
     TARGET_DISK="/dev/nvme0n1"
+    PARTITION1="p1"
   else
     echo "No suitable disk found (/dev/sda or /dev/nvme0n1). You need a disk to run an Ethereum node. Stopping the installation."
     exit 1
@@ -88,11 +90,11 @@ if [ ! -f "$FLAG" ]; then
   format_disk "$TARGET_DISK"
 
   # Step 4: Remove FS reserved blocks
-  tune2fs -m 0 "${TARGET_DISK}1"
+  tune2fs -m 0 "${PARTITION}"
 
   # Step 5: Mount the disk as /home
   echo "Mounting $TARGET_DISK as /home"
-  echo "${TARGET_DISK}1 /home ext4 defaults,noatime 0 2" >>/etc/fstab && mount /home
+  echo "${PARTITION} /home ext4 defaults,noatime 0 2" >>/etc/fstab && mount /home
 
   # Step 6: Create ethereum user
   echo "Creating ethereum user"
@@ -113,6 +115,16 @@ if [ ! -f "$FLAG" ]; then
   sed -i 's|#CONF_SWAPSIZE=.*|CONF_SWAPSIZE=8192|' /etc/dphys-swapfile
   sed -i 's|#CONF_MAXSWAP=.*|CONF_MAXSWAP=8192|' /etc/dphys-swapfile
   systemctl enable dphys-swapfile
+
+  # Modify hostname and /etc/hosts (ethereumonarm-$MAC-HASH-CHUNK)
+  echo Changing hostname
+  # Get the network interface
+  ACTIVE_INTERFACE=$(ip route get 8.8.8.8 | awk '/dev/ {print $5}')
+  # Get the MAC address for the active network interface
+  MAC_ADDRESS=$(cat /sys/class/net/"$ACTIVE_INTERFACE"/address)
+  MAC_HASH=$(echo "$MAC_ADDRESS" | sha256sum | awk '{print substr($0,0,9)}')
+  echo ethereumonarm-rpi5-"$MAC_HASH" >/etc/hostname
+  sed -i "s/rpi5b/ethereumonarm-rpi5-$MAC_HASH/g" /etc/hosts
 
   # Disable ZRAM if present
   if [ -f /etc/default/armbian-zram-config ]; then

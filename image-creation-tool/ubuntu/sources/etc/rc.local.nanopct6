@@ -162,7 +162,7 @@ sudo apt-get install geth nethermind erigon reth besu prysm lighthouse nimbus te
 EOF
   # Install monitoring packages
   apt-get -y install gpg wget
-  wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+  wget -q -O - https://packages.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/grafana.gpg >/dev/null
   echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
   apt-get -y update
   apt-get -y install grafana
@@ -205,7 +205,7 @@ EOF
   EOA_MINOR_VERSION=${EOA_MINOR_VERSION:-0}
   EOA_MAJOR_VERSION=$(date +"%y"."%m")
   EOA_VERSION="Ethereum on ARM $EOA_MAJOR_VERSION.$EOA_MINOR_VERSION"
-  echo "$EOA_VERSION" > "$EOA_RELEASE_FILE"
+  echo "$EOA_VERSION" >"$EOA_RELEASE_FILE"
 
   # Correct ethereum home permissions if /home already exists
   chown -R ethereum:ethereum /home/ethereum/

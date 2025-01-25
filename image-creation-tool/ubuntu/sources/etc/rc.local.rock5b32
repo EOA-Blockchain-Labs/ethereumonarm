@@ -160,7 +160,7 @@ sudo apt-get install geth nethermind erigon reth besu prysm lighthouse nimbus te
 EOF
   # Install monitoring packages
   apt-get -y install gpg wget gpg-agent
-  wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+  wget -q -O - https://packages.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/grafana.gpg >/dev/null
   echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
   apt-get -y update
   apt-get -y install grafana

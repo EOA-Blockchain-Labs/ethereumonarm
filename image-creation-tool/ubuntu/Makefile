@@ -15,7 +15,6 @@ define modify_image
 	# Disable Armbian autologin
 	sudo rm -f /tmp/ubuntu_iso/etc/systemd/system/getty@.service.d/override.conf
 	sudo rm -f /tmp/ubuntu_iso/etc/systemd/system/serial-getty@.service.d/override.conf
-
 	sudo test -f "/tmp/ubuntu_iso/root/.not_logged_in_yet" && sudo rm -f /tmp/ubuntu_iso/root/.not_logged_in_yet || echo no armbian release detected
 	sync
 	sudo umount /tmp/ubuntu_iso
@@ -23,10 +22,10 @@ define modify_image
 	rmdir /tmp/ubuntu_iso
 endef
 
-rpi_url := https://cdimage.ubuntu.com/releases/22.04.2/release/ubuntu-22.04.2-preinstalled-server-arm64+raspi.img.xz
-rpi_iso := ubuntu-22.04.2-preinstalled-server-arm64+raspi.img
-rpi_offset := 269484032
-rpi_rclocal := rpi
+rpi5_url := 
+rpi5_iso := Armbian-unofficial_25.02.0-trunk_Rpi5b_jammy_current_6.6.73.img
+rpi5_offset := 272629760
+rpi5_rclocal := rpi5
 
 rock5b_url := https://armbian.nardol.ovh/dl/rock-5b/archive/Armbian_24.8.1_Rock-5b_jammy_vendor_6.1.75.img.xz
 rock5b_iso := Armbian_24.8.1_Rock-5b_jammy_vendor_6.1.75.img
@@ -54,11 +53,11 @@ nanopct6_iso := Armbian-unofficial_24.8.2_Nanopct6_jammy_current_6.10.6.img
 nanopct6_offset := 16777216
 nanopct6_rclocal := nanopct6
 
-all: rpi rock5b orangepi5 orangepi5-plus nanopct6
+all: rpi5 rock5b orangepi5 orangepi5-plus nanopct6
 
-rpi:
-	$(call download_image,$(rpi_url))
-	$(call modify_image,$(rpi_iso),$(rpi_offset),$(rpi_rclocal))
+rpi5:
+#	$(call download_image,$(rpi5_url))
+	$(call modify_image,$(rpi5_iso),$(rpi5_offset),$(rpi5_rclocal))
 
 rock5b:
 	$(call download_image,$(rock5b_url))

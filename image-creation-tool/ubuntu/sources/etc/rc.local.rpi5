@@ -198,6 +198,7 @@ EOF
 
   # Create the first-run flag and reboot
   touch "$FLAG"
+  grep "rc.local" /var/log/syslog >>$FLAG
   echo "Provisioning complete. Rebooting..."
   reboot
 else

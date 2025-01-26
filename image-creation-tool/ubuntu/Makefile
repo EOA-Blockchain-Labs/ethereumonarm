@@ -2,13 +2,13 @@ DATE := $(shell date +"%y.%m")
 RELEASE := 00
 
 define download_image
-	mkdir -p /tmp/ubuntu_iso
 	wget $1
 	unxz $(notdir $1)
 endef
 
 define modify_image
 	# Copy device rc.local
+	mkdir -p /tmp/ubuntu_iso
 	sudo mount -o loop,offset=$(2) $(notdir $1) /tmp/ubuntu_iso
 	sudo cp -a sources/etc/rc.local.$(3) /tmp/ubuntu_iso/etc/rc.local
 	sudo cp -a sources/usr/local/sbin/check_install /tmp/ubuntu_iso/usr/local/sbin
@@ -64,7 +64,7 @@ rock5b:
 	$(call modify_image,$(rock5b_iso),$(rock5b_offset),$(rock5b_rclocal))
 
 rock5b32:
-	$(call download_image,$(rock5b32_url))
+	$(call download_image,$(rock5b32_url))ubuntu-22.04.2-preinstalled-server-arm64+raspi.img
 	$(call modify_image,$(rock5b32_iso),$(rock5b32_offset),$(rock5b32_rclocal))
 
 orangepi5:

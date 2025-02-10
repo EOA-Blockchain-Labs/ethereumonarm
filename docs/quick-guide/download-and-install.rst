@@ -4,11 +4,7 @@
 Download and Install
 ====================
 
-There are 5 images available for **NanoPC T6**,  **Rock 5B**, **Orange Pi 5 Plus**, **Orange Pi 5** and **Raspberry Pi 4**
-
-.. warning::
-  The Raspberry Pi 4 image is outdated and you may run into issues running the clients. This device can barely run an Ethereum node 
-  because of hardware limitations.
+There are 4 images available for **NanoPC T6**,  **Rock 5B**, **Orange Pi 5 Plus** and **Raspberry Pi 5**
 
 Getting the hardware
 --------------------
@@ -161,44 +157,24 @@ By running:
 
   sha256sum ethonarm_orangepi5-plus_24.06.00.img.zip
 
-
-Orange Pi 5
-~~~~~~~~~~~
-
-Download link:
-
-ethonarm_orangepi5_23.11.00.img.zip_
-
-.. _ethonarm_orangepi5_23.11.00.img.zip: https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/EcOBdTMPmHtKq3f4m4Rx7BMBNPHlhgNKK7OXxiBIr4f_iQ?download=1
-
-You can verify the file with the following ``SHA256`` Hash:
-
-``SHA256 7d8f1647b7729678438f9438a80a95fc6a1b99a799d5082c2121123391c227e4``
-
-By running:
-
-.. prompt:: bash $
-
-  sha256sum ethonarm_orangepi5_23.11.00.img.zip
-
-Raspberry Pi 4
+Raspberry Pi 5
 ~~~~~~~~~~~~~~
 
 Download link:
 
-ethonarm_22.04.00.img.zip_
+ethonarm_rpi5_25.01.00.img.zip_
 
-.. _ethonarm_22.04.00.img.zip: https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/Ec_VmUvr80VFjf3RYSU-NzkBmj2JOteDECj8Bibde929Gw?download=1
+.. _ethonarm_rpi5_25.01.00.img.zip: https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/EYQhSp5gCARBt3CQQcqsoWIB3weuTxtlCwu4V53WfCbIuQ?download=1
 
 You can verify the file with the following ``SHA256`` Hash:
 
-``SHA256 fb497e8f8a7388b62d6e1efbc406b9558bee7ef46ec7e53083630029c117444f``
+``SHA256 41b792eaf7481bd78a50724abc0d8b123920ef8f559a9fbbbb0cf1a7f71e2992``
 
 By running:
 
 .. prompt:: bash $
 
-  sha256sum ethonarm_22.04.00.img.zip
+  sha256sum ethonarm_rpi5_25.01.00.img.zip
 
 Image installation
 ==================

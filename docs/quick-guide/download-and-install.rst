@@ -55,46 +55,30 @@ You will need a **MicroSD** and an M2.2280 **NVME** disk as well.
 .. _Orange Pi 5 Plus 32 GB RAM: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-5-plus-32GB.html
 .. _Orange Pi 5 Plus Case with heatsink: https://aliexpress.com/item/1005005728553439.html
 
-Orange Pi 5
-~~~~~~~~~~~
-
-You can acquire the Orange Pi 5 from several distributors. Go to the official page and pick one at the top right corner 
-(make sure you are getting the 16 GB RAM model).
-
-* `Orange Pi 5 official page`_
-
-Try to find a set that includes the power supply as well. It is also recommended to get a proper case with a heatsink. 
-For example:
-
-* `Case with heatsink`_
-
-You will need a **MicroSD** and an **NVME** as well.
-
-Regarding the NVMe disk, take into account there are 2 NVME M.2 types that fit perfectly into the board: 2230 and 2242. 
-You can use a M.2 2280 as well but keep in mind that you will need a hollow enclosure because the drive does not fit on the board.
-
-.. _Orange Pi 5 official page: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-5.html
-.. _Case with heatsink: https://aliexpress.com/item/1005005115126370.html
-
-
-Raspberry Pi 4
+Raspberry Pi 5
 ~~~~~~~~~~~~~~
 
-You can acquire a Raspberry Pi 4 from multiples sources. This is the official website.
+You can acquire a Raspberry Pi 5 from multiples sources. This is the official website.
 
-* `Raspberry Pi 4 (8 GB)`_
+* `Raspberry Pi 5 (16 GB RAM)`_
 
-.. _Raspberry Pi 4 (8 GB): https://www.raspberrypi.com/products/raspberry-pi-4-model-b/?variant=raspberry-pi-4-model-b-8gb
+.. _Raspberry Pi 5 (16 GB RAM): https://www.raspberrypi.com/products/raspberry-pi-5/
 
-Make sure you get the 8 GB RAM version.
+For Nvme Hat, case and cooling, we recommend the following (you can find them in several providers)
 
-You will need a **MicroSD** and an **USB3 disk** as well. A case with heathsink and 
-the official Raspberry Pi 4 power supply is recommended.
+* **Geekworm** P579 case and X1001 NVMe Hat
+* **GeeekPi** Raspberry Pi 5 case and N04 M.2 2280 NVMe Hat.
 
+Make sure you get the 16 GB RAM version.
+
+You will need a **MicroSD** and an **NVMe disk** as well. A case with heathsink and 
+the official Raspberry Pi 5 power supply is recommended.
 
 .. warning::
-  Again, the image is currently outdated and Post-merge, while it is still possible running a node, the hardware is quite limited. Run **Nimbus+Geth** 
-  clients combo as this is the best option in terms of performance.
+  Again, make sure to buy an NVMe disk that **doesn't use a Phison controller**. Take a look at the SSD list below and check the 
+  Controller column of each disk. A High-end or Mid-Range disk is recommended.
+
+* `SSD list <https://docs.google.com/spreadsheets/d/1B27_j9NDPU3cNlj2HKcrfpJKHkOf-Oi1DbuuQva2gT4/edit>`_
 
 Images download
 ---------------

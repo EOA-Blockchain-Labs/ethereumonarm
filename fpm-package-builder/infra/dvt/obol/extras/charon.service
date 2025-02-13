@@ -1,10 +1,10 @@
 [Unit]
-  Description=Obol Charon Service
+  Description=Obol DVT Charon Service for Ethereum Mainnet
   StartLimitIntervalSec=500
   StartLimitBurst=5
 
 [Service]
-  EnvironmentFile=/etc/ethereum/charon.conf
+  EnvironmentFile=/etc/ethereum/dvt/charon.conf
   Restart=on-failure
   RestartSec=5s
   ExecStart=/usr/bin/charon run $ARGS

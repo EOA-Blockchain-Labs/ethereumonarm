@@ -33,7 +33,6 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(CHARON_VERSION) --license $(PKG_LICEN
 --deb-systemd extras/teku-validator-obol.service \
 --deb-systemd extras/lighthouse-validator-obol.service \
 --deb-systemd extras/lodestar-validator-obol.service \
---deb-systemd extras/grandine-validator-obol.service \
 --deb-systemd extras/prysm-validator-obol.service \
 --deb-systemd extras/nimbus-validator-obol.service \
 

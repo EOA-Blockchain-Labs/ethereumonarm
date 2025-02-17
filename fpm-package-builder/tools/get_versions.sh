@@ -172,7 +172,6 @@ declare -A layer1_execution=(
 declare -A layer2=(
     [OffchainLabs/nitro]="arbitrum-nitro"
     [ethereum-optimism/op-geth]="optimism-op-geth"
-    [maticnetwork/bor]="polygon-bor"
     [NethermindEth/juno]="starknet-juno"
     [FuelLabs/fuel-core]="fuel-network"
 )

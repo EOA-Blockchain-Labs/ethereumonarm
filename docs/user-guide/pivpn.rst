@@ -41,9 +41,9 @@ Network Diagram
    :align: center
    :scale: 70%
 
-   **Figure 1:** Example network diagram illustrating a PiVPN + WireGuard setup. 
-   The VPS (10.1.25.1) runs PiVPN + WireGuard, and multiple clients (e.g., Rock5B at 10.1.25.4, Raspberry Pi5 at 10.1.25.5, NanoPC T6 at 10.1.25.6, Orange Pi at 10.1.25.x, and a laptop at 10.1.25.2) share the 10.1.25.0/24 subnet. 
-   Each client keeps its own direct internet gateway but can communicate securely with other clients through the VPN.
+	**Figure 1:** Example network diagram illustrating a PiVPN + WireGuard setup. 
+	The VPS (10.1.25.1) runs PiVPN + WireGuard, and multiple clients (e.g., Rock5B at 10.1.25.4, Raspberry Pi5 at 10.1.25.5, NanoPC T6 at 10.1.25.6, Orange Pi at 		10.1.25.x, and a laptop at 10.1.25.2) share the 10.1.25.0/24 subnet. 
+	Each client keeps its own direct internet gateway but can communicate securely with other clients through the VPN.
 
 -------------------------------------------------
 Step 0: Initial Server Setup (Highly Recommended)
@@ -58,7 +58,8 @@ Step 0: Initial Server Setup (Highly Recommended)
       sudo adduser pivpn
       sudo usermod -aG sudo pivpn
 
-2. **Log in as the New User:**  
+2. **Log in as the New User:**
+
    Log out of the root account and log in as the new user you just created. All subsequent steps should be performed as this non-root user.
 
 3. **Configure a Basic Firewall (UFW):**
@@ -217,7 +218,8 @@ Step 6: Client Configuration and Activation
 1. **Install a WireGuard Client:**  
    Visit https://www.wireguard.com/install/ to download the official client for your operating system.
 
-2. **Import the Client Configuration:**  
+2. **Import the Client Configuration:**
+
    Securely transfer the client configuration file (e.g., ``client1.conf``) to your device using secure methods such as ``scp`` or ``sftp``. **Avoid unencrypted methods (e.g., email or FTP).**
 
    Example using ``scp`` (run from your local machine):
@@ -251,10 +253,12 @@ Step 6: Client Configuration and Activation
 4. **Activate the Connection (for Linux-based Clients):**  
    You can manage the WireGuard interface with systemd and wg-quick:
 
-   a. **Save the Configuration:**  
+   a. **Save the Configuration:**
+    
       Place your client configuration file in the ``/etc/wireguard/`` directory. For example, save it as ``/etc/wireguard/eoa.conf`` (if your interface is named "eoa").
 
-   b. **Enable the WireGuard Service:**  
+   b. **Enable the WireGuard Service:**
+     
       To have the interface start automatically at boot, run:
 
       .. code-block:: bash
@@ -263,7 +267,8 @@ Step 6: Client Configuration and Activation
 
       This command creates a symlink for the "eoa" interface, enabling automatic startup.
 
-   c. **Bring Up the Interface Manually:**  
+   c. **Bring Up the Interface Manually:**
+   
       To manually start the interface, use:
 
       .. code-block:: bash
@@ -282,14 +287,16 @@ Step 6: Client Configuration and Activation
 Step 7: Verify the Connection
 ---------------------------------------
 
-* **On the Server:**  
+* **On the Server:**
+
   Verify active connections by running:
 
   .. code-block:: bash
 
      sudo pivpn -c
 
-* **On the Client:**  
+* **On the Client:**
+
   - **Ping Test:** Ping another client's VPN IP address (e.g., ``ping 10.1.25.5``) to ensure intra-VPN connectivity.
   - **Internet Test:** Open a web browser and navigate to a website (e.g., google.com) to confirm that internet traffic is not routed through the VPN.
 
@@ -301,22 +308,30 @@ Below are some common issues and suggested solutions:
 
 * **Issue: VPN Client Cannot Connect**
   - **Check:** Verify that the WireGuard service is running on the server.
+  
   - **Solution:** Run ``sudo systemctl status wg-quick@wg0`` and restart with ``sudo systemctl restart wg-quick@wg0`` if needed.
 
 * **Issue: No Internet Access on the Client**
+
   - **Check:** Ensure that the client’s configuration file does not set a default route through the VPN.
   - **Solution:** Confirm that ``AllowedIPs`` is set to ``10.1.25.0/24`` rather than ``0.0.0.0/0``.
 
 * **Issue: Firewall Blocking Connections**
+
   - **Check:** Confirm that UFW or your preferred firewall is configured to allow traffic on the WireGuard port and between VPN clients.
+  
   - **Solution:** Revisit Step 4 and adjust the rules accordingly.
 
 * **Issue: DNS Resolution Issues on the Client**
+
   - **Check:** Ensure that the DNS settings in the client configuration are correct.
+  
   - **Solution:** Test with alternative DNS providers or verify that the chosen DNS servers are reachable.
 
 * **Issue: PersistentKeepalive Settings Not Maintaining Connection**
+
   - **Check:** Verify that the keepalive setting (e.g., 25 seconds) is correctly configured on both the server (in ``setupVars.conf``) and client configurations.
+  
   - **Solution:** Adjust the keepalive interval if network conditions require a different value.
 
 If issues persist, consult the official PiVPN and WireGuard documentation or seek assistance from community forums.

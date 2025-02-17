@@ -31,6 +31,20 @@ Before proceeding, ensure you have the following:
 * Basic Linux command-line knowledge.
 * A user account with ``sudo`` privileges.
 
+
+---------------------------------------
+Network Diagram
+---------------------------------------
+
+.. figure:: /_static/images/network_diagram.png
+   :alt: PiVPN and WireGuard Intra-VPN Diagram
+   :align: center
+   :scale: 70%
+
+   **Figure 1:** Example network diagram illustrating a PiVPN + WireGuard setup. 
+   The VPS (10.1.25.1) runs PiVPN + WireGuard, and multiple clients (e.g., Rock5B at 10.1.25.4, Raspberry Pi5 at 10.1.25.5, NanoPC T6 at 10.1.25.6, Orange Pi at 10.1.25.x, and a laptop at 10.1.25.2) share the 10.1.25.0/24 subnet. 
+   Each client keeps its own direct internet gateway but can communicate securely with other clients through the VPN.
+
 -------------------------------------------------
 Step 0: Initial Server Setup (Highly Recommended)
 -------------------------------------------------

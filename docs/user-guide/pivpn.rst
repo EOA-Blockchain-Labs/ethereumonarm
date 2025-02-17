@@ -215,7 +215,8 @@ Follow the on-screen prompts to create a configuration file for each client. We 
 -------------------------------------------
 Step 6: Client Configuration and Activation
 -------------------------------------------
-1. **Install a WireGuard Client:**  
+1. **Install a WireGuard Client:**
+
    Visit https://www.wireguard.com/install/ to download the official client for your operating system.
 
 2. **Import the Client Configuration:**
@@ -230,7 +231,8 @@ Step 6: Client Configuration and Activation
 
    Replace ``<your_server_ip>`` and ``/path/to/local/destination/`` with the appropriate values.
 
-3. **Review the Client Configuration File:**  
+3. **Review the Client Configuration File:**
+
    A typical client configuration file for WireGuard might look like this:
 
    .. code-block::
@@ -250,7 +252,8 @@ Step 6: Client Configuration and Activation
    .. important::
       Replace all placeholders (e.g., ``<Client Private Key>``, ``<Server Public Key>``) with your actual configuration values. Notice that setting ``AllowedIPs`` to ``10.1.25.0/24`` allows only intra-VPN communication, ensuring that internet traffic uses the client’s local connection.
 
-4. **Activate the Connection (for Linux-based Clients):**  
+4. **Activate the Connection (for Linux-based Clients):**
+
    You can manage the WireGuard interface with systemd and wg-quick:
 
    a. **Save the Configuration:**
@@ -307,6 +310,7 @@ Troubleshooting
 Below are some common issues and suggested solutions:
 
 * **Issue: VPN Client Cannot Connect**
+
   - **Check:** Verify that the WireGuard service is running on the server.
   
   - **Solution:** Run ``sudo systemctl status wg-quick@wg0`` and restart with ``sudo systemctl restart wg-quick@wg0`` if needed.

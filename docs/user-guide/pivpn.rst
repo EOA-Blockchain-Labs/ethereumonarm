@@ -260,6 +260,12 @@ Step 6: Client Configuration and Activation
     
       Place your client configuration file in the ``/etc/wireguard/`` directory. For example, save it as ``/etc/wireguard/eoa.conf`` (if your interface is named "eoa").
 
+      Ensure the configuration file has the correct permissions:
+
+      .. code-block:: bash
+      
+         sudo chmod 600 /etc/wireguard/eoa.conf
+
    b. **Enable the WireGuard Service:**
      
       To have the interface start automatically at boot, run:

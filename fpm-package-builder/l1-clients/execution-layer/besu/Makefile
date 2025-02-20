@@ -30,7 +30,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(BESU_VERSION) --license $(PKG_LICENSE
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 	--deb-systemd extras/besu.service --deb-systemd extras/besu-goerli.service --deb-systemd extras/besu-holesky.service\
 	--depends openjdk-21-jre-headless\
-	--depends libsecp256k1-0\
+	--depends "libsecp256k1-0|libsecp256k1-1"\
 	--depends merge-config\
 	--depends libjemalloc-dev\
 	--replaces hyperledger-besu\

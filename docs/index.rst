@@ -88,6 +88,7 @@ information regarding the image and other Ethereum related software.
   /user-guide/storage
   /user-guide/security
   /user-guide/troubleshooting
+  /user-guide/PiVPNandWireGuard
 
 Developers Guide
 ----------------

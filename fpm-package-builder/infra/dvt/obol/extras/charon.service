@@ -5,6 +5,7 @@
 
 [Service]
   EnvironmentFile=/etc/ethereum/dvt/charon.conf
+  WorkingDirectory=/home/ethereum
   Restart=on-failure
   RestartSec=5s
   ExecStart=/usr/bin/charon run $ARGS

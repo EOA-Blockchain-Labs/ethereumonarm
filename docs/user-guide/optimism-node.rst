@@ -88,6 +88,7 @@ Software Prerequisites
     **Flashing the Image:**
 
     *   **Using Etcher (Recommended):**
+        
         1.  Download and install Balena Etcher: `https://www.balena.io/etcher/`
         2.  Open Etcher.
         3.  Select the downloaded ``.img.zip`` file.
@@ -95,6 +96,7 @@ Software Prerequisites
         5.  Click "Flash!"
 
     *   **Using ``dd`` (Linux/macOS - Advanced Users):**
+        
         1.  Identify your MicroSD card device name.  *Be extremely careful; choosing the wrong device will overwrite data!*
 
             .. prompt:: bash $

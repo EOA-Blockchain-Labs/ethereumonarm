@@ -55,11 +55,97 @@ Before you begin, ensure you have the following hardware:
 Software Prerequisites
 ----------------------
 
-1.  **Flash the Ethereum on ARM Image:** Download the appropriate image for your board (Rock 5B or Orange Pi 5 Plus) from the links provided in the original "Images download" section.  Verify the SHA256 checksum after downloading.  Then, flash the image to your MicroSD card using a tool like Etcher (recommended for ease of use) or the `dd` command (as described in the original "Image installation" section).
+1.  **Flash the Ethereum on ARM Image:**
 
-2.  **Boot the Board:** Insert the MicroSD card, connect the NVMe SSD, connect the Ethernet cable, and power on the board.  The initial boot and setup script will take 10-15 minutes.
+    Download the appropriate image for your board.  *Always verify the SHA256 checksum after downloading to ensure file integrity.*
 
-3.  **Log In and Change Password:** After the initial setup, log in via SSH (using the board's IP address and the default username/password: `ethereum`/`ethereum`) or directly using a monitor and keyboard.  You will be prompted to change the default password immediately.
+    *   **For Rock 5B (32GB):**
+
+        *   Download Link: `ethonarm_rock5b_24.09.00.img.zip <https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/EeYfOU29o3ZDgFv2yTCSjCQBkLb6_hjGF2GRzD65Ojpxag?download=1>`_
+        *   SHA256 Checksum: ``849d44f6053d058216ea3138bce8455762edc5c7823d9734a8a8f5a62d26e612``
+
+        Verify the checksum (in your terminal, after downloading):
+
+        .. prompt:: bash $
+
+            sha256sum ethonarm_rock5b_24.09.00.img.zip
+
+        Compare the output to the checksum provided above.  They *must* match.
+
+    *   **For Orange Pi 5 Plus (32GB):**
+
+        *   Download Link: `ethonarm_orangepi5-plus_24.06.00.img.zip <https://ethereumonarm-my.sharepoint.com/:u:/p/dlosada/Ecmleamkm-hJkGoIQezdU_kBw8Tl0suJXUlb-kjsZpi67Q?download=1>`_
+        *   SHA256 Checksum: ``60b46fd88dc9b6cc6855a48087b8da88e0b2af670e1f1443d6ca0834c9af2125``
+
+        Verify the checksum:
+
+        .. prompt:: bash $
+
+            sha256sum ethonarm_orangepi5-plus_24.06.00.img.zip
+
+        Compare the output to the checksum provided above.
+
+    **Flashing the Image:**
+
+    *   **Using Etcher (Recommended):**
+        1.  Download and install Balena Etcher: `https://www.balena.io/etcher/`
+        2.  Open Etcher.
+        3.  Select the downloaded ``.img.zip`` file.
+        4.  Select your MicroSD card (be *absolutely certain* you choose the correct drive!).
+        5.  Click "Flash!"
+
+    *   **Using ``dd`` (Linux/macOS - Advanced Users):**
+        1.  Identify your MicroSD card device name.  *Be extremely careful; choosing the wrong device will overwrite data!*
+
+            .. prompt:: bash $
+
+                sudo fdisk -l
+
+            Look for a device like ``/dev/mmcblk0`` or ``/dev/sdX`` (where X is a letter).
+
+        2.  Unzip the downloaded image file.  For example, for the Rock 5B:
+
+            .. prompt:: bash $
+
+                unzip ethonarm_rock5b_24.09.00.img.zip
+
+        3.  Flash the image using ``dd``.  Replace ``/dev/mmcblk0`` with the *correct* device name for your MicroSD card.  *Double-check this!*
+
+            .. prompt:: bash $
+
+                sudo dd bs=1M if=ethonarm_rock5b_24.09.00.img of=/dev/mmcblk0 conv=fdatasync status=progress
+
+            (Use the correct image filename for the Orange Pi 5 Plus if applicable.)
+
+2.  **Boot the Board:** Insert the MicroSD card into the board, connect the NVMe SSD, connect the Ethernet cable, and connect the power supply.  The initial boot and setup script will take 10-15 minutes. The device will reboot automatically.
+
+3.  **Log In and Change Password:** After the initial setup and reboot, log in via SSH or directly using a monitor and keyboard.
+
+    *   **Finding the IP Address:** If you don't have a monitor connected, you'll need to find the board's IP address.  You can usually find this in your router's administration interface, or use a network scanning tool:
+
+        *   **Using ``nmap`` (install with ``sudo apt-get install nmap`` on your desktop):**
+
+            .. prompt:: bash $
+
+                nmap -sP 192.168.1.0/24  # Replace with your network's subnet if different
+
+        *   **Using ``fping`` (install with ``sudo apt-get install fping``):**
+
+            .. prompt:: bash $
+
+                fping -a -g 192.168.1.0/24  # Replace with your network's subnet
+
+    *   **Logging in via SSH:**  Use an SSH client (like PuTTY on Windows, or the ``ssh`` command on Linux/macOS) and connect to the board's IP address:
+
+        .. prompt:: bash $
+
+            ssh ethereum@your_board_IP
+
+        Replace ``your_board_IP`` with the actual IP address.  The default username is ``ethereum`` and the default password is ``ethereum``.
+
+    *   **Direct Login (Monitor/Keyboard):**  If you have a monitor and keyboard connected, log in directly using the same credentials.
+
+    You will be *immediately* prompted to change the default password.  Choose a strong password and remember it! You will need to log in *twice* on the first login – once to trigger the password change, and again with the new password.
 
 Step 1: Setting up the Layer 1 (Ethereum) Node
 -----------------------------------------------

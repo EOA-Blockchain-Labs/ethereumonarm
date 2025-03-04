@@ -1054,7 +1054,7 @@ Now that you have a running Optimism Supernode, what can you actually *do* with 
 
 **5. Join the Community and Stay Informed:**
 
-*   **Ethereum on ARM Community:** Engage with the Ethereum on ARM community forums, chat channels, or social media groups.  This is a great place to ask questions, share your experiences, get help with troubleshooting, and stay informed about updates and best practices for running Ethereum nodes on ARM hardware.
+*   **Ethereum on ARM Community:** Engage with the Ethereum on ARM community Discord.  This is a great place to ask questions, share your experiences, get help with troubleshooting, and stay informed about updates and best practices for running Ethereum nodes on ARM hardware.
 *   **Optimism Community:**  Participate in the Optimism community forums, Discord channels, or governance discussions. Stay up-to-date with Optimism network upgrades, new features, and community initiatives.
 *   **Ethereum Ecosystem Resources:**  Continue learning about Ethereum, Optimism, and blockchain technology in general through online resources, documentation, blog posts, and educational materials.
 

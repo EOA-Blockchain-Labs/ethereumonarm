@@ -310,7 +310,7 @@ Geth
 
 :guilabel:`Geth` is the most used EL client. It is developed by the Ethereum Foundation team
 and the performance on ARM64 devices is outstanding. It is capable of syncing the whole blockchain 
-in 2-3 days on a **Raspberry Pi 4 with 8 GB RAM** and in less that 1 day on the 
+in less than 1 day on a **Raspberry Pi 5 with 16 GB RAM** and in less that 1 day on the 
 **Radxa Rock 5B**.
 
 .. csv-table::

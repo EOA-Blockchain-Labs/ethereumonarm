@@ -20,6 +20,7 @@ This board includes 1x M.2 2245 NVMe disk support.
 Raspberry Pi 5
 --------------
 
-The optimal setup for the Raspberry Pi 5 involves using an NVMe hat. For a detailed installation guide and recommended hardware, please see the :doc:`RaspberryPi5-storage`.
+The optimal setup for the Raspberry Pi 5 involves using an NVMe hat. 
+For a detailed installation guide and recommended hardware, please see the :doc:`RaspberryPi5-storage`.
 
 

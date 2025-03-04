@@ -68,6 +68,7 @@ Choosing the right hardware is crucial for a stable and performant Supernode.  L
 
     *   **Why NVMe SSD?**  Blockchain data is constantly being read and written. NVMe SSDs offer significantly faster read and write speeds compared to traditional SATA SSDs or hard drives. This speed is *essential* for blockchain synchronization and node performance.
     *   **Why 4TB (Recommended) / 2TB (Minimum)?**  The Ethereum blockchain is large and constantly growing.  A 4TB SSD provides ample space for both L1 and L2 chain data, allowing for future growth. While a 2TB SSD *might* be sufficient initially, it will become tighter over time, and 4TB is strongly recommended for long-term operation and to avoid disk space issues.
+    *   **AVOID Phison Controller NVMe Drives!**  Certain NVMe SSD controllers, particularly Phison controllers (especially in budget drives), have been known to exhibit poor performance or compatibility issues under the sustained heavy workloads of Ethereum nodes.  **Choosing a Mid-Range or High-End drive from reputable brands is crucial for reliability.**
     *   **Recommended 4TB NVMe SSDs (High-End - Reliable and Performant):**
 
         *   **Western Digital SN850X 4TB:**  Widely regarded as a top-tier, highly reliable, and performant NVMe SSD.
@@ -1020,19 +1021,19 @@ The verification and monitoring methods described in Step 4 are a good starting 
 
 Once you have a solid understanding of the basic Supernode setup, you can explore more advanced configuration options. **Proceed with caution when modifying advanced settings, and always back up your configuration files before making changes.**
 
-*   **Customizing Node Client Configurations:**
-
-    The Ethereum on ARM image provides default configurations for Geth, Prysm, `op-geth`, and `op-node`.  You can examine the configuration files (e.g., `/etc/ethereum/geth.conf`, `/etc/ethereum/prysm-beacon.conf`, `/etc/ethereum/op-node.conf`, `/etc/ethereum/op-geth.conf`) to understand the available settings and potentially customize them.  Configuration options might include:
-    *   **P2P Network Settings:**  Adjusting peer limits, network ports, and discovery settings.
-    *   **Data Storage Paths:**  Changing the default directories where blockchain data is stored (if you have specific storage requirements, although the default NVMe SSD setup is generally recommended).
-    *   **RPC Endpoint Configuration:**  Customizing RPC ports, enabling/disabling RPC methods, and setting RPC access control (e.g., limiting RPC access to specific IP addresses - for security if exposing RPC endpoints publicly).
-    *   **Resource Limits (Advanced):** In very specific scenarios, you *might* consider adjusting resource limits for node processes (CPU affinity, memory limits, etc.), but this is generally not necessary on a properly sized 32GB RAM system for a Supernode.  Incorrectly set resource limits can harm performance.
+*   **Customizing Node Client Configurations:** The Ethereum on ARM image provides default configurations for Geth, Prysm, `op-geth`, and `op-node`.  You can examine the configuration files (e.g., `/etc/ethereum/geth.conf`, `/etc/ethereum/prysm-beacon.conf`, `/etc/ethereum/op-node.conf`, `/etc/ethereum/op-geth.conf`) to understand the available settings and potentially customize them.  Configuration options might include:    
+    
+    *  **P2P Network Settings:**  Adjusting peer limits, network ports, and discovery settings.
+    *  **Data Storage Paths:**  Changing the default directories where blockchain data is stored (if you have specific storage requirements, although the default NVMe SSD setup is generally recommended).
+    *  **RPC Endpoint Configuration:**  Customizing RPC ports, enabling/disabling RPC methods, and setting RPC access control (e.g., limiting RPC access to specific IP addresses - for security if exposing RPC endpoints publicly).
+    *  **Resource Limits (Advanced):** In very specific scenarios, you *might* consider adjusting resource limits for node processes (CPU affinity, memory limits, etc.), but this is generally not necessary on a properly sized 32GB RAM system for a Supernode.  Incorrectly set resource limits can harm performance.
 
 *   **Exposing RPC Endpoints Publicly (With Security Considerations - Advanced):**
 
     By default, the RPC endpoints for Geth, Prysm, and `op-geth` are configured to listen on `localhost` only. This means they are only accessible from within the Supernode itself.  For certain use cases (e.g., accessing your node's RPC from applications outside your Supernode, offering public RPC services - advanced topics, not covered in this basic guide), you *could* configure the RPC endpoints to be accessible from your local network or even publicly on the internet.
 
     **Exposing RPC endpoints publicly significantly increases security risks.** If you choose to do this, you **must** implement strong security measures, including:
+    
     *   **Firewall Rules:**  Restrict access to RPC ports to only the necessary IP addresses or network ranges.
     *   **RPC Authentication:**  Enable RPC authentication (using API keys or similar mechanisms) if supported by the client software.
     *   **Rate Limiting:** Implement rate limiting on RPC requests to prevent abuse and denial-of-service attacks.

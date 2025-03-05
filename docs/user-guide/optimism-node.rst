@@ -68,7 +68,6 @@ Choosing the right hardware is crucial for a stable and performant Supernode.  L
 
     *   **Why NVMe SSD?**  Blockchain data is constantly being read and written. NVMe SSDs offer significantly faster read and write speeds compared to traditional SATA SSDs or hard drives. This speed is *essential* for blockchain synchronization and node performance.
     *   **Why 4TB (Recommended) / 2TB (Minimum)?**  The Ethereum blockchain is large and constantly growing.  A 4TB SSD provides ample space for both L1 and L2 chain data, allowing for future growth. While a 2TB SSD *might* be sufficient initially, it will become tighter over time, and 4TB is strongly recommended for long-term operation and to avoid disk space issues.
-    *   **AVOID Phison Controller NVMe Drives!**  Certain NVMe SSD controllers, particularly Phison controllers (especially in budget drives), have been known to exhibit poor performance or compatibility issues under the sustained heavy workloads of Ethereum nodes.  **Choosing a Mid-Range or High-End drive from reputable brands is crucial for reliability.**
     *   **Recommended 4TB NVMe SSDs (High-End - Reliable and Performant):**
 
         *   **Western Digital SN850X 4TB:**  Widely regarded as a top-tier, highly reliable, and performant NVMe SSD.
@@ -132,15 +131,15 @@ Software Prerequisites - **Step-by-Step Guide**
 
             **Verifying Checksum on macOS/Linux:**
 
-            1.  Open your terminal application.
-            2.  Navigate to the directory where you downloaded the ``.img.zip`` file using the ``cd`` command (e.g., ``cd Downloads``).
-            3.  Run the following command in your terminal:
+            7.  Open your terminal application.
+            8.  Navigate to the directory where you downloaded the ``.img.zip`` file using the ``cd`` command (e.g., ``cd Downloads``).
+            9.  Run the following command in your terminal:
 
             .. prompt:: bash $
 
                 sha256sum ethonarm_rock5b_24.09.00.img.zip
 
-            4.  **Compare the output to the provided checksum:** ``849d44f6053d058216ea3138bce8455762edc5c7823d9734a8a8f5a62d26e612``. **They MUST match exactly.** If they do not match, re-download the image file.
+            10. **Compare the output to the provided checksum:** ``849d44f6053d058216ea3138bce8455762edc5c7823d9734a8a8f5a62d26e612``. **They MUST match exactly.** If they do not match, re-download the image file.
 
         *   **For Orange Pi 5 Plus (32GB):**
 
@@ -467,7 +466,7 @@ The first crucial step in setting up your Optimism Supernode is to establish a f
 
     *   **Syncing Very Slow or Stuck:**
 
-        *   **Check NVMe SSD Health and Performance:**  A slow or failing NVMe SSD will severely bottleneck Geth synchronization. Use system monitoring tools (like ``iotop``, ``iostat``, ``htop``) to check disk I/O activity and SSD performance.  Ensure you are using a recommended SSD and have avoided Phison controller drives.
+        *   **Check NVMe SSD Health and Performance:**  A slow or failing NVMe SSD will severely bottleneck Geth synchronization. Use system monitoring tools (like ``iotop``, ``iostat``, ``htop``) to check disk I/O activity and SSD performance.
         *   **Insufficient Free Disk Space:** Verify you have ample free space on your NVMe SSD.  If the SSD is nearing full capacity, Geth performance will degrade significantly, and sync may stall. Use ``df -h`` in the terminal to check disk space usage.
         *   **Slow or Unstable Internet Connection:** Geth requires a stable and reasonably fast internet connection to download blockchain data.  Check your internet speed and stability.  A poor internet connection is a common cause of slow sync.
         *   **Geth Process Consuming Excessive Resources (CPU/RAM):** While resource-intensive, Geth should run comfortably on a 32GB RAM Rock 5B or Orange Pi 5 Plus. Use ``htop`` or ``top`` to monitor CPU and RAM usage. If Geth is consuming excessive resources, and the system is swapping heavily (high swap usage in ``htop``), it might indicate a system issue or that other processes are consuming resources.  However, on a dedicated Supernode setup, this is less likely if you have followed hardware recommendations.
@@ -534,7 +533,7 @@ Once your Layer 1 (L1) Ethereum node (Geth and Prysm) is fully synchronized, you
         *   **Internal Port/Port Range:** ``31303``
         *   **Internal IP Address/Destination IP:** Enter the **internal IP address of your Rock 5B or Orange Pi 5 Plus Supernode**.  This is the same IP address you use to SSH into your board.
         *   **Enable:** Ensure the port forwarding rule is enabled
-		4.  Save the port forwarding settings on your router.  You may need to reboot your router for the changes to take effect.
+		1.  Save the port forwarding settings on your router.  You may need to reboot your router for the changes to take effect.
 
     **UFW Firewall Configuration (on the Supernode itself) for ``op-geth`` will be covered in Step 3.**
 

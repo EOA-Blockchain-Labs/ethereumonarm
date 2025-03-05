@@ -161,12 +161,10 @@ Software Prerequisites - **Step-by-Step Guide**
 
         4.  **Select Target:** Click "Select target" and **carefully select your MicroSD card drive.**  **Double-check that you have chosen the correct drive letter for your MicroSD card.  Flashing to the wrong drive will erase data on that drive!** Etcher usually highlights removable drives to help prevent mistakes.
 
-            .. image:: etcher_interface.png
-               :alt: Etcher interface example (replace with actual screenshot in your documentation)
+            .. image:: /_static/images/balena.png
+               :alt: Etcher interface example
                :width: 600 px
                :align: center
-
-            *(**[Replace ``etcher_interface.png`` with an actual screenshot of Etcher interface with image and target selected in your documentation build if possible]**)*
 
 
         5.  **Flash!:** Click the "Flash!" button. Etcher will write the image to your MicroSD card and then verify the write process.

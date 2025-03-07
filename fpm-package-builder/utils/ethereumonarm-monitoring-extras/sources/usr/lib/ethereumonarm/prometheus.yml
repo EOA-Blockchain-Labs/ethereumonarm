@@ -75,7 +75,7 @@ scrape_configs:
       - targets: ["127.0.0.1:9095"]  # Ethereum metrics exporter endpoint address.
 
   # DVT 
-  
+
   # Obol
   - job_name: "charon_0"  # Charon node 0 for Distributed Validator Technology (DVT) with Obol.
     static_configs:
@@ -96,3 +96,11 @@ scrape_configs:
   - job_name: "charon_4"  # Charon node 4 for DVT with Obol.
     static_configs:
       - targets: ["node4:3620"]  # Charon node 4 metrics endpoint address.
+
+#Layer 2
+
+#Optimism
+  - job_name: "optimism_node" # Optimism execution client
+    static_configs:
+      - targets: ["127.0.0.1:7300"] # Replace with your Optimism node's metrics port
+    metrics_path: "/metrics" # Optimism's metrics endpoint

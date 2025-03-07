@@ -3,7 +3,7 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-ERIGON_VERSION := $(shell curl -s "https://api.github.com/repos/erigontech/erigon/releases/latest" | jq -r '.tag_name' | tr -d "v")
+ERIGON_VERSION := $(shell curl -s "https://api.github.com/repos/erigontech/erigon/releases/latest" | jq -r '.tag_name')
 
 PKG_RELEASE := 0
 PKG_NAME := erigon

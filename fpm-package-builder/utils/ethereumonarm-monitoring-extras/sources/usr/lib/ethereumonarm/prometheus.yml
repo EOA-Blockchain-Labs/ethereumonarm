@@ -1,75 +1,98 @@
 global:
-  scrape_interval: 15s  # Sets default interval for scraping metrics
-  evaluation_interval: 15s  # Sets interval for evaluating rules
+  scrape_interval: 15s  # Default interval for scraping metrics.
+  evaluation_interval: 15s  # Default interval for evaluating rules.
 
 scrape_configs:
   # Ethereum Execution Clients
-  - job_name: "geth"  # Geth: Go Ethereum client
-    metrics_path: "/debug/metrics/prometheus"
+  - job_name: "geth"  # Go Ethereum client.
+    metrics_path: "/debug/metrics/prometheus"  # Metrics endpoint for Geth.
     static_configs:
-      - targets: ["127.0.0.1:6060"]
+      - targets: ["127.0.0.1:6060"]  # Geth metrics endpoint address.
 
-  - job_name: "erigon"  # Erigon: Advanced Ethereum client for performance
-    metrics_path: "/debug/metrics/prometheus"
+  - job_name: "erigon"  # Erigon: Performance-focused Ethereum client.
+    metrics_path: "/debug/metrics/prometheus"  # Metrics endpoint for Erigon.
     static_configs:
-      - targets: ["127.0.0.1:5050"]
+      - targets: ["127.0.0.1:5050"]  # Erigon metrics endpoint address.
 
-  - job_name: "nethermind"  # Nethermind: .NET Ethereum client
+  - job_name: "nethermind"  # Nethermind: .NET Ethereum client.
     static_configs:
-      - targets: ["127.0.0.1:7070"]
+      - targets: ["127.0.0.1:7070"]  # Nethermind metrics endpoint address. (Assumed default)
 
-  - job_name: "besu"  # Besu: Java Ethereum client
+  - job_name: "besu"  # Besu: Java Ethereum client.
     static_configs:
-      - targets: ["127.0.0.1:9545"]
+      - targets: ["127.0.0.1:9545"]  # Besu metrics endpoint address. (Assumed default)
 
-  - job_name: "reth"  # Reth: Rust Ethereum client
-    metrics_path: "/"
+  - job_name: "reth"  # Reth: Rust Ethereum client.
+    metrics_path: "/"  # Reth metrics endpoint is at the root.
     static_configs:
-      - targets: ["127.0.0.1:9001"]
+      - targets: ["127.0.0.1:9001"]  # Reth metrics endpoint address.
 
-  # Ethereum 2.0 Clients and Validators
-  - job_name: "lighthouse_validator"  # Lighthouse Validator for ETH 2.0
+  # Ethereum Consensus Clients and Validators (ETH 2.0)
+  - job_name: "lighthouse_validator"  # Lighthouse Validator.
     static_configs:
-      - targets: ["127.0.0.1:5054"]
+      - targets: ["127.0.0.1:5054"]  # Lighthouse Validator metrics endpoint address. (Assumed default)
 
-  - job_name: "nimbus"  # Nimbus: ETH 2.0 client for restricted resources
+  - job_name: "nimbus"  # Nimbus: Resource-efficient ETH 2.0 client.
     static_configs:
-      - targets: ["127.0.0.1:8008"]
+      - targets: ["127.0.0.1:8008"]  # Nimbus metrics endpoint address. (Assumed default)
 
-  - job_name: "validator"  # Prysm Validator for ETH 2.0
+  - job_name: "validator"  # Prysm Validator.
     static_configs:
-      - targets: ["127.0.0.1:8081"]
+      - targets: ["127.0.0.1:8081"]  # Prysm Validator metrics endpoint address. (Assumed default)
 
-  - job_name: "beacon node"  # Prysm Beacon Node for ETH 2.0
+  - job_name: "beacon_node"  # Prysm Beacon Node.
     static_configs:
-      - targets: ["127.0.0.1:8080"]
+      - targets: ["127.0.0.1:8080"]  # Prysm Beacon Node metrics endpoint address. (Assumed default)
 
-  - job_name: "slasher"  # Prysm Slasher for ETH 2.0
+  - job_name: "slasher"  # Prysm Slasher.
     static_configs:
-      - targets: ["127.0.0.1:8082"]
+      - targets: ["127.0.0.1:8082"]  # Prysm Slasher metrics endpoint address. (Assumed default)
 
-  - job_name: "teku-dev"  # Teku Development client for ETH 2.0
+  - job_name: "teku_dev"  # Teku Development client.
     static_configs:
-      - targets: ["127.0.0.1:8009"]
+      - targets: ["127.0.0.1:8009"]  # Teku Development metrics endpoint address. (Assumed default)
 
-  - job_name: "lodestar-beacon"  # Lodestar Beacon for ETH 2.0
+  - job_name: "lodestar_beacon"  # Lodestar Beacon Node.
     static_configs:
-      - targets: ["localhost:4040"]
+      - targets: ["localhost:4040"]  # Lodestar Beacon Node metrics endpoint address.
 
-  - job_name: "lodestar-validator"  # Lodestar Validator for ETH 2.0
+  - job_name: "lodestar_validator"  # Lodestar Validator.
     static_configs:
-      - targets: ["localhost:5064"]
+      - targets: ["localhost:5064"]  # Lodestar Validator metrics endpoint address.
 
   # System Metrics and Monitoring
-  - job_name: "node"  # Node Exporter for system metrics
+  - job_name: "node"  # Node Exporter for system metrics.
     static_configs:
-      - targets: ["127.0.0.1:9100"]
+      - targets: ["127.0.0.1:9100"]  # Node Exporter metrics endpoint address.
 
-  - job_name: "prometheus"  # Prometheus for self-monitoring
+  - job_name: "prometheus"  # Prometheus self-monitoring.
     static_configs:
-      - targets: ["127.0.0.1:9090"]
+      - targets: ["127.0.0.1:9090"]  # Prometheus metrics endpoint address.
 
   # Miscellaneous Services
-  - job_name: "ethereum-metrics-exporter"  # Metrics exporter for ETH nodes
+  - job_name: "ethereum_metrics_exporter"  # Custom metrics exporter for Ethereum.
     static_configs:
-      - targets: ["127.0.0.1:9095"]
+      - targets: ["127.0.0.1:9095"]  # Ethereum metrics exporter endpoint address.
+
+  # DVT 
+  
+  # Obol
+  - job_name: "charon_0"  # Charon node 0 for Distributed Validator Technology (DVT) with Obol.
+    static_configs:
+      - targets: ["node0:3620"]  # Charon node 0 metrics endpoint address.
+
+  - job_name: "charon_1"  # Charon node 1 for DVT with Obol.
+    static_configs:
+      - targets: ["node1:3620"]  # Charon node 1 metrics endpoint address.
+
+  - job_name: "charon_2"  # Charon node 2 for DVT with Obol.
+    static_configs:
+      - targets: ["node2:3620"]  # Charon node 2 metrics endpoint address.
+
+  - job_name: "charon_3"  # Charon node 3 for DVT with Obol.
+    static_configs:
+      - targets: ["node3:3620"]  # Charon node 3 metrics endpoint address.
+
+  - job_name: "charon_4"  # Charon node 4 for DVT with Obol.
+    static_configs:
+      - targets: ["node4:3620"]  # Charon node 4 metrics endpoint address.

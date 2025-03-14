@@ -1,16 +1,16 @@
 #!/bin/bash
 #
-# /etc/rc.local
+#   /etc/rc.local
 #
-# This script is executed at the end of each multiuser runlevel.
-# Ensure that the script will "exit 0" on success or any other
-# value on error.
+#   This script is executed at the end of each multiuser runlevel.
+#   Ensure that the script will "exit 0" on success or any other
+#   value on error.
 #
-# In order to enable or disable this script, just change the execution bits.
+#   In order to enable or disable this script, just change the execution bits.
 #
-# By default, this script does nothing.
-# This script transforms the Ubuntu image into an Ethereum on ARM image
-# for various devices.
+#   By default, this script does nothing.
+#   This script transforms the Ubuntu image into an Ethereum on ARM image
+#   for various devices.
 
 # --- Device Model Detection and Variable Setup ---
 # Device model detection
@@ -22,53 +22,29 @@ case "$DEVICE_MODEL" in
     TARGET_DISK="/dev/nvme0n1"
     PARTITION1="p1"
     HOSTNAME_SEED="rpi5"
-    DEVICE_RAM=$(free -m | awk '/Mem:/ {print $2}') # Get RAM in MB
-    if [ "$DEVICE_RAM" -le 4096 ]; then             # Example: 4GB or less RAM
-        SWAP_SIZE=4096                              # 4GB swap for <= 4GB RAM
-        SWAPPINESS=20                               # Slightly more aggressive swapping
-    else
-        SWAP_SIZE=2048 # 2GB swap for > 4GB RAM
-        SWAPPINESS=10  # Less aggressive swapping
-    fi
+    SWAP_SIZE=8192
+    SWAPPINESS=10
     ;;
 "FriendlyElec NanoPC-T6")
     TARGET_DISK="/dev/nvme0n1" # Adjust if needed for your specific setup
     PARTITION1="p1"            # Adjust if needed for your specific setup
     HOSTNAME_SEED="nanopct6"
-    DEVICE_RAM=$(free -m | awk '/Mem:/ {print $2}') # Get RAM in MB
-    if [ "$DEVICE_RAM" -le 8192 ]; then             # Example: 8GB or less RAM
-        SWAP_SIZE=8192                              # 8GB swap for <= 8GB RAM
-        SWAPPINESS=15
-    else
-        SWAP_SIZE=4096 # 4GB swap for > 8GB RAM
-        SWAPPINESS=10
-    fi
+    SWAP_SIZE=8192
+    SWAPPINESS=10
     ;;
 "Radxa ROCK 5B")
     TARGET_DISK="/dev/nvme0n1" # Adjust if needed for your specific setup
     PARTITION1="p1"            # Adjust if needed for your specific setup
     HOSTNAME_SEED="rock5b"
-    DEVICE_RAM=$(free -m | awk '/Mem:/ {print $2}') # Get RAM in MB
-    if [ "$DEVICE_RAM" -le 16384 ]; then            # Example: 16GB or less RAM
-        SWAP_SIZE=8192                              # 8GB swap for <= 16GB RAM
-        SWAPPINESS=10
-    else
-        SWAP_SIZE=4096 # 4GB swap for > 16GB RAM
-        SWAPPINESS=5
-    fi
+    SWAP_SIZE=8192
+    SWAPPINESS=10
     ;;
 "Orange Pi 5 Plus")
     TARGET_DISK="/dev/nvme0n1" # Adjust if needed for your specific setup
     PARTITION1="p1"            # Adjust if needed for your specific setup
     HOSTNAME_SEED="opi5plus"
-    DEVICE_RAM=$(free -m | awk '/Mem:/ {print $2}') # Get RAM in MB
-    if [ "$DEVICE_RAM" -le 8192 ]; then             # Example: 8GB or less RAM
-        SWAP_SIZE=8192                              # 8GB swap for <= 8GB RAM
-        SWAPPINESS=15
-    else
-        SWAP_SIZE=4096 # 4GB swap for > 8GB RAM
-        SWAPPINESS=10
-    fi
+    SWAP_SIZE=8192
+    SWAPPINESS=10
     ;;
 *)
     echo "Unrecognized device model: $DEVICE_MODEL. Exiting."
@@ -125,7 +101,7 @@ if [ ! -f "$FLAG" ]; then
 
     # Step 1: Install necessary dependencies
     apt-get update
-    apt-get -y install gdisk software-properties-common apt-utils vim net-tools file # telnet REMOVED as requested
+    apt-get -y install gdisk software-properties-common apt-utils vim net-tools file kitty-terminfo bash-completion
 
     # Step 2: Detect target disk (using device-specific variable TARGET_DISK)
 
@@ -140,6 +116,9 @@ if [ ! -f "$FLAG" ]; then
 
     # Step 5: Mount the disk as /home
     echo "${TARGET_DISK}${PARTITION1} /home ext4 defaults,noatime 0 2" >>/etc/fstab && mount /home
+
+    # Step 5a: Reload systemd daemon
+    systemctl daemon-reload
 
     # Step 6: Create ethereum user
     if ! id -u ethereum >/dev/null 2>&1; then
@@ -192,7 +171,7 @@ if [ ! -f "$FLAG" ]; then
     cat <<EOF >>/etc/bash.bashrc
 alias update-ethereum='
 sudo apt-get update
-sudo apt-get install geth nethermind erigon reth besu prysm lighthouse nimbus teku staking-deposit-cli'
+sudo apt-get install geth nethermind erigon reth besu prysm lighthouse nimbus teku lodestar staking-deposit-cli'
 EOF
 
     # Step 12: Install monitoring stack (Prometheus & Grafana) for node observability
@@ -209,6 +188,10 @@ EOF
     chown -R prometheus:prometheus /home/prometheus/{metrics2,node-exporter}
     apt-get install -y prometheus prometheus-node-exporter
     systemctl enable prometheus prometheus-node-exporter
+
+    # install Ethereum on ARM monitoring config (device-specific addition)
+    apt-get -y install ethereumonarm-monitoring-extras
+    set-ethereumonarm-monitoring-extras -o
 
     # Step 13: Install MEV-Boost (no censorship relays) for potentially increased rewards
     apt-get -y install mev-boost
@@ -234,7 +217,28 @@ EOF
     EOA_VERSION="Ethereum on ARM $EOA_MAJOR_VERSION.$EOA_MINOR_VERSION"
     echo "$EOA_VERSION" >"$EOA_RELEASE_FILE"
 
-    # Step 18: Create the first-run flag to prevent re-execution and reboot the system
+    # Step 18: Delete non-system users except ethereum
+    # Get the normal user UID range from /etc/login.defs
+    UID_MIN=$(grep -E '^UID_MIN' /etc/login.defs | awk '{print $2}')
+    UID_MAX=$(grep -E '^UID_MAX' /etc/login.defs | awk '{print $2}')
+
+    # Check if UID_MIN and UID_MAX were successfully retrieved
+    if [[ -n "$UID_MIN" && -n "$UID_MAX" ]]; then
+        # Use getent to list all users
+        while IFS=':' read -r user _ _ uid _ _ _ _; do
+            # Check if the user's UID is within the normal user range and is not ethereum
+            if [[ "$uid" -ge "$UID_MIN" && "$uid" -le "$UID_MAX" && "$user" != "ethereum" ]]; then
+                deluser "$user" --remove-home || echo "Failed to delete user $user"
+            fi
+        done < /etc/passwd
+    else
+        echo "Failed to retrieve UID_MIN or UID_MAX from /etc/login.defs. Skipping user deletion."
+    fi
+
+    # Step 19: Correct ethereum home permissions if /home already exists
+    chown -R ethereum:ethereum /home/ethereum/
+
+    # Step 20: Create the first-run flag to prevent re-execution and reboot the system
     touch "$FLAG"
     grep "rc.local" /var/log/syslog >>"$FLAG" # Keeping this line for historical logging of rc.local execution, purpose is limited.
     reboot

@@ -1,250 +1,290 @@
 #!/bin/bash
+# Ethereum on ARM Node Initial Setup Script
+# rc.local
 #
-#   /etc/rc.local
+# This script is executed at the end of the system startup process, specifically when it reaches the multiuser runlevel.
+# It is crucial that the script concludes with an "exit 0" status upon successful completion, or any other non-zero value to indicate an error.
 #
-#   This script is executed at the end of each multiuser runlevel.
-#   Ensure that the script will "exit 0" on success or any other
-#   value on error.
+# The script can be enabled or disabled by simply modifying its execution permissions.
 #
-#   In order to enable or disable this script, just change the execution bits.
+# By default, this script performs no actions.
+# This script is designed to convert an armbian Ubuntu 64-bit operating system image into one that is ready to function as an Ethereum node on an ARM-based device, as part of the Ethereum on ARM project.
 #
-#   By default, this script does nothing.
-#   This script transforms the Ubuntu image into an Ethereum on ARM image
-#   for various devices.
+# This script is intended to be run only once, during the first system startup.
+# It automates the setup of an Ethereum node on an ARM device.
+# A flag file is utilized to prevent the script from being executed again after the initial setup has been completed.
+#
+# This rc.local script is part of the Ethereum on ARM project (see online documentation for more details: https://ethereum-on-arm-documentation.readthedocs.io/en/latest/index.html) and its purpose is to transform various ARM-based devices into fully functional Ethereum nodes.
 
-# --- Device Model Detection and Variable Setup ---
-# Device model detection
+FLAG="/root/first-run.flag"
+
+# Check if the setup has already been completed.
+# If the flag file exists, it means the script has run before, so we exit.
+if [ -f "$FLAG" ]; then
+    echo "Setup already completed. Exiting."
+    exit 0
+fi
+
+# Define the wait time for the network interface to link up (in seconds).
+WAIT_TIME=15
+
+# Wait for the interface to link up.
+sleep "$WAIT_TIME"
+
+# Check for internet connection (Borrowed from Armbian).
+wget -q -t 1 --timeout=30 --spider http://github.com
+if [[ $? -ne 0 ]]; then
+    echo "Stopping the installation, internet access is necessary"
+    exit 1
+fi
+
+# --- Device Detection and Setting Up Variables ---
+# We try to find the device model from a specific system file.
+# If that fails, we use the 'uname' command to get the machine type.
+# We then remove any null characters from the output.
 DEVICE_MODEL=$(cat /sys/firmware/devicetree/base/model 2>/dev/null || uname -m | tr -d '\0')
 
-# Device-specific variables configuration
+# We configure specific settings based on the detected device model.
+
 case "$DEVICE_MODEL" in
+
 "Raspberry Pi 5 Model B Rev 1.1")
-    TARGET_DISK="/dev/nvme0n1"
-    PARTITION1="p1"
-    HOSTNAME_SEED="rpi5"
-    SWAP_SIZE=8192
-    SWAPPINESS=10
+    TARGET_DISK="/dev/nvme0n1" # Specifies the disk device where the Ethereum data will be stored.
+    PARTITION1="p1"            # Defines the partition number on the target disk to be used.
+    HOSTNAME_SEED="rpi5"       # Used as a base to generate a unique hostname for this device.
+    SWAP_SIZE=8192             # Sets the size of the swap space in megabytes (MB).
+    SWAPPINESS=10              # Controls how aggressively the kernel uses swap memory (lower value means less aggressive).
     ;;
+
 "FriendlyElec NanoPC-T6")
-    TARGET_DISK="/dev/nvme0n1" # Adjust if needed for your specific setup
-    PARTITION1="p1"            # Adjust if needed for your specific setup
-    HOSTNAME_SEED="nanopct6"
-    SWAP_SIZE=8192
-    SWAPPINESS=10
+    TARGET_DISK="/dev/nvme0n1" # Specifies the disk device where the Ethereum data will be stored.
+    PARTITION1="p1"            # Defines the partition number on the target disk to be used.
+    HOSTNAME_SEED="nanopct6"   # Used as a base to generate a unique hostname for this device.
+    SWAP_SIZE=8192             # Sets the size of the swap space in megabytes (MB).
+    SWAPPINESS=10              # Controls how aggressively the kernel uses swap memory (lower value means less aggressive).
     ;;
+
 "Radxa ROCK 5B")
-    TARGET_DISK="/dev/nvme0n1" # Adjust if needed for your specific setup
-    PARTITION1="p1"            # Adjust if needed for your specific setup
-    HOSTNAME_SEED="rock5b"
-    SWAP_SIZE=8192
-    SWAPPINESS=10
+    TARGET_DISK="/dev/nvme0n1" # Specifies the disk device where the Ethereum data will be stored.
+    PARTITION1="p1"            # Defines the partition number on the target disk to be used.
+    HOSTNAME_SEED="rock5b"     # Used as a base to generate a unique hostname for this device.
+    SWAP_SIZE=8192             # Sets the size of the swap space in megabytes (MB).
+    SWAPPINESS=10              # Controls how aggressively the kernel uses swap memory (lower value means less aggressive).
     ;;
-"Orange Pi 5 Plus")
-    TARGET_DISK="/dev/nvme0n1" # Adjust if needed for your specific setup
-    PARTITION1="p1"            # Adjust if needed for your specific setup
-    HOSTNAME_SEED="opi5plus"
-    SWAP_SIZE=8192
-    SWAPPINESS=10
+
+"Orange Pi 5 Plus" | "Xunlong Orange Pi 5 Plus")
+    TARGET_DISK="/dev/nvme0n1" # Specifies the disk device where the Ethereum data will be stored. .
+    PARTITION1="p1"            # Defines the partition number on the target disk to be used.
+    HOSTNAME_SEED="opi5plus"   # Used as a base to generate a unique hostname for this device.
+    SWAP_SIZE=8192             # Sets the size of the swap space in megabytes (MB).
+    SWAPPINESS=10              # Controls how aggressively the kernel uses swap memory (lower value means less aggressive).
     ;;
+
 *)
-    echo "Unrecognized device model: $DEVICE_MODEL. Exiting."
+    echo "Unrecognized device model: $DEVICE_MODEL. Exiting." # If the detected device model does not match any of the cases above, this message is displayed, and the script will terminate.
     exit 1
     ;;
+
 esac
-# --- End of Device Model Detection and Variable Setup ---
 
-# Function to format a disk as /home/ethereum
+# --- List of Packages to Install ---
+# These are the basic tools and libraries we need.
+BASE_PACKAGES="gdisk software-properties-common apt-utils vim net-tools file kitty-terminfo bash-completion wget gpg"
+# These are the different Ethereum client software options and related tools.
+ETHEREUM_PACKAGES="geth nethermind erigon reth besu prysm lighthouse nimbus teku lodestar staking-deposit-cli mev-boost arbitrum-nitro optimism-op-geth optimism-op-node polygon-bor polygon-heimdall starknet-juno fuel-network ethereumonarm-utils"
+# These are the tools for monitoring the Ethereum node.
+MONITORING_PACKAGES="grafana prometheus prometheus-node-exporter ethereumonarm-monitoring-extras" # Includes extra monitoring configurations.
+# These are the packages needed for setting up Nginx as a reverse proxy.
+NGINX_PACKAGES="nginx ethereumonarm-nginx-proxy-extras ethereumonarm-config-sync ethereumonarm-utils"
+
+# --- Update System and Install Basic Packages ---
+# First, we update the list of available packages.
+apt-get update
+# Then, we install the basic packages without asking for confirmation.
+apt-get -y install $BASE_PACKAGES
+
+# --- Disk Partitioning and Formatting ---
+# This function will format the specified disk partition.
 format_disk() {
-    DISK="$1"
-    PARTITION="${DISK}${PARTITION1}"
+    local DISK="$1"
+    local PARTITION="${DISK}${PARTITION1}"
 
-    # Create a temporary directory for mounting
-    local TMP_DIR
+    # Create a temporary directory to check if the partition is already formatted.
     TMP_DIR=$(mktemp -d)
-    local PROCEED_WITH_FORMAT=false
+    local FORMAT=true
 
-    # If the partition exists and is some kind of Linux filesystem, try mounting it
-    if [[ -b "$PARTITION" ]] && command -v file >/dev/null 2>&1 && [[ $(file -s "$PARTITION" | grep -oP 'Linux.*filesystem') ]]; then
+    # Check if the partition exists and if it seems to be a Linux filesystem.
+    if [[ -b "$PARTITION" ]] && command -v file >/dev/null && [[ $(file -s "$PARTITION" | grep 'Linux.*filesystem') ]]; then
+        # Try to mount the partition temporarily.
         mount "$PARTITION" "$TMP_DIR" 2>/dev/null
+        # If an 'ethereum' directory exists and a '.format_me' file does not, we assume it's already set up.
+        [[ -d "$TMP_DIR/ethereum" && ! -f "$TMP_DIR/ethereum/.format_me" ]] && FORMAT=false
+        # If mounted, unmount it.
+        mountpoint -q "$TMP_DIR" && umount "$TMP_DIR"
     fi
-
-    # Check if /home/ethereum exists on the mounted disk
-    if [ -d "$TMP_DIR/ethereum" ]; then
-        # Check for .format_me file to force formatting
-        if [ -f "$TMP_DIR/ethereum/.format_me" ]; then
-            PROCEED_WITH_FORMAT=true
-        else
-            PROCEED_WITH_FORMAT=false
-        fi
-    else
-        PROCEED_WITH_FORMAT=true
-    fi
-
-    # Unmount if we mounted it
-    if mountpoint -q "$TMP_DIR"; then
-        umount "$TMP_DIR"
-    fi
+    # Remove the temporary directory.
     rm -rf "$TMP_DIR"
 
-    # Proceed with format if appropriate
-    if [ "$PROCEED_WITH_FORMAT" = true ]; then
+    # If the 'FORMAT' variable is still true, we proceed with formatting.
+    if [ "$FORMAT" = true ]; then
+        # Remove any existing filesystem signatures from the disk.
         wipefs -a "$DISK"
+        # Create a new partition on the disk.
         sgdisk -n 0:0:0 "$DISK"
-        mkfs.ext4 -F "$PARTITION" || {
-            return 1
-        }
+        # Format the partition with the ext4 filesystem, forcing the operation.
+        mkfs.ext4 -F "$PARTITION" || return 1
     fi
 }
 
-FLAG="/root/first-run.flag"
-if [ ! -f "$FLAG" ]; then
+# Call the format_disk function for the target disk. If it fails, exit the script.
+format_disk "$TARGET_DISK" || exit 1
+# Set the reserved block count for the filesystem to 0%.
+tune2fs -m 0 "${TARGET_DISK}${PARTITION1}"
 
-    # Step 1: Install necessary dependencies
-    apt-get update
-    apt-get -y install gdisk software-properties-common apt-utils vim net-tools file kitty-terminfo bash-completion
+# Add an entry to the fstab file to automatically mount the partition at /home on boot.
+echo "${TARGET_DISK}${PARTITION1} /home ext4 defaults,noatime 0 2" >>/etc/fstab
+# Mount the /home directory.
+mount /home
+# Reload the systemd manager configuration.
+systemctl daemon-reload
 
-    # Step 2: Detect target disk (using device-specific variable TARGET_DISK)
-
-    # Step 3: Partition and format the detected disk
-    format_disk "$TARGET_DISK"
-    if [ $? -ne 0 ]; then
-        exit 1
-    fi
-
-    # Step 4: Remove FS reserved blocks to maximize usable space
-    tune2fs -m 0 "${TARGET_DISK}${PARTITION1}"
-
-    # Step 5: Mount the disk as /home
-    echo "${TARGET_DISK}${PARTITION1} /home ext4 defaults,noatime 0 2" >>/etc/fstab && mount /home
-
-    # Step 5a: Reload systemd daemon
-    systemctl daemon-reload
-
-    # Step 6: Create ethereum user
-    if ! id -u ethereum >/dev/null 2>&1; then
-        adduser --disabled-password --gecos "" ethereum
-        echo "ethereum:ethereum" | chpasswd
-    fi
-    for GRP in sudo netdev audio video dialout plugdev; do
-        adduser ethereum "$GRP"
-    done
-    # Force password change on first login for security
+# --- Ethereum User Setup ---
+# Check if the 'ethereum' user already exists. If not, create it.
+id -u ethereum &>/dev/null || {
+    adduser --disabled-password --gecos "" ethereum
+    # Set the password for the 'ethereum' user to 'ethereum'.
+    echo "ethereum:ethereum" | chpasswd
+    # Force the user to change their password on the next login.
     chage -d 0 ethereum
+}
 
-    # Step 7: Swap installation and configuration
-    apt-get -y install dphys-swapfile
-    # Configure dphys-swapfile to use a file on /home/ethereum and set size
-    sed -i "s|#CONF_SWAPFILE=.*|CONF_SWAPFILE=/home/ethereum/swapfile|" /etc/dphys-swapfile
-    sed -i "s|#CONF_SWAPSIZE=.*|CONF_SWAPSIZE=${SWAP_SIZE}|" /etc/dphys-swapfile
-    sed -i "s|#CONF_MAXSWAP=.*|CONF_MAXSWAP=${SWAP_SIZE}|" /etc/dphys-swapfile
-    systemctl enable dphys-swapfile
+# Add the 'ethereum' user to various groups for necessary permissions.
+for GRP in sudo netdev audio video dialout plugdev; do
+    adduser ethereum "$GRP"
+done
 
-    # Step 8: Modify hostname and /etc/hosts
-    # Get the network interface for hostname generation
-    ACTIVE_INTERFACE=$(ip route get 8.8.8.8 | awk '/dev/ {print $5}')
-    # Get the MAC address for the active network interface for unique hostname
-    MAC_ADDRESS=$(cat /sys/class/net/"$ACTIVE_INTERFACE"/address)
-    MAC_HASH=$(echo "$MAC_ADDRESS" | sha256sum | awk '{print substr($0,0,9)}')
-    echo "ethereumonarm-${HOSTNAME_SEED}-${MAC_HASH}" >/etc/hostname
-    sed -i "s/rpi5b/ethereumonarm-${HOSTNAME_SEED}-${MAC_HASH}/g" /etc/hosts
+# --- Swap Configuration ---
+# Install the dphys-swapfile package for managing swap.
+apt-get -y install dphys-swapfile
+# Configure the swap file location to be in the /home/ethereum directory.
+sed -i "s|#CONF_SWAPFILE=.*|CONF_SWAPFILE=/home/ethereum/swapfile|" /etc/dphys-swapfile
+# Set the size of the swap file in MB.
+sed -i "s|#CONF_SWAPSIZE=.*|CONF_SWAPSIZE=${SWAP_SIZE}|" /etc/dphys-swapfile
+# Set the maximum size of the swap file (same as the configured size here).
+sed -i "s|#CONF_MAXSWAP=.*|CONF_MAXSWAP=${SWAP_SIZE}|" /etc/dphys-swapfile
+# Enable the dphys-swapfile service to start on boot.
+systemctl enable dphys-swapfile
 
-    # Step 9: Disable ZRAM if present
-    if [ -f /etc/default/armbian-zram-config ]; then
-        sed -i "s/ENABLED=true/ENABLED=false/g" /etc/default/armbian-zram-config
-    fi
+# --- Hostname and Network Setup ---
+# Get the name of the active network interface.
+ACTIVE_INTERFACE=$(ip route get 8.8.8.8 | awk '/dev/ {print $5}')
+# Get the MAC address of the active network interface.
+MAC_ADDRESS=$(cat /sys/class/net/"$ACTIVE_INTERFACE"/address)
+# Create a short hash from the MAC address for uniqueness.
+MAC_HASH=$(echo "$MAC_ADDRESS" | sha256sum | cut -c1-8)
+# Generate a new hostname for the system.
+NEW_HOSTNAME="ethereumonarm-${HOSTNAME_SEED}-${MAC_HASH}"
+# Set the new hostname.
+echo "$NEW_HOSTNAME" >/etc/hostname
+# Update the /etc/hosts file with the new hostname.
+sed -i "s/127\.0\.1\.1.*/127.0.1.1 $NEW_HOSTNAME/g" /etc/hosts
 
-    # Step 10: Tune swappiness for better performance with Ethereum nodes
-    echo "vm.swappiness=${SWAPPINESS}" >>/etc/sysctl.conf
-    sysctl -p
+# --- System Performance Tuning ---
+# If the armbian-zram-config file exists, disable zram.
+[[ -f /etc/default/armbian-zram-config ]] && sed -i "s/ENABLED=true/ENABLED=false/g" /etc/default/armbian-zram-config
+# Set the kernel swappiness value.
+echo "vm.swappiness=${SWAPPINESS}" >>/etc/sysctl.conf
+# Apply the new sysctl settings.
+sysctl -p
 
-    # Step 11: Ethereum software installation
-    # Step 11a: Adding Ethereum on ARM repository for package management
-    wget -q -O - http://apt.ethereumonarm.com/eoa.apt.keyring.gpg | sudo tee /etc/apt/trusted.gpg.d/eoa.apt.keyring.gpg >/dev/null
-    add-apt-repository -y -n "deb http://apt.ethereumonarm.com jammy main"
+# --- Ethereum Software Installation ---
+# Download and install the Ethereum on ARM repository key.
+wget -qO- http://apt.ethereumonarm.com/eoa.apt.keyring.gpg | tee /etc/apt/trusted.gpg.d/eoa.gpg >/dev/null
+# Add the Ethereum on ARM repository to the system's software sources.
+add-apt-repository -y -n "deb http://apt.ethereumonarm.com noble main"
+# Update the package lists again to include the new repository.
+apt-get update
+# Install all the specified Ethereum-related packages.
+apt-get -y install $ETHEREUM_PACKAGES
 
-    # Step 11b: Installing core Ethereum packages (clients and tools)
-    apt-get update
-    apt-get -y install geth nethermind erigon reth besu prysm lighthouse nimbus teku lodestar staking-deposit-cli
-    apt-get -y install arbitrum-nitro optimism-op-geth optimism-op-node polygon-bor polygon-heimdall starknet-juno fuel-network
+# Add EOA Release version
+# Define the file where the release version will be stored.
+EOA_RELEASE_FILE="/etc/eoa-release"
+# Set a default minor version if it's not already defined.
+EOA_MINOR_VERSION=${EOA_MINOR_VERSION:-0}
+# Get the current year and month to form the major version.
+EOA_MAJOR_VERSION=$(date +"%y"."%m")
+# Create the full release version string.
+EOA_VERSION="Ethereum on ARM $EOA_MAJOR_VERSION.$EOA_MINOR_VERSION"
+# Write the release version to the specified file.
+echo "$EOA_VERSION" >"$EOA_RELEASE_FILE"
 
-    # Step 11c: Create an alias for easy Ethereum package updates in .bashrc
-    cat <<EOF >>/etc/bash.bashrc
+# --- Alias for Ethereum Package Updates ---
+# Add an alias to the bash configuration file for easy Ethereum package updates.
+cat <<EOF >>/etc/bash.bashrc
 alias update-ethereum='
 sudo apt-get update
 sudo apt-get install geth nethermind erigon reth besu prysm lighthouse nimbus teku lodestar staking-deposit-cli'
 EOF
 
-    # Step 12: Install monitoring stack (Prometheus & Grafana) for node observability
-    apt-get -y install gpg wget
-    wget -q -O - https://packages.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/grafana.gpg >/dev/null
-    echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
-    apt-get -y update
-    apt-get -y install grafana
-    systemctl enable grafana-server
+# --- Monitoring and Observability Stack ---
+# Install necessary tools for adding repositories.
+apt-get -y install gpg wget
+# Download and add the Grafana repository key.
+wget -q -O - https://packages.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/grafana.gpg >/dev/null
+# Add the Grafana repository to the system's software sources.
+echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+# Update the package lists to include the Grafana repository.
+apt-get -y update
+# Install the Grafana server.
+apt-get -y install grafana
+# Enable the Grafana server service to start on boot.
+systemctl enable grafana-server
+# Create a system user for Prometheus.
+adduser --quiet --system --home /home/prometheus --no-create-home --group --gecos "Prometheus daemon" prometheus
+# Create directories for Prometheus data.
+mkdir -p /home/prometheus/{metrics2,node-exporter}
+# Set the correct ownership for the Prometheus data directories.
+chown -R prometheus:prometheus /home/prometheus/{metrics2,node-exporter}
+# Install Prometheus and the Node Exporter.
+apt-get -y install prometheus prometheus-node-exporter
+# Enable the Prometheus and Node Exporter services to start on boot.
+systemctl enable prometheus prometheus-node-exporter
 
-    # Add Prometheus user for monitoring services
-    adduser --quiet --system --home /home/prometheus --no-create-home --group --gecos "Prometheus daemon" prometheus
-    mkdir -p /home/prometheus/{metrics2,node-exporter}
-    chown -R prometheus:prometheus /home/prometheus/{metrics2,node-exporter}
-    apt-get install -y prometheus prometheus-node-exporter
-    systemctl enable prometheus prometheus-node-exporter
+# Install Ethereum on ARM monitoring configuration.
+apt-get -y install ethereumonarm-monitoring-extras
+# Apply the Ethereum on ARM monitoring extras configuration.
+set-ethereumonarm-monitoring-extras -o
+systemctl daemon-reload
 
-    # install Ethereum on ARM monitoring config (device-specific addition)
-    apt-get -y install ethereumonarm-monitoring-extras
-    set-ethereumonarm-monitoring-extras -o
+# --- Nginx Setup ---
+# Install the Nginx web server and related packages.
+apt-get -y install $NGINX_PACKAGES
+# Enable the Nginx service to start on boot.
+systemctl enable nginx
 
-    # Step 13: Install MEV-Boost (no censorship relays) for potentially increased rewards
-    apt-get -y install mev-boost
+# --- Security Hardening ---
+# Disable the root user account to prevent direct login.
+passwd -l root
 
-    # Step 14: Install and configure Nginx for reverse proxy and web access
-    apt-get -y install nginx
-    # UFW FIREWALL REMOVED AS REQUESTED - **SECURITY RISK!** - Consider re-enabling and configuring UFW for security
-    apt-get -y install ethereumonarm-nginx-proxy-extras ethereumonarm-utils ethereumonarm-config-sync
-    systemctl enable nginx
+# --- Cleanup: Delete other Users ---
+# Get the minimum and maximum user IDs for regular users.
+UID_MIN=$(awk '/^UID_MIN/{print $2}' /etc/login.defs)
+UID_MAX=$(awk '/^UID_MAX/ {print $2}' /etc/login.defs)
 
-    # Step 15: Disable root user login for enhanced security
-    passwd -l root
+# Find and delete all users whose UID falls within the regular user range and are not the 'ethereum' user.
+awk -F: -v min="$UID_MIN" -v max="$UID_MAX" '{if($3 >= min && $3 <= max && $1 != "ethereum") print $1}' /etc/passwd | xargs -r sudo deluser --remove-home
 
-    # Step 16: Restore Ethereum clients configuration from backup if it exists
-    if [ -d "/home/ethereum/.etc/ethereum/" ]; then
-        rsync --min-size=1 -avz "/home/ethereum/.etc/ethereum/" "/etc/ethereum/"
-    fi
+# --- Correct ethereum home permissions ---
+# Ensure the 'ethereum' user owns their home directory.
+chown -R ethereum:ethereum /home/ethereum/
 
-    # Step 17: Add Ethereum on ARM release version file
-    EOA_RELEASE_FILE="/etc/eoa-release"
-    EOA_MINOR_VERSION=${EOA_MINOR_VERSION:-0}
-    EOA_MAJOR_VERSION=$(date +"%y"."%m")
-    EOA_VERSION="Ethereum on ARM $EOA_MAJOR_VERSION.$EOA_MINOR_VERSION"
-    echo "$EOA_VERSION" >"$EOA_RELEASE_FILE"
-
-    # Step 18: Delete non-system users except ethereum
-    # Get the normal user UID range from /etc/login.defs
-    UID_MIN=$(grep -E '^UID_MIN' /etc/login.defs | awk '{print $2}')
-    UID_MAX=$(grep -E '^UID_MAX' /etc/login.defs | awk '{print $2}')
-
-    # Check if UID_MIN and UID_MAX were successfully retrieved
-    if [[ -n "$UID_MIN" && -n "$UID_MAX" ]]; then
-        # Use getent to list all users
-        while IFS=':' read -r user _ _ uid _ _ _ _; do
-            # Check if the user's UID is within the normal user range and is not ethereum
-            if [[ "$uid" -ge "$UID_MIN" && "$uid" -le "$UID_MAX" && "$user" != "ethereum" ]]; then
-                deluser "$user" --remove-home || echo "Failed to delete user $user"
-            fi
-        done < /etc/passwd
-    else
-        echo "Failed to retrieve UID_MIN or UID_MAX from /etc/login.defs. Skipping user deletion."
-    fi
-
-    # Step 19: Correct ethereum home permissions if /home already exists
-    chown -R ethereum:ethereum /home/ethereum/
-
-    # Step 20: Create the first-run flag to prevent re-execution and reboot the system
-    touch "$FLAG"
-    grep "rc.local" /var/log/syslog >>"$FLAG" # Keeping this line for historical logging of rc.local execution, purpose is limited.
-    reboot
-else
-    echo "Nothing to do"
-    # Logging removed as requested
-fi
+# --- First Run Flag and Reboot ---
+# Create the flag file to indicate that the script has been run.
+touch "$FLAG"
+# This line seems to be for historical logging of rc.local execution, its purpose is limited.
+grep "rc.local" /var/log/syslog >>"$FLAG"
+# Reboot the system to apply all changes.
+reboot
 
 exit 0

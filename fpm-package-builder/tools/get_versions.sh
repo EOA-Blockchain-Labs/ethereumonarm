@@ -27,26 +27,26 @@ GITHUB_TOKEN=""
 
 # Parse command-line arguments
 while getopts ":ht:" opt; do
-  case $opt in
+    case $opt in
     h)
-      usage
-      ;;
+        usage
+        ;;
     t)
-      GITHUB_TOKEN="$OPTARG"
-      ;;
+        GITHUB_TOKEN="$OPTARG"
+        ;;
     \?)
-      echo "Error: Invalid option '-$OPTARG'" >&2
-      usage
-      ;;
+        echo "Error: Invalid option '-$OPTARG'" >&2
+        usage
+        ;;
     :)
-      echo "Error: Option '-$OPTARG' requires an argument." >&2
-      usage
-      ;;
-  esac
+        echo "Error: Option '-$OPTARG' requires an argument." >&2
+        usage
+        ;;
+    esac
 done
 
 # Shift off processed options/arguments
-shift $((OPTIND-1))
+shift $((OPTIND - 1))
 
 ########################################
 # 1. Check for required dependencies
@@ -78,8 +78,8 @@ fetch_github_release() {
     # Attempt to fetch the latest "release" from GitHub
     if ! latest_release=$(
         curl --fail -sL "${AUTH_HEADER[@]}" \
-             "https://api.github.com/repos/$repo/releases/latest" \
-        | jq -r '.tag_name' 2>/dev/null
+            "https://api.github.com/repos/$repo/releases/latest" |
+            jq -r '.tag_name' 2>/dev/null
     ); then
         echo "Error: Failed to fetch 'releases/latest' from GitHub for $repo" >&2
         echo ""
@@ -90,8 +90,8 @@ fetch_github_release() {
     if [[ -z "$latest_release" || "$latest_release" == "null" ]]; then
         if ! latest_release=$(
             curl --fail -sL "${AUTH_HEADER[@]}" \
-                 "https://api.github.com/repos/$repo/tags" \
-            | jq -r '.[0].name' 2>/dev/null
+                "https://api.github.com/repos/$repo/tags" |
+                jq -r '.[0].name' 2>/dev/null
         ); then
             echo "Error: Failed to fetch 'tags' from GitHub for $repo" >&2
             echo ""
@@ -100,9 +100,9 @@ fetch_github_release() {
     fi
 
     # Normalize: remove any path segments & strip leading "v"
-    latest_release="$(echo "$latest_release" \
-        | sed -E 's|^.*/||' \
-        | sed -E 's/^v//')"
+    latest_release="$(echo "$latest_release" |
+        sed -E 's|^.*/||' |
+        sed -E 's/^v//')"
 
     echo "$latest_release"
 }
@@ -118,11 +118,11 @@ get_latest_repo_version() {
 
     # Scrape the HTML index for .deb files matching the package name
     if ! latest_version=$(
-        curl --fail -s "${BASE_URL}" \
-        | grep -oP "(?<=<a href=\")${package}_[^\"]*\.deb" \
-        | sort -V \
-        | tail -n 1 \
-        | grep -oP '(?<=_)[^_]+(?=_)'
+        curl --fail -s "${BASE_URL}" |
+            grep -oP "(?<=<a href=\")${package}_[^\"]*\.deb" |
+            sort -V |
+            tail -n 1 |
+            grep -oP '(?<=_)[^_]+(?=_)'
     ); then
         echo "Error: Failed to fetch package versions for $package" >&2
         echo ""
@@ -132,11 +132,11 @@ get_latest_repo_version() {
     # Fallback if it didn't match exactly
     if [[ -z "$latest_version" ]]; then
         latest_version=$(
-            curl --fail -s "${BASE_URL}" \
-            | grep -oP "(?<=<a href=\")${package}_[^\"]*\.deb" \
-            | sort -V \
-            | tail -n 1 \
-            | grep -oP '(?<=_)[^_]+(?=\.deb)'
+            curl --fail -s "${BASE_URL}" |
+                grep -oP "(?<=<a href=\")${package}_[^\"]*\.deb" |
+                sort -V |
+                tail -n 1 |
+                grep -oP '(?<=_)[^_]+(?=\.deb)'
         )
     fi
 
@@ -176,6 +176,18 @@ declare -A layer2=(
     [FuelLabs/fuel-core]="fuel-network"
 )
 
+# ---- Infra ----
+declare -A infra=(
+    [ethereum/staking-deposit-cli]="staking-deposit-cli"
+    [ObolNetwork/charon]="dvt-obol"
+)
+
+# ---- Web3 ----
+declare -A web3=(
+    [ipfs/kubo]="kubo"
+    [ethersphere/bee]="bee"
+)
+
 ########################################
 # 6. Helpers for prettier ASCII-table output
 ########################################
@@ -193,7 +205,7 @@ print_table_row() {
     local package="$1"
     local github_version="$2"
     local repo_version="$3"
-    local mismatch="$4"  # yes/no
+    local mismatch="$4" # yes/no
 
     if [[ "$mismatch" == "yes" ]]; then
         # Print row in red
@@ -209,7 +221,7 @@ print_table_row() {
 # 7. Compare and display (grouped)
 #    Store mismatch count in a global
 ########################################
-_LAST_GROUP_MISMATCHES=0  # global scratch variable
+_LAST_GROUP_MISMATCHES=0 # global scratch variable
 
 print_group() {
     local group_name="$1"
@@ -256,19 +268,25 @@ main() {
 
     # ---- Layer 1 Consensus ----
     print_group "Layer 1 Consensus" layer1_consensus
-    (( total_mismatches += _LAST_GROUP_MISMATCHES ))
+    ((total_mismatches += _LAST_GROUP_MISMATCHES))
 
     # ---- Layer 1 Execution ----
     print_group "Layer 1 Execution" layer1_execution
-    (( total_mismatches += _LAST_GROUP_MISMATCHES ))
+    ((total_mismatches += _LAST_GROUP_MISMATCHES))
 
     # ---- Layer 2 ----
     print_group "Layer 2" layer2
-    (( total_mismatches += _LAST_GROUP_MISMATCHES ))
+    ((total_mismatches += _LAST_GROUP_MISMATCHES))
 
+    # ---- Infra ----
+    print_group "Infra" infra
+    ((total_mismatches += _LAST_GROUP_MISMATCHES))
+
+    # ---- Web3 ----
+    print_group "Web3" web3
+    ((total_mismatches += _LAST_GROUP_MISMATCHES))
     echo
     echo "Total mismatches: $total_mismatches"
 }
 
 main
-

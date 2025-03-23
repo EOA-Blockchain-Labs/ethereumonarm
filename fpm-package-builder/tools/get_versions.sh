@@ -1,31 +1,21 @@
 #!/usr/bin/env bash
 set -uo pipefail
 
-########################################
-# 0. Usage and Option Parsing (getopts)
-########################################
 usage() {
     cat <<EOF
 Usage: $0 [OPTIONS]
 
-Compare the latest versions of various Ethereum-based repos on GitHub with
-the versions in the EthereumonARM .deb repository, highlighting mismatches in red.
+Compare Ethereum-based GitHub repos with EthereumonARM .deb repository versions.
 
 Options:
-  -t <token>    Provide a GitHub personal access token to avoid rate-limits
-  -h            Show this help message
-
-Examples:
-  $0
-  $0 -t ghp_1234567890abcdef
-
+  -t <token>    GitHub token to avoid rate limits
+  -h            Display help
 EOF
     exit 0
 }
 
 GITHUB_TOKEN=""
 
-# Parse command-line arguments
 while getopts ":ht:" opt; do
     case $opt in
     h)
@@ -34,259 +24,138 @@ while getopts ":ht:" opt; do
     t)
         GITHUB_TOKEN="$OPTARG"
         ;;
-    \?)
-        echo "Error: Invalid option '-$OPTARG'" >&2
-        usage
-        ;;
-    :)
-        echo "Error: Option '-$OPTARG' requires an argument." >&2
+    *)
         usage
         ;;
     esac
 done
 
-# Shift off processed options/arguments
 shift $((OPTIND - 1))
 
-########################################
-# 1. Check for required dependencies
-########################################
 for cmd in curl jq; do
     if ! command -v "$cmd" &>/dev/null; then
-        echo "Error: $cmd is not installed. Please install it and try again." >&2
+        echo "Error: $cmd not installed." >&2
         exit 1
     fi
 done
 
-########################################
-# 2. Set up authorization header array
-########################################
-# Using an array avoids tricky quoting issues when expanding.
 if [[ -n "$GITHUB_TOKEN" ]]; then
     AUTH_HEADER=(-H "Authorization: token $GITHUB_TOKEN")
 else
     AUTH_HEADER=()
 fi
 
-########################################
-# 3. Function: Fetch latest release/tag
-########################################
+BASE_URL="https://repo.ethereumonarm.com/pool/main/"
+
 fetch_github_release() {
     local repo="$1"
     local latest_release
 
-    # Attempt to fetch the latest "release" from GitHub
-    if ! latest_release=$(
-        curl --fail -sL "${AUTH_HEADER[@]}" \
-            "https://api.github.com/repos/$repo/releases/latest" |
-            jq -r '.tag_name' 2>/dev/null
-    ); then
-        echo "Error: Failed to fetch 'releases/latest' from GitHub for $repo" >&2
-        echo ""
-        return 1
-    fi
+    latest_release=$(curl -fsSL --retry 3 \
+        -H "User-Agent: EthRepoComparator/1.0" \
+        "${AUTH_HEADER[@]}" \
+        "https://api.github.com/repos/${repo}/releases/latest" |
+        jq -r '.tag_name')
 
-    # If empty or "null", fallback to fetching the first tag
     if [[ -z "$latest_release" || "$latest_release" == "null" ]]; then
-        if ! latest_release=$(
-            curl --fail -sL "${AUTH_HEADER[@]}" \
-                "https://api.github.com/repos/$repo/tags" |
-                jq -r '.[0].name' 2>/dev/null
-        ); then
-            echo "Error: Failed to fetch 'tags' from GitHub for $repo" >&2
-            echo ""
-            return 1
-        fi
+        latest_release=$(curl -fsSL --retry 3 \
+            -H "User-Agent: EthRepoComparator/1.0" \
+            "${AUTH_HEADER[@]}" \
+            "https://api.github.com/repos/${repo}/tags" |
+            jq -r '.[0].name')
     fi
 
-    # Normalize: remove any path segments & strip leading "v"
-    latest_release="$(echo "$latest_release" |
-        sed -E 's|^.*/||' |
-        sed -E 's/^v//')"
+    latest_release="${latest_release##*/}"
+    latest_release="${latest_release#v}"
 
-    echo "$latest_release"
+    echo "${latest_release:-N/A}"
 }
-
-########################################
-# 4. Function: Fetch latest version from .deb repo
-########################################
-BASE_URL="https://repo.ethereumonarm.com/pool/main/"
 
 get_latest_repo_version() {
     local package="$1"
-    local latest_version=""
+    local latest_version
 
-    # Scrape the HTML index for .deb files matching the package name
-    if ! latest_version=$(
-        curl --fail -s "${BASE_URL}" |
-            grep -oP "(?<=<a href=\")${package}_[^\"]*\.deb" |
-            sort -V |
-            tail -n 1 |
-            grep -oP '(?<=_)[^_]+(?=_)'
-    ); then
-        echo "Error: Failed to fetch package versions for $package" >&2
-        echo ""
-        return 1
-    fi
+    latest_version=$(curl -fsSL "$BASE_URL" |
+        grep -oP "(?<=<a href=\")${package}_[^\"]*\.deb" |
+        sort -V | tail -n1 | grep -oP '(?<=_)[^_]+(?=_)')
 
-    # Fallback if it didn't match exactly
-    if [[ -z "$latest_version" ]]; then
-        latest_version=$(
-            curl --fail -s "${BASE_URL}" |
-                grep -oP "(?<=<a href=\")${package}_[^\"]*\.deb" |
-                sort -V |
-                tail -n 1 |
-                grep -oP '(?<=_)[^_]+(?=\.deb)'
-        )
-    fi
+    [[ -z "$latest_version" ]] && latest_version="N/A"
 
-    # Strip trailing "-0", "-1", etc.
-    latest_version="$(echo "$latest_version" | sed -E 's/-[0-9]+$//')"
+    latest_version="${latest_version%-*}"
 
     echo "$latest_version"
 }
 
-########################################
-# 5. Define Repositories & Packages (Grouped)
-########################################
-# ---- Layer 1 Consensus ----
 declare -A layer1_consensus=(
-    [grandinetech/grandine]="grandine"
-    [sigp/lighthouse]="lighthouse"
-    [ChainSafe/lodestar]="lodestar"
-    [status-im/nimbus-eth2]="nimbus"
-    [prysmaticlabs/prysm]="prysm"
-    [ConsenSys/teku]="teku"
+    [grandinetech/grandine]=grandine
+    [sigp/lighthouse]=lighthouse
+    [ChainSafe/lodestar]=lodestar
+    [status-im/nimbus-eth2]=nimbus
+    [prysmaticlabs/prysm]=prysm
+    [ConsenSys/teku]=teku
 )
 
-# ---- Layer 1 Execution ----
 declare -A layer1_execution=(
-    [hyperledger/besu]="besu"
-    [ledgerwatch/erigon]="erigon"
-    [ethereum/go-ethereum]="geth"
-    [NethermindEth/nethermind]="nethermind"
-    [paradigmxyz/reth]="reth"
+    [hyperledger/besu]=besu
+    [ledgerwatch/erigon]=erigon
+    [ethereum/go-ethereum]=geth
+    [NethermindEth/nethermind]=nethermind
+    [paradigmxyz/reth]=reth
 )
 
-# ---- Layer 2 ----
 declare -A layer2=(
-    [OffchainLabs/nitro]="arbitrum-nitro"
-    [ethereum-optimism/op-geth]="optimism-op-geth"
-    [NethermindEth/juno]="starknet-juno"
-    [FuelLabs/fuel-core]="fuel-network"
+    [OffchainLabs/nitro]=arbitrum-nitro
+    [ethereum-optimism/op-geth]=optimism-op-geth
+    [NethermindEth/juno]=starknet-juno
+    [FuelLabs/fuel-core]=fuel-network
 )
 
-# ---- Infra ----
 declare -A infra=(
-    [ethereum/staking-deposit-cli]="staking-deposit-cli"
-    [ObolNetwork/charon]="dvt-obol"
+    [ethereum/staking-deposit-cli]=staking-deposit-cli
+    [ObolNetwork/charon]=dvt-obol
 )
 
-# ---- Web3 ----
 declare -A web3=(
-    [ipfs/kubo]="kubo"
-    [ethersphere/bee]="bee"
+    [ipfs/kubo]=kubo
+    [ethersphere/bee]=bee
 )
 
-########################################
-# 6. Helpers for prettier ASCII-table output
-########################################
-print_table_border() {
-    echo "+-------------------------+-----------------+-----------------+"
-}
 
-print_table_header() {
-    print_table_border
-    echo "| Package                 | GitHub Version  | Repo Version    |"
-    print_table_border
-}
-
-print_table_row() {
-    local package="$1"
-    local github_version="$2"
-    local repo_version="$3"
-    local mismatch="$4" # yes/no
-
-    if [[ "$mismatch" == "yes" ]]; then
-        # Print row in red
-        printf "\033[1;31m| %-23s | %-15s | %-15s |\033[0m\n" \
-            "$package" "$github_version" "$repo_version"
+print_table() {
+    local pkg="$1" gh_ver="$2" repo_ver="$3"
+    if [[ "$gh_ver" != "$repo_ver" ]]; then
+        printf "\033[1;31m| %-23s | %-15s | %-15s |\033[0m\n" "$pkg" "$gh_ver" "$repo_ver"
     else
-        printf "| %-23s | %-15s | %-15s |\n" \
-            "$package" "$github_version" "$repo_version"
+        printf "| %-23s | %-15s | %-15s |\n" "$pkg" "$gh_ver" "$repo_ver"
     fi
 }
 
-########################################
-# 7. Compare and display (grouped)
-#    Store mismatch count in a global
-########################################
-_LAST_GROUP_MISMATCHES=0 # global scratch variable
-
-print_group() {
+compare_group() {
     local group_name="$1"
-    local -n group_array="$2"
+    local -n group_ref="$2"
+    echo -e "\n===== $group_name =====\n"
+    echo "+-------------------------+-----------------+-----------------+"
+    echo "| Package                 | GitHub Version  | Repo Version    |"
+    echo "+-------------------------+-----------------+-----------------+"
 
-    _LAST_GROUP_MISMATCHES=0
-
-    echo
-    echo "===== ${group_name} ====="
-    echo
-
-    print_table_header
-
-    for repo in "${!group_array[@]}"; do
-        local package="${group_array[$repo]}"
-        local github_version
-        local repo_version
-
-        github_version="$(fetch_github_release "$repo" || echo "")"
-        repo_version="$(get_latest_repo_version "$package" || echo "")"
-
-        github_version="${github_version:-N/A}"
-        repo_version="${repo_version:-N/A}"
-
-        if [[ "$github_version" != "$repo_version" ]]; then
-            _LAST_GROUP_MISMATCHES=$((_LAST_GROUP_MISMATCHES + 1))
-            print_table_row "$package" "$github_version" "$repo_version" "yes"
-        else
-            print_table_row "$package" "$github_version" "$repo_version" "no"
-        fi
+    for repo in "${!group_ref[@]}"; do
+        pkg=${group_ref[$repo]}
+        (
+            gh_ver=$(fetch_github_release "$repo")
+            repo_ver=$(get_latest_repo_version "$pkg")
+            print_table "$pkg" "$gh_ver" "$repo_ver"
+        ) &
     done
-
-    print_table_border
-
-    # Always return 0 (success) so "set -e" doesn't abort the script.
-    return 0
+    wait
+    echo "+-------------------------+-----------------+-----------------+"
 }
 
-########################################
-# 8. Main Execution
-########################################
 main() {
-    local total_mismatches=0
-
-    # ---- Layer 1 Consensus ----
-    print_group "Layer 1 Consensus" layer1_consensus
-    ((total_mismatches += _LAST_GROUP_MISMATCHES))
-
-    # ---- Layer 1 Execution ----
-    print_group "Layer 1 Execution" layer1_execution
-    ((total_mismatches += _LAST_GROUP_MISMATCHES))
-
-    # ---- Layer 2 ----
-    print_group "Layer 2" layer2
-    ((total_mismatches += _LAST_GROUP_MISMATCHES))
-
-    # ---- Infra ----
-    print_group "Infra" infra
-    ((total_mismatches += _LAST_GROUP_MISMATCHES))
-
-    # ---- Web3 ----
-    print_group "Web3" web3
-    ((total_mismatches += _LAST_GROUP_MISMATCHES))
-    echo
-    echo "Total mismatches: $total_mismatches"
+    compare_group "Layer 1 Consensus" layer1_consensus
+    compare_group "Layer 1 Execution" layer1_execution
+    compare_group "Layer 2" layer2
+    compare_group "Infra" infra
+    compare_group "Web3" web3
 }
 
 main

@@ -32,8 +32,7 @@ WAIT_TIME=15
 sleep "$WAIT_TIME"
 
 # Check for internet connection (Borrowed from Armbian).
-wget -q -t 1 --timeout=30 --spider http://github.com
-if [[ $? -ne 0 ]]; then
+if ! wget -q -t 1 --timeout=30 --spider http://github.com; then
     echo "Stopping the installation, internet access is necessary"
     exit 1
 fi
@@ -53,7 +52,7 @@ case "$DEVICE_MODEL" in
     PARTITION1="p1"            # Defines the partition number on the target disk to be used.
     HOSTNAME_SEED="rpi5"       # Used as a base to generate a unique hostname for this device.
     SWAP_SIZE=8192             # Sets the size of the swap space in megabytes (MB).
-    SWAPPINESS=1              # Controls how aggressively the kernel uses swap memory (lower value means less aggressive).
+    SWAPPINESS=1               # Controls how aggressively the kernel uses swap memory (lower value means less aggressive).
     ;;
 
 "FriendlyElec NanoPC-T6")
@@ -61,7 +60,7 @@ case "$DEVICE_MODEL" in
     PARTITION1="p1"            # Defines the partition number on the target disk to be used.
     HOSTNAME_SEED="nanopct6"   # Used as a base to generate a unique hostname for this device.
     SWAP_SIZE=8192             # Sets the size of the swap space in megabytes (MB).
-    SWAPPINESS=1             # Controls how aggressively the kernel uses swap memory (lower value means less aggressive).
+    SWAPPINESS=1               # Controls how aggressively the kernel uses swap memory (lower value means less aggressive).
     ;;
 
 "Radxa ROCK 5B")
@@ -69,7 +68,7 @@ case "$DEVICE_MODEL" in
     PARTITION1="p1"            # Defines the partition number on the target disk to be used.
     HOSTNAME_SEED="rock5b"     # Used as a base to generate a unique hostname for this device.
     SWAP_SIZE=8192             # Sets the size of the swap space in megabytes (MB).
-    SWAPPINESS=1              # Controls how aggressively the kernel uses swap memory (lower value means less aggressive).
+    SWAPPINESS=1               # Controls how aggressively the kernel uses swap memory (lower value means less aggressive).
     ;;
 
 "Orange Pi 5 Plus" | "Xunlong Orange Pi 5 Plus")
@@ -77,7 +76,7 @@ case "$DEVICE_MODEL" in
     PARTITION1="p1"            # Defines the partition number on the target disk to be used.
     HOSTNAME_SEED="opi5plus"   # Used as a base to generate a unique hostname for this device.
     SWAP_SIZE=8192             # Sets the size of the swap space in megabytes (MB).
-    SWAPPINESS=1              # Controls how aggressively the kernel uses swap memory (lower value means less aggressive).
+    SWAPPINESS=1               # Controls how aggressively the kernel uses swap memory (lower value means less aggressive).
     ;;
 
 *)
@@ -101,7 +100,7 @@ NGINX_PACKAGES="nginx ethereumonarm-nginx-proxy-extras ethereumonarm-config-sync
 # First, we update the list of available packages.
 apt-get update
 # Then, we install the basic packages without asking for confirmation.
-apt-get -y install $BASE_PACKAGES
+apt-get -y install "$BASE_PACKAGES"
 
 # --- Disk Partitioning and Formatting ---
 # This function will format the specified disk partition.
@@ -114,7 +113,8 @@ format_disk() {
     local FORMAT=true
 
     # Check if the partition exists and if it seems to be a Linux filesystem.
-    if [[ -b "$PARTITION" ]] && command -v file >/dev/null && [[ $(file -s "$PARTITION" | grep 'Linux.*filesystem') ]]; then
+    if [[ -b "$PARTITION" ]] && command -v file >/dev/null && file -s "$PARTITION" | grep -q 'Linux.*filesystem'; then
+
         # Try to mount the partition temporarily.
         mount "$PARTITION" "$TMP_DIR" 2>/dev/null
         # If an 'ethereum' directory exists and a '.format_me' file does not, we assume it's already set up.
@@ -226,7 +226,7 @@ add-apt-repository -y -n "deb http://apt.ethereumonarm.com noble main"
 # Update the package lists again to include the new repository.
 apt-get update
 # Install all the specified Ethereum-related packages.
-apt-get -y install $ETHEREUM_PACKAGES
+apt-get -y install "$ETHEREUM_PACKAGES"
 
 # Add EOA Release version
 # Define the file where the release version will be stored.
@@ -250,37 +250,31 @@ EOF
 
 # --- Monitoring and Observability Stack ---
 # Install necessary tools for adding repositories.
-apt-get -y install gpg wget
-# Download and add the Grafana repository key.
-wget -q -O - https://packages.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/grafana.gpg >/dev/null
-# Add the Grafana repository to the system's software sources.
-echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
-# Update the package lists to include the Grafana repository.
+wget -q -O - https://packages.grafana.com/gpg.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/grafana.gpg >/dev/null
+echo "deb https://packages.grafana.com/oss/deb stable main" | tee /etc/apt/sources.list.d/grafana.list
 apt-get -y update
-# Install the Grafana server.
-apt-get -y install grafana
-# Enable the Grafana server service to start on boot.
-systemctl enable grafana-server
-# Create a system user for Prometheus.
-adduser --quiet --system --home /home/prometheus --no-create-home --group --gecos "Prometheus daemon" prometheus
-# Create directories for Prometheus data.
+
+# Create a system user for Prometheus before installing the monitoring packages.
+if ! id -u prometheus >/dev/null 2>&1; then
+    adduser --quiet --system --home /home/prometheus --no-create-home --group --gecos "Prometheus daemon" prometheus
+fi
 mkdir -p /home/prometheus/{metrics2,node-exporter}
-# Set the correct ownership for the Prometheus data directories.
 chown -R prometheus:prometheus /home/prometheus/{metrics2,node-exporter}
-# Install Prometheus and the Node Exporter.
-apt-get -y install prometheus prometheus-node-exporter
-# Enable the Prometheus and Node Exporter services to start on boot.
+
+# Install monitoring packages using the defined variable.
+apt-get -y install "$MONITORING_PACKAGES"
+
+# Enable services for Grafana, Prometheus, and Node Exporter.
+systemctl enable grafana-server
 systemctl enable prometheus prometheus-node-exporter
 
-# Install Ethereum on ARM monitoring configuration.
-apt-get -y install ethereumonarm-monitoring-extras
 # Apply the Ethereum on ARM monitoring extras configuration.
 set-ethereumonarm-monitoring-extras -o
 systemctl daemon-reload
 
 # --- Nginx Setup ---
 # Install the Nginx web server and related packages.
-apt-get -y install $NGINX_PACKAGES
+apt-get -y install "$NGINX_PACKAGES"
 # Enable the Nginx service to start on boot.
 systemctl enable nginx
 

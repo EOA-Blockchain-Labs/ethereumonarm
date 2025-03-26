@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+
+TARGET_USER="ethereum"
+# Assume group name is the same as user name, adjust if needed
+TARGET_GROUP="ethereum"
+
+# Check if the target group exists
+if ! getent group "$TARGET_GROUP" >/dev/null; then
+    echo "ERROR: Group '$TARGET_GROUP' not found." >&2
+    echo "Please ensure the '$TARGET_GROUP' group exists before installing this package." >&2
+    echo "This package requires it to run the Contributoor service." >&2
+    exit 1
+fi
+
+# Check if the target user exists
+if ! getent passwd "$TARGET_USER" >/dev/null; then
+    echo "ERROR: User '$TARGET_USER' not found." >&2
+    echo "Please ensure the '$TARGET_USER' user exists before installing this package." >&2
+    echo "This package requires it to run the Contributoor service." >&2
+    exit 1
+fi
+
+echo "Required user '$TARGET_USER' and group '$TARGET_GROUP' found."
+exit 0

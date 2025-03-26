@@ -1,0 +1,28 @@
+[Unit]
+Description=Contributoor Service
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=$USER
+Group=$USER
+ExecStart=/usr/bin/sentry --config /etc/ethereum/contributoor/config.yaml
+WorkingDirectory=/home/ethereum/.contributoor
+Restart=always
+RestartSec=5
+
+# Environment setup
+Environment=HOME=$HOME
+Environment=USER=$USER
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=false
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=Lodestar Validator daemon
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/lido/lodestar-validator-lido.conf
+ExecStart=/usr/bin/lodestar $ARGS
+Restart=always
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target

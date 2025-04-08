@@ -38,8 +38,8 @@ all: prepare deb clean test
 
 prepare: ## Download the latest binary and compile the package files
 	mkdir -p /tmp/juno_tmp
-	cd /tmp/juno_tmp ; wget https://github.com/NethermindEth/juno/releases/download/v$(JUNO_VERSION)/juno-v$(JUNO_VERSION)-Linux-arm64.zip ; unzip juno-v$(JUNO_VERSION)-Linux-arm64.zip; chmod +x juno-v$(JUNO_VERSION)-Linux-arm64
-	cp /tmp/juno_tmp/juno-v$(JUNO_VERSION)-Linux-arm64 sources/usr/bin/juno
+	cd /tmp/juno_tmp ; wget https://github.com/NethermindEth/juno/releases/download/v$(JUNO_VERSION)/juno-v$(JUNO_VERSION)-linux-arm64.zip ; unzip juno-v$(JUNO_VERSION)-linux-arm64.zip; chmod +x juno-v$(JUNO_VERSION)-linux-arm64
+	cp /tmp/juno_tmp/juno-v$(JUNO_VERSION)-linux-arm64 sources/usr/bin/juno
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)

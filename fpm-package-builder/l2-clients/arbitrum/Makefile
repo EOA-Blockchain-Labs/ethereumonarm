@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 NITRO_VERSION := $(shell curl -s "https://api.github.com/repos/OffchainLabs/nitro/releases/latest" | jq -r '.tag_name' | tr -d "v")
 #NITRO_DHASH :=$(shell curl -s "https://api.github.com/repos/ethereum/go-ethereum/tags" | jq -c 'map(select(.name | contains("$(NITRO_VERSION)")))' | jq -r '.[0].commit.sha' | cut -c1-8)
-DOCKER_CONTAINER := "offchainlabs/nitro-node:v3.5.3-0a9c975"
+DOCKER_CONTAINER := "offchainlabs/nitro-node:v3.5.5-90ee45c"
 
 #DOCKER_CONTAINER := $(shell curl -s "https://api.github.com/repos/OffchainLabs/nitro/releases/latest" | jq -r '.body' | sed -n 's/.*Docker Hub at \([^[:space:]]*\).*/\1/p')
 

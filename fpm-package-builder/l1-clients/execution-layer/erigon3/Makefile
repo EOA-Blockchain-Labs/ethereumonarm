@@ -3,7 +3,7 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-ERIGON_VERSION := $(shell curl -s "https://api.github.com/repos/erigontech/erigon/releases/latest" | jq -r '.tag_name')
+ERIGON3_VERSION := $(shell curl -s "https://api.github.com/repos/erigontech/erigon/releases/latest" | jq -r '.tag_name')
 
 PKG_RELEASE := 0
 PKG_NAME := erigon3
@@ -22,18 +22,18 @@ PKG_ARCH_RPM := arm64
 SOURCESDIR := sources/
 OUTPUTDIR := ../../../packages
 
-PKG_RPM := $(PKG_NAME)-$(ERIGON_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_RPM).rpm
-PKG_DEB := $(PKG_NAME)_$(ERIGON_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
+PKG_RPM := $(PKG_NAME)-$(ERIGON3_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_RPM).rpm
+PKG_DEB := $(PKG_NAME)_$(ERIGON3_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
 
-FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(ERIGON_VERSION) --license $(PKG_LICENSE)\
+FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(ERIGON3_VERSION) --license $(PKG_LICENSE)\
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
---deb-systemd extras/erigon.service --deb-systemd extras/erigon-archive.service\
---deb-systemd extras/erigon-goerli.service --deb-systemd extras/erigon-holesky.service\
+--deb-systemd extras/erigon3.service --deb-systemd extras/erigon3-archive.service\
+--deb-systemd extras/erigon3-goerli.service --deb-systemd extras/erigon3-holesky.service\
 --conflicts erigon
 
-FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(ERIGON_VERSION) --license $(PKG_LICENSE)\
+FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(ERIGON3_VERSION) --license $(PKG_LICENSE)\
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_RPM)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
@@ -41,8 +41,9 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(ERIGON_VERSION) --license $(PKG_LICEN
 all: prepare deb clean test
 
 prepare: ## Download the latest binary and prepare the package files
-#	wget https://github.com/erigontech/erigon/releases/download/$(ERIGON_VERSION)/erigon_$(ERIGON_VERSION)_linux_arm64.tar.gz -O - | tar -xz -C sources/usr/bin/  erigon
-	wget https://github.com/erigontech/erigon/releases/download/$(ERIGON_VERSION)/erigon_$(ERIGON_VERSION)_linux_arm64.tar.gz -O - | tar -xz -C sources/usr/bin --wildcards --absolute-names --no-anchored --strip-components 1 '*/erigon'
+#	wget https://github.com/erigontech/erigon/releases/download/$(ERIGON3_VERSION)/erigon_$(ERIGON3_VERSION)_linux_arm64.tar.gz -O - | tar -xz -C sources/usr/bin/  erigon
+	wget https://github.com/erigontech/erigon/releases/download/$(ERIGON3_VERSION)/erigon_$(ERIGON3_VERSION)_linux_arm64.tar.gz -O - | tar -xz -C sources/usr/bin --wildcards --absolute-names --no-anchored --strip-components 1 '*/erigon'
+	mv sources/usr/bin/erigon sources/usr/bin/erigon3
 
 deb: ## Create deb package
 	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)
@@ -52,7 +53,7 @@ rpm: ## Create rpm package
 
 .PHONY: clean test
 clean: ## Clean up
-	rm sources/usr/bin/erigon
+	rm sources/usr/bin/erigon3
 
 test:
 	@if [ -f $(OUTPUTDIR)/$(PKG_DEB) ]; then \

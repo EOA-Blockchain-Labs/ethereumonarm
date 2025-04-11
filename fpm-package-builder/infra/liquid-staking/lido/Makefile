@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 LIDO_VERSION :=  $(shell date +"%y%m%d")
 PKG_RELEASE := 0
-PKG_NAME := lido-staking
+PKG_NAME := ls-lido
 
 PKG_DESCRIPTION := "Lido Liquid Staking Infra"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
@@ -19,7 +19,7 @@ PKG_ARCH_DEB := arm64
 PKG_ARCH_RPM := arm64
 
 SOURCESDIR := sources/
-OUTPUTDIR := ../../packages
+OUTPUTDIR := ../../../packages
 
 PKG_RPM := $(PKG_NAME)-$(LIDO_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_RPM).rpm
 PKG_DEB := $(PKG_NAME)_$(LIDO_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
@@ -30,7 +30,6 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(LIDO_VERSION) --license $(PKG_LICENSE
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 --deb-systemd extras/teku-validator-lido.service \
 --deb-systemd extras/lighthouse-validator-lido.service \
---deb-systemd extras/lodestar-validator-lido.service \
 --deb-systemd extras/prysm-validator-lido.service \
 --deb-systemd extras/nimbus-validator-lido.service \
 

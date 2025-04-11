@@ -374,9 +374,37 @@ In order to start the client run:
 
   sudo systemctl start erigon
 
+
 .. note::
-  :guilabel:`Erigon` is the only client that includes a Light Consensus Client. You can 
-  run a full Ethereum node just by starting the Erigon service.
+   :guilabel:`Erigon` includes Caplin, its own consensus layer, and by default runs 
+   as a full Ethereum node without requiring a separate consensus layer client.
+
+.. warning::
+   Erigon 3 introduces a major change to Erigon's architecture. Erigon is now configured to use 
+   Caplin as its consensus layer by default.  Users who wish to use an external consensus 
+   layer must explicitly configure Erigon to do so using the `erigon-externalcl` service. 
+   This is a breaking change and requires manual configuration.
+
+**Caplin Consensus Layer**
+
+Erigon has integrated Caplin, its own consensus layer, directly into the client. 
+This means that for most users, running a full Ethereum node is as simple as starting the `erigon` service. 
+The need for a separate beacon node client is eliminated in the default configuration.
+
+**`erigon-externalcl` Service**
+
+For advanced use cases or when compatibility with external consensus layer clients is required, 
+EoA provides the `erigon-externalcl` service. This service allows Erigon to operate with a separate consensus client.
+
+**Upgrade Notes**
+
+Due to the significant changes to Erigon's architecture, a manual upgrade process is necessary. 
+You can use the new provided config or update yours according to the Erigon documentation.
+
+**Further Information**
+
+For complete details on Erigon configuration, usage, and troubleshooting, please refer to the official Erigon documentation: [https://docs.erigon.tech]
+
 
 Staking
 -------

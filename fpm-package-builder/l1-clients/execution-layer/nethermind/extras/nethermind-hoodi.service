@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 User=ethereum
-EnvironmentFile=/etc/ethereum/nethermind-goerli.conf
+EnvironmentFile=/etc/ethereum/nethermind-hoodi.conf
 ExecStart=/usr/bin/nethermind $ARGS
 Restart=on-failure
 WorkingDirectory=/home/ethereum

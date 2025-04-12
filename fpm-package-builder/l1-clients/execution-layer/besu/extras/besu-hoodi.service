@@ -3,7 +3,7 @@ Description=Ethereum Besu client daemon
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/besu-goerli.conf
+EnvironmentFile=/etc/ethereum/besu-hoodi.conf
 ExecStart=/usr/bin/besu $ARGS
 Restart=always
 User=ethereum

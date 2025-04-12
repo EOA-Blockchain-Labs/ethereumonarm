@@ -1,14 +1,14 @@
 [Unit]
-Description=Ethereum geth client daemon by The Ethereum Foundation (merge test)
+Description=Ethereum geth client daemon by The Ethereum Foundation
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/geth-goerli.conf
+EnvironmentFile=/etc/ethereum/geth-hoodi.conf
 ExecStart=/usr/bin/geth $ARGS
 Restart=always
 User=ethereum
 KillSignal=SIGTERM 
-TimeoutStopSec=600
+TimeoutStopSec=1200
 
 [Install]
 WantedBy=multi-user.target

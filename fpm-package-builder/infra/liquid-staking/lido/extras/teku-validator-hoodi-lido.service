@@ -3,7 +3,7 @@ Description=Ethereum Teku client daemon
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/lido/teku-validator-hoodi-lido.conf
+EnvironmentFile=/etc/ethereum/ls/teku-validator-hoodi-lido.conf
 ExecStart=/usr/bin/teku $ARGS
 Restart=always
 User=ethereum

@@ -3,9 +3,9 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-TEKU_VERSION := $(shell curl -s https://api.github.com/repos/ConsenSys/teku/releases/latest | jq -r '.name' | tr -d 'v')
+TEKU_VERSION := $(shell curl -sL https://api.github.com/repos/ConsenSys/teku/releases/latest | jq -r '.name' | tr -d 'v')
 
-PKG_RELEASE := 0
+PKG_RELEASE := 1
 PKG_NAME := teku
 
 PKG_DESCRIPTION := "Consensys Quorum Teku Eth2 java client"
@@ -28,8 +28,11 @@ PKG_DEB := $(PKG_NAME)_$(TEKU_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(TEKU_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\
 	-a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-	--deb-systemd extras/teku-beacon.service --deb-systemd extras/teku-validator.service --deb-systemd extras/teku-prater.service\
+	--deb-systemd extras/teku-beacon.service --deb-systemd extras/teku-validator.service \
+	--deb-systemd extras/teku-beacon-mev.service --deb-systemd extras/teku-validator-mev.service \
 	--deb-systemd extras/teku-beacon-holesky.service --deb-systemd extras/teku-validator-holesky.service\
+	--deb-systemd extras/teku-beacon-hoodi.service --deb-systemd extras/teku-validator-hoodi.service\
+	--deb-systemd extras/teku-beacon-hoodi-mev.service --deb-systemd extras/teku-validator-hoodi-mev.service\
 	--depends openjdk-21-jre-headless\
 	--depends merge-config
 

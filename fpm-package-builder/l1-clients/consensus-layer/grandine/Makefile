@@ -3,9 +3,9 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-GRANDINE_VERSION := $(shell curl -s "https://api.github.com/repos/grandinetech/grandine/releases/latest" | jq '.tag_name' | tr -d  '"'| tr -d "v")
+GRANDINE_VERSION := $(shell curl -sL "https://api.github.com/repos/grandinetech/grandine/releases/latest" | jq '.tag_name' | tr -d  '"'| tr -d "v")
 
-PKG_RELEASE := 0
+PKG_RELEASE := 1
 PKG_NAME := grandine
 
 PKG_DESCRIPTION := "Ethereum Consensus Layer Grandine Tech implementation"
@@ -29,8 +29,8 @@ PKG_DEB := $(PKG_NAME)_$(GRANDINE_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(GRANDINE_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\
 	-a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-	--deb-systemd extras/grandine-beacon.service \
-	--deb-systemd extras/grandine-validator.service \
+	--deb-systemd extras/grandine-beacon.service --deb-systemd extras/grandine-validator.service \
+	--deb-systemd extras/grandine-beacon-hoodi.service --deb-systemd extras/grandine-validator-hoodi.service \
 	--depends merge-config
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(GRANDINE_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\

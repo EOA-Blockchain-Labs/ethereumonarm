@@ -3,10 +3,10 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-NIMBUS_VERSION := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.name' | tr -d 'v')
-NIMBUS_URL := $(shell curl -s https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.assets[] | select(.name | contains("arm64v8")).browser_download_url')
+NIMBUS_VERSION := $(shell curl -sL https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.name' | tr -d 'v')
+NIMBUS_URL := $(shell curl -sL https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.assets[] | select(.name | contains("arm64v8")).browser_download_url')
 
-PKG_RELEASE := 0
+PKG_RELEASE := 1
 PKG_NAME := nimbus
 
 PKG_DESCRIPTION := "Ethereum 2.0 Nimbus implementation"
@@ -32,7 +32,10 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICEN
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 	--before-upgrade extras/preinst --after-upgrade extras/postinst \
 	--deb-systemd extras/nimbus-beacon.service --deb-systemd extras/nimbus-validator.service\
+	--deb-systemd extras/nimbus-beacon-mev.service --deb-systemd extras/nimbus-validator-mev.service\
 	--deb-systemd extras/nimbus-beacon-holesky.service --deb-systemd extras/nimbus-validator-holesky.service\
+	--deb-systemd extras/nimbus-beacon-hoodi.service --deb-systemd extras/nimbus-validator-hoodi.service\
+	--deb-systemd extras/nimbus-beacon-hoodi-mev.service --deb-systemd extras/nimbus-validator-hoodi-mev.service\
 	--depends merge-config
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICENSE)\

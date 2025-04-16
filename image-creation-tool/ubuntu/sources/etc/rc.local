@@ -104,37 +104,7 @@ apt-get -y install "$BASE_PACKAGES"
 
 # --- Disk Partitioning and Formatting ---
 # This function will format the specified disk partition.
-format_disk() {
-    local DISK="$1"
-    local PARTITION="${DISK}${PARTITION1}"
 
-    # Create a temporary directory to check if the partition is already formatted.
-    TMP_DIR=$(mktemp -d)
-    local FORMAT=true
-
-    # Check if the partition exists and if it seems to be a Linux filesystem.
-    if [[ -b "$PARTITION" ]] && command -v file >/dev/null && file -s "$PARTITION" | grep -q 'Linux.*filesystem'; then
-
-        # Try to mount the partition temporarily.
-        mount "$PARTITION" "$TMP_DIR" 2>/dev/null
-        # If an 'ethereum' directory exists and a '.format_me' file does not, we assume it's already set up.
-        [[ -d "$TMP_DIR/ethereum" && ! -f "$TMP_DIR/ethereum/.format_me" ]] && FORMAT=false
-        # If mounted, unmount it.
-        mountpoint -q "$TMP_DIR" && umount "$TMP_DIR"
-    fi
-    # Remove the temporary directory.
-    rm -rf "$TMP_DIR"
-
-    # If the 'FORMAT' variable is still true, we proceed with formatting.
-    if [ "$FORMAT" = true ]; then
-        # Remove any existing filesystem signatures from the disk.
-        wipefs -a "$DISK"
-        # Create a new partition on the disk.
-        sgdisk -n 0:0:0 "$DISK"
-        # Format the partition with the ext4 filesystem, forcing the operation.
-        mkfs.ext4 -F "$PARTITION" || return 1
-    fi
-}
 
 # Call the format_disk function for the target disk. If it fails, exit the script.
 format_disk "$TARGET_DISK" || exit 1

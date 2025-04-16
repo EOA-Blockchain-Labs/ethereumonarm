@@ -3,12 +3,12 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-NETHERMIND_VERSION := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/releases/latest" | jq -r '.name' | tr -d "v")
+NETHERMIND_VERSION := $(shell curl -sL "https://api.github.com/repos/NethermindEth/nethermind/releases/latest" | jq -r '.name' | tr -d "v")
 #NETHERMIND_DHASH := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/tags" | jq -c 'map(select(.name | contains("$(NETHERMIND_VERSION)")))' | jq .[0].commit.sha | tr -d  '"' | cut -c1-7)
-NETHERMIND_URL := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/releases/latest"|jq -r '.assets[0].browser_download_url')
-NETHERMIND_NAME := $(shell curl -s "https://api.github.com/repos/NethermindEth/nethermind/releases/latest"|jq -r '.assets[0].name')
+NETHERMIND_URL := $(shell curl -sL "https://api.github.com/repos/NethermindEth/nethermind/releases/latest"|jq -r '.assets[0].browser_download_url')
+NETHERMIND_NAME := $(shell curl -sL "https://api.github.com/repos/NethermindEth/nethermind/releases/latest"|jq -r '.assets[0].name')
 
-PKG_RELEASE := 0
+PKG_RELEASE := 1
 PKG_NAME := nethermind
 
 PKG_DESCRIPTION := "Ethereum 1 client written in .NET"
@@ -32,8 +32,8 @@ PKG_DEB := $(PKG_NAME)_$(NETHERMIND_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(NETHERMIND_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) -p $(OUTPUTDIR)\
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -x */.gitkeep\
-	--deb-systemd extras/nethermind.service --deb-systemd extras/nethermind-goerli.service\
-	--deb-systemd extras/nethermind-holesky.service --deb-systemd extras/nethermind-gnosis.service \
+	--deb-systemd extras/nethermind.service --deb-systemd extras/nethermind-hoodi.service\
+	--deb-systemd extras/nethermind-holesky.service\
 	--deb-systemd extras/nethermind-op.service --deb-systemd extras/nethermind-base.service\
 	--deb-user ethereum\
 	--deb-group ethereum\

@@ -32,6 +32,10 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(LIDO_VERSION) --license $(PKG_LICENSE
 --deb-systemd extras/lighthouse-validator-lido.service \
 --deb-systemd extras/prysm-validator-lido.service \
 --deb-systemd extras/nimbus-validator-lido.service \
+--deb-systemd extras/teku-validator-hoodi-lido.service \
+--deb-systemd extras/lighthouse-validator-hoodi-lido.service \
+--deb-systemd extras/prysm-validator-hoodi-lido.service \
+--deb-systemd extras/nimbus-validator-hoodi-lido.service \
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(LIDO_VERSION) --license $(PKG_LICENSE)\
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\

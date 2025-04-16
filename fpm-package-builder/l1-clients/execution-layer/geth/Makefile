@@ -6,7 +6,7 @@ SHELL := /bin/bash
 GETH_VERSION := $(shell curl -s "https://api.github.com/repos/ethereum/go-ethereum/releases/latest" | jq -r '.tag_name' | tr -d "v")
 GETH_DHASH :=$(shell curl -s "https://api.github.com/repos/ethereum/go-ethereum/tags" | jq -c 'map(select(.name | contains("$(GETH_VERSION)")))' | jq -r '.[0].commit.sha' | cut -c1-8)
 
-PKG_RELEASE := 1
+PKG_RELEASE := 0
 PKG_NAME := geth
 
 PKG_DESCRIPTION := "Official Go implementation of the Ethereum protocol"

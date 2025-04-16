@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 GRANDINE_VERSION := $(shell curl -sL "https://api.github.com/repos/grandinetech/grandine/releases/latest" | jq '.tag_name' | tr -d  '"'| tr -d "v")
 
-PKG_RELEASE := 1
+PKG_RELEASE := 0
 PKG_NAME := grandine
 
 PKG_DESCRIPTION := "Ethereum Consensus Layer Grandine Tech implementation"

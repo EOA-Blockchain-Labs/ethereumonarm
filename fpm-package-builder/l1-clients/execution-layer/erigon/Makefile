@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 ERIGON_VERSION := $(shell curl -sL "https://api.github.com/repos/erigontech/erigon/releases/latest" | jq -r '.tag_name')
 
-PKG_RELEASE := 1
+PKG_RELEASE := 0
 PKG_NAME := erigon
 
 PKG_DESCRIPTION := "Erigon Go implementation of the Ethereum protocol"

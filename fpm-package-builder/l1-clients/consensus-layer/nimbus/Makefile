@@ -6,7 +6,7 @@ SHELL := /bin/bash
 NIMBUS_VERSION := $(shell curl -sL https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.name' | tr -d 'v')
 NIMBUS_URL := $(shell curl -sL https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -r '.assets[] | select(.name | contains("arm64v8")).browser_download_url')
 
-PKG_RELEASE := 1
+PKG_RELEASE := 0
 PKG_NAME := nimbus
 
 PKG_DESCRIPTION := "Ethereum 2.0 Nimbus implementation"

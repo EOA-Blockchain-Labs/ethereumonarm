@@ -4,7 +4,7 @@ After=network.target
 Requires=prysm-beacon.service
 
 [Service]
-EnvironmentFile=/etc/ethereum/lido/prysm-validator-hoodi-lido.conf
+EnvironmentFile=/etc/ethereum/ls/prysm-validator-hoodi-lido.conf
 ExecStart=/usr/bin/validator $ARGS
 Restart=always
 User=ethereum

@@ -8,7 +8,7 @@ NETHERMIND_VERSION := $(shell curl -sL "https://api.github.com/repos/NethermindE
 NETHERMIND_URL := $(shell curl -sL "https://api.github.com/repos/NethermindEth/nethermind/releases/latest"|jq -r '.assets[0].browser_download_url')
 NETHERMIND_NAME := $(shell curl -sL "https://api.github.com/repos/NethermindEth/nethermind/releases/latest"|jq -r '.assets[0].name')
 
-PKG_RELEASE := 1
+PKG_RELEASE := 0
 PKG_NAME := nethermind
 
 PKG_DESCRIPTION := "Ethereum 1 client written in .NET"

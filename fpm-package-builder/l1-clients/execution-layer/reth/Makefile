@@ -6,7 +6,7 @@ SHELL := /bin/bash
 RETH_VERSION_GIT := $(shell curl -s "https://api.github.com/repos/paradigmxyz/reth/releases/latest" | jq -r '.tag_name')
 RETH_VERSION := $(shell curl -s "https://api.github.com/repos/paradigmxyz/reth/releases/latest" | jq -r '.tag_name' | tr -d "v" | sed -E 's/([a-z]+)\.([0-9]+)/\1\2/')
 
-PKG_RELEASE := 1
+PKG_RELEASE := 0
 PKG_NAME := reth
 
 PKG_DESCRIPTION := "Rust implementation of the Ethereum protocol by Paradigm team"

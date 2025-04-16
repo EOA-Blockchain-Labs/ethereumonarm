@@ -6,7 +6,7 @@ SHELL := /bin/bash
 LODESTAR_VERSION := $(shell curl -s "https://api.github.com/repos/ChainSafe/lodestar/releases/latest" | jq '.tag_name' | tr -d  '"'| tr -d "v")
 LODESTAR_URL := $(shell curl -s "https://api.github.com/repos/ChainSafe/lodestar/releases/latest" | jq -r '.assets[] | select(.name | contains("arm64")).browser_download_url')
 
-PKG_RELEASE := 1
+PKG_RELEASE := 0
 PKG_NAME := lodestar
 
 PKG_DESCRIPTION := "Ethereum 2.0 Lodestar implementation"

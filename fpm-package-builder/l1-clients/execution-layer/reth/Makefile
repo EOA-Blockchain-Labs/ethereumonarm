@@ -6,7 +6,7 @@ SHELL := /bin/bash
 RETH_VERSION_GIT := $(shell curl -s "https://api.github.com/repos/paradigmxyz/reth/releases/latest" | jq -r '.tag_name')
 RETH_VERSION := $(shell curl -s "https://api.github.com/repos/paradigmxyz/reth/releases/latest" | jq -r '.tag_name' | tr -d "v" | sed -E 's/([a-z]+)\.([0-9]+)/\1\2/')
 
-PKG_RELEASE := 0
+PKG_RELEASE := 1
 PKG_NAME := reth
 
 PKG_DESCRIPTION := "Rust implementation of the Ethereum protocol by Paradigm team"
@@ -31,6 +31,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(RETH_VERSION) --license $(PKG_LICENSE
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 --deb-systemd extras/reth.service --deb-systemd extras/reth-holesky.service\
+--deb-systemd extras/reth-hoodi.service\
 --depends merge-config
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(RETH_VERSION) --license $(PKG_LICENSE)\

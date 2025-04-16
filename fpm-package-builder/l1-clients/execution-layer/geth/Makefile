@@ -6,7 +6,7 @@ SHELL := /bin/bash
 GETH_VERSION := $(shell curl -s "https://api.github.com/repos/ethereum/go-ethereum/releases/latest" | jq -r '.tag_name' | tr -d "v")
 GETH_DHASH :=$(shell curl -s "https://api.github.com/repos/ethereum/go-ethereum/tags" | jq -c 'map(select(.name | contains("$(GETH_VERSION)")))' | jq -r '.[0].commit.sha' | cut -c1-8)
 
-PKG_RELEASE := 0
+PKG_RELEASE := 1
 PKG_NAME := geth
 
 PKG_DESCRIPTION := "Official Go implementation of the Ethereum protocol"
@@ -30,7 +30,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(GETH_VERSION) --license $(PKG_LICENSE
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
---deb-systemd extras/geth.service --deb-systemd extras/geth-goerli.service\
+--deb-systemd extras/geth.service --deb-systemd extras/geth-hoodi.service\
 --deb-systemd extras/geth-holesky.service\
 --depends merge-config
 

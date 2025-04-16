@@ -3,9 +3,9 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-ERIGON_VERSION := $(shell curl -s "https://api.github.com/repos/erigontech/erigon/releases/latest" | jq -r '.tag_name')
+ERIGON_VERSION := $(shell curl -sL "https://api.github.com/repos/erigontech/erigon/releases/latest" | jq -r '.tag_name')
 
-PKG_RELEASE := 0
+PKG_RELEASE := 1
 PKG_NAME := erigon
 
 PKG_DESCRIPTION := "Erigon Go implementation of the Ethereum protocol"
@@ -30,7 +30,8 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(ERIGON_VERSION) --license $(PKG_LICEN
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 --deb-systemd extras/erigon.service --deb-systemd extras/erigon-archive.service\
---deb-systemd extras/erigon-goerli.service --deb-systemd extras/erigon-holesky.service
+--deb-systemd extras/erigon-externalcl.service\
+--deb-systemd extras/erigon-hoodi.service --deb-systemd extras/erigon-holesky.service
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(ERIGON_VERSION) --license $(PKG_LICENSE)\
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\

@@ -3,8 +3,8 @@
 #gem install --no-document fpm
 SHELL := /bin/bash
 
-BESU_VERSION := $(shell curl -s https://api.github.com/repos/hyperledger/besu/releases/latest | jq -r '.tag_name'| tr -d 'v')
-PKG_RELEASE := 0
+BESU_VERSION := $(shell curl -sL https://api.github.com/repos/hyperledger/besu/releases/latest | jq -r '.tag_name'| tr -d 'v')
+PKG_RELEASE := 1
 PKG_NAME := besu
 
 PKG_DESCRIPTION := "Hyperledger Ethereum 1.0 java client"
@@ -28,7 +28,7 @@ PKG_DEB := $(PKG_NAME)_$(BESU_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(BESU_VERSION) --license $(PKG_LICENSE)\
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-	--deb-systemd extras/besu.service --deb-systemd extras/besu-goerli.service --deb-systemd extras/besu-holesky.service\
+	--deb-systemd extras/besu.service --deb-systemd extras/besu-holesky.service --deb-systemd extras/besu-hoodi.service\
 	--depends openjdk-21-jre-headless\
 	--depends "libsecp256k1-0|libsecp256k1-1"\
 	--depends merge-config\

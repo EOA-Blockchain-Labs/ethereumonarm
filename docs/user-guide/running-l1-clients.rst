@@ -866,8 +866,12 @@ Time to create the validator keys that will be used by your client to stake.
 
 You have 2 main options for creating the validator keys:
 
-1. Use the **Wagyu key generator by Ethstaker** (which includes a GUI).  Go to https://wagyu.gg, download the appropiate binary 
-for your desktop and follow the instructions. **Remember to put here the Lido withdrawal address**: `0xB9D7934878B5FB9610B3fE8A5e441e8fad7E293f`
+1. Use the **Wagyu key generator by Ethstaker** (which includes a GUI).  Go to:
+
+https://wagyu.gg
+
+Download the appropiate binary for your desktop and follow the instructions. 
+**Remember to put here the Lido withdrawal address**: ``0xB9D7934878B5FB9610B3fE8A5e441e8fad7E293f``
 
 .. warning::
 
@@ -882,7 +886,7 @@ for your desktop and follow the instructions. **Remember to put here the Lido wi
 
   deposit new-mnemonic --num_validators $YOUR_NUMBER_VALIDATORS --chain mainnet --eth1_withdrawal_address 0xB9D7934878B5FB9610B3fE8A5e441e8fad7E293f
 
-A validator_keys folder will be created containing all necessary files. Here you will need to copy and paste the `deposit_data` 
+A validator_keys folder will be created containing all necessary files. Here you will need to copy and paste the ``deposit_data`` 
 file content to your desktop in order to submit this data to the CSM Lido portal.
 
 - Download the deposit tool to your desktop and run it there. Same with folder and contents:
@@ -895,8 +899,8 @@ Follow the screen instructions in both cases and make sure you write down the 12
 
   **Make sure you write down the passphrase as this are your validators private keys and set the withdrawal address**.
 
-Now, in any case, the tools will create two file types (a `keystore(s)` file(s) depending on the number of validators and a `deposit_data` file). 
-The `keystore(s)` is/are for importing your validator keys in your Validator client. The `deposit_data` file is for uploading 
+Now, in any case, the tools will create two file types (a ``keystore(s)`` file(s) depending on the number of validators and a ``deposit_data`` file). 
+The ``keystore(s)`` is/are for importing your validator keys in your Validator client. The ``deposit_data`` file is for uploading 
 the keys into the CSM module and making the corresponding deposit.
 
 For more info regarding validator keys generation visit this site:
@@ -914,7 +918,7 @@ You need to log into your node and run the import command, depending on you vali
 
   lighthouse account validator import --directory=/home/ethereum/validator_keys
 
-Note that we assume that the `keystore` and `deposit_data` files are in the `/home/ethereum/validator_keys` directory. If 
+Note that we assume that the ``keystore`` and ``deposit_data`` files are in the ``/home/ethereum/validator_keys`` directory. If 
 you generated the keys in your desktop, you will need to copy them into your node.
 
 Please, refer to our **"Running validator client"** section for more info about how to import keys 
@@ -922,7 +926,7 @@ in all Validator clients:
 
 .. _running-validator-client: https://ethereum-on-arm-documentation.readthedocs.io/en/latest/user-guide/running-l1-clients.html#running-validator-client
 
-Now it is time to start the validator. Make sure you add the argument `lido` in the service, for instance:
+Now it is time to start the validator. Make sure you add the argument ``lido`` in the service, for instance:
 
 .. prompt:: bash $
 
@@ -930,7 +934,7 @@ Now it is time to start the validator. Make sure you add the argument `lido` in 
 
 .. warning::
 
-  **Don't forget to add the `lido`argument as it contains the specific config for Lido CSM**.
+  **Don't forget to add the ``lido`` argument as it contains the specific config for Lido CSM**.
 
 Create and Activate the CSM operator
 """"""""""""""""""""""""""""""""""""
@@ -945,7 +949,7 @@ Now it is time to visit the CSM Lido portal
 
 3. Clic **"Create node operator"**
 
-4. Now, paste the `deposit_data` file content into **"Upload deposit data"** form.
+4. Now, paste the ```eposit_data`` file content into **"Upload deposit data"** form.
 
 5. **Confirm** and clic **"Create Node Operator"**
 
@@ -959,9 +963,9 @@ Done, you are now running a CSM Lido Validator. Now, you need to wait for the Va
 
 Running CSM on Hoodi testnet
 """"""""""""""""""""""""""""
-Running CSM on `Hoodi` is pretty much the same process but you need to make some adjustments.
+Running CSM on ``oodi`` is pretty much the same process but you need to make some adjustments.
 
-1. For the full node, your add the `hoodi` network on EL+CL client services, for instance:
+1. For the full node, your add the ``hoodi`` network on EL+CL client services, for instance:
 
 .. prompt:: bash $
 
@@ -974,16 +978,16 @@ Running CSM on `Hoodi` is pretty much the same process but you need to make some
 
   sudo systemctl start mev-boost-hoodi
 
-3. Key generation. **Wagyu** supports `Hoodi` so make sure you select this network. On deposit command line, replace 
-`mainnet` for `hoodi`. **Make sure to set this withdrawal address** in both cases: `0x4473dCDDbf77679A643BdB654dbd86D67F8d32f2`
+3. Key generation. **Wagyu** supports ``oodi`` so make sure you select this network. On deposit command line, replace 
+``mainnet`` for ``hoodi``. **Make sure to set this withdrawal address** in both cases: ``0x4473dCDDbf77679A643BdB654dbd86D67F8d32f2``
 
 .. warning::
 
-  **Again, be carefull, Lido withdrawal address for Hoodi is `0x4473dCDDbf77679A643BdB654dbd86D67F8d32f2**
+  **Again, be carefull, Lido withdrawal address for Hoodi is 0x4473dCDDbf77679A643BdB654dbd86D67F8d32f2**
 
 4. Key import and validator start.
 
-In both cases (command import and service start). You will need to add the `hoodi` flag to target the correct network. For instance:
+In both cases (command import and service start). You will need to add the ``hoodi`` flag to target the correct network. For instance:
 
 .. prompt:: bash $
 

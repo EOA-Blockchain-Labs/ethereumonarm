@@ -778,12 +778,12 @@ Lido Liquid Staking
 a liquid token representing their staked assets.
 
 When you stake **ETH** with Lido, **you receive a token called stETH, a liquid representation of your staked ETH**. The key 
-innovation here is liquidity—stETH tokens can be freely traded, utilized in DeFi applications, or held in wallets, 
+innovation here is **liquidity—stETH tokens can be freely traded, utilized in DeFi applications, or held in wallets**, 
 unlike traditionally locked staking that prevents users from accessing their funds until the lock-up period ends.
 
 **Lido Community Staking Module**
 
-The Community Staking Module (CSM) is the Lido on Ethereum protocol's first module with permissionless entry, 
+The Community Staking Module (CSM) is the Lido on Ethereum protocol's first module with **permissionless entry**, 
 allowing any node operator — and especially community stakers, from solo stakers, to groups of friends, to 
 amateur operators — to operate validators by providing an ETH-based safety deposit.
 
@@ -793,7 +793,9 @@ amateur operators — to operate validators by providing an ETH-based safety dep
 
 Lido CSM
 """"""""
-First step is to take a look to CSM, what it is and what we can expect from it.
+First step is to take a look to CSM, what it is and what we can expect from it:
+
+`LIDO-CSM`_
 
 .. _LIDO-CSM: https://operatorportal.lido.fi/modules/community-staking-module?pk_vid=dfd844e8ac98a6ab1744384064237bde#block-4a646a8613264067b77ea0a309c1e7c3
 
@@ -802,7 +804,7 @@ but it is important for you to take a look at the Lido Portal, particularly, the
 
 .. warning::
 
-  As of today, CSM has reached its stake share limit so your validator won't be activated until this limit is increased. Stay 
+  As of today, **CSM has reached its stake share limit so your validator won't be activated until this limit is increased**. Stay 
   tuned with Lido updates. You can still upload keys, but they are very unlikely to receive deposits in the near 
   future (possibly for months).
 
@@ -810,22 +812,22 @@ Prerrequisites
 """"""""""""""
 
 - A Full/Archive **Ethereum node synced** with MEV support
-- A **MEV server** running compatible with Lido
+- A **MEV server** compatible with Lido
 - A Lido Community Staking Module **(CSM) Operator**
 - At least 1 CSM **validator key**
 - A running **Validator Client** with Lido configuration
-- Ethereum on ARM **:guilabel:`ls-lido`** package
+- Ethereum on ARM :guilabel:`ls-lido` package
 
-Running a Full Ethereum node
-""""""""""""""""""""""""""""
 .. note::
   These are instructions for **mainnet** but **you can test the Lido setup on Hoodie testnet** by starting the corresponding 
   services and accessing the CSM testnet portal. Refer to the bottom of the page for more details.
 
   **We strongly recommend first running the CSM Lido setup on the Hoodi testnet.** 
 
+Running a Full Ethereum node
+""""""""""""""""""""""""""""
 
-Let's make sure the **:guilabel:`ls-lido`** is installed. Run on your node:
+Let's make sure the :guilabel:`ls-lido` is installed. Run on your node:
 
 .. prompt:: bash $
 
@@ -833,7 +835,7 @@ Let's make sure the **:guilabel:`ls-lido`** is installed. Run on your node:
 
 First step is to **run a Full/Archive Ethereum node** (Full node is enough). This is the same process as running a vanilla node, the 
 only difference is that we need to enable :guilabel:`MEV Boost` in the beacon chain and start a MEV Boost 
-server.
+server compatible with Lido.
 
 1. Choose a **Consensus Client** and an **Execution Client** and start both services. For instance:
 
@@ -844,8 +846,8 @@ server.
 
 .. warning::
 
-  Note that the Beacon Chain service includes the **mev** argument. Use it with any client, for instance 
-  prysm-beacon-mev, teku-beacon-mev... This is necessary to enable MEV for running Lido.
+  Note that the Beacon Chain service includes the `mev` argument. Use it with any client, for instance 
+  `prysm-beacon-mev`, `teku-beacon-mev`... This is necessary to enable MEV for running Lido.
 
 
 2. Once synced, start the MEV service:
@@ -864,8 +866,8 @@ Time to create the validator keys that will be used by your client to stake.
 
 You have 2 main options for creating the validator keys:
 
-1. Use the **Wagyu key generator** by Ethstaker (which includes a GUI).  Go to https://wagyu.gg, download the appropiate binary 
-for your desktop and follow the instructions. **Remember to put here the Lido withdrawal address**: 0xB9D7934878B5FB9610B3fE8A5e441e8fad7E293f
+1. Use the **Wagyu key generator by Ethstaker** (which includes a GUI).  Go to https://wagyu.gg, download the appropiate binary 
+for your desktop and follow the instructions. **Remember to put here the Lido withdrawal address**: `0xB9D7934878B5FB9610B3fE8A5e441e8fad7E293f`
 
 .. warning::
 
@@ -878,18 +880,22 @@ for your desktop and follow the instructions. **Remember to put here the Lido wi
 
 .. prompt:: bash $
 
-  deposit new-mnemonic --num_validators $YOUR_NUMBER --chain mainnet --eth1_withdrawal_address 0xB9D7934878B5FB9610B3fE8A5e441e8fad7E293f
+  deposit new-mnemonic --num_validators $YOUR_NUMBER_VALIDATORS --chain mainnet --eth1_withdrawal_address 0xB9D7934878B5FB9610B3fE8A5e441e8fad7E293f
 
-Here you need to copy the deposit_data file (or paste the content) to your desktop in order to 
-submit this data to the CSM Lido portal.
+A validator_keys folder will be created containing all necessary files. Here you will need to copy and paste the `deposit_data` 
+file content to your desktop in order to submit this data to the CSM Lido portal.
 
-- Download the deposit tool to your desktop and run it there.
+- Download the deposit tool to your desktop and run it there. Same with folder and contents.
 
 Follow the screen instructions in both cases and make sure you write down the 12 words password.
 
-Now, you will get two files (a keystore(s) depending on the number of validators and a deposit file). The keystore(s) is/are for importing your 
-validator keys in your Validator client. The .deposit file is for uploading the keys into the CSM module 
-and making the corresponding deposit.
+.. warning::
+
+  **Make sure you write down the passphrase as this are your validators private keys**.
+
+Now, in any case, you have two file types (a `keystore(s)` file(s) depending on the number of validators and a `deposit_data`` file). 
+The `keystore(s)`` is/are for importing your validator keys in your Validator client. The `deposit_data` file is for uploading 
+the keys into the CSM module and making the corresponding deposit.
 
 For more info regarding validator keys generation visit this site:
 
@@ -900,19 +906,19 @@ Create and Activate the CSM operator
 
 Now it is time to visit the CSM Lido portal
 
-.. _csm.lido.fi: https://csm.lido.fi
+`https://csm.lido.fi`_
 
-1. Clic in "Become a Node Operator". Make sure you have at least 1.5 ETH. 
+1. Clic in **"Become a Node Operator"**. Make sure you have at least **2.3** ETH. 
 
-2. Accept the terms and choose your wallet that will create the Operator and make the deposit
+2. **Accept the terms** and **choose your wallet** that will create the Operator and make the deposit
 
-3. Clic "Create node operator"
+3. Clic **"Create node operator"**
 
-4. Now, paste the deposit_data file content into "Upload deposit data" form.
+4. Now, paste the `deposit_data` file content into **"Upload deposit data"** form.
 
-5. Mark the confirmation tick and Clic "Create Node Operator"
+5. **Confirm** and clic **"Create Node Operator"**
 
-6. Confirm the transaction in your wallet
+6. **Confirm the transaction** in your wallet
 
 Done, you are now running a CSM Lido Validator. Now, you need to wait for the Validator to get enabled. 
 
@@ -922,9 +928,9 @@ Done, you are now running a CSM Lido Validator. Now, you need to wait for the Va
 
 Running CSM on Hoodi testnet
 """"""""""""""""""""""""""""
-Running CSM on Hoodi is pretty much the same process but you need to make some adjustments.
+Running CSM on `Hoodi` is pretty much the same process but you need to make some adjustments.
 
-1. For the full node, your add the hoodi network on EL+CL client services, for instance:
+1. For the full node, your add the `hoodi` network on EL+CL client services, for instance:
 
 .. prompt:: bash $
 
@@ -937,14 +943,14 @@ Running CSM on Hoodi is pretty much the same process but you need to make some a
 
   sudo systemctl start mev-boost-hoodi
 
-3. Key generation. **Wagyu** supports Hoodi so make sure you select this network. On deposit command line, replace 
-mainnet for hoodi. Make sure to set this withdrawal address in both cases: **0x4473dCDDbf77679A643BdB654dbd86D67F8d32f2**
+3. Key generation. **Wagyu** supports `Hoodi` so make sure you select this network. On deposit command line, replace 
+`mainnet` for `hoodi`. **Make sure to set this withdrawal address** in both cases: `0x4473dCDDbf77679A643BdB654dbd86D67F8d32f2`
 
 .. warning::
 
-  **Again, be carefull, Lido withdrawal address for Hoodi is 0x4473dCDDbf77679A643BdB654dbd86D67F8d32f2**
+  **Again, be carefull, Lido withdrawal address for Hoodi is `0x4473dCDDbf77679A643BdB654dbd86D67F8d32f2**
 
 4. Lido Operator Portal for Hoodi is:
 
-_csm.testnet.fi https://csm.testnet.fi/
+`https://csm.testnet.fi`_
 

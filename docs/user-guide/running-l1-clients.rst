@@ -819,10 +819,10 @@ Prerrequisites
 - Ethereum on ARM :guilabel:`ls-lido` package
 
 .. note::
-  These are instructions for `mainnet` but **you can test the Lido setup on `hoodie` testnet** by starting the corresponding 
+  These are instructions for mainnet but **you can test the Lido setup on hoodie testnet** by starting the corresponding 
   services and accessing the CSM testnet portal. Refer to the bottom of the page for more details.
 
-  **We strongly recommend first running the CSM Lido setup on the `hoodi` testnet.** 
+  **We strongly recommend first running the CSM Lido setup on the hoodi testnet.** 
 
 Running a Full Ethereum node
 """"""""""""""""""""""""""""
@@ -846,8 +846,8 @@ server compatible with Lido.
 
 .. warning::
 
-  Note that the Beacon Chain service includes the `mev` argument. Use it with any client, for instance 
-  `prysm-beacon-mev`, `teku-beacon-mev`... This is necessary to enable MEV for running Lido.
+  Note that the Beacon Chain service includes the mev argument. Use it with any client, for instance 
+  prysm-beacon-mev, teku-beacon-mev... This is necessary to enable MEV for running Lido.
 
 
 2. Once synced, start the MEV service:

@@ -834,7 +834,7 @@ Let's make sure the :guilabel:`ls-lido` is installed. Run on your node:
   sudo apt-get update && sudo apt-get install ls-lido
 
 First step is to **run a Full/Archive Ethereum node** (Full node is enough). This is the same process as running a vanilla node, the 
-only difference is that we need to enable :guilabel:`MEV Boost` in the beacon chain and start a :guilabel:`MEV Boost`` 
+only difference is that we need to enable :guilabel:`MEV Boost` in the beacon chain and start a :guilabel:`MEV Boost`
 server compatible with Lido.
 
 1. Choose a **Consensus Client** and an **Execution Client** and start both services. For instance:

@@ -895,8 +895,8 @@ Follow the screen instructions in both cases and make sure you write down the 12
 
   **Make sure you write down the passphrase as this are your validators private keys and set the withdrawal address**.
 
-Now, in any case, the tools will create two file types (a `keystore(s)` file(s) depending on the number of validators and a `deposit_data`` file). 
-The `keystore(s)`` is/are for importing your validator keys in your Validator client. The `deposit_data` file is for uploading 
+Now, in any case, the tools will create two file types (a `keystore(s)` file(s) depending on the number of validators and a `deposit_data` file). 
+The `keystore(s)` is/are for importing your validator keys in your Validator client. The `deposit_data` file is for uploading 
 the keys into the CSM module and making the corresponding deposit.
 
 For more info regarding validator keys generation visit this site:

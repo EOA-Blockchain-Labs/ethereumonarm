@@ -891,6 +891,8 @@ file content to your desktop in order to submit this data to the CSM Lido portal
 
 - Download the deposit tool to your desktop and run it there. Same with folder and contents:
 
+`ethstaker-deposit-cli`_
+
 .. _ethstaker-deposit-cli: https://github.com/eth-educators/ethstaker-deposit-cli/releases
 
 Follow the screen instructions in both cases and make sure you write down the 12 words password.
@@ -904,6 +906,8 @@ The ``keystore(s)`` is/are for importing your validator keys in your Validator c
 the keys into the CSM module and making the corresponding deposit.
 
 For more info regarding validator keys generation visit this site:
+
+`homestaker-validator-key-generation`_
 
 .. _homestaker-validator-key-generation: https://dvt-homestaker.stakesaurus.com/keystore-generation-and-mev-boost/validator-key-generation
 
@@ -923,6 +927,8 @@ you generated the keys in your desktop, you will need to copy them into your nod
 
 Please, refer to our **"Running validator client"** section for more info about how to import keys 
 in all Validator clients:
+
+`running-validator-client`_
 
 .. _running-validator-client: https://ethereum-on-arm-documentation.readthedocs.io/en/latest/user-guide/running-l1-clients.html#running-validator-client
 
@@ -949,7 +955,7 @@ Now it is time to visit the CSM Lido portal
 
 3. Clic **"Create node operator"**
 
-4. Now, paste the ```eposit_data`` file content into **"Upload deposit data"** form.
+4. Now, paste the ``deposit_data`` file content into **"Upload deposit data"** form.
 
 5. **Confirm** and clic **"Create Node Operator"**
 
@@ -963,7 +969,7 @@ Done, you are now running a CSM Lido Validator. Now, you need to wait for the Va
 
 Running CSM on Hoodi testnet
 """"""""""""""""""""""""""""
-Running CSM on ``oodi`` is pretty much the same process but you need to make some adjustments.
+Running CSM on ``hoodi`` is pretty much the same process but you need to make some adjustments.
 
 1. For the full node, your add the ``hoodi`` network on EL+CL client services, for instance:
 
@@ -978,7 +984,7 @@ Running CSM on ``oodi`` is pretty much the same process but you need to make som
 
   sudo systemctl start mev-boost-hoodi
 
-3. Key generation. **Wagyu** supports ``oodi`` so make sure you select this network. On deposit command line, replace 
+3. Key generation. **Wagyu** supports ``hoodi`` so make sure you select this network. On deposit command line, replace 
 ``mainnet`` for ``hoodi``. **Make sure to set this withdrawal address** in both cases: ``0x4473dCDDbf77679A643BdB654dbd86D67F8d32f2``
 
 .. warning::
@@ -996,5 +1002,5 @@ In both cases (command import and service start). You will need to add the ``hoo
 
 5. Lido Operator Portal for Hoodi is:
 
-`https://csm.testnet.fi`_
+https://csm.testnet.fi
 

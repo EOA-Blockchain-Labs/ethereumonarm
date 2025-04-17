@@ -819,10 +819,10 @@ Prerrequisites
 - Ethereum on ARM :guilabel:`ls-lido` package
 
 .. note::
-  These are instructions for **mainnet** but **you can test the Lido setup on Hoodie testnet** by starting the corresponding 
+  These are instructions for `mainnet` but **you can test the Lido setup on `hoodie` testnet** by starting the corresponding 
   services and accessing the CSM testnet portal. Refer to the bottom of the page for more details.
 
-  **We strongly recommend first running the CSM Lido setup on the Hoodi testnet.** 
+  **We strongly recommend first running the CSM Lido setup on the `hoodi` testnet.** 
 
 Running a Full Ethereum node
 """"""""""""""""""""""""""""
@@ -834,7 +834,7 @@ Let's make sure the :guilabel:`ls-lido` is installed. Run on your node:
   sudo apt-get update && sudo apt-get install ls-lido
 
 First step is to **run a Full/Archive Ethereum node** (Full node is enough). This is the same process as running a vanilla node, the 
-only difference is that we need to enable :guilabel:`MEV Boost` in the beacon chain and start a MEV Boost 
+only difference is that we need to enable :guilabel:`MEV Boost` in the beacon chain and start a :guilabel:`MEV Boost`` 
 server compatible with Lido.
 
 1. Choose a **Consensus Client** and an **Execution Client** and start both services. For instance:
@@ -885,21 +885,52 @@ for your desktop and follow the instructions. **Remember to put here the Lido wi
 A validator_keys folder will be created containing all necessary files. Here you will need to copy and paste the `deposit_data` 
 file content to your desktop in order to submit this data to the CSM Lido portal.
 
-- Download the deposit tool to your desktop and run it there. Same with folder and contents.
+- Download the deposit tool to your desktop and run it there. Same with folder and contents:
+
+.. _ethstaker-deposit-cli: https://github.com/eth-educators/ethstaker-deposit-cli/releases
 
 Follow the screen instructions in both cases and make sure you write down the 12 words password.
 
 .. warning::
 
-  **Make sure you write down the passphrase as this are your validators private keys**.
+  **Make sure you write down the passphrase as this are your validators private keys and set the withdrawal address**.
 
-Now, in any case, you have two file types (a `keystore(s)` file(s) depending on the number of validators and a `deposit_data`` file). 
+Now, in any case, the tools will create two file types (a `keystore(s)` file(s) depending on the number of validators and a `deposit_data`` file). 
 The `keystore(s)`` is/are for importing your validator keys in your Validator client. The `deposit_data` file is for uploading 
 the keys into the CSM module and making the corresponding deposit.
 
 For more info regarding validator keys generation visit this site:
 
 .. _homestaker-validator-key-generation: https://dvt-homestaker.stakesaurus.com/keystore-generation-and-mev-boost/validator-key-generation
+
+Importing the keys and starting the validator
+"""""""""""""""""""""""""""""""""""""""""""""
+
+Once we have our private keys, we can import them into our validator client and start it.
+
+You need to log into your node and run the import command, depending on you validator client. For instance:
+
+.. prompt:: bash $
+
+  lighthouse account validator import --directory=/home/ethereum/validator_keys
+
+Note that we assume that the `keystore` and `deposit_data` files are in the `/home/ethereum/validator_keys` directory. If 
+you generated the keys in your desktop, you will need to copy them into your node.
+
+Please, refer to our **"Running validator client"** section for more info about how to import keys 
+in all Validator clients:
+
+.. _running-validator-client: https://ethereum-on-arm-documentation.readthedocs.io/en/latest/user-guide/running-l1-clients.html#running-validator-client
+
+Now it is time to start the validator. Make sure you add the argument `lido` in the service, for instance:
+
+.. prompt:: bash $
+
+  sudo systemctl start lighthouse-validator-lido
+
+.. warning::
+
+  **Don't forget to add the `lido`argument as it contains the specific config for Lido CSM**.
 
 Create and Activate the CSM operator
 """"""""""""""""""""""""""""""""""""
@@ -908,7 +939,7 @@ Now it is time to visit the CSM Lido portal
 
 `https://csm.lido.fi`_
 
-1. Clic in **"Become a Node Operator"**. Make sure you have at least **2.3** ETH. 
+1. Clic in **"Become a Node Operator"**. Make sure you have at least **2.4** ETH. 
 
 2. **Accept the terms** and **choose your wallet** that will create the Operator and make the deposit
 
@@ -950,7 +981,16 @@ Running CSM on `Hoodi` is pretty much the same process but you need to make some
 
   **Again, be carefull, Lido withdrawal address for Hoodi is `0x4473dCDDbf77679A643BdB654dbd86D67F8d32f2**
 
-4. Lido Operator Portal for Hoodi is:
+4. Key import and validator start.
+
+In both cases (command import and service start). You will need to add the `hoodi` flag to target the correct network. For instance:
+
+.. prompt:: bash $
+
+  lighthouse account validator --network hoodi import --directory=/home/ethereum/validator_keys
+  sudo systemctl start lighthouse-validator-hoodi-lido
+
+5. Lido Operator Portal for Hoodi is:
 
 `https://csm.testnet.fi`_
 

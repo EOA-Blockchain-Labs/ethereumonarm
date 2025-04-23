@@ -113,6 +113,7 @@ declare -A layer2=(
 declare -A infra=(
     [ethereum/staking-deposit-cli]=staking-deposit-cli
     [ObolNetwork/charon]=dvt-obol
+    [flashbots/mev-boost]=mev-boost
     [ethpandaops/contributoor]=contributoor
 )
 

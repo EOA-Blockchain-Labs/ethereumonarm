@@ -31,7 +31,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(GETH_VERSION) --license $(PKG_LICENSE
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 --deb-systemd extras/geth.service --deb-systemd extras/geth-hoodi.service\
---deb-systemd extras/geth-holesky.service\
+--deb-systemd extras/geth-holesky.service --deb-systemd extras/geth-gnosis.service\
 --depends merge-config
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(GETH_VERSION) --license $(PKG_LICENSE)\

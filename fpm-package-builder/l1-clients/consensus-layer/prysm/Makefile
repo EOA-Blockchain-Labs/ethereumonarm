@@ -32,6 +32,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENS
 	--deb-systemd extras/prysm-beacon.service --deb-systemd extras/prysm-validator.service\
 	--deb-systemd extras/prysm-beacon-mev.service --deb-systemd extras/prysm-validator-mev.service\
 	--deb-systemd extras/prysm-beacon-hoodi.service --deb-systemd extras/prysm-validator-hoodi.service\
+	--deb-systemd extras/prysm-beacon-gnosis.service --deb-systemd extras/prysm-validator-gnosis.service\
 	--deb-systemd extras/prysm-beacon-hoodi-mev.service --deb-systemd extras/prysm-validator-hoodi-mev.service\
 	--deb-systemd extras/prysm-beacon-holesky.service --deb-systemd extras/prysm-validator-holesky.service\
 	--conflicts prysm-beacon\

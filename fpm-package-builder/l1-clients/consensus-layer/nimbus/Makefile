@@ -33,6 +33,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICEN
 	--before-upgrade extras/preinst --after-upgrade extras/postinst \
 	--deb-systemd extras/nimbus-beacon.service --deb-systemd extras/nimbus-validator.service\
 	--deb-systemd extras/nimbus-beacon-mev.service --deb-systemd extras/nimbus-validator-mev.service\
+	--deb-systemd extras/nimbus-beacon-gnosis.service --deb-systemd extras/nimbus-validator-gnosis.service\
 	--deb-systemd extras/nimbus-beacon-holesky.service --deb-systemd extras/nimbus-validator-holesky.service\
 	--deb-systemd extras/nimbus-beacon-hoodi.service --deb-systemd extras/nimbus-validator-hoodi.service\
 	--deb-systemd extras/nimbus-beacon-hoodi-mev.service --deb-systemd extras/nimbus-validator-hoodi-mev.service\

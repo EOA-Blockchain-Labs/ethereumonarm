@@ -3,7 +3,7 @@ Description=Grandine Beacon chain daemon
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/grandine-validator.conf
+EnvironmentFile=/etc/ethereum/grandine-validator-hoodi.conf
 ExecStart=/usr/bin/grandine $ARGS
 Restart=always
 User=ethereum

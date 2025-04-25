@@ -1,0 +1,13 @@
+[Unit]
+Description=Nimbus Beacon chain daemon
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/nimbus-validator-gnosis.conf
+ExecStart=/usr/bin/nimbus_validator_client $ARGS
+Restart=always
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target
+

@@ -79,10 +79,6 @@ $(call ETHONARM_IMAGE,rock5b):
 	$(call download_image,$(rock5b_url))
 	$(call modify_image,$(rock5b_iso),$(rock5b_offset),rock5b)
 
-$(call ETHONARM_IMAGE,orangepi5):
-	$(call download_image,$(orangepi5_url))
-	$(call modify_image,$(orangepi5_iso),$(orangepi5_offset),orangepi5)
-
 $(call ETHONARM_IMAGE,orangepi5-plus):
 	$(call download_image,$(orangepi5-plus_url))
 	$(call modify_image,$(orangepi5-plus_iso),$(orangepi5-plus_offset),orangepi5-plus)

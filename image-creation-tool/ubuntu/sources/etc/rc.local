@@ -1,278 +1,458 @@
 #!/bin/bash
-# Ethereum on ARM Node Initial Setup Script
-# rc.local
-#
-# This script is executed at the end of the system startup process, specifically when it reaches the multiuser runlevel.
-# It is crucial that the script concludes with an "exit 0" status upon successful completion, or any other non-zero value to indicate an error.
-#
-# The script can be enabled or disabled by simply modifying its execution permissions.
-#
-# By default, this script performs no actions.
-# This script is designed to convert an armbian Ubuntu 64-bit operating system image into one that is ready to function as an Ethereum node on an ARM-based device, as part of the Ethereum on ARM project.
-#
-# This script is intended to be run only once, during the first system startup.
-# It automates the setup of an Ethereum node on an ARM device.
-# A flag file is utilized to prevent the script from being executed again after the initial setup has been completed.
-#
-# This rc.local script is part of the Ethereum on ARM project (see online documentation for more details: https://ethereum-on-arm-documentation.readthedocs.io/en/latest/index.html) and its purpose is to transform various ARM-based devices into fully functional Ethereum nodes.
+# This script sets up an Ethereum node on a small computer.
+# It runs automatically one time when the computer starts.
 
+# This file helps the script know if it ran before.
 FLAG="/root/first-run.flag"
 
-# Check if the setup has already been completed.
-# If the flag file exists, it means the script has run before, so we exit.
+# If the flag file exists, setup is done, so we stop.
 if [ -f "$FLAG" ]; then
-    echo "Setup already completed. Exiting."
+    echo "Setup already finished. Stopping."
     exit 0
 fi
 
-# Define the wait time for the network interface to link up (in seconds).
-WAIT_TIME=15
+# How long to wait for the internet (in seconds).
+WAIT_TIME=20
 
-# Wait for the interface to link up.
+# Wait for network connection.
+echo "Waiting for network..."
 sleep "$WAIT_TIME"
 
-# Check for internet connection (Borrowed from Armbian).
+# Check if internet works.
+echo "Checking internet..."
 if ! wget -q -t 1 --timeout=30 --spider http://github.com; then
-    echo "Stopping the installation, internet access is necessary"
+    echo "No internet. Cannot continue setup."
     exit 1
 fi
+echo "Internet OK."
 
-# --- Device Detection and Setting Up Variables ---
-# We try to find the device model from a specific system file.
-# If that fails, we use the 'uname' command to get the machine type.
-# We then remove any null characters from the output.
-DEVICE_MODEL=$(cat /sys/firmware/devicetree/base/model 2>/dev/null || uname -m | tr -d '\0')
+# --- Find computer type ---
+echo "Finding computer model..."
+DEVICE_MODEL=$(cat /sys/firmware/devicetree/base/model 2>/dev/null || uname -m | tr -d '\\0')
+echo "Model: $DEVICE_MODEL"
 
-# We configure specific settings based on the detected device model.
-
+# Set settings based on computer model.
 case "$DEVICE_MODEL" in
-
 "Raspberry Pi 5 Model B Rev 1.1")
-    TARGET_DISK="/dev/nvme0n1" # Specifies the disk device where the Ethereum data will be stored.
-    PARTITION1="p1"            # Defines the partition number on the target disk to be used.
-    HOSTNAME_SEED="rpi5"       # Used as a base to generate a unique hostname for this device.
-    SWAP_SIZE=8192             # Sets the size of the swap space in megabytes (MB).
-    SWAPPINESS=1               # Controls how aggressively the kernel uses swap memory (lower value means less aggressive).
+    TARGET_DISK="/dev/nvme0n1" # Hard drive for data
+    PARTITION1="p1"            # Part of the drive to use
+    HOSTNAME_SEED="rpi5"       # Part of computer name
+    SWAP_SIZE=8192             # Extra memory space (MB)
+    SWAPPINESS=1               # How much to use extra memory
     ;;
 
 "FriendlyElec NanoPC-T6")
-    TARGET_DISK="/dev/nvme0n1" # Specifies the disk device where the Ethereum data will be stored.
-    PARTITION1="p1"            # Defines the partition number on the target disk to be used.
-    HOSTNAME_SEED="nanopct6"   # Used as a base to generate a unique hostname for this device.
-    SWAP_SIZE=8192             # Sets the size of the swap space in megabytes (MB).
-    SWAPPINESS=1               # Controls how aggressively the kernel uses swap memory (lower value means less aggressive).
+    TARGET_DISK="/dev/nvme0n1" # Hard drive for data
+    PARTITION1="p1"            # Part of the drive to use
+    HOSTNAME_SEED="nanopct6"   # Part of computer name
+    SWAP_SIZE=8192             # Extra memory space (MB)
+    SWAPPINESS=1               # How much to use extra memory
     ;;
 
 "Radxa ROCK 5B")
-    TARGET_DISK="/dev/nvme0n1" # Specifies the disk device where the Ethereum data will be stored.
-    PARTITION1="p1"            # Defines the partition number on the target disk to be used.
-    HOSTNAME_SEED="rock5b"     # Used as a base to generate a unique hostname for this device.
-    SWAP_SIZE=8192             # Sets the size of the swap space in megabytes (MB).
-    SWAPPINESS=1               # Controls how aggressively the kernel uses swap memory (lower value means less aggressive).
+    TARGET_DISK="/dev/nvme0n1" # Hard drive for data
+    PARTITION1="p1"            # Part of the drive to use
+    HOSTNAME_SEED="rock5b"     # Part of computer name
+    SWAP_SIZE=8192             # Extra memory space (MB)
+    SWAPPINESS=1               # How much to use extra memory
     ;;
 
 "Orange Pi 5 Plus" | "Xunlong Orange Pi 5 Plus")
-    TARGET_DISK="/dev/nvme0n1" # Specifies the disk device where the Ethereum data will be stored. .
-    PARTITION1="p1"            # Defines the partition number on the target disk to be used.
-    HOSTNAME_SEED="opi5plus"   # Used as a base to generate a unique hostname for this device.
-    SWAP_SIZE=8192             # Sets the size of the swap space in megabytes (MB).
-    SWAPPINESS=1               # Controls how aggressively the kernel uses swap memory (lower value means less aggressive).
+    TARGET_DISK="/dev/nvme0n1" # Hard drive for data
+    PARTITION1="p1"            # Part of the drive to use
+    HOSTNAME_SEED="opi5plus"   # Part of computer name
+    SWAP_SIZE=8192             # Extra memory space (MB)
+    SWAPPINESS=1               # How much to use extra memory
     ;;
 
 *)
-    echo "Unrecognized device model: $DEVICE_MODEL. Exiting." # If the detected device model does not match any of the cases above, this message is displayed, and the script will terminate.
+    echo "Unknown computer model: $DEVICE_MODEL. Stopping."
     exit 1
     ;;
-
 esac
+echo "Disk=${TARGET_DISK}, Partition=${PARTITION1}, Name part=${HOSTNAME_SEED}"
 
-# --- List of Packages to Install ---
-# These are the basic tools and libraries we need.
-BASE_PACKAGES="gdisk software-properties-common apt-utils vim net-tools file kitty-terminfo bash-completion ufw wget gpg"
-# These are the different Ethereum client software options and related tools.
-ETHEREUM_PACKAGES="geth nethermind erigon reth besu prysm lighthouse nimbus teku lodestar staking-deposit-cli mev-boost arbitrum-nitro optimism-op-geth optimism-op-node polygon-bor polygon-heimdall starknet-juno fuel-network ethereumonarm-utils"
-# These are the tools for monitoring the Ethereum node.
-MONITORING_PACKAGES="grafana prometheus prometheus-node-exporter ethereumonarm-monitoring-extras" # Includes extra monitoring configurations.
-# These are the packages needed for setting up Nginx as a reverse proxy.
-NGINX_PACKAGES="nginx ethereumonarm-nginx-proxy-extras ethereumonarm-config-sync ethereumonarm-utils"
+# --- Lists of software to install ---
+BASE_PACKAGES="apt-utils bash-completion file gdisk gpg parted net-tools rsync software-properties-common ufw vim wget kitty-terminfo"
+ETHEREUM_PACKAGES="arbitrum-nitro besu dvt-obol erigon ethstaker-deposit-cli ethereumonarm-utils fuel-network geth lighthouse lodestar ls-lido mev-boost nethermind nimbus optimism-op-geth optimism-op-node prysm reth starknet-juno teku"
+MONITORING_PACKAGES="ethereumonarm-monitoring-extras grafana prometheus prometheus-node-exporter"
+NGINX_PACKAGES="ethereumonarm-config-sync ethereumonarm-nginx-proxy-extras ethereumonarm-utils nginx"
 
-# --- Update System and Install Basic Packages ---
-# First, we update the list of available packages.
-apt-get update
-# Then, we install the basic packages without asking for confirmation.
-apt-get -y install "$BASE_PACKAGES"
+# --- Install Basic Programs ---
+echo "Getting program list..."
+apt-get update || {
+    echo "Failed to get program list."
+    exit 1
+}
+echo "Installing basic programs..."
+apt-get -y install $BASE_PACKAGES || {
+    echo "Failed to install basic programs."
+    exit 1
+}
+echo "Basic programs installed."
 
-# --- Disk Partitioning and Formatting ---
-# This function will format the specified disk partition.
-
-
-# Call the format_disk function for the target disk. If it fails, exit the script.
-format_disk "$TARGET_DISK" || exit 1
-# Set the reserved block count for the filesystem to 0%.
-tune2fs -m 0 "${TARGET_DISK}${PARTITION1}"
-
-# Add an entry to the fstab file to automatically mount the partition at /home on boot.
-echo "${TARGET_DISK}${PARTITION1} /home ext4 defaults,noatime 0 2" >>/etc/fstab
-# Mount the /home directory.
-mount /home
-# Reload the systemd manager configuration.
-systemctl daemon-reload
-
-# --- Ethereum User Setup ---
-# Check if the 'ethereum' user already exists. If not, create it.
-id -u ethereum &>/dev/null || {
-    adduser --disabled-password --gecos "" ethereum
-    # Set the password for the 'ethereum' user to 'ethereum'.
-    echo "ethereum:ethereum" | chpasswd
-    # Force the user to change their password on the next login.
-    chage -d 0 ethereum
+# --- Add new places to get programs and update list ---
+echo "Adding Ethereum on ARM programs list..."
+wget -qO- http://apt.ethereumonarm.com/eoa.apt.keyring.gpg | tee /etc/apt/trusted.gpg.d/eoa.gpg >/dev/null
+add-apt-repository -y -n "deb http://apt.ethereumonarm.com noble main" || {
+    echo "Failed to add Ethereum on ARM list."
+    exit 1
 }
 
-# Add the 'ethereum' user to various groups for necessary permissions.
+echo "Adding Grafana programs list..."
+wget -q -O - https://packages.grafana.com/gpg.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/grafana.gpg >/dev/null
+echo "deb https://packages.grafana.com/oss/deb stable main" | tee /etc/apt/sources.list.d/grafana.list || {
+    echo "Failed to add Grafana list."
+    exit 1
+}
+
+# Get the newest program list from all places.
+echo "Getting newest program list..."
+apt-get update || {
+    echo "Failed to get newest program list."
+    exit 1
+}
+
+# --- Prepare the hard drive ---
+
+# This job prepares the hard drive. IT WILL ERASE EVERYTHING!
+# Includes a check for a .format_me file to allow re-formatting an existing /home/ethereum
+format_disk() {
+    local DISK="$1"
+    local PART_DEVICE="${DISK}${PARTITION1}"
+    local PROCEED_WITH_FORMAT=false
+
+    echo "Preparing disk ${DISK}. DANGER: All data will be lost UNLESS /home/ethereum exists AND .format_me is NOT present!"
+
+    # Check if the partition exists and contains a Linux filesystem
+    if [[ -b "$PART_DEVICE" && $(file -s "$PART_DEVICE" | grep -oP 'Linux.*filesystem') ]]; then
+        TMP_DIR=$(mktemp -d)
+        echo "Attempting to mount ${PART_DEVICE} to check for /home/ethereum..."
+        if mount "$PART_DEVICE" "$TMP_DIR"; then
+            if [ -d "$TMP_DIR/ethereum" ]; then
+                echo "/home/ethereum already exists on the disk."
+                if [ -f "$TMP_DIR/ethereum/.format_me" ]; then
+                    echo "The .format_me file was found in /home/ethereum. Proceeding with formatting."
+                    PROCEED_WITH_FORMAT=true
+                else
+                    echo "The .format_me file was not found in /home/ethereum. Skipping format and mount."
+                    PROCEED_WITH_FORMAT=false
+                fi
+            else
+                echo "The path /home/ethereum does not exist on the disk. Proceeding with formatting."
+                PROCEED_WITH_FORMAT=true
+            fi
+            # Unmount the disk from the temporary directory
+            if mountpoint -q "$TMP_DIR"; then
+                umount "$TMP_DIR"
+            fi
+        else
+            echo "Could not mount ${PART_DEVICE}. Proceeding with formatting."
+            PROCEED_WITH_FORMAT=true
+        fi
+        # Clean up temporary directory
+        if [ -d "$TMP_DIR" ]; then
+            rm -r "$TMP_DIR"
+        fi
+    else
+        echo "Partition ${PART_DEVICE} does not exist or is not a Linux filesystem. Proceeding with formatting."
+        PROCEED_WITH_FORMAT=true
+    fi
+
+    if [ "$PROCEED_WITH_FORMAT" = true ]; then
+        echo "Trying to stop using parts of ${DISK}..."
+        umount "${PART_DEVICE}" 2>/dev/null || echo "Info: Part not used or couldn't stop."
+        lsblk -nrpo NAME,MOUNTPOINT "${DISK}" | awk '$2!=""{print $1}' | xargs -r -n1 umount 2>/dev/null || echo "Info: No other parts used or couldn't stop."
+        sleep 2
+
+        echo "Cleaning old info on ${DISK}..."
+        wipefs --all --force "${DISK}" || {
+            echo "Failed to clean ${DISK}"
+            return 1
+        }
+
+        echo "Creating new structure and part on ${DISK}..."
+        echo "label: gpt" | sfdisk --force --no-reread "${DISK}" || {
+            echo "Failed to create structure."
+            return 1
+        }
+        echo ",,L" | sfdisk --append --force --no-reread "${DISK}" || {
+            echo "Failed to create part."
+            return 1
+        }
+
+        echo "Waiting for computer to see new part ${PART_DEVICE}..."
+        sleep 5
+        partprobe "${DISK}" || echo "partprobe did nothing or failed."
+
+        echo "Helping computer see the new part..."
+        udevadm trigger --action=add --subsystem-match=block || echo "udevadm trigger failed."
+        echo "Waiting for computer to finish."
+        udevadm settle || echo "udevadm settle failed."
+        sleep 2
+
+        if [ ! -b "${PART_DEVICE}" ]; then
+            echo "Warning: Part ${PART_DEVICE} not seen. Waiting more..."
+            sleep 15
+            partprobe "${DISK}" || echo "partprobe did nothing or failed."
+            udevadm trigger --action=add --subsystem-match=block || echo "udevadm trigger failed."
+            udevadm settle || echo "udevadm settle failed."
+            sleep 2
+
+            if [ ! -b "${PART_DEVICE}" ]; then
+                echo "Error: Part ${PART_DEVICE} still not found. Stopping disk setup."
+                return 1
+            fi
+            echo "Part ${PART_DEVICE} found after waiting."
+        fi
+
+        echo "Making ${PART_DEVICE} ready to store files (formatting)..."
+        if mountpoint -q "${PART_DEVICE}"; then
+            echo "Warning: ${PART_DEVICE} is used. Trying to stop..."
+            umount "${PART_DEVICE}" || {
+                echo "Failed to stop using ${PART_DEVICE}."
+                return 1
+            }
+            sleep 1
+        fi
+        mkfs.ext4 -F -L "ethereum_data" "${PART_DEVICE}" || {
+            echo "Failed to format ${PART_DEVICE}"
+            return 1
+        }
+
+        echo "Disk ${DISK} ready."
+        return 0
+    else
+        echo "Skipping disk format as requested by .format_me check."
+        return 0 # Return 0 even if formatting is skipped, as it's an intended path
+    fi
+}
+
+# Start preparing the hard drive. Stop if it fails.
+echo "Starting disk preparation..."
+format_disk "$TARGET_DISK" || exit 1
+echo "Disk preparation done."
+
+# Set empty space on the drive part to 0%.
+echo "Setting empty space on ${TARGET_DISK}${PARTITION1} to 0%..."
+tune2fs -m 0 "${TARGET_DISK}${PARTITION1}"
+
+# Tell the computer to use this drive part for /home.
+echo "Adding /home to mount list..."
+sed -i '\|^.*/home.*|d' /etc/fstab # Remove old /home line
+echo "${TARGET_DISK}${PARTITION1} /home ext4 defaults,noatime 0 2" >>/etc/fstab
+echo "Mounting /home..."
+systemctl daemon-reload # Apply changes
+mount /home || {        # Use /home now
+    echo "Failed to mount /home. Check settings and disk."
+    exit 1
+}
+systemctl daemon-reload # Apply changes again
+
+# --- Set up a user for Ethereum ---
+echo "Setting up 'ethereum' user..."
+if ! id -u ethereum >/dev/null 2>&1; then
+    echo "Creating 'ethereum' user..."
+    adduser --disabled-password --gecos "" ethereum
+    echo "Setting initial password (must change on first login)..."
+    echo "ethereum:ethereum" | chpasswd
+    chage -d 0 ethereum # User must change password
+fi
+
+echo "Adding 'ethereum' user to groups..."
 for GRP in sudo netdev audio video dialout plugdev; do
     adduser ethereum "$GRP"
 done
+echo "'ethereum' user setup complete."
 
-# --- Swap Configuration ---
-# Set the swap file location
-SWAP_FILE="/home/ethereum/swapfile"
-# Set the systemd swap unit name
-SWAP_UNIT="ethereumonarm-swap.swap"
+# --- Set up extra memory space (Swap) ---
+echo "Setting up swap..."
+SWAP_FILE="/home/ethereum/swapfile" # Swap file location
+# Generate escaped unit name from swap file path
+SWAP_UNIT=$(systemd-escape -p --suffix=swap "$SWAP_FILE")
 
-# Create the swap file
-fallocate -l "${SWAP_SIZE}M" "${SWAP_FILE}"
+echo "Creating folder /home/ethereum if needed..."
+mkdir -p /home/ethereum
+chown ethereum:ethereum /home/ethereum # ethereum user owns folder
 
-# Set permissions and format the swap file
+echo "Making swap file ${SWAP_FILE} (${SWAP_SIZE}M)..."
+# Check if swap file exists and remove it before creating a new one
+if [ -f "${SWAP_FILE}" ]; then
+    echo "Existing swap file found. Removing it."
+    swapoff "${SWAP_FILE}" 2>/dev/null
+    rm "${SWAP_FILE}"
+fi
+fallocate -l "${SWAP_SIZE}M" "${SWAP_FILE}" || {
+    echo "Failed to make swap file. Check disk space."
+    exit 1
+}
+
+echo "Making swap file ready..."
 chmod 600 "${SWAP_FILE}"
-mkswap "${SWAP_FILE}"
+mkswap "${SWAP_FILE}" || {
+    echo "Failed to make swap file ready."
+    exit 1
+}
 
-# Create the systemd swap unit file
+# Create systemd swap unit with proper naming
+echo "Creating systemd unit: ${SWAP_UNIT}"
 cat <<EOF >/etc/systemd/system/"${SWAP_UNIT}"
 [Unit]
-Description=Swap File at $SWAP_FILE
-After=network.target
+Description=Swap File at ${SWAP_FILE}
 
 [Swap]
-What=$SWAP_FILE
+What=${SWAP_FILE}
 Priority=10
 
 [Install]
-WantedBy=local-fs.target
+WantedBy=multi-user.target
 EOF
 
-# Enable and start the swap unit
-systemctl enable --now "${SWAP_UNIT}"
-
-# Reload systemd daemon to ensure changes are applied
+echo "Enabling and activating swap..."
 systemctl daemon-reload
+systemctl enable --now "${SWAP_UNIT}" || {
+    echo "Failed to enable/start swap. Check system settings."
+    exit 1
+}
 
-# --- Hostname and Network Setup ---
-# Get the name of the active network interface.
-ACTIVE_INTERFACE=$(ip route get 8.8.8.8 | awk '/dev/ {print $5}')
-# Get the MAC address of the active network interface.
-MAC_ADDRESS=$(cat /sys/class/net/"$ACTIVE_INTERFACE"/address)
-# Create a short hash from the MAC address for uniqueness.
-MAC_HASH=$(echo "$MAC_ADDRESS" | sha256sum | cut -c1-8)
-# Generate a new hostname for the system.
-NEW_HOSTNAME="ethereumonarm-${HOSTNAME_SEED}-${MAC_HASH}"
-# Set the new hostname.
-echo "$NEW_HOSTNAME" >/etc/hostname
-# Update the /etc/hosts file with the new hostname.
-sed -i "s/127\.0\.1\.1.*/127.0.1.1 $NEW_HOSTNAME/g" /etc/hosts
+echo "Verifying swap..."
+swapon --show
+echo "Swap setup completed successfully."
 
-# --- System Performance Tuning ---
-# If the armbian-zram-config file exists, disable zram.
-[[ -f /etc/default/armbian-zram-config ]] && sed -i "s/ENABLED=true/ENABLED=false/g" /etc/default/armbian-zram-config
-# Set the kernel swappiness value.
+# --- Set computer name and network ---
+echo "Setting up computer name..."
+ACTIVE_INTERFACE=$(ip route get 8.8.8.8 | awk '/dev/ {print $5; exit}')
+if [ -z "$ACTIVE_INTERFACE" ]; then
+    echo "Could not find network name. Skipping name setup."
+else
+    echo "Network: $ACTIVE_INTERFACE"
+    MAC_ADDRESS=$(cat /sys/class/net/"$ACTIVE_INTERFACE"/address)
+    if [ -n "$MAC_ADDRESS" ]; then
+        echo "Network number: $MAC_ADDRESS"
+        MAC_HASH=$(echo "$MAC_ADDRESS" | sha256sum | cut -c1-8)
+        NEW_HOSTNAME="ethereumonarm-${HOSTNAME_SEED}-${MAC_HASH}"
+        echo "Setting name to $NEW_HOSTNAME..."
+        echo "$NEW_HOSTNAME" >/etc/hostname
+        hostnamectl set-hostname "$NEW_HOSTNAME"
+        sed -i "s/127\.0\.1\.1.*/127.0.1.1	$NEW_HOSTNAME/g" /etc/hosts
+        echo "Computer name setup done."
+    else
+        echo "Could not find network number. Skipping name setup."
+    fi
+fi
+
+# --- Make computer run better ---
+echo "Making computer run better..."
+if [[ -f /etc/default/armbian-zram-config ]]; then
+    echo "Turning off Armbian zRAM..."
+    sed -i "s/ENABLED=true/ENABLED=false/g" /etc/default/armbian-zram-config
+fi
+echo "Setting how much to use swap to ${SWAPPINESS}..."
+sed -i '/^vm\.swappiness/d' /etc/sysctl.conf # Remove old setting
 echo "vm.swappiness=${SWAPPINESS}" >>/etc/sysctl.conf
-# Apply the new sysctl settings.
-sysctl -p
+sysctl -p # Apply settings now
+echo "Performance settings applied."
 
-# --- Ethereum Software Installation ---
-# Download and install the Ethereum on ARM repository key.
-wget -qO- http://apt.ethereumonarm.com/eoa.apt.keyring.gpg | tee /etc/apt/trusted.gpg.d/eoa.gpg >/dev/null
-# Add the Ethereum on ARM repository to the system's software sources.
-add-apt-repository -y -n "deb http://apt.ethereumonarm.com noble main"
-# Update the package lists again to include the new repository.
-apt-get update
-# Install all the specified Ethereum-related packages.
-apt-get -y install "$ETHEREUM_PACKAGES"
+# --- Install Ethereum Programs ---
+echo "Installing Ethereum programs..."
+apt-get -y install $ETHEREUM_PACKAGES || {
+    echo "Failed to install Ethereum programs."
+    exit 1
+}
+echo "Ethereum programs installed."
 
-# Add EOA Release version
-# Define the file where the release version will be stored.
+# Add info about the Ethereum on ARM version.
+echo "Setting Ethereum on ARM version info..."
 EOA_RELEASE_FILE="/etc/eoa-release"
-# Set a default minor version if it's not already defined.
 EOA_MINOR_VERSION=${EOA_MINOR_VERSION:-0}
-# Get the current year and month to form the major version.
 EOA_MAJOR_VERSION=$(date +"%y"."%m")
-# Create the full release version string.
 EOA_VERSION="Ethereum on ARM $EOA_MAJOR_VERSION.$EOA_MINOR_VERSION"
-# Write the release version to the specified file.
 echo "$EOA_VERSION" >"$EOA_RELEASE_FILE"
 
-# --- Alias for Ethereum Package Updates ---
-# Add an alias to the bash configuration file for easy Ethereum package updates.
+# --- Add a shortcut command for updating Ethereum programs ---
+echo "Adding update shortcut 'update-ethereum'..."
+sed -i '/^alias update-ethereum=/d' /etc/bash.bashrc # Remove old shortcut
 cat <<EOF >>/etc/bash.bashrc
-alias update-ethereum='
-sudo apt-get update
-sudo apt-get install geth nethermind erigon reth besu prysm lighthouse nimbus teku lodestar staking-deposit-cli'
+
+# Shortcut to update Ethereum on ARM programs
+alias update-ethereum='sudo apt-get update && sudo apt-get install $ETHEREUM_PACKAGES'
 EOF
+# Make sure the computer sees this shortcut for all users.
+grep -q "if \[ -f /etc/bash.bashrc \]; then . /etc/bash.bashrc; fi" /etc/profile ||
+    echo "if [ -f /etc/bash.bashrc ]; then . /etc/bash.bashrc; fi" >>/etc/profile
 
-# --- Monitoring and Observability Stack ---
-# Install necessary tools for adding repositories.
-wget -q -O - https://packages.grafana.com/gpg.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/grafana.gpg >/dev/null
-echo "deb https://packages.grafana.com/oss/deb stable main" | tee /etc/apt/sources.list.d/grafana.list
-apt-get -y update
+# --- Set up Programs to Watch the Node ---
+echo "Setting up watching programs (Grafana, Prometheus)..."
 
-# Create a system user for Prometheus before installing the monitoring packages.
+echo "Making sure user 'prometheus' exists..."
 if ! id -u prometheus >/dev/null 2>&1; then
     adduser --quiet --system --home /home/prometheus --no-create-home --group --gecos "Prometheus daemon" prometheus
 fi
-mkdir -p /home/prometheus/{metrics2,node-exporter}
-chown -R prometheus:prometheus /home/prometheus/{metrics2,node-exporter}
+mkdir -p /home/prometheus/{metrics2,node-exporter}                       # Make folders
+chown -R prometheus:prometheus /home/prometheus/{metrics2,node-exporter} # prometheus user owns folders
 
-# Install monitoring packages using the defined variable.
-apt-get -y install "$MONITORING_PACKAGES"
+echo "Installing watching programs..."
+apt-get -y install $MONITORING_PACKAGES || {
+    echo "Failed to install watching programs."
+    exit 1
+}
 
-# Enable services for Grafana, Prometheus, and Node Exporter.
+echo "Turning on watching services..."
 systemctl enable grafana-server
 systemctl enable prometheus prometheus-node-exporter
 
-# Apply the Ethereum on ARM monitoring extras configuration.
-set-ethereumonarm-monitoring-extras -o
+echo "Applying special settings for watching programs..."
+set-ethereumonarm-monitoring-extras -o || echo "Warning: Failed to apply watching settings."
 systemctl daemon-reload
+echo "Watching programs setup done."
 
-# --- Nginx Setup ---
-# Install the Nginx web server and related packages.
-apt-get -y install "$NGINX_PACKAGES"
-# Enable the Nginx service to start on boot.
+# --- Set up Nginx (for web access) ---
+echo "Setting up Nginx..."
+echo "Installing Nginx programs..."
+apt-get -y install $NGINX_PACKAGES || {
+    echo "Failed to install Nginx programs."
+    exit 1
+}
+echo "Turning on Nginx service..."
 systemctl enable nginx
+echo "Nginx setup done."
 
-# --- Security Hardening ---
-# Disable the root user account to prevent direct login.
+# --- Restore clients configuration if a previous one exists ---
+echo "Checking for existing client configurations to restore..."
+if [ -d "/home/ethereum/.etc/ethereum/" ]; then
+    echo "Found existing configurations. Restoring..."
+    rsync --min-size=1 -avz "/home/ethereum/.etc/ethereum/" "/etc/ethereum/"
+    echo "Client configurations restored."
+else
+    echo "No existing client configurations found to restore."
+fi
+
+# --- Make computer more secure ---
+echo "Making computer more secure..."
+echo "Blocking 'root' login..."
 passwd -l root
 
-# --- Cleanup: Delete other Users ---
-# Get the minimum and maximum user IDs for regular users.
+# --- Clean up: Remove other users ---
 UID_MIN=$(awk '/^UID_MIN/{print $2}' /etc/login.defs)
 UID_MAX=$(awk '/^UID_MAX/ {print $2}' /etc/login.defs)
 
-# Find and delete all users whose UID falls within the regular user range and are not the 'ethereum' user.
-awk -F: -v min="$UID_MIN" -v max="$UID_MAX" '{if($3 >= min && $3 <= max && $1 != "ethereum") print $1}' /etc/passwd | xargs -r sudo deluser --remove-home
+echo "Removing other users (except 'ethereum')..."
+awk -F: -v min="$UID_MIN" -v max="$UID_MAX" '{if($3 >= min && $3 <= max && $1 != "ethereum") print $1}' /etc/passwd | xargs -r sudo deluser --remove-home || echo "Warning: Could not remove all other users."
 
-# --- Correct ethereum home permissions ---
-# Ensure the 'ethereum' user owns their home directory.
+# --- Fix permissions for ethereum home folder ---
+echo "Fixing permissions for /home/ethereum..."
 chown -R ethereum:ethereum /home/ethereum/
 
-# --- Disable ufw ---
+# --- Turn off firewall (ufw) ---
+echo "Turning off UFW firewall..."
 ufw --force disable
 
-# --- First Run Flag and Reboot ---
-# Create the flag file to indicate that the script has been run.
+# --- Finish Setup and Restart ---
+echo "Setup done. Creating flag file and restarting."
 touch "$FLAG"
-# This line seems to be for historical logging of rc.local execution, its purpose is limited.
+# Add info about this script run to the flag file.
 grep "rc.local" /var/log/syslog >>"$FLAG"
-# Reboot the system to apply all changes.
-reboot
 
-exit 0
+sync && sleep 3 && reboot # Restart the computer
+
+exit 0 # Script finished OK.

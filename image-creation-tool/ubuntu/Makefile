@@ -1,80 +1,99 @@
 DATE := $(shell date +"%y.%m")
 RELEASE := 00
 
+ETHONARM_IMAGE = ethonarm_$(1)_$(DATE).$(RELEASE).img
+
 define download_image
-	wget $1
-	unxz $(notdir $1)
+	@if [ -f $(notdir $1) ]; then \
+		echo "$(notdir $1) already exists. Skipping download."; \
+	else \
+		echo "Downloading $1..."; \
+		wget -O $(notdir $1) $1 || { echo "Download failed for $1"; exit 1; }; \
+	fi
+	@if [ ! -f $(basename $(notdir $1)) ]; then \
+		echo "Decompressing $(notdir $1)..."; \
+		unxz -k $(notdir $1) || { echo "Failed to decompress $1"; exit 1; }; \
+	else \
+		echo "$(basename $(notdir $1)) already exists. Skipping decompression."; \
+	fi
 endef
 
 define modify_image
-	# Copy device rc.local
-	mkdir -p /tmp/ubuntu_iso
-	sudo mount -o loop,offset=$(2) $(notdir $1) /tmp/ubuntu_iso
-	sudo cp -a sources/etc/rc.local.$(3) /tmp/ubuntu_iso/etc/rc.local
-	sudo cp -a sources/usr/local/sbin/check_install /tmp/ubuntu_iso/usr/local/sbin
-	# Disable Armbian autologin
-	sudo rm -f /tmp/ubuntu_iso/etc/systemd/system/getty@.service.d/override.conf
-	sudo rm -f /tmp/ubuntu_iso/etc/systemd/system/serial-getty@.service.d/override.conf
-	sudo test -f "/tmp/ubuntu_iso/root/.not_logged_in_yet" && sudo rm -f /tmp/ubuntu_iso/root/.not_logged_in_yet || echo no armbian release detected
-	sync
-	sudo umount /tmp/ubuntu_iso
-	mv $(notdir $1) ethonarm_$(3)_$(DATE).$(RELEASE).img
-	rmdir /tmp/ubuntu_iso
+	@echo "Modifying image $(notdir $1) for device $3..."
+	@mount_dir=$$(mktemp -d); \
+	sudo mount -o loop,offset=$(2) $(notdir $1) $$mount_dir || { echo "Mount failed"; exit 1; }; \
+	sudo cp -a sources/etc/rc.local $$mount_dir/etc/rc.local; \
+	sudo cp -a sources/usr/local/sbin/check_install $$mount_dir/usr/local/sbin/; \
+	sudo rm -f $$mount_dir/etc/systemd/system/getty@.service.d/override.conf || true; \
+	sudo rm -f $$mount_dir/etc/systemd/system/serial-getty@.service.d/override.conf || true; \
+	sudo test -f "$$mount_dir/root/.not_logged_in_yet" && sudo rm -f $$mount_dir/root/.not_logged_in_yet || echo "no armbian release detected (no .not_logged_in_yet file)"; \
+	sync; \
+	sudo umount $$mount_dir; \
+	rmdir $$mount_dir
+	@mv $(notdir $1) $(call ETHONARM_IMAGE,$3)
+	@sha256sum $(call ETHONARM_IMAGE,$3) >> manifest.txt
+	@echo "Created image: $(call ETHONARM_IMAGE,$3)"
 endef
 
-rpi5_url := 
-rpi5_iso := Armbian-unofficial_25.02.0-trunk_Rpi5b_jammy_current_6.6.73.img
+# Device definitions
+rpi5_url := https://es.sbcmirror.org/dl/rpi4b/archive/Armbian_25.2.4_Rpi4b_noble_current_6.12.22.img.xz
+rpi5_iso := Armbian_25.2.4_Rpi4b_noble_current_6.12.22.img
 rpi5_offset := 272629760
-rpi5_rclocal := rpi5
 
-rock5b_url := https://armbian.nardol.ovh/dl/rock-5b/archive/Armbian_24.8.1_Rock-5b_jammy_vendor_6.1.75.img.xz
-rock5b_iso := Armbian_24.8.1_Rock-5b_jammy_vendor_6.1.75.img
+rock5b_url := https://es.sbcmirror.org/dl/rock-5b/archive/Armbian_25.2.2_Rock-5b_noble_current_6.12.15.img.xz
+rock5b_iso := Armbian_25.2.2_Rock-5b_noble_current_6.12.15.img
 rock5b_offset := 16777216
-rock5b_rclocal := rock5b
 
-rock5b32_url := https://github.com/radxa-build/rock-5b/releases/download/b39/rock-5b_ubuntu_jammy_cli_b39.img.xz
-rock5b32_iso := rock-5b_ubuntu_jammy_cli_b39.img
-rock5b32_offset := 348127232
-rock5b32_rclocal := rock5b32
+orangepi5_url := https://es.sbcmirror.org/dl/orangepi5/archive/Armbian_25.2.1_Orangepi5_noble_current_6.12.13.img.xz
+orangepi5_iso := Armbian_25.2.1_Orangepi5_noble_current_6.12.13.img
+orangepi5_offset := 16777216
 
-orangepi5_url := https://fi.mirror.armbian.de/archive/orangepi5/archive/Armbian_23.8.1_Orangepi5_jammy_legacy_5.10.160.img.xz
-orangepi5_iso := Armbian_23.8.1_Orangepi5_jammy_legacy_5.10.160.img
-orangepi5_offset := 285212672
-orangepi5_rclocal := orangepi5
-
-orangepi5-plus_url := https://dl.armbian.com/orangepi5-plus/archive/Armbian_24.5.1_Orangepi5-plus_jammy_vendor_6.1.43.img.xz
-orangepi5-plus_iso := Armbian_24.5.1_Orangepi5-plus_jammy_vendor_6.1.43.img
+orangepi5-plus_url := https://es.sbcmirror.org/dl/orangepi5-plus/archive/Armbian_25.2.1_Orangepi5-plus_noble_current_6.12.13.img.xz
+orangepi5-plus_iso := Armbian_25.2.1_Orangepi5-plus_noble_current_6.12.13.img
 orangepi5-plus_offset := 16777216
-orangepi5-plus_rclocal := orangepi5-plus
 
-# There is not an Armbian image for downloading yet
-nanopct6_url := Armbian-unofficial_24.8.2_Nanopct6_jammy_current_6.10.6.img
-nanopct6_iso := Armbian-unofficial_24.8.2_Nanopct6_jammy_current_6.10.6.img
+nanopct6_url := https://es.sbcmirror.org/dl/nanopct6/archive/Armbian_25.2.1_Nanopct6_noble_current_6.12.13.img.xz
+nanopct6_iso := Armbian_25.2.1_Nanopct6_noble_current_6.12.13.img
 nanopct6_offset := 16777216
-nanopct6_rclocal := nanopct6
 
-all: rpi5 rock5b orangepi5 orangepi5-plus nanopct6
+DEVICES = rpi5 rock5b orangepi5 orangepi5-plus nanopct6
 
-rpi5:
-#	$(call download_image,$(rpi5_url))
-	$(call modify_image,$(rpi5_iso),$(rpi5_offset),$(rpi5_rclocal))
+.PHONY: all $(foreach dev,$(DEVICES),$(call ETHONARM_IMAGE,$(dev))) clean build
 
-rock5b:
+# Build all images
+all: $(foreach dev,$(DEVICES),$(call ETHONARM_IMAGE,$(dev)))
+
+# Build individual device
+build:
+ifndef DEVICE
+	$(error Please specify a DEVICE, e.g. make build DEVICE=rock5b)
+endif
+	$(MAKE) $(call ETHONARM_IMAGE,$(DEVICE))
+
+# Per-device rules
+$(call ETHONARM_IMAGE,rpi5):
+	$(call download_image,$(rpi5_url))
+	$(call modify_image,$(rpi5_iso),$(rpi5_offset),rpi5)
+
+$(call ETHONARM_IMAGE,rock5b):
 	$(call download_image,$(rock5b_url))
-	$(call modify_image,$(rock5b_iso),$(rock5b_offset),$(rock5b_rclocal))
+	$(call modify_image,$(rock5b_iso),$(rock5b_offset),rock5b)
 
-rock5b32:
-	$(call download_image,$(rock5b32_url))ubuntu-22.04.2-preinstalled-server-arm64+raspi.img
-	$(call modify_image,$(rock5b32_iso),$(rock5b32_offset),$(rock5b32_rclocal))
-
-orangepi5:
+$(call ETHONARM_IMAGE,orangepi5):
 	$(call download_image,$(orangepi5_url))
-	$(call modify_image,$(orangepi5_iso),$(orangepi5_offset),$(orangepi5_rclocal))
+	$(call modify_image,$(orangepi5_iso),$(orangepi5_offset),orangepi5)
 
-orangepi5-plus:
+$(call ETHONARM_IMAGE,orangepi5-plus):
 	$(call download_image,$(orangepi5-plus_url))
-	$(call modify_image,$(orangepi5-plus_iso),$(orangepi5-plus_offset),$(orangepi5-plus_rclocal))
+	$(call modify_image,$(orangepi5-plus_iso),$(orangepi5-plus_offset),orangepi5-plus)
 
-nanopct6:
-#	$(call download_image,$(nanopct6_url))
-	$(call modify_image,$(nanopct6_iso),$(nanopct6_offset),$(nanopct6_rclocal))
+$(call ETHONARM_IMAGE,nanopct6):
+	$(call download_image,$(nanopct6_url))
+	$(call modify_image,$(nanopct6_iso),$(nanopct6_offset),nanopct6)
+
+# Clean target
+clean:
+	@echo "Cleaning generated images and downloads..."
+	rm -f $(foreach dev,$(DEVICES),$(call ETHONARM_IMAGE,$(dev)))
+	rm -f *.img.xz *.img manifest.txt
+	@echo "Clean complete."

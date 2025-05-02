@@ -263,6 +263,25 @@ echo "Adding 'ethereum' user to groups..."
 for GRP in sudo netdev audio video dialout plugdev; do
     adduser ethereum "$GRP"
 done
+
+echo "Granting passwordless sudo to 'ethereum' user..."
+
+SUDOERS_FILE="/etc/sudoers.d/90-ethereum-nopasswd"
+# Create the sudoers file content
+# Allows user 'ethereum' to run any command as any user ('ALL=(ALL)') without a password ('NOPASSWD: ALL')
+echo "ethereum ALL=(ALL) NOPASSWD: ALL" >"$SUDOERS_FILE" || {
+    echo "Failed to create sudoers file for ethereum."
+    exit 1
+}
+# Set correct permissions (read-only for root) - sudo ignores files with insecure permissions
+chmod 0440 "$SUDOERS_FILE" || {
+    echo "Failed to set permissions on sudoers file for ethereum."
+
+    rm -f "$SUDOERS_FILE"
+    exit 1
+}
+echo "Passwordless sudo configured."
+
 echo "'ethereum' user setup complete."
 
 # --- Set up extra memory space (Swap) ---
@@ -437,7 +456,7 @@ UID_MIN=$(awk '/^UID_MIN/{print $2}' /etc/login.defs)
 UID_MAX=$(awk '/^UID_MAX/ {print $2}' /etc/login.defs)
 
 echo "Removing other users (except 'ethereum')..."
-awk -F: -v min="$UID_MIN" -v max="$UID_MAX" '{if($3 >= min && $3 <= max && $1 != "ethereum") print $1}' /etc/passwd | xargs -r sudo deluser --remove-home || echo "Warning: Could not remove all other users."
+awk -F: -v min="$UID_MIN" -v max="$UID_MAX" '{if($3 >= min && $3 <= max && $1 != "ethereum") print $1}' /etc/passwd | xargs -r deluser --remove-home || echo "Warning: Could not remove all other users."
 
 # --- Fix permissions for ethereum home folder ---
 echo "Fixing permissions for /home/ethereum..."

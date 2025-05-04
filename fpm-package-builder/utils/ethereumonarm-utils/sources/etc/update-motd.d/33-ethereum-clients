@@ -1,0 +1,63 @@
+#!/bin/bash
+#
+# Script to display running Ethereum clients in Armbian MOTD
+# Place this file in /etc/update-motd.d/ and make it executable.
+#
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# --- Ethereum Client Detection ---
+# Add more service names if needed for your setup
+el_clients_to_check=("geth.service" "nethermind.service" "besu.service" "erigon.service" "reth.service")
+cl_clients_to_check=("lighthouse-beacon.service" "prysm-beacon.service" "nimbus-beacon.service" "teku.service" "lodestar-beacon.service" "lighthouse-validator.service" "prysm-validator.service" "lodestar-validator.service")
+
+active_el_clients=""
+active_cl_clients=""
+
+# Check if systemctl command exists before trying to use it
+if command -v systemctl &>/dev/null; then
+    # Check Execution Clients
+    for service in "${el_clients_to_check[@]}"; do
+        if systemctl is-active --quiet "$service"; then
+            client_name="${service%.service}" # Remove .service suffix
+            active_el_clients+="${client_name} "
+        fi
+    done
+
+    # Check Consensus Clients
+    for service in "${cl_clients_to_check[@]}"; do
+        if systemctl is-active --quiet "$service"; then
+            client_name="${service%.service}" # Remove .service suffix
+            active_cl_clients+="${client_name} "
+        fi
+    done
+fi
+# Trim trailing spaces
+active_el_clients=$(echo "$active_el_clients" | xargs)
+active_cl_clients=$(echo "$active_cl_clients" | xargs)
+
+
+# --- Display Ethereum Clients ---
+# Only display the section if systemctl exists and at least one client was found active.
+if [[ -n "$active_el_clients" || -n "$active_cl_clients" ]] && command -v systemctl &>/dev/null; then
+    # Add a separating newline; adjust if spacing is off after testing
+    echo ""
+    # Header for the section
+    printf "\e[0;90mEthereum Clients:\x1B[0m\n"
+
+    # Display Execution clients status
+    if [[ -n "$active_el_clients" ]]; then
+        printf " Execution:    \e[0;92m%s\x1B[0m\n" "$active_el_clients"
+    else
+        printf " Execution:    \e[0;90m%s\x1B[0m\n" "None detected"
+    fi
+
+    # Display Consensus clients status
+    if [[ -n "$active_cl_clients" ]]; then
+        printf " Consensus:    \e[0;92m%s\x1B[0m\n" "$active_cl_clients"
+    else
+        printf " Consensus:    \e[0;90m%s\x1B[0m\n" "None detected"
+    fi
+fi
+
+exit 0

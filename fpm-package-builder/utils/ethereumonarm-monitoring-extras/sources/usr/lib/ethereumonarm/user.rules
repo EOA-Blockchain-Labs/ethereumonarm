@@ -21,43 +21,61 @@
 :ufw-user-limit-accept - [0:0]
 
 # Allow SSH (port 22) for remote server management
+# Consider rate limiting SSH externally (e.g., using 'ufw limit ssh')
 -A ufw-user-input -p tcp --dport 22 -j ACCEPT
 
-# Custom Ethereum Node Ports:
-# Include specific ports needed for your Ethereum node's operation and other services
-
-# Allow TCP and UDP traffic on port 9000
--A ufw-user-input -p tcp --dport 9000 -j ACCEPT
--A ufw-user-input -p udp --dport 9000 -j ACCEPT
-
-# Allow TCP and UDP traffic on port 9001
--A ufw-user-input -p tcp --dport 9001 -j ACCEPT
--A ufw-user-input -p udp --dport 9001 -j ACCEPT
-
-# Allow TCP and UDP traffic on port 9090
--A ufw-user-input -p tcp --dport 9090 -j ACCEPT
--A ufw-user-input -p udp --dport 9090 -j ACCEPT
-
-# Allow TCP and UDP traffic on port 9100
--A ufw-user-input -p tcp --dport 9100 -j ACCEPT
--A ufw-user-input -p udp --dport 9100 -j ACCEPT
-
-# Allow TCP traffic on port 13000
--A ufw-user-input -p tcp --dport 13000 -j ACCEPT
-
-# Allow UDP traffic on port 12000
--A ufw-user-input -p udp --dport 12000 -j ACCEPT
-
-# Allow TCP traffic on port 30607
--A ufw-user-input -p tcp --dport 30607 -j ACCEPT
-
-# Default Ethereum P2P Port:
-# Allow TCP and UDP traffic on port 30303 for Ethereum node P2P communication
+# --- Ethereum EL/CL P2P Ports (Essential) ---
+# Standard Ethereum P2P Port (Geth, Nethermind, Besu etc.)
 -A ufw-user-input -p tcp --dport 30303 -j ACCEPT
 -A ufw-user-input -p udp --dport 30303 -j ACCEPT
+# Standard CL P2P Port (Lighthouse, Teku, Nimbus default)
+-A ufw-user-input -p tcp --dport 9000 -j ACCEPT
+-A ufw-user-input -p udp --dport 9000 -j ACCEPT
+# Prysm Default CL P2P Ports
+-A ufw-user-input -p tcp --dport 13000 -j ACCEPT
+-A ufw-user-input -p udp --dport 12000 -j ACCEPT
 
-# Allow TCP traffic on port 3000
+# --- L2 P2P Ports (Optimism Stack - Essential if running OP) ---
+# op-geth P2P Ports
+-A ufw-user-input -p tcp --dport 30403 -j ACCEPT
+-A ufw-user-input -p udp --dport 30403 -j ACCEPT
+# op-node P2P Ports
+-A ufw-user-input -p tcp --dport 9222 -j ACCEPT
+-A ufw-user-input -p udp --dport 9222 -j ACCEPT
+
+# --- RPC / API Ports (Optional - Open ONLY if external access needed) ---
+# Standard JSON-RPC (EL Clients)
+-A ufw-user-input -p tcp --dport 8545 -j ACCEPT
+# Standard WebSocket RPC (EL Clients)
+-A ufw-user-input -p tcp --dport 8546 -j ACCEPT
+# Standard Beacon API (CL Clients - REST/gRPC Gateway)
+-A ufw-user-input -p tcp --dport 5052 -j ACCEPT
+# L2 Rollup RPC (op-node)
+-A ufw-user-input -p tcp --dport 9545 -j ACCEPT
+
+# --- Metrics Ports (Optional - Open for external monitoring systems like Prometheus) ---
+# Common Node Exporter Ports
+-A ufw-user-input -p tcp --dport 9090 -j ACCEPT
+-A ufw-user-input -p tcp --dport 9100 -j ACCEPT # Note: 9100/udp was in original, but metrics are usually TCP
+# Erigon Metrics Port
+-A ufw-user-input -p tcp --dport 5050 -j ACCEPT
+# Lodestar Metrics Port
+-A ufw-user-input -p tcp --dport 4040 -j ACCEPT
+# Nethermind Metrics Port
+-A ufw-user-input -p tcp --dport 7070 -j ACCEPT
+# op-geth Metrics Port
+-A ufw-user-input -p tcp --dport 7301 -j ACCEPT
+# op-node Metrics Port
+-A ufw-user-input -p tcp --dport 7300 -j ACCEPT
+# Teku Metrics Port
+-A ufw-user-input -p tcp --dport 8009 -j ACCEPT
+
+# --- Other/Miscellaneous Ports (Check if needed for your specific setup) ---
+# Port 3000 (TCP) - Often used for Grafana or other web dashboards
 -A ufw-user-input -p tcp --dport 3000 -j ACCEPT
+# Port 30607 (TCP) - Purpose Unclear from provided info
+-A ufw-user-input -p tcp --dport 30607 -j ACCEPT
+
 
 # Logging and Rate Limiting Configuration
 ### LOGGING ###
@@ -68,6 +86,7 @@
 -A ufw-logging-allow -j LOG --log-prefix "[UFW ALLOW] " -m limit --limit 3/min --limit-burst 10
 
 ### RATE LIMITING ###
+# Defines chains, apply using 'ufw limit <port>/<proto>' command if needed (e.g., for SSH)
 -A ufw-user-limit -m limit --limit 3/minute -j LOG --log-prefix "[UFW LIMIT BLOCK] "
 -A ufw-user-limit -j REJECT
 -A ufw-user-limit-accept -j ACCEPT

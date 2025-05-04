@@ -100,9 +100,6 @@ EOF
 # Enable NTP synchronization
 timedatectl set-ntp true
 
-# Restart systemd-timesyncd to apply changes
-systemctl restart systemd-timesyncd
-
 # --- Install Basic Programs ---
 echo "Cleaning posible outdated cache"
 apt-get clean all

@@ -78,7 +78,34 @@ ETHEREUM_PACKAGES="arbitrum-nitro besu dvt-obol erigon ethstaker-deposit-cli eth
 MONITORING_PACKAGES="ethereumonarm-monitoring-extras grafana prometheus prometheus-node-exporter"
 NGINX_PACKAGES="ethereumonarm-config-sync ethereumonarm-nginx-proxy-extras ethereumonarm-utils nginx"
 
+# --- Tune ntp daemon ---
+
+# Create directory for systemd-timesyncd drop-in config if it doesn't exist
+sudo mkdir -p /etc/systemd/timesyncd.conf.d/
+
+# Write the NTP configuration to eoa.conf
+sudo tee /etc/systemd/timesyncd.conf.d/eoa.conf >/dev/null <<EOF
+# Configuration to improve time sync accuracy using Google's NTP servers.
+# systemd-timesyncd is a simple NTP client included with systemd that syncs the system clock.
+# This config sets multiple NTP servers and adjusts polling intervals to reduce time drift,
+# helping maintain accurate system time which is important for services like Ethereum validators.
+
+[Time]
+NTP=time1.google.com time2.google.com time3.google.com time4.google.com
+PollIntervalMinSec=16
+PollIntervalMaxSec=64
+RootDistanceMaxSec=100
+EOF
+
+# Enable NTP synchronization
+sudo timedatectl set-ntp true
+
+# Restart systemd-timesyncd to apply changes
+sudo systemctl restart systemd-timesyncd
+
 # --- Install Basic Programs ---
+echo "Cleaning posible outdated cache"
+apt-get clean all
 echo "Getting program list..."
 apt-get update || {
     echo "Failed to get program list."
@@ -271,14 +298,12 @@ SUDOERS_FILE="/etc/sudoers.d/90-ethereum-nopasswd"
 # Allows user 'ethereum' to run any command as any user ('ALL=(ALL)') without a password ('NOPASSWD: ALL')
 echo "ethereum ALL=(ALL) NOPASSWD: ALL" >"$SUDOERS_FILE" || {
     echo "Failed to create sudoers file for ethereum."
-    exit 1
 }
 # Set correct permissions (read-only for root) - sudo ignores files with insecure permissions
 chmod 0440 "$SUDOERS_FILE" || {
     echo "Failed to set permissions on sudoers file for ethereum."
 
     rm -f "$SUDOERS_FILE"
-    exit 1
 }
 echo "Passwordless sudo configured."
 

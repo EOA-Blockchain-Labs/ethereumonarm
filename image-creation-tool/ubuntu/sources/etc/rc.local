@@ -81,10 +81,10 @@ NGINX_PACKAGES="ethereumonarm-config-sync ethereumonarm-nginx-proxy-extras ether
 # --- Tune ntp daemon ---
 
 # Create directory for systemd-timesyncd drop-in config if it doesn't exist
-sudo mkdir -p /etc/systemd/timesyncd.conf.d/
+mkdir -p /etc/systemd/timesyncd.conf.d/
 
 # Write the NTP configuration to eoa.conf
-sudo tee /etc/systemd/timesyncd.conf.d/eoa.conf >/dev/null <<EOF
+tee /etc/systemd/timesyncd.conf.d/eoa.conf >/dev/null <<EOF
 # Configuration to improve time sync accuracy using Google's NTP servers.
 # systemd-timesyncd is a simple NTP client included with systemd that syncs the system clock.
 # This config sets multiple NTP servers and adjusts polling intervals to reduce time drift,
@@ -98,10 +98,10 @@ RootDistanceMaxSec=100
 EOF
 
 # Enable NTP synchronization
-sudo timedatectl set-ntp true
+timedatectl set-ntp true
 
 # Restart systemd-timesyncd to apply changes
-sudo systemctl restart systemd-timesyncd
+systemctl restart systemd-timesyncd
 
 # --- Install Basic Programs ---
 echo "Cleaning posible outdated cache"

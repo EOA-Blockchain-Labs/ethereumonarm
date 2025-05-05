@@ -36,7 +36,6 @@ fi
 active_el_clients=$(echo "$active_el_clients" | xargs)
 active_cl_clients=$(echo "$active_cl_clients" | xargs)
 
-
 # --- Display Ethereum Clients ---
 # Only display the section if systemctl exists and at least one client was found active.
 if [[ -n "$active_el_clients" || -n "$active_cl_clients" ]] && command -v systemctl &>/dev/null; then
@@ -59,5 +58,6 @@ if [[ -n "$active_el_clients" || -n "$active_cl_clients" ]] && command -v system
         printf " Consensus:    \e[0;90m%s\x1B[0m\n" "None detected"
     fi
 fi
+echo ""
 
 exit 0

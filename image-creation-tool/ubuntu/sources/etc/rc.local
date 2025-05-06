@@ -408,7 +408,7 @@ SYSCTL_CONFIG="/etc/sysctl.d/99-ethereum-node-tweaks.conf"
 
 cat <<EOF >"$SYSCTL_CONFIG"
 # Optimize swap usage
-vm.swappiness=1
+vm.swappiness=${SWAPPINESS}
 
 # Improve filesystem caching and disk IO
 vm.dirty_ratio=40

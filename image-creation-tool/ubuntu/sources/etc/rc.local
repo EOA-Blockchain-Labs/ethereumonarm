@@ -76,7 +76,7 @@ echo "Disk=${TARGET_DISK}, Partition=${PARTITION1}, Name part=${HOSTNAME_SEED}"
 BASE_PACKAGES="apt-utils bash-completion file gdisk gpg parted net-tools rsync software-properties-common ufw vim wget kitty-terminfo"
 ETHEREUM_PACKAGES="arbitrum-nitro besu dvt-obol erigon ethstaker-deposit-cli ethereumonarm-utils fuel-network geth lighthouse lodestar ls-lido mev-boost nethermind nimbus optimism-op-geth optimism-op-node prysm reth starknet-juno teku"
 MONITORING_PACKAGES="ethereumonarm-monitoring-extras grafana prometheus prometheus-node-exporter"
-NGINX_PACKAGES="ethereumonarm-config-sync ethereumonarm-nginx-proxy-extras ethereumonarm-utils nginx"
+NGINX_PACKAGES="ethereumonarm-config-sync ethereumonarm-nginx-proxy-extras nginx"
 
 # --- Tune ntp daemon ---
 
@@ -402,7 +402,10 @@ if [[ -f /etc/default/armbian-zram-config ]]; then
 fi
 
 # Performance-oriented sysctl settings
+sed -i '/^vm\.swappiness/d' /etc/sysctl.conf # Remove old setting
+
 SYSCTL_CONFIG="/etc/sysctl.d/99-ethereum-node-tweaks.conf"
+
 cat <<EOF >"$SYSCTL_CONFIG"
 # Optimize swap usage
 vm.swappiness=1

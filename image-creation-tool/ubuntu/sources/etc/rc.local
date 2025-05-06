@@ -100,6 +100,18 @@ EOF
 # Enable NTP synchronization
 timedatectl set-ntp true
 
+echo "Waiting for system clock to synchronize..."
+MAX_WAIT=20 # max wait time in seconds
+WAITED=0
+while [ "$(timedatectl show -p NTPSynchronized --value)" != "yes" ]; do
+    sleep 2
+    WAITED=$((WAITED + 2))
+    if [ $WAITED -ge $MAX_WAIT ]; then
+        echo "Warning: Time synchronization not achieved after $MAX_WAIT seconds."
+        break
+    fi
+done
+
 # --- Install Basic Programs ---
 echo "Cleaning posible outdated cache"
 apt-get clean all
@@ -264,7 +276,7 @@ tune2fs -m 0 "${TARGET_DISK}${PARTITION1}"
 # Tell the computer to use this drive part for /home.
 echo "Adding /home to mount list..."
 sed -i '\|^.*/home.*|d' /etc/fstab # Remove old /home line
-echo "${TARGET_DISK}${PARTITION1} /home ext4 defaults,noatime 0 2" >>/etc/fstab
+echo "${TARGET_DISK}${PARTITION1} /home ext4 defaults,noatime,commit=120,data=writeback 0 2" >>/etc/fstab
 echo "Mounting /home..."
 systemctl daemon-reload # Apply changes
 mount /home || {        # Use /home now
@@ -388,11 +400,31 @@ if [[ -f /etc/default/armbian-zram-config ]]; then
     echo "Turning off Armbian zRAM..."
     sed -i "s/ENABLED=true/ENABLED=false/g" /etc/default/armbian-zram-config
 fi
-echo "Setting how much to use swap to ${SWAPPINESS}..."
-sed -i '/^vm\.swappiness/d' /etc/sysctl.conf # Remove old setting
-echo "vm.swappiness=${SWAPPINESS}" >>/etc/sysctl.conf
-sysctl -p # Apply settings now
-echo "Performance settings applied."
+
+# Performance-oriented sysctl settings
+SYSCTL_CONFIG="/etc/sysctl.d/99-ethereum-node-tweaks.conf"
+cat <<EOF >"$SYSCTL_CONFIG"
+# Optimize swap usage
+vm.swappiness=1
+
+# Improve filesystem caching and disk IO
+vm.dirty_ratio=40
+vm.dirty_background_ratio=10
+vm.vfs_cache_pressure=50
+
+# Network throughput optimizations
+net.core.rmem_max=12582912
+net.core.wmem_max=12582912
+net.ipv4.tcp_rmem=10240 87380 12582912
+net.ipv4.tcp_wmem=10240 87380 12582912
+net.core.netdev_max_backlog=2500
+net.ipv4.tcp_congestion_control=bbr
+EOF
+
+# Apply sysctl settings immediately
+sysctl --system
+
+echo "Performance sysctl tweaks applied successfully."
 
 # --- Install Ethereum Programs ---
 echo "Installing Ethereum programs..."

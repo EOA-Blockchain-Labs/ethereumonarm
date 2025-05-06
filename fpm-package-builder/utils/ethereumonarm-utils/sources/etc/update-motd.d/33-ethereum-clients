@@ -9,7 +9,7 @@ export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 # --- Ethereum Client Detection ---
 # Add more service names if needed for your setup
 el_clients_to_check=("geth.service" "nethermind.service" "besu.service" "erigon.service" "reth.service")
-cl_clients_to_check=("lighthouse-beacon.service" "prysm-beacon.service" "nimbus-beacon.service" "teku.service" "lodestar-beacon.service" "lighthouse-validator.service" "prysm-validator.service" "lodestar-validator.service")
+cl_clients_to_check=("lighthouse-beacon.service" "prysm-beacon.service" "nimbus-beacon.service" "teku-beacon.service" "lodestar-beacon.service" ¨grandine-beacon")
 
 active_el_clients=""
 active_cl_clients=""

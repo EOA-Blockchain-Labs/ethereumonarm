@@ -7,7 +7,7 @@ PKG_NAME := ethereumonarm-utils
 PKG_DESCRIPTION := "Ethereum on ARM utils"
 
 PKG_VERSION := 1.0.6
-PKG_RELEASE := 0
+PKG_RELEASE := 1
 
 PKG_MAINTAINER := "Fernando Collado <fcollado@ethereumonarm.com>"
 PKG_ARCH := all

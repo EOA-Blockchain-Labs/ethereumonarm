@@ -1,0 +1,10 @@
+[Unit]
+Description=Charon configuration directory sync service
+After=network.target # Add dependency on network
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/local/sbin/charon-config-sync 
+
+[Install]
+WantedBy=multi-user.target # Run at boot

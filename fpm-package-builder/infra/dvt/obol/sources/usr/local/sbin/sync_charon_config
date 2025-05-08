@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Source directory
+source_dir="/home/ethereum/.charon"
+# Destination directory
+dest="/etc/ethereum/charon_config_backup"
+
+# Check if the source directory exists
+if [ -d "$source_dir" ]; then
+    # Create the destination directory if it does not exist
+    mkdir -p "$dest"
+    # Use rsync to sync the directories
+    rsync -avz --delete "$source_dir/" "$dest/" # Added trailing slashes for directory sync
+    # Print completion message
+    echo "Successfully synced $source_dir to $dest"
+else
+    # Print message if source directory does not exist
+    echo "Source directory $source_dir does not exist. Skipping rsync."
+fi
+
+# Exit the script
+exit 0

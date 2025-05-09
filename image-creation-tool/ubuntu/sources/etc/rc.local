@@ -379,7 +379,7 @@ sed -i '\|^.*/home.*|d' /etc/fstab
 #   commit=120: How often to commit data to disk (120 seconds).
 #   data=writeback: Data is written to disk after metadata, can improve performance but slightly higher risk on power loss.
 # 0 2: dump flag (0 = no dump), fsck order (2 = check after root).
-echo "${TARGET_DISK}${PARTITION1} /home ext4 defaults,noatime,commit=120,data=writeback 0 2" >>/etc/fstab
+echo "${TARGET_DISK}${PARTITION1} /home ext4 defaults,noatime 0 2" >>/etc/fstab
 echo "Mounting the new /home partition..."
 systemctl daemon-reload # Tell systemd to re-read configuration files, including fstab.
 mount /home || {        # Attempt to mount /home based on the new fstab entry.

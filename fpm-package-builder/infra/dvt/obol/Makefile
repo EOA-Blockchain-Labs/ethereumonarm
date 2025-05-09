@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 #CHARON_VERSION := $(shell date +"%y%m%d")
 CHARON_VERSION := $(shell curl -s "https://api.github.com/repos/ObolNetwork/charon/releases/latest" | jq -r '.tag_name' | tr -d "v")
-PKG_RELEASE := 0
+PKG_RELEASE := 1
 PKG_NAME := dvt-obol
 
 PKG_DESCRIPTION := "Obol DVT client"
@@ -31,6 +31,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(CHARON_VERSION) --license $(PKG_LICEN
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 --deb-systemd extras/charon.service \
 --deb-systemd extras/sync-charon-config.service \
+--deb-systemd extras/sync-charon-config.timer \
 --deb-systemd extras/teku-validator-obol.service \
 --deb-systemd extras/lighthouse-validator-obol.service \
 --deb-systemd extras/lodestar-validator-obol.service \

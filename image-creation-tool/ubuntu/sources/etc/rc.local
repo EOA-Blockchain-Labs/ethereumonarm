@@ -100,9 +100,12 @@ esac
 # Confirm the settings chosen based on the model.
 echo "Configuration: Target Disk=${TARGET_DISK}, Target Partition Suffix=${PARTITION1}, Hostname Seed=${HOSTNAME_SEED}"
 
+# This prevents dpkg and apt from prompting for user input during package installation/configuration.
+export DEBIAN_FRONTEND=noninteractive
+
 # --- Section: Define lists of software packages to be installed ---
 # These are basic command-line utilities and tools needed for system administration.
-BASE_PACKAGES="apt-utils bash-completion file gdisk gpg parted net-tools rsync software-properties-common ufw vim wget kitty-terminfo"
+BASE_PACKAGES="apt-utils bash-completion file gdisk gpg parted net-tools rsync software-properties-common dphys-swapfile ufw vim wget kitty-terminfo"
 # These are various Ethereum client implementations and related tools.
 # This list includes clients for different layers (execution, consensus) and networks (e.g., Arbitrum, Optimism).
 ETHEREUM_PACKAGES="arbitrum-nitro besu dvt-obol erigon ethstaker-deposit-cli ethereumonarm-utils fuel-network geth lighthouse lodestar ls-lido mev-boost nethermind nimbus optimism-op-geth optimism-op-node prysm reth starknet-juno teku"
@@ -445,70 +448,25 @@ fi
 
 echo "'ethereum' user setup is complete."
 
-# --- Section: Set up Swap Space (Virtual Memory) ---
-echo "Setting up swap space..."
-# Define the location and name for the swap file within the new /home/ethereum directory.
-SWAP_FILE="/home/ethereum/swapfile"
-# Generate a systemd-comptabile unit name for the swap file.
-# 'systemd-escape -p --suffix=swap' converts a path to a valid unit name.
-SWAP_UNIT=$(systemd-escape -p --suffix=swap "$SWAP_FILE")
+# --- Section: Set up Swap Space (Virtual Memory) using dphys-swapfile ---
+echo "Setting up swap space using dphys-swapfile..."
 
-echo "Ensuring the directory /home/ethereum exists..."
-mkdir -p /home/ethereum # Create if it doesn't exist.
-# Set ownership of /home/ethereum to the 'ethereum' user and group.
-chown ethereum:ethereum /home/ethereum
+# Configure swap file location and size
+echo "Configuring swap file location and size in /etc/dphys-swapfile..."
+sudo sed -i "s|#CONF_SWAPFILE=.*|CONF_SWAPFILE=/home/ethereum/swapfile|" /etc/dphys-swapfile
+sudo sed -i "s|#CONF_SWAPSIZE=.*|CONF_SWAPSIZE=${SWAP_SIZE}|" /etc/dphys-swapfile
+sudo sed -i "s|#CONF_MAXSWAP=.*|CONF_MAXSWAP=${SWAP_SIZE}|" /etc/dphys-swapfile
 
-echo "Creating the swap file at ${SWAP_FILE} with size ${SWAP_SIZE}M..."
-# Check if a swap file already exists from a previous attempt or setup.
-if [ -f "${SWAP_FILE}" ]; then
-    echo "An existing swap file was found at ${SWAP_FILE}. Removing it before creating a new one."
-    # Turn off the swap file if it's active. '2>/dev/null' suppresses errors if not active.
-    swapoff "${SWAP_FILE}" 2>/dev/null
-    # Delete the old swap file.
-    rm "${SWAP_FILE}"
-fi
-# 'fallocate' pre-allocates space for the file quickly.
-# -l specifies the length (size).
-fallocate -l "${SWAP_SIZE}M" "${SWAP_FILE}" || {
-    echo "ERROR: Failed to allocate space for the swap file. Check available disk space in /home. Stopping."
-    exit 1
-}
-
-echo "Setting up the swap file for use..."
-# Set permissions: only readable/writable by root (user who will activate it).
-chmod 600 "${SWAP_FILE}"
-# 'mkswap' formats the file as a swap area.
-mkswap "${SWAP_FILE}" || {
-    echo "ERROR: Failed to format the swap file (mkswap failed). Stopping."
-    exit 1
-}
-
-# Create a systemd unit file to manage the swap file.
-# This allows systemd to automatically activate the swap on boot.
-echo "Creating systemd swap unit file: /etc/systemd/system/${SWAP_UNIT}"
-cat <<EOF >"/etc/systemd/system/${SWAP_UNIT}"
-[Unit]
-Description=Swap File at ${SWAP_FILE} managed by Ethereum on ARM setup
-
-[Swap]
-What=${SWAP_FILE}  # Path to the swap file
-Priority=10        # Priority for this swap area (higher number = higher priority, -1 is default)
-
-[Install]
-WantedBy=multi-user.target # Enable swap when system reaches multi-user runlevel
-EOF
-
-echo "Enabling and activating the new swap space via systemd..."
-systemctl daemon-reload # Reload systemd configurations to recognize the new unit file.
-# 'enable --now' both enables the unit to start on boot and starts it immediately.
-systemctl enable --now "${SWAP_UNIT}" || {
-    echo "ERROR: Failed to enable and start the swap unit (${SWAP_UNIT}). Check systemd logs. Stopping."
+# Enable dphys-swapfile service
+echo "Enabling dphys-swapfile service..."
+sudo systemctl enable dphys-swapfile --now || {
+    echo "ERROR: Failed to enable dphys-swapfile service. Stopping."
     exit 1
 }
 
 echo "Verifying active swap spaces..."
-swapon --show # Display currently active swap devices/files.
-echo "Swap setup completed successfully."
+sudo swapon --show
+echo "Swap setup completed successfully using dphys-swapfile."
 
 # --- Section: Set Computer Hostname and Network Configuration ---
 echo "Setting up the computer's hostname..."

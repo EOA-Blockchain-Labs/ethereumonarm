@@ -36,6 +36,17 @@ if ! wget -q -t 1 --timeout=30 --spider http://github.com; then
 fi
 echo "Internet connection is active."
 
+# Inject Netplan override to make Ethernet interfaces optional (prevent boot delay)
+echo "Creating Netplan override to make Ethernet interfaces optional..."
+tee /etc/netplan/99-optional-interfaces.yaml >/dev/null <<EOF
+network:
+  version: 2
+  ethernets:
+    all-eth-interfaces:
+      optional: true
+EOF
+chmod 600 /etc/netplan/99-optional-interfaces.yaml
+
 # --- Section: Identify the computer's hardware model ---
 echo "Identifying the computer hardware model..."
 # Try to read the model from the device tree (common on ARM devices like Raspberry Pi).

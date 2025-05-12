@@ -1,7 +1,0 @@
-# /etc/cron.d/ethereumonarm-config-sync: crontab entries for the Ethereum on ARM sync
-#
-# This script is executed every hour.
-SHELL=/bin/sh
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-
-1 * * * * root /usr/local/sbin/sync_charon_config

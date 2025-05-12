@@ -55,6 +55,13 @@ echo "Identifying the computer hardware model..."
 DEVICE_MODEL=$(cat /sys/firmware/devicetree/base/model 2>/dev/null || uname -m | tr -d '\\0')
 echo "Detected model: $DEVICE_MODEL"
 
+# --- Section: Adaptive swap-size calculation ----------------------------------
+# Calculate swap as 2 × RAM, capped at 32 GB (32768 MB)
+MEM_MB=$(awk '/MemTotal/ {print int($2/1024)}' /proc/meminfo)
+SWAP_SIZE=$((MEM_MB * 2))
+[ "$SWAP_SIZE" -gt 65536 ] && SWAP_SIZE=65536
+echo "Adaptive swap size chosen: ${SWAP_SIZE} MB"
+
 # Configure settings based on the identified computer model.
 # The 'case' statement checks the value of DEVICE_MODEL against known models.
 case "$DEVICE_MODEL" in
@@ -62,7 +69,6 @@ case "$DEVICE_MODEL" in
     TARGET_DISK="/dev/nvme0n1" # The primary storage device (likely an NVMe SSD) for Ethereum data.
     PARTITION1="p1"            # The first partition on that disk (e.g., /dev/nvme0n1p1).
     HOSTNAME_SEED="rpi5"       # A base string to help create a unique computer name.
-    SWAP_SIZE=8192             # The amount of swap (virtual memory) to create, in Megabytes (MB). 8GB here.
     SWAPPINESS=1               # A system setting (0-100) that controls how aggressively the system uses swap. 1 means "use swap only when absolutely necessary".
     ;;
 
@@ -70,7 +76,6 @@ case "$DEVICE_MODEL" in
     TARGET_DISK="/dev/nvme0n1"
     PARTITION1="p1"
     HOSTNAME_SEED="nanopct6"
-    SWAP_SIZE=8192
     SWAPPINESS=1
     ;;
 
@@ -78,7 +83,6 @@ case "$DEVICE_MODEL" in
     TARGET_DISK="/dev/nvme0n1"
     PARTITION1="p1"
     HOSTNAME_SEED="rock5b"
-    SWAP_SIZE=8192
     SWAPPINESS=1
     ;;
 
@@ -87,7 +91,6 @@ case "$DEVICE_MODEL" in
     TARGET_DISK="/dev/nvme0n1"
     PARTITION1="p1"
     HOSTNAME_SEED="opi5plus"
-    SWAP_SIZE=8192
     SWAPPINESS=1
     ;;
 

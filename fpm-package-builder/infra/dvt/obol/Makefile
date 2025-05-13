@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 #CHARON_VERSION := $(shell date +"%y%m%d")
 CHARON_VERSION := $(shell curl -s "https://api.github.com/repos/ObolNetwork/charon/releases/latest" | jq -r '.tag_name' | tr -d "v")
-PKG_RELEASE := 2
+PKG_RELEASE := 0
 PKG_NAME := dvt-obol
 
 PKG_DESCRIPTION := "Obol DVT client"

@@ -125,7 +125,6 @@ declare -A infra=(
     [eth-educators/ethstaker-deposit-cli]=ethstaker-deposit-cli
     [ObolNetwork/charon]=dvt-obol
     [flashbots/mev-boost]=mev-boost
-    [ethpandaops/contributoor]=contributoor
 )
 
 declare -A web3=(

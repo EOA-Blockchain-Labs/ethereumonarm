@@ -31,10 +31,17 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(CHARON_VERSION) --license $(PKG_LICEN
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
 --deb-systemd extras/charon.service \
 --deb-systemd extras/teku-validator-obol.service \
+--deb-systemd extras/teku-validator-hoodi-obol.service \
 --deb-systemd extras/lighthouse-validator-obol.service \
+--deb-systemd extras/lighthouse-validator-hoodi-obol.service \
+--deb-systemd extras/lighthouse-validator-obol-lido.service \
 --deb-systemd extras/lodestar-validator-obol.service \
 --deb-systemd extras/prysm-validator-obol.service \
+--deb-systemd extras/prysm-validator-hoodi-obol.service \
+--deb-systemd extras/prysm-validator-obol-lido.service \
 --deb-systemd extras/nimbus-validator-obol.service \
+--deb-systemd extras/nimbus-validator-hoodi-obol.service \
+--deb-systemd extras/nimbus-validator-obol-lido.service
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(CHARON_VERSION) --license $(PKG_LICENSE)\
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\

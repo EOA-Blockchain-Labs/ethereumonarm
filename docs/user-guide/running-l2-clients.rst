@@ -30,7 +30,7 @@ means run nodes.
 .. prompt:: bash $
 
   sudo apt-get update
-  sudo apt-get install polygon-bor polygon-heimdall arbitrum-nitro starknet-juno starknet-papyrus 
+  sudo apt-get install polygon-bor polygon-heimdall arbitrum-nitro starknet-juno
   optimism-op-geth optimism-op-node fuel-network
 
 

@@ -6,7 +6,7 @@ Sources
 
 You can get the source code in our Github repo:
 
-https://github.com/diglos/ethereumonarm
+https://github.com/EOA-Blockchain-Labs/ethereum
 
 You can find here:
 

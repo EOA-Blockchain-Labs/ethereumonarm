@@ -45,7 +45,7 @@ If you don't know what an Ethereum node is, please visit the :doc:`User Guide se
 
     Recommended hardware and settings for running an Ethereum full/staking node on a Rock 5B board    
 
-    * **Rock 5B board** (16GB RAM)
+    * **Rock 5B board** (16GB to 32GBRAM)
     * **MicroSD Card** (16 GB Class 10 minimum)
     * **NVMe disk** 2 TB minimum, 4 TB recommended (M2.2280)
     * **Power supply** (Radxa official)
@@ -70,7 +70,7 @@ If you don't know what an Ethereum node is, please visit the :doc:`User Guide se
 
     Recommended hardware and settings for running an Ethereum full/staking node on a Orange Pi 5 Plus board
 
-    * **Orange Pi 5 Plus board** (16GB RAM)
+    * **Orange Pi 5 Plus board** (16GB to 32GB RAM)
     * **MicroSD Card** (16 GB Class 10 minimum)
     * **NVMe disk** 2 TB minimum, 4 TB recommended (M2.2280)
     * **Power supply**

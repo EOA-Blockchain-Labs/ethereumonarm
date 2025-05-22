@@ -1,4 +1,5 @@
 [![GitPOAP Badge](https://public-api.gitpoap.io/v1/repo/diglos/ethereumonarm/badge)](https://www.gitpoap.io/gh/diglos/ethereumonarm)
+[![Release](https://img.shields.io/github/v/release/EOA-Blockchain-Labs/ethereumonarm)](https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases)
 
 # Ethereum on ARM
 

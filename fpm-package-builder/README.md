@@ -3,7 +3,7 @@ This is a collection of Makefiles and scripts used to create all the Ethereum on
 ## Clone the repository:
 
 ```bash
-git clone https://github.com/diglos/ethereumonarm.git
+git clone https://github.com/EOA-Blockchain-Labs/ethereumonarm.git
 ```
 
 ---
@@ -101,18 +101,17 @@ Use the provided `Vagrantfile` to create an Ubuntu 24.04 VM with all the needed 
 	vagrant up
 	vagrant ssh
 	cd ethereumonarm/
-  ```
-
+```
 Just type make to create all the deb packages::
 
 ```bash
 
 	make
 ``` 
-* Alternatively you can simple cd into any dir and type make to create only the desired package::
+Alternatively you can simple cd into any dir and type make to create only the desired package::
 
 ```bash
 
 	cd geth
 	make
-  ``` 
+``` 

@@ -1,0 +1,15 @@
+[Unit]
+Description=Ethereum reth client daemon by Paradigm team
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/op-reth-base.conf
+ExecStart=/usr/bin/op-reth $ARGS
+Restart=always
+User=ethereum
+KillSignal=SIGTERM 
+TimeoutStopSec=600
+
+[Install]
+WantedBy=multi-user.target
+

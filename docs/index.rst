@@ -101,6 +101,7 @@ Coming soon
   :hidden:
 
   /developer-guide/about
+  /developer-guide/howto
   
 About Ethereum on ARM
 ---------------------

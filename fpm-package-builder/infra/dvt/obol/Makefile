@@ -18,6 +18,8 @@ PKG_LICENSE := "GNU Lesser General Public License v3.0"
 
 PKG_ARCH_DEB := arm64
 PKG_ARCH_RPM := arm64
+PKG_AFTER_INSTALL := extras/dvt-obol.postinst
+
 
 SOURCESDIR := sources/
 OUTPUTDIR := ../../../packages
@@ -29,6 +31,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(CHARON_VERSION) --license $(PKG_LICEN
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
+--after-install $(PKG_AFTER_INSTALL)
 --deb-systemd extras/charon.service \
 --deb-systemd extras/teku-validator-obol.service \
 --deb-systemd extras/teku-validator-hoodi-obol.service \

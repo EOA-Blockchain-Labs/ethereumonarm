@@ -1,26 +1,34 @@
 .. _development_guide:
 
 Development Guide
+=================
+
 This guide outlines the development process for the Ethereum on ARM project, covering repository setup, dependency management, package creation, and image generation.
 
 Clone the Repository
-Begin by cloning the Ethereum on ARM repository from GitHub:
+--------------------
+
+1. Begin by cloning the Ethereum on ARM repository from GitHub:
+---------------------------------------------------------------
 
 .. code-block:: bash
 
-git clone https://github.com/EOA-Blockchain-Labs/ethereumonarm.git
+	git clone https://github.com/EOA-Blockchain-Labs/ethereumonarm.git
 
-Setup for Package Building (fpm-package-builder)
+
+2. Setup for Package Building (fpm-package-builder)
+---------------------------------------------------
+
 Navigate to the fpm-package-builder directory within the cloned repository:
 
 .. code-block:: bash
 
-cd ethereumonarm/fpm-package-builder
+	cd ethereumonarm/fpm-package-builder
 
 From here, you have two options for setting up the development environment: installing dependencies manually or using a Vagrant machine.
 
-2.1. Install Dependencies Manually (Ubuntu 24.04)
-
+2.1 Install Dependencies Manually (Ubuntu 24.04)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you prefer to install dependencies directly on an Ubuntu 24.04 system, follow these steps:
 
@@ -107,17 +115,19 @@ If you prefer to install dependencies directly on an Ubuntu 24.04 system, follow
        su - vagrant -c 'export NZM_DIR   "$SOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm install   g yarn'
 
 2.2. Alternatively, use the Provided Vagrantfile (Recommended)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 For an easier and recommended setup, use the provided Vagrantfile to create an Ubuntu 24.04 VM with all necessary dependencies. You will need Vagrant <https://www.vagrantup.com/docs/installation>_ and VirtualBox <https://www.virtualbox.org/wiki/Downloads>_ installed.
 
 .. code-block:: bash
 
-cd ethereumonarm/fpm-package-builder
-vagrant up
-vagrant ssh
-cd ethereumonarm/
+	cd ethereumonarm/fpm-package-builder
+	vagrant up
+	vagrant ssh
+	cd ethereumonarm/
 
 2.3. Create .deb Packages
-
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Once your environment is set up (either manually or with Vagrant), you can create ``.deb`` packages.
 
@@ -144,7 +154,5 @@ This section would involve:
 * **Reviewing the ``Makefile``**: Understanding how the latest Armbian links are integrated.
 * **Reviewing ``rc.local``**: This script, located at ``/etc/rc.local``, runs once during the initial boot of the Ethereum on ARM image to set up the system and install Ethereum-related software.
 * **Making your own image**: Details on how to use the tools to build a custom Ethereum on ARM image.
-
-This guide provides an overview of the image creation process and related tasks and packages, as well as the tools and scripts used for releasing the EOA image.
 
 For more information, the existing documentation includes a `Quick Start Guide </quick-guide/about-quick-start>`_ and a `User Guide </user-guide/about-user-guide>`_, which offer further details on Ethereum and client management.

@@ -116,6 +116,8 @@ declare -A layer1_execution=(
 declare -A layer2=(
     [OffchainLabs/nitro]=arbitrum-nitro
     [ethereum-optimism/op-geth]=optimism-op-geth
+    [paradigmxyz/reth]=op-reth
+    [eqlabs/pathfinder]=starknet-pathfinder
     [NethermindEth/juno]=starknet-juno
     [FuelLabs/fuel-core]=fuel-network
 )

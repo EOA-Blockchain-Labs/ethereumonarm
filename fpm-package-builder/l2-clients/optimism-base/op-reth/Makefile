@@ -7,7 +7,7 @@ RETH_VERSION_GIT := $(shell curl -s "https://api.github.com/repos/paradigmxyz/re
 RETH_VERSION := $(shell curl -s "https://api.github.com/repos/paradigmxyz/reth/releases/latest" | jq -r '.tag_name' | tr -d "v" | sed -E 's/([a-z]+)\.([0-9]+)/\1\2/')
 
 PKG_RELEASE := 0
-PKG_NAME := op-reth
+PKG_NAME := optimism-op-reth
 
 PKG_DESCRIPTION := "Rust implementation of the Optimism protocol by Paradigm team"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
@@ -30,6 +30,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(RETH_VERSION) --license $(PKG_LICENSE
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
+--replaces op-geth \
 --deb-systemd extras/op-reth.service --deb-systemd extras/op-reth-base.service
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(RETH_VERSION) --license $(PKG_LICENSE)\

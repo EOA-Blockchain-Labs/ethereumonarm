@@ -36,7 +36,7 @@ if [ ! -f $FLAG ]; then
     echo '/dev/nvme1n1p1 /home ext4 defaults 0 2' >> /etc/fstab && mount /home
   else
     echo "no SDD detected"
-    echo "stopping the installation, and extenal disk is needed"
+    echo "stopping the installation, and external disk is needed"
     exit 1
   fi
 

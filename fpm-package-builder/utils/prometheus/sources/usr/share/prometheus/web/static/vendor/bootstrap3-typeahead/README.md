@@ -19,7 +19,7 @@ Download
  
 Full integration with Bootstrap 3 Typeahead
 -------------------------------------------
-Download the latest version of Boostrap from [Bootstrap](https://github.com/twbs/bootstrap/archive/master.zip). Copy `bootstrap3-typeahead.js` to the js/ folder. Edit `gruntfile.js` and add `bootstrap3-typeahead.js` to the plugins' list.
+Download the latest version of Bootstrap from [Bootstrap](https://github.com/twbs/bootstrap/archive/master.zip). Copy `bootstrap3-typeahead.js` to the js/ folder. Edit `gruntfile.js` and add `bootstrap3-typeahead.js` to the plugins' list.
 Build your own version with typeahead with `grunt dist`.
 
 CSS

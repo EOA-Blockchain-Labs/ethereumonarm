@@ -517,7 +517,7 @@ fi
 
 # Define the path for custom sysctl settings.
 # sysctl is used to configure kernel parameters at runtime.
-SYSCTL_CONFIG="/etc/sysctl.d/99-ethereum-node-tweaks.conf"
+SYSCTL_CONFIG="/etc/sysctl.d/99-zzz-ethereum-node-tweaks.conf"
 
 # Remove any existing vm.swappiness setting from the main /etc/sysctl.conf to avoid conflicts.
 sed -i '/^vm\.swappiness/d' /etc/sysctl.conf

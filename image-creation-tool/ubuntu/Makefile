@@ -36,20 +36,20 @@ define modify_image
 endef
 
 # Device definitions
-rpi5_url := https://es.sbcmirror.org/dl/rpi4b/archive/Armbian_25.2.4_Rpi4b_noble_current_6.12.22_minimal.img.xz
-rpi5_iso := Armbian_25.2.4_Rpi4b_noble_current_6.12.22_minimal.img
+rpi5_url := https://es.sbcmirror.org/dl/rpi4b/archive/Armbian_25.2.4_Rpi4b_noble_current_6.12.28_minimal.img.xz
+rpi5_iso := Armbian_25.2.4_Rpi4b_noble_current_6.12.28_minimal.img
 rpi5_offset := 272629760
 
-rock5b_url := https://es.sbcmirror.org/dl/rock-5b/archive/Armbian_25.2.2_Rock-5b_noble_vendor_6.1.99_minimal.img.xz
-rock5b_iso := Armbian_25.2.2_Rock-5b_noble_vendor_6.1.99_minimal.img
+rock5b_url := https://es.sbcmirror.org/dl/rock-5b/archive/Armbian_25.2.2_Rock-5b_noble_vendor_6.1.115_minimal.img.xz
+rock5b_iso := Armbian_25.2.2_Rock-5b_noble_vendor_6.1.115_minimal.img
 rock5b_offset := 16777216
 
-orangepi5-plus_url := https://es.sbcmirror.org/dl/orangepi5-plus/archive/Armbian_25.2.1_Orangepi5-plus_noble_vendor_6.1.99_minimal.img.xz
-orangepi5-plus_iso := Armbian_25.2.1_Orangepi5-plus_noble_vendor_6.1.99_minimal.img
+orangepi5-plus_url := https://es.sbcmirror.org/dl/orangepi5-plus/archive/Armbian_25.2.1_Orangepi5-plus_noble_vendor_6.1.115_minimal.img.xz
+orangepi5-plus_iso := Armbian_25.2.1_Orangepi5-plus_noble_vendor_6.1.115_minimal.img
 orangepi5-plus_offset := 16777216
 
-nanopct6_url := https://es.sbcmirror.org/dl/nanopct6/archive/Armbian_25.2.1_Nanopct6_noble_vendor_6.1.99_minimal.img.xz
-nanopct6_iso := Armbian_25.2.1_Nanopct6_noble_vendor_6.1.99_minimal.img
+nanopct6_url := https://es.sbcmirror.org/dl/nanopct6/archive/Armbian_25.2.1_Nanopct6_noble_vendor_6.1.115_minimal.img.xz
+nanopct6_iso := Armbian_25.2.1_Nanopct6_noble_vendor_6.1.115_minimal.img
 nanopct6_offset := 16777216
 
 DEVICES = rpi5 rock5b orangepi5-plus nanopct6

@@ -263,55 +263,27 @@ Official Clients
 
 .. note::
 
-  1. We will sync Optimism using an :guilabel:`Op-Geth` Snapshot. Take into account that this is a large snapshot and 
-  it will take a few hours to download and decompress so, please, be patient. You will need a 1TB SSD to be able to 
-  download the snapshot and extract it.
+  You need access to a synced Ethereum L1 node.
 
-  2. You need access to a synced Ethereum L1 node.
+Let's set the Execution and Consensus APIs:
 
-In order to run an Optimism node you need to:
-
-1. Download :guilabel:`Op-Geth` Snapshot
-2. Decompress and remove the snapshot
-3. Set the L1 node IP
-4. Start and sync the :guilabel:`Op-Geth` client
-5. Start and sync the :guilabel:`Op-Node` client
-6. (Optional) Start the :guilabel:`L2Geth` client (not available yet)
-
-**SNAPSHOTS**
-
-We included 1 script that download and decompress the :guilabel:`Op-Geth` Snapshot automatically. The recommended steps are as follows:
-
-Run the ``screen`` utility in order to make sure the process continues to run even if you are 
-disconnected from the console (this is particularly useful if you are accessing through SSH):
+Set the synced IP L1 ethereum node (localhost if this is a super Node):
 
 .. prompt:: bash $
 
-  screen
-
-.. note::
-  Press ``CONTROL+A  D`` to deattach the console and run the command ``screen -r`` to attach the console again
-
-Once inside screen, run the download script as the ``ethereum`` user:
-
-.. prompt:: bash $
-
-  op-geth-preinstall
-
-This will download the :guilabel:`Op-Geth` snapshot. Once downloaded it will be decompressed into the 
-correct directory.
-
-Set the synced IP L1 ethereum node:
-
-.. prompt:: bash $
-
-  sudo sed -i "s/changeme/YOUR_IP/" /etc/ethereum/op-node.conf
+  sudo sed -i "s/l1ip/$YOUR_IP/" /etc/ethereum/op-node.conf
 
 For example:
 
 .. prompt:: bash $
 
-  sudo sed -i "s/changeme/192.168.0.10/" /etc/ethereum/op-node.conf
+  sudo sed -i "s/l1ip/192.168.0.10/" /etc/ethereum/op-node.conf
+
+Now, set the L1 Beacon API (again, localhost if this is a Super Node)
+
+.. prompt:: bash $
+
+  sudo sed -i "s/l1beaconip/$YOUR_IP/" /etc/ethereum/op-node.conf
 
 Start the :guilabel:`Op-Geth` service and check the logs:
 
@@ -330,37 +302,26 @@ Now, start the :guilabel:`Op-Node` client:
   systemctl start op-node
   sudo journalctl -u op-node -f
 
-Congrats, you are now running an Optimism Bedrock node.
+Congrats, you are now running an Optimism node.
 
 Nethermind Execution Client 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can use the :guilabel:`Nethermind` Execution Layer implementation along with :guilabel:`Op-Node` client.
 
-In this case, :guilabel:`Nethermind` takes care of downloading and decompressing the Snapshot so just need 
-to set the L1 address and start the Systemd services:
+Same process than above but we switch the :guilabel:`Op-Geth` service for :guilabel:`Nethermind Optimism`
+
+Start the :guilabel:`Nethermind Optimism` service and check the logs:
 
 .. prompt:: bash $
 
-  sudo sed -i "s/changeme/YOUR_IP/" /etc/ethereum/op-node.conf
+  systemctl start nethermind-op
 
-For example:
-
-.. prompt:: bash $
-
-  sudo sed -i "s/changeme/192.168.0.10/" /etc/ethereum/op-node.conf
-
-Now, start the :guilabel:`Nethermind` service:
+Check the logs:
 
 .. prompt:: bash $
 
-  systemctl start op-nethermind
-
-Wait for the Snapshot to download and decompress, you can monitor the progress by running:
-
-.. prompt:: bash $
-
-  sudo journalctl -u op-nethermind -f
+  sudo journalctl -u nethermind-op -f
 
 And start the :guilabel:`Op-Node` service:
 
@@ -368,7 +329,6 @@ And start the :guilabel:`Op-Node` service:
 
   systemctl start op-node
   sudo journalctl -u op-node -f
-  
 
 Base
 ----

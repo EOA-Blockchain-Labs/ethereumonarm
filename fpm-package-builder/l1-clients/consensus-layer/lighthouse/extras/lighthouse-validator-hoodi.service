@@ -7,7 +7,7 @@ EnvironmentFile=/etc/ethereum/lighthouse-validator-hoodi.conf
 ExecStart=/usr/bin/lighthouse $ARGS
 Restart=always
 User=ethereum
-
+SyslogIdentifier=lighthouse-validator-hoodi
 [Install]
 WantedBy=multi-user.target
 

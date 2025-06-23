@@ -4,12 +4,11 @@ After=network.target
 
 [Service]
 Environment="GODEBUG=netdns=go"
-EnvironmentFile=/etc/ethereum/erigon-hoodi.conf
+EnvironmentFile=/etc/ethereum/erigon-gnosis.conf
 ExecStart=/usr/bin/erigon $ARGS
 Restart=always
 User=ethereum
-SyslogIdentifier=erigon-hoodi
-
+SyslogIdentifier=erigon-gnosis
 
 [Install]
 WantedBy=multi-user.target

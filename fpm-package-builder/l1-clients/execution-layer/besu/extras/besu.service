@@ -8,6 +8,7 @@ Environment="JAVA_OPTS=-Xmx5g"
 ExecStart=/usr/bin/besu $ARGS
 Restart=always
 User=ethereum
+SyslogIdentifier=besu
 
 [Install]
 WantedBy=multi-user.target

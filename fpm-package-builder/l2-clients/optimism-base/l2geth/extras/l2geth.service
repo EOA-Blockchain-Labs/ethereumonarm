@@ -11,6 +11,7 @@
   Type=simple
   User=ethereum
   TimeoutStopSec=120
+  SyslogIdentifier=l2geth
 
 [Install]
   WantedBy=multi-user.target

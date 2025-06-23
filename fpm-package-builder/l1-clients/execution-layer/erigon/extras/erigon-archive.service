@@ -8,6 +8,8 @@ EnvironmentFile=/etc/ethereum/erigon-archive.conf
 ExecStart=/usr/bin/erigon $ARGS
 Restart=always
 User=ethereum
+SyslogIdentifier=erigon-archive
+
 
 [Install]
 WantedBy=multi-user.target

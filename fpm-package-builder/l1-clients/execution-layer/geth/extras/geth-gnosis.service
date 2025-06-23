@@ -9,6 +9,8 @@ Restart=always
 User=ethereum
 KillSignal=SIGTERM 
 TimeoutStopSec=600
+SyslogIdentifier=geth-gnosis
+
 
 [Install]
 WantedBy=multi-user.target

@@ -7,6 +7,7 @@ EnvironmentFile=/etc/ethereum/besu-holesky.conf
 ExecStart=/usr/bin/besu $ARGS
 Restart=always
 User=ethereum
+SyslogIdentifier=besu-holesky
 
 [Install]
 WantedBy=multi-user.target

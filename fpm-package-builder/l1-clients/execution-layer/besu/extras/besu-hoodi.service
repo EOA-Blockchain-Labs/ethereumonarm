@@ -7,6 +7,7 @@ EnvironmentFile=/etc/ethereum/besu-hoodi.conf
 ExecStart=/usr/bin/besu $ARGS
 Restart=always
 User=ethereum
+SyslogIdentifier=besu-hoodi
 
 [Install]
 WantedBy=multi-user.target

@@ -8,5 +8,8 @@
   Restart=on-failure
   RestartSec=5s
   User=ethereum
+  SyslogIdentifier=op-node-base
+
 [Install]
   WantedBy=multi-user.target
+

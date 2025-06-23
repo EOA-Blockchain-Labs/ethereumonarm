@@ -8,6 +8,7 @@ EnvironmentFile=/etc/ethereum/prysm-validator-holesky.conf
 ExecStart=/usr/bin/validator $ARGS
 Restart=always
 User=ethereum
+SyslogIdentifier=prysm-validator-holesky
 
 [Install]
 WantedBy=multi-user.target

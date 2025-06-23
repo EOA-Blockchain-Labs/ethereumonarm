@@ -9,6 +9,7 @@ Restart=always
 User=ethereum
 KillSignal=SIGTERM 
 TimeoutStopSec=600
+SyslogIdentifier=op-reth-base
 
 [Install]
 WantedBy=multi-user.target

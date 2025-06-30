@@ -68,7 +68,7 @@ You need to edit two sections:
 
 2.  **`SOURCE_FOLDERS`**: Under the ``SOURCE_FOLDERS=`` marker, add the full paths of all the directories you wish to back up. Each directory must be on its own line.
 
-    .. code-like:: ini
+    .. code-block:: ini
 
        SOURCE_FOLDERS=
        /etc/ethereum

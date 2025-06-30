@@ -74,6 +74,9 @@ You need to edit two sections:
        /etc/ethereum
        /home/ethereum/.charon
 
+
+    The list of source folders is completely customizable. You can add any directory you wish to include in the backup. The ``/home/ethereum/.charon`` path, for example, is only necessary if you are running a Distributed Validator with an Obol Charon cluster.
+
 Save and close the file.
 
 Step 3: Enable the Backup Timer

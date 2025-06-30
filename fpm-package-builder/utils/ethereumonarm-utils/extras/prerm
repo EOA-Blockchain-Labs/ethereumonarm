@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+
+case "$1" in
+    remove|upgrade)
+        echo "Stopping and disabling systemd timer for eoa-rclone-backup..."
+        systemctl stop ethereum-backup.timer || true
+        systemctl disable ethereum-backup.timer || true
+    ;;
+esac
+
+exit 0

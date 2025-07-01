@@ -31,7 +31,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(CHARON_VERSION) --license $(PKG_LICEN
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
---after-install $(PKG_AFTER_INSTALL)
+--after-install $(PKG_AFTER_INSTALL)\
 --deb-systemd extras/charon.service \
 --deb-systemd extras/teku-validator-obol.service \
 --deb-systemd extras/teku-validator-hoodi-obol.service \

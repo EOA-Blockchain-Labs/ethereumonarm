@@ -6,25 +6,25 @@
 set -e
 
 case "$1" in
-    configure)
-        echo "Setting permissions for /etc/cron.d/sync_charon_config (package dvt-obol)..."
-        # Set ownership to root:root
+configure | "")
+    echo "Setting permissions for /etc/cron.d/sync_charon_config (package dvt-obol)..."
+    # Set ownership to root:root
+    if [ -e /etc/cron.d/sync_charon_config ]; then
         chown root:root /etc/cron.d/sync_charon_config
         # Set permissions to rw-r--r-- (644)
-        # This allows root to read and write, and others to read.
-        # For cron files, this is a common and secure permission.
-        # If the file contains sensitive information that no other user should read,
-        # consider using 600 instead.
         chmod 644 /etc/cron.d/sync_charon_config
         echo "Permissions set for /etc/cron.d/sync_charon_config."
+    else
+        echo "Warning: /etc/cron.d/sync_charon_config not found. Skipping permission setting." >&2
+    fi
     ;;
 
-    abort-upgrade|abort-remove|abort-deconfigure)
-    ;;
+abort-upgrade | abort-remove | abort-deconfigure) ;;
 
+\
     *)
-        echo "postinst for dvt-obol called with unknown argument \`$1'" >&2
-        exit 1
+    echo "postinst for dvt-obol called with unknown argument \`$1'" >&2
+    exit 1
     ;;
 esac
 

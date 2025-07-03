@@ -12,6 +12,7 @@
   Type=simple
   User=ethereum
   TimeoutSec=0
+  SyslogIdentifier=charon
 
 [Install]
   WantedBy=multi-user.target

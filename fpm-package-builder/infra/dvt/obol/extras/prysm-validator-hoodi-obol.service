@@ -8,6 +8,7 @@ EnvironmentFile=/etc/ethereum/dvt/prysm-validator-hoodi-obol.conf
 ExecStart=/usr/bin/validator $ARGS
 Restart=always
 User=ethereum
+SyslogIdentifier=prysm-validator-hoodi-obol
 
 [Install]
 WantedBy=multi-user.target

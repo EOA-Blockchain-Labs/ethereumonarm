@@ -88,9 +88,9 @@ NanoPC T6
 
 Download link:
 
-ethonarm_nanopct6_25.05.00.img.zip_
+ethonarm_nanopct6_25.07.00.img.zip_
 
-.. _ethonarm_nanopct6_25.05.00.img.zip: https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v25.05.00/ethonarm_nanopct6_25.05.00.img.zip
+.. _ethonarm_nanopct6_25.07.00.img.zip: https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v25.07.00/ethonarm_nanopct6_25.07.00.img.zip
 
 You can verify the file with the following ``SHA256`` Hash:
 
@@ -100,16 +100,16 @@ By running:
 
 .. prompt:: bash $
 
-  sha256sum ethonarm_nanopct6_25.05.00.img.zip
+  sha256sum ethonarm_nanopct6_25.07.00.img.zip
 
 Rock 5B
 ~~~~~~~
 
 Download link:
 
-ethonarm_rock5b_25.05.00.img.zip_
+ethonarm_rock5b_25.07.00.img.zip_
 
-.. _ethonarm_rock5b_25.05.00.img.zip: https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v25.05.00/ethonarm_rock5b_25.05.00.img.zip
+.. _ethonarm_rock5b_25.07.00.img.zip: https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v25.07.00/ethonarm_rock5b_25.07.00.img.zip
 
 
 You can verify the file with the following ``SHA256`` Hash:
@@ -120,16 +120,16 @@ By running:
 
 .. prompt:: bash $
 
-  sha256sum ethonarm_rock5b_25.05.00.img.zip
+  sha256sum ethonarm_rock5b_25.07.00.img.zip
 
 Orange Pi 5 Plus
 ~~~~~~~~~~~~~~~~
 
 Download link:
 
-ethonarm_orangepi5-plus_25.05.00.img.zip_
+ethonarm_orangepi5-plus_25.07.00.img.zip_
 
-.. _ethonarm_orangepi5-plus_25.05.00.img.zip: https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v25.05.00/ethonarm_orangepi5-plus_25.05.00.img.zip
+.. _ethonarm_orangepi5-plus_25.07.00.img.zip: https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v25.07.00/ethonarm_orangepi5-plus_25.07.00.img.zip
 
 You can verify the file with the following ``SHA256`` Hash:
 
@@ -139,16 +139,16 @@ By running:
 
 .. prompt:: bash $
 
-  sha256sum ethonarm_orangepi5-plus_25.05.00.img.zip
+  sha256sum ethonarm_orangepi5-plus_25.07.00.img.zip
 
 Raspberry Pi 5
 ~~~~~~~~~~~~~~
 
 Download link:
 
-ethonarm_rpi5_25.05.00.img.zip_
+ethonarm_rpi5_25.07.00.img.zip_
 
-.. _ethonarm_rpi5_25.05.00.img.zip: https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v25.05.00/ethonarm_rpi5_25.05.00.img.zip
+.. _ethonarm_rpi5_25.07.00.img.zip: https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v25.07.00/ethonarm_rpi5_25.07.00.img.zip
 
 You can verify the file with the following ``SHA256`` Hash:
 
@@ -158,7 +158,7 @@ By running:
 
 .. prompt:: bash $
 
-  sha256sum ethonarm_rpi5_25.05.00.img.zip
+  sha256sum ethonarm_rpi5_25.07.00.img.zip
 
 Image installation
 ==================
@@ -192,8 +192,8 @@ Unzip and flash the image (we are using here the NanoPc T6 image):
 
 .. prompt:: bash $
 
-   unzip ethonarm_nanopct6_25.05.00.img.zip
-   sudo dd bs=1M if=ethonarm_nanopct6_25.05.00.img of=/dev/mmcblk0 conv=fdatasync status=progress
+   unzip ethonarm_nanopct6_25.07.00.img.zip
+   sudo dd bs=1M if=ethonarm_nanopct6_25.07.00.img of=/dev/mmcblk0 conv=fdatasync status=progress
 
 Insert MicroSD
 --------------

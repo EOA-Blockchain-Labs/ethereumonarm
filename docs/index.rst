@@ -89,6 +89,7 @@ information regarding the image and other Ethereum related software.
   /user-guide/security
   /user-guide/troubleshooting
   /user-guide/PiVPNandWireGuard
+  /user-guide/rclone-backup
 
 Developers Guide
 ----------------

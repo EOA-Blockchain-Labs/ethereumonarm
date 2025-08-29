@@ -334,7 +334,7 @@ Base
 ----
 
 Base, developed by Coinbase, is a new Layer-Two (L2) blockchain built on Optimism, aimed at scaling Ethereum.
-
+ 
 While initially centralized in block production, plans to leverage Optimism's "superchain" concept, 
 enhancing interoperability and reducing transaction fees.
 

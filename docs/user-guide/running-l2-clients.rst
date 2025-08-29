@@ -341,5 +341,9 @@ enhancing interoperability and reducing transaction fees.
 For running a Base node, follow the above instructions for **Optimism** and replace both, the **Systemd** services 
 and the **config files** as follows:
 
-- Systemd services: ``op-geth-base`` and ``op-node-base``
-- Config files: ``/etc/ethereum/op-geth-base.conf`` and ``/etc/ethereum/op-node-base.conf``
+- Systemd services: ``nethermind-base`` and ``op-node-base``
+- Config files: ``/etc/ethereum/nethermind-base.conf`` and ``/etc/ethereum/op-node-base.conf``
+
+Currently (August 2025), we recommend **Nethermind Base** implementation as execution engine instead of **Optimism**
+so you can sync in snap sync mode (much easier and faster). So, follow the **Nethermind** section instructions and 
+replace ``nethermind-op`` for ``nethermind-base``.

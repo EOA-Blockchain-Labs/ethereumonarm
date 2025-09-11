@@ -94,7 +94,7 @@ ethonarm_nanopct6_25.07.00.img.zip_
 
 You can verify the file with the following ``SHA256`` Hash:
 
-``SHA256 a514c2fae777b86c23dff8aacfea675ee9dcdbbed5bee9e713a9965d0e115120``
+``SHA256 58abf1684bcc924e001e479d3309765e53fbb1677d29385f92647d147952536b``
 
 By running:
 
@@ -114,7 +114,7 @@ ethonarm_rock5b_25.07.00.img.zip_
 
 You can verify the file with the following ``SHA256`` Hash:
 
-``SHA256 08528275f457eed75b2178312e174ef5a6ecbf172caa28f6d987b9bde1b3b3b7``
+``SHA256 50cb16586cc93a5c2f1d2abd2e23220245600cb832cc3e62f41a1c1af7e7a586``
 
 By running:
 
@@ -133,7 +133,7 @@ ethonarm_orangepi5-plus_25.07.00.img.zip_
 
 You can verify the file with the following ``SHA256`` Hash:
 
-``SHA256 308dada4c43c4d0e47ab695d23e0c93ebc9b7768c23866f4a4260662bf5e15b5``
+``SHA256 9b15af4f15a144921b43037a24d8008021be568290bf75b31108f8a851e24c30``
 
 By running:
 

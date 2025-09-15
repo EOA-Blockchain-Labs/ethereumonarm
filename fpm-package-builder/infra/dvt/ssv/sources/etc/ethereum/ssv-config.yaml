@@ -17,21 +17,33 @@ db:
 ssv:
   # The SSV network to join to
   # Mainnet = Network: mainnet (default)
-  # Testnet (Goerli)  = Network: jato-v2
-  # Testnet (Holesky) = Network: holesky
-  Network: holesky
+  # Hoodi = Network: hoodi
+  # Sepolia = Network: sepolia
+  Network: mainnet
   
   ValidatorOptions:
-    # Whether to enable MEV block production. Requires the connected Beacon node to be MEV-enabled.
-    BuilderProposals: false
+    # Block proposals are by default controlled by Beacon Node.
+    # Requires the connected Beacon node to be MEV-enabled.
+    # Please see https://docs.ssv.network/operators/operator-node/setup-sidecars/configuring-mev
 
 eth2:
   # HTTP URL of the Beacon node to connect to.
   BeaconNodeAddr: http://localhost:5052
+  # If you want to use multiple endpoints you can divide them with ;
+  # e.g. http://example.url:5052;http://example.url:5053
+  
+  # Enables improved attestation accuracy by scoring responses from multiple Beacon nodes.
+  # Will have no effect with only 1 endpoint.
+  WithWeightedAttestationData: false
+
+  #Enables parallel Attestation and Sync Committee submissions to multiple Beacon nodes.
+  WithParallelSubmissions: false
 
 eth1:
   # WebSocket URL of the Eth1 node to connect to.
-  ETH1Addr: ws://localhost:8546
+  ETH1Addr: ws://localhost:8546/ws
+  # If you want to use multiple endpoints you can divide them with ;
+  # e.g. ws://example.url:8546/ws;ws://example.url:8547/ws
 
 p2p:
   # Optionally provide the external IP address of the node, if it cannot be automatically determined.
@@ -42,8 +54,14 @@ p2p:
   # UdpPort: 12001
 
 KeyStore:
-  PrivateKeyFile: /home/ethereum/.ssv/encrypted_private_key.json # e.g. ./encrypted_private_key.json
-  PasswordFile: /home/ethereum/.ssv/password.txt # e.g. ./password
+  PrivateKeyFile: /home/ethereum/.ssv/encrypted_private_key.json
+  PasswordFile: /home/ethereum/.ssv/password.txt
 
-# This enables monitoring at the specified port, see https://docs.ssv.network/run-a-node/operator-node/maintenance/monitoring
-MetricsAPIPort: 15000ssvnode generate-operator-keys -p
+# Enables Doppelganger Protection for validators, see https://github.com/ssvlabs/ssv/blob/v2.3.0/doppelganger/README.md
+EnableDoppelgangerProtection: false
+
+# This enables monitoring at the specified port, see https://docs.ssv.network/operators/operator-node/monitoring/
+MetricsAPIPort: 15000
+# This enables node health endpoint for troubleshooting, see https://docs.ssv.network/operators/operator-node/maintenance/troubleshooting
+SSVAPIPort: 16000
+

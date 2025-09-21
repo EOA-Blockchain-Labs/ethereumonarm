@@ -44,8 +44,10 @@ FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(NIMBUS_VERSION) --license $(PKG_LICEN
 all: prepare deb clean test
 
 prepare: ## Download the latest binary and prepare the package files
+	wget -O sources/usr/bin/era_downloader.sh https://raw.githubusercontent.com/status-im/nimbus-eth1/refs/heads/master/scripts/era_downloader.sh
 	wget $(NIMBUS_CLIENT_URL) -O - | tar -xz -C sources/usr/bin/ --wildcards --absolute-names --no-anchored --strip-components 2 '*/nimbus_*'
 	wget $(NIMBUS_PROXY_URL) -O - | tar -xz -C sources/usr/bin/ --wildcards --absolute-names --no-anchored --strip-components 2 '*/nimbus_*'
+	chmod +x sources/usr/bin/era_downloader.sh
 	rm sources/usr/bin/nimbus*.sha512sum
 
 deb: ## Create deb package

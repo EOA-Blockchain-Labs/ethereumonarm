@@ -48,8 +48,8 @@ prepare: ## Download the latest binary and prepare the package files
 	# install ssv-keys
 	mkdir -p /tmp/ssv_keys_tmp
 	cd /tmp/ssv_keys_tmp/ ; git clone https://github.com/ssvlabs/ssv-keys.git ; cd ssv-keys ; git checkout v$(SSV_KEYS_VERSION);
-	cd /tmp/ssv_keys_tmp/ssv-keys ; sed -i '/"package-linux": "pkg dist\/tsc\/src\/cli-interactive.js --targets node14-linux-x64 --output bin\/linux\/ssv-keys-lin --compress GZip",/a \ \ "package-linux-arm64": "pkg dist/tsc/src/cli-interactive.js --targets node14-linux-arm64 --output bin/linux/ssv-keys-lin-arm64 --compress GZip",' package.json
-	cd /tmp/ssv_keys_tmp/ssv-keys ; yarn install --network-timeout 1000000 ; yarn package-linux-arm64
+	cd /tmp/ssv_keys_tmp/ssv-keys ; sed -i '/"package-linux": "pkg dist\/cli-interactive.js --targets node22-linux-x64 --output bin\/linux\/ssv-keys-lin --compress GZip",/a \ \ "package-linux-arm64": "pkg dist/cli-interactive.js --targets node22-linux-arm64 --output bin/linux/ssv-keys-lin-arm64 --compress GZip",' package.json
+	cd /tmp/ssv_keys_tmp/ssv-keys ; pnpm install --fetch-timeout 1000000 && pnpm package-linux-arm64
 	cp /tmp/ssv_keys_tmp/ssv-keys/bin/linux/ssv-keys-lin-arm64 sources/usr/bin/ssv-keys
 
 deb: ## Create deb package

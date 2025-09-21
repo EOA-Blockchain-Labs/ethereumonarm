@@ -59,6 +59,7 @@ rpm: ## Create rpm package
 .PHONY: clean test
 clean: ## Clean up
 	rm sources/usr/bin/nimbus*
+	rm sources/usr/bin/era_downloader.sh
 
 test:
 	@if [ -f $(OUTPUTDIR)/$(PKG_DEB) ]; then \

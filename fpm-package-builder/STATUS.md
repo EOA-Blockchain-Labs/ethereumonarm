@@ -1,12 +1,13 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-09-27 09:55:13 UTC_
+_Last updated: 2025-09-28 07:19:49 UTC_
 
 ## Summary
 
-- **Total Packages Checked:** 23
-- ✅ **Up-to-date:** 23
-- ❌ **Outdated:** 0
+- Total Packages Checked: 23
+- Up-to-date: 23
+- Outdated: 0
+- N/A (no data): 0
 
 
 ### Infra

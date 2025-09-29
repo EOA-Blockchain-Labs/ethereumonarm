@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-09-29 08:24:15 UTC_
+_Last updated: 2025-09-29 18:18:37 UTC_
 
 ## Summary
 
@@ -27,7 +27,7 @@ _Last updated: 2025-09-29 08:24:15 UTC_
 | `lighthouse` | `7.1.0` | `7.1.0` | ✅ Up-to-date |
 | `lodestar` | `1.34.1` | `1.34.1` | ✅ Up-to-date |
 | `nimbus` | `25.9.2` | `25.9.2` | ✅ Up-to-date |
-| `prysm` | `6.1.0` | `6.1.0` | ✅ Up-to-date |
+| `prysm` | `6.1.1` | `6.1.1` | ✅ Up-to-date |
 | `teku` | `25.9.3` | `25.9.3` | ✅ Up-to-date |
 
 ### Layer 1 Execution

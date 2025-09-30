@@ -2,10 +2,10 @@ name: Update Package Status
 
 # Controls when the action will run
 on:
-  # Allows you to run this workflow manually from the Actions tab
+  # Allows manual triggering of the workflow from the Actions tab
   workflow_dispatch:
 
-  # Runs on a schedule (e.g., at 03:00 UTC every day)
+  # Runs on a schedule at 3:00 AM UTC every day
   schedule:
     - cron: '0 3 * * *'
 
@@ -20,8 +20,6 @@ jobs:
       - name: Check out repository and submodules
         uses: actions/checkout@v4
         with:
-          # This line is crucial to download the contents of Git submodules,
-          # which is where your 'fpm-package-builder' script resides.
           submodules: 'recursive'
       
       # 2. Run the script to generate the status file

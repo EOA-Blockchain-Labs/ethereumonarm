@@ -1,11 +1,7 @@
 name: Update Package Status
 
-# Controls when the action will run
 on:
-  # Allows manual triggering of the workflow from the Actions tab
   workflow_dispatch:
-
-  # Runs on a schedule at 3:00 AM UTC every day
   schedule:
     - cron: '0 3 * * *'
 
@@ -23,14 +19,14 @@ jobs:
         with:
           submodules: 'recursive'
       
-      # 2. Run the script to generate the status file
+      # 2. (MOVED UP) Pull latest changes to avoid conflicts
+      - name: Pull latest changes
+        run: git pull --rebase origin main
+      
+      # 3. (MOVED DOWN) Run the script to generate the status file
       - name: Run version check script
         run: |
           bash ./fpm-package-builder/tools/get_versions.sh -m STATUS.md -t ${{ secrets.REPO_GITHUB_TOKEN }}
-      
-      # 3. Pull latest changes from the remote to avoid non-fast-forward errors
-      - name: Pull latest changes
-        run: git pull --rebase origin main
       
       # 4. Commits the changes to the repository if the file has been modified
       - name: Commit and push if changed

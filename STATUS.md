@@ -1,12 +1,12 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-09-30 12:12:08 UTC_
+_Last updated: 2025-09-30 13:41:44 UTC_
 
 ## Summary
 
 - Total Packages Checked: 25
-- Up-to-date: 23
-- Outdated: 2
+- Up-to-date: 24
+- Outdated: 1
 - N/A (no data): 0
 
 
@@ -48,7 +48,7 @@ _Last updated: 2025-09-30 12:12:08 UTC_
 | `arbitrum-nitro` | `3.7.4` | `3.7.4` | ✅ Up-to-date |
 | `fuel-network` | `0.46.0` | `0.46.0` | ✅ Up-to-date |
 | `optimism-op-geth` | `1.101602.3` | `1.101602.3` | ✅ Up-to-date |
-| `optimism-op-node` | `1.13.6` | `1.13.7` | ❌ Outdated |
+| `optimism-op-node` | `1.13.7` | `1.13.7` | ✅ Up-to-date |
 | `optimism-op-reth` | `1.8.1` | `1.8.1` | ✅ Up-to-date |
 | `starknet-juno` | `0.15.7` | `0.15.7` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.20.4` | `0.20.4` | ✅ Up-to-date |

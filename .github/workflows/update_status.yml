@@ -5,28 +5,31 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-  # Runs on a schedule (this example runs at 03:00 UTC every day)
+  # Runs on a schedule (e.g., at 03:00 UTC every day)
   schedule:
     - cron: '0 3 * * *'
 
 jobs:
   update-status:
     runs-on: ubuntu-latest
-    # Set permissions for the job to allow it to write to the repository
     permissions:
       contents: write
 
     steps:
-      # 1. Checks out your repository's code
-      - name: Check out repository
+      # 1. Checks out your repository's code AND its submodules
+      - name: Check out repository and submodules
         uses: actions/checkout@v4
-
+        with:
+          # This line is crucial to download the contents of Git submodules,
+          # which is where your 'fpm-package-builder' script resides.
+          submodules: 'recursive'
+      
       # 2. Run the script to generate the status file
-      #    -t uses the automatically provided GITHUB_TOKEN to avoid API rate limits
-      #    -m generates the STATUS.md file
       - name: Run version check script
         run: |
-          bash ./ethereumonarm/fpm-package-builder/tools/get_versions.sh -m STATUS.md -t ${{ secrets.REPO_GITHUB_TOKEN }}
+          # Corrected path: Assumes 'fpm-package-builder' is at the root
+          # of the checked-out repository.
+          bash ./fpm-package-builder/tools/get_versions.sh -m STATUS.md -t ${{ secrets.REPO_GITHUB_TOKEN }}
       
       # 3. Commits the changes to the repository if the file has been modified
       - name: Commit and push if changed

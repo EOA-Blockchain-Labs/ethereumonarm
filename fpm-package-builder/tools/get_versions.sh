@@ -373,11 +373,13 @@ declare -A layer1_execution=(
   [ethereum/go-ethereum]=geth
   [NethermindEth/nethermind]=nethermind
   [paradigmxyz/reth]=reth
+  [status-im/nimbus-eth1]=nimbus-ec
 )
 
 declare -A layer2=(
   [OffchainLabs/nitro]=arbitrum-nitro
   [ethereum-optimism/op-geth]=optimism-op-geth
+  [ethereum-optimism/optimism]=optimism-op-node
   [paradigmxyz/reth]=optimism-op-reth
   [eqlabs/pathfinder]=starknet-pathfinder
   [NethermindEth/juno]=starknet-juno

@@ -16,6 +16,7 @@ jobs:
       contents: write
 
     steps:
+      
       # 1. Checks out your repository's code AND its submodules
       - name: Check out repository and submodules
         uses: actions/checkout@v4
@@ -25,11 +26,13 @@ jobs:
       # 2. Run the script to generate the status file
       - name: Run version check script
         run: |
-          # Corrected path: Assumes 'fpm-package-builder' is at the root
-          # of the checked-out repository.
           bash ./fpm-package-builder/tools/get_versions.sh -m STATUS.md -t ${{ secrets.REPO_GITHUB_TOKEN }}
       
-      # 3. Commits the changes to the repository if the file has been modified
+      # 3. Pull latest changes from the remote to avoid non-fast-forward errors
+      - name: Pull latest changes
+        run: git pull --rebase origin main
+      
+      # 4. Commits the changes to the repository if the file has been modified
       - name: Commit and push if changed
         uses: stefanzweifel/git-auto-commit-action@v5
         with:

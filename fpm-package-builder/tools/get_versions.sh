@@ -391,6 +391,7 @@ declare -A infra=(
   [eth-educators/ethstaker-deposit-cli]=ethstaker-deposit-cli
   [ObolNetwork/charon]=dvt-obol
   [flashbots/mev-boost]=mev-boost
+  [ethpandaops/ethereum-metrics-exporter]=ethereum-metrics-exporter
 )
 
 declare -A web3=(

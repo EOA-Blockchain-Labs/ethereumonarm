@@ -1,12 +1,12 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-09-30 06:27:16 UTC_
+_Last updated: 2025-09-30 12:12:08 UTC_
 
 ## Summary
 
-- Total Packages Checked: 23
+- Total Packages Checked: 25
 - Up-to-date: 23
-- Outdated: 0
+- Outdated: 2
 - N/A (no data): 0
 
 
@@ -38,6 +38,7 @@ _Last updated: 2025-09-30 06:27:16 UTC_
 | `erigon` | `3.1.0` | `3.1.0` | ✅ Up-to-date |
 | `geth` | `1.16.4` | `1.16.4` | ✅ Up-to-date |
 | `nethermind` | `1.34.0` | `1.34.0` | ✅ Up-to-date |
+| `nimbus-ec` | `0.2.0` | `nightly` | ❌ Outdated |
 | `reth` | `1.8.1` | `1.8.1` | ✅ Up-to-date |
 
 ### Layer 2
@@ -47,6 +48,7 @@ _Last updated: 2025-09-30 06:27:16 UTC_
 | `arbitrum-nitro` | `3.7.4` | `3.7.4` | ✅ Up-to-date |
 | `fuel-network` | `0.46.0` | `0.46.0` | ✅ Up-to-date |
 | `optimism-op-geth` | `1.101602.3` | `1.101602.3` | ✅ Up-to-date |
+| `optimism-op-node` | `1.13.6` | `1.13.7` | ❌ Outdated |
 | `optimism-op-reth` | `1.8.1` | `1.8.1` | ✅ Up-to-date |
 | `starknet-juno` | `0.15.7` | `0.15.7` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.20.4` | `0.20.4` | ✅ Up-to-date |

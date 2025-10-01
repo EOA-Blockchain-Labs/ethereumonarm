@@ -1,7 +1,6 @@
 # Ethereum on ARM
 
 [![Repository](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/diglos/ethereumonarm)
-[![Discord](https://img.shields.io/discord/789549333344649247?logo=discord&label=Discord&color=7289DA)](https://discord.com/invite/ve2Z8fxz5N)
 [![Twitter](https://img.shields.io/twitter/follow/EthereumOnARM?style=social)](https://twitter.com/EthereumOnARM)
 [![License](https://img.shields.io/github/license/diglos/ethereumonarm)](https://github.com/diglos/ethereumonarm/blob/main/LICENSE)
 [![GitPOAP Badge](https://public-api.gitpoap.io/v1/repo/diglos/ethereumonarm/badge)](https://www.gitpoap.io/gh/diglos/ethereumonarm)

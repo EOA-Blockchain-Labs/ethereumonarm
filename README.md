@@ -30,7 +30,7 @@ Our main goal is to lower the barrier to entry so more people can participate in
 -   NanoPC-T6
 -   Rock 5B
 -   Orange Pi 5 Plus
--   Orange Pi 5
+-   Raspbrery Pi 5
 
 ## 📦 Package Status
 

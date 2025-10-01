@@ -29,6 +29,10 @@ Our main goal is to lower the barrier to entry so more people can participate in
 -   Orange Pi 5 Plus
 -   Orange Pi 5
 
+## 📦 Package Status
+
+For a detailed list of all supported packages and their current status, please see our **[Status Page](https://github.com/EOA-Blockchain-Labs/ethereumonarm/blob/main/STATUS.md)**.
+
 ## 🚀 Installation
 
 To get started, please follow our **[step-by-step installation guide](https://ethereum-on-arm-documentation.readthedocs.io)**.

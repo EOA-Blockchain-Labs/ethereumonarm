@@ -1,12 +1,12 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-09-30 13:41:44 UTC_
+_Last updated: 2025-10-01 03:44:27 UTC_
 
 ## Summary
 
-- Total Packages Checked: 25
-- Up-to-date: 24
-- Outdated: 1
+- Total Packages Checked: 26
+- Up-to-date: 23
+- Outdated: 3
 - N/A (no data): 0
 
 
@@ -15,6 +15,7 @@ _Last updated: 2025-09-30 13:41:44 UTC_
 | Package | Repo Version | GitHub Version | Status |
 |:--------|:-------------|:---------------|:------:|
 | `dvt-obol` | `1.6.1` | `1.6.1` | ✅ Up-to-date |
+| `ethereum-metrics-exporter` | `0.28.3` | `0.28.3` | ✅ Up-to-date |
 | `ethstaker-deposit-cli` | `1.2.2` | `1.2.2` | ✅ Up-to-date |
 | `mev-boost` | `1.9` | `1.9` | ✅ Up-to-date |
 | `staking-deposit-cli` | `2.8.0` | `2.8.0` | ✅ Up-to-date |
@@ -39,7 +40,7 @@ _Last updated: 2025-09-30 13:41:44 UTC_
 | `geth` | `1.16.4` | `1.16.4` | ✅ Up-to-date |
 | `nethermind` | `1.34.0` | `1.34.0` | ✅ Up-to-date |
 | `nimbus-ec` | `0.2.0` | `nightly` | ❌ Outdated |
-| `reth` | `1.8.1` | `1.8.1` | ✅ Up-to-date |
+| `reth` | `1.8.1` | `1.8.2` | ❌ Outdated |
 
 ### Layer 2
 
@@ -49,7 +50,7 @@ _Last updated: 2025-09-30 13:41:44 UTC_
 | `fuel-network` | `0.46.0` | `0.46.0` | ✅ Up-to-date |
 | `optimism-op-geth` | `1.101602.3` | `1.101602.3` | ✅ Up-to-date |
 | `optimism-op-node` | `1.13.7` | `1.13.7` | ✅ Up-to-date |
-| `optimism-op-reth` | `1.8.1` | `1.8.1` | ✅ Up-to-date |
+| `optimism-op-reth` | `1.8.1` | `1.8.2` | ❌ Outdated |
 | `starknet-juno` | `0.15.7` | `0.15.7` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.20.4` | `0.20.4` | ✅ Up-to-date |
 

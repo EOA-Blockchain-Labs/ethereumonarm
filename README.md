@@ -1,34 +1,44 @@
-[![GitPOAP Badge](https://public-api.gitpoap.io/v1/repo/diglos/ethereumonarm/badge)](https://www.gitpoap.io/gh/diglos/ethereumonarm)
-
 # Ethereum on ARM
 
-## Introduction
-Ethereum on ARM provides a plug-and-play (PnP) Ubuntu Armbian image for various ARM64 boards, specifically designed to set up and run both Execution and Consensus clients as Systemd services. This turns the device into a Full Ethereum node or a home Staking box, with a focus on lowering the barriers for running Ethereum L1 or L2 nodes.
-
-## Supported Devices
-- NanoPC-T6
-- Rock 5B
-- Orange Pi 5 Plus
-- Orange Pi 5
-
-## Features
-- **EOA-gui**: A console menu interface for easy setup of L1 or L2 Full/Archive nodes. (Alpha Stage)
-- **Multiple Client Support**: Includes Geth, Erigon, Besu, Nethermind, Reth, Prysm, Nimbus, Teku, Lodestar and Lighthouse.
-- **L2 Support**: Compatibility with Optimism, Arbitrum, Polygon, Starknet, and Gnosis.
-- **Distributed Validator Technology**: Research and implementation for enhanced decentralization.
-- **Client Diversity**: Promotion of minority client adoption.
-- **Advanced Monitoring Solutions**: Ready-to-use Prometheus and Grafana dashboards provide comprehensive monitoring capabilities, allowing for detailed insights and analytics of node performance and network health.
-- **Optimized Operating System Configurations**: The project includes several enhancements over the default Armbian settings, specifically optimized for Ethereum node performance and stability, ensuring a smooth and efficient node operation experience.
+[![Repository](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/diglos/ethereumonarm)
+[![Discord](https://img.shields.io/discord/789549333344649247?logo=discord&label=Discord&color=7289DA)](https://discord.com/invite/ve2Z8fxz5N)
+[![Twitter](https://img.shields.io/twitter/follow/EthereumOnARM?style=social)](https://twitter.com/EthereumOnARM)
+[![License](https://img.shields.io/github/license/diglos/ethereumonarm)](https://github.com/diglos/ethereumonarm/blob/main/LICENSE)
+[![GitPOAP Badge](https://public-api.gitpoap.io/v1/repo/diglos/ethereumonarm/badge)](https://www.gitpoap.io/gh/diglos/ethereumonarm)
 
 
-## Installation
-[Step-by-step guide](https://ethereum-on-arm-documentation.readthedocs.io)
+**Ethereum on ARM** is a project that makes it easy to run a full Ethereum node on low-power ARM devices. We provide Plug-and-Play (PnP) Ubuntu Armbian images for a variety of ARM64 boards, allowing users to easily set up and maintain both execution and consensus nodes.
 
-## Support and Discussion
-Join our [Discord Channel](http://discord.gg/ve2Z8fxz5N) for support and discussion.
+Our main goal is to lower the barrier to entry so more people can participate in the Ethereum network, either by running a full node or by staking from home.
 
-## Stay Updated
-Follow us on [Twitter](https://twitter.com/EthereumOnARM) for the latest updates.
+## ✨ Main Features
 
-## Acknowledgements
-Thanks to our community for their ongoing donations and support.
+-   **Graphical User Interface (EOA-gui)**: A console menu that simplifies the setup of L1/L2 nodes, for both full and archive nodes (currently in alpha).
+-   **Multiple Client Support**:
+    -   **Execution Layer**: Geth, Erigon, Besu, Nethermind, Reth.
+    -   **Consensus Layer**: Prysm, Nimbus, Teku, Lodestar, Lighthouse.
+-   **L2 Support**: Compatible with Optimism, Arbitrum, Starknet, and Gnosis.
+-   **Distributed Validator Technology (DVT)**: We support research and implementation for better decentralization.
+-   **Client Diversity**: We actively promote the use of minority clients.
+-   **Advanced Monitoring**: Ready-to-use dashboards with Prometheus and Grafana for detailed tracking of your node's performance.
+-   **Optimized Operating System**: Custom configurations on top of Armbian to ensure your node is stable and efficient.
+
+## ⚙️ Supported Devices
+
+-   NanoPC-T6
+-   Rock 5B
+-   Orange Pi 5 Plus
+-   Orange Pi 5
+
+## 🚀 Installation
+
+To get started, please follow our **[step-by-step installation guide](https://ethereum-on-arm-documentation.readthedocs.io)**.
+
+## 🤝 Community and Support
+
+-   **Discord**: Join our **[Discord channel](http://discord.gg/ve2Z8fxz5N)** to get help, discuss ideas, or chat with other community members.
+-   **Twitter**: Follow us on **[@EthereumOnARM](https://twitter.com/EthereumOnARM)** to stay updated with the latest news.
+
+## 💖 Acknowledgements
+
+This project is possible thanks to the support and donations from our amazing community. Thank you all!

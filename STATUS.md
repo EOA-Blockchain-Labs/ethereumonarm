@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-10-02 06:05:51 UTC_
+_Last updated: 2025-10-02 12:02:03 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -41,7 +41,7 @@ _Last updated: 2025-10-02 06:05:51 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `besu` | `25.9.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `25.9.0` | ✅ Up-to-date |
-| `erigon` | `3.1.0` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.1.0` | ✅ Up-to-date |
+| `erigon` | `3.2.0` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.2.0` | ✅ Up-to-date |
 | `geth` | `1.16.4` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.4` | ✅ Up-to-date |
 | `nethermind` | `1.34.0` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.34.0` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.2.0` | ❌ Outdated |

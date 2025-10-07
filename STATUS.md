@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-10-06 03:36:15 UTC_
+_Last updated: 2025-10-07 03:33:11 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -13,8 +13,8 @@ _Last updated: 2025-10-06 03:36:15 UTC_
 
 ### Summary
 - Total packages checked: **26**
-- ✅ Up-to-date: **25** (96.2%)
-- ❌ Outdated: **1** (3.8%)
+- ✅ Up-to-date: **24** (92.3%)
+- ❌ Outdated: **2** (7.7%)
 - ❓ N/A: **0** (0.0%)
 
 ### Infra
@@ -43,7 +43,7 @@ _Last updated: 2025-10-06 03:36:15 UTC_
 | `besu` | `25.9.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `25.9.0` | ✅ Up-to-date |
 | `erigon` | `3.2.0` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.2.0` | ✅ Up-to-date |
 | `geth` | `1.16.4` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.4` | ✅ Up-to-date |
-| `nethermind` | `1.34.0` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.34.0` | ✅ Up-to-date |
+| `nethermind` | `1.34.1` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.34.1` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.2.0` | ❌ Outdated |
 | `reth` | `1.8.2` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.8.2` | ✅ Up-to-date |
 ### Layer 2
@@ -53,7 +53,7 @@ _Last updated: 2025-10-06 03:36:15 UTC_
 | `arbitrum-nitro` | `3.7.4` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.7.4` | ✅ Up-to-date |
 | `fuel-network` | `0.46.0` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.46.0` | ✅ Up-to-date |
 | `optimism-op-geth` | `1.101602.3` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101602.3` | ✅ Up-to-date |
-| `optimism-op-node` | `1.13.7` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.13.7` | ✅ Up-to-date |
+| `optimism-op-node` | `0.8.0` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.13.7` | ❌ Outdated |
 | `optimism-op-reth` | `1.8.2` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.8.2` | ✅ Up-to-date |
 | `starknet-juno` | `0.15.7` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.7` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.20.4` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.20.4` | ✅ Up-to-date |

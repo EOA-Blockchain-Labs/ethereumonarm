@@ -97,6 +97,19 @@ normalize_tag() {
   printf '%s\n' "$t"
 }
 
+# --- Special-case ONLY for op-node (ethereum-optimism/optimism monorepo) ---
+# Uses the provided jq pipeline to select the newest release whose tag starts with "op-node/"
+fetch_opnode_version() {
+  local tag
+  tag="$(http_get "https://api.github.com/repos/ethereum-optimism/optimism/releases" \
+    | jq -r '[.[] | select(.tag_name | startswith("op-node/"))] | sort_by(.published_at) | .[-1].tag_name | ltrimstr("op-node/v") // empty' 2>/dev/null || true)"
+  if [[ -n "$tag" && "$tag" != "null" ]]; then
+    printf '%s\n' "$tag"
+  else
+    printf 'N/A\n'
+  fi
+}
+
 fetch_github_release() {
   local repo="$1"
   local tag=""
@@ -188,7 +201,12 @@ compare_group() {
   for repo in "${sorted_repos[@]}"; do
     pkg="${group_ref[$repo]}"; guard_parallel
     (
-      gh_ver="$(fetch_github_release "$repo")"
+      # Only for op-node, use the special fetch from the optimism monorepo
+      if [[ "$repo" == "ethereum-optimism/optimism" && "$pkg" == "optimism-op-node" ]]; then
+        gh_ver="$(fetch_opnode_version)"
+      else
+        gh_ver="$(fetch_github_release "$repo")"
+      fi
       repo_ver="$(get_latest_repo_version "$pkg")"
       print_table_and_store_result "$repo" "$pkg" "$gh_ver" "$repo_ver" "$group_name"
     ) &

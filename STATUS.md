@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-10-09 03:35:03 UTC_
+_Last updated: 2025-10-09 15:58:20 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -13,8 +13,8 @@ _Last updated: 2025-10-09 03:35:03 UTC_
 
 ### Summary
 - Total packages checked: **26**
-- ✅ Up-to-date: **23** (88.5%)
-- ❌ Outdated: **3** (11.5%)
+- ✅ Up-to-date: **25** (96.2%)
+- ❌ Outdated: **1** (3.8%)
 - ❓ N/A: **0** (0.0%)
 
 ### Infra
@@ -32,7 +32,7 @@ _Last updated: 2025-10-09 03:35:03 UTC_
 |:--------|:-------------------|:------------------------|:------:|
 | `grandine` | `1.1.5` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `1.1.5` | ✅ Up-to-date |
 | `lighthouse` | `7.1.0` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `7.1.0` | ✅ Up-to-date |
-| `lodestar` | `1.35.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.34.1` | ❌ Outdated |
+| `lodestar` | `1.35.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.35.0` | ✅ Up-to-date |
 | `nimbus` | `25.9.2` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.9.2` | ✅ Up-to-date |
 | `prysm` | `6.1.1` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `6.1.1` | ✅ Up-to-date |
 | `teku` | `25.9.3` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.9.3` | ✅ Up-to-date |
@@ -62,4 +62,4 @@ _Last updated: 2025-10-09 03:35:03 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `bee` | `2.6.0` ([ethersphere/bee](https://github.com/ethersphere/bee)) | `2.6.0` | ✅ Up-to-date |
-| `kubo` | `0.38.1` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.38.0` | ❌ Outdated |
+| `kubo` | `0.38.1` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.38.1` | ✅ Up-to-date |

@@ -1,0 +1,12 @@
+[Unit]
+Description=Pathfinder StarkNet node
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/pathfinder.conf
+ExecStart=/usr/bin/pathfinder $ARGS
+Restart=always
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target

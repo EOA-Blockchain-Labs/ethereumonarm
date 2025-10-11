@@ -8,6 +8,7 @@ EnvironmentFile=/etc/ethereum/prysm-validator-mev.conf
 ExecStart=/usr/bin/validator $ARGS
 Restart=always
 User=ethereum
+SyslogIdentifier=prysm-validator-mev
 
 [Install]
 WantedBy=multi-user.target

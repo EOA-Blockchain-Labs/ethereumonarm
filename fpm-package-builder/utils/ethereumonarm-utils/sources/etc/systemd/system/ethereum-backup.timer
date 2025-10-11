@@ -1,0 +1,13 @@
+[Unit]
+Description=Run Ethereum data backup daily
+
+[Timer]
+# Runs once a day, shortly after midnight.
+OnCalendar=daily
+# If the computer was off, run the job as soon as it boots up.
+Persistent=true
+# Spreads out jobs to avoid all "daily" tasks running at once.
+RandomizedDelaySec=1h
+
+[Install]
+WantedBy=timers.target

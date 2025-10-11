@@ -8,6 +8,7 @@ EnvironmentFile=/etc/ethereum/dvt/prysm-validator-obol-lido.conf
 ExecStart=/usr/bin/validator $ARGS
 Restart=always
 User=ethereum
+SyslogIdentifier=prysm-validator-obol-lido
 
 [Install]
 WantedBy=multi-user.target

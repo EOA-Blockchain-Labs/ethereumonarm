@@ -7,6 +7,7 @@ EnvironmentFile=/etc/ethereum/grandine-validator.conf
 ExecStart=/usr/bin/grandine $ARGS
 Restart=always
 User=ethereum
+SyslogIdentifier=grandine-validator
 
 [Install]
 WantedBy=multi-user.target

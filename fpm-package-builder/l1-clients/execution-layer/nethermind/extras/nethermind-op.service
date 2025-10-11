@@ -9,6 +9,7 @@ ExecStart=/usr/bin/nethermind $ARGS
 Restart=on-failure
 WorkingDirectory=/home/ethereum
 LimitNOFILE=1000000
+SyslogIdentifier=nethermind-op
 
 [Install]
 WantedBy=default.target

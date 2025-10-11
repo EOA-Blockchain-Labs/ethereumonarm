@@ -7,6 +7,7 @@ EnvironmentFile=/etc/ethereum/nimbus-beacon-holesky.conf
 ExecStart=/usr/bin/nimbus_beacon_node $ARGS
 Restart=always
 User=ethereum
+SyslogIdentifier=nimbus-beacon-holesky
 
 [Install]
 WantedBy=multi-user.target

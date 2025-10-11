@@ -8,6 +8,8 @@ EnvironmentFile=/etc/ethereum/prysm-validator-hoodi-mev.conf
 ExecStart=/usr/bin/validator $ARGS
 Restart=always
 User=ethereum
+SyslogIdentifier=prysm-validator-hoodi-mev
+
 
 [Install]
 WantedBy=multi-user.target

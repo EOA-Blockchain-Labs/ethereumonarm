@@ -7,6 +7,7 @@ EnvironmentFile=/etc/ethereum/prysm-beacon-mev.conf
 ExecStart=/usr/bin/beacon-chain $ARGS
 Restart=always
 User=ethereum
+SyslogIdentifier=prysm-beacon-mev
 
 [Install]
 WantedBy=multi-user.target

@@ -7,6 +7,7 @@ EnvironmentFile=/etc/ethereum/teku-validator-mev.conf
 ExecStart=/usr/bin/teku $ARGS
 Restart=always
 User=ethereum
+SyslogIdentifier=teku-validator-mev
 
 [Install]
 WantedBy=multi-user.target

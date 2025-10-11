@@ -4,7 +4,7 @@
 [![Release](https://img.shields.io/github/v/release/EOA-Blockchain-Labs/ethereumonarm)](https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases)
 [![Docs](https://img.shields.io/badge/Docs-Read%20the%20Docs-3a7bd5?logo=readthedocs)](https://ethereum-on-arm-documentation.readthedocs.io)
 [![Discord](https://img.shields.io/badge/Discord-Join%20Server-7289DA?logo=discord&logoColor=white)](https://discord.gg/ve2Z8fxz5N)
-[![Twitter](https://img.shields.io/twitter/follow/EthereumOnARM?style=social)](https://twitter.com/EthereumOnARM)
+[![Twitter](https://img.shields.io/twitter/follow/EthereumOnARM?style=social)](https://x.com/EthereumOnARM)
 [![Bluesky](https://img.shields.io/badge/Bluesky-Follow-0085FF?logo=bluesky&logoColor=white)](https://bsky.app/profile/ethereumonarm.bsky.social)
 [![Farcaster](https://img.shields.io/badge/Farcaster-Follow-8A63D2?logo=farcaster&logoColor=white)](https://farcaster.xyz/ethereumonarm)
 [![License](https://img.shields.io/github/license/diglos/ethereumonarm)](https://github.com/diglos/ethereumonarm/blob/main/LICENSE)
@@ -56,7 +56,7 @@ To get started, please follow our
 
 - **Discord**: Join our **[Discord channel](https://discord.gg/ve2Z8fxz5N)** to
   get help, discuss ideas, or chat with other community members.
-- **Twitter**: Follow us on **[@EthereumOnARM](https://twitter.com/EthereumOnARM)**
+- **X/Twitter**: Follow us on **[@EthereumOnARM](https://x.com/EthereumOnARM)**
   to stay updated with the latest news.
 
 ## 💖 Acknowledgements

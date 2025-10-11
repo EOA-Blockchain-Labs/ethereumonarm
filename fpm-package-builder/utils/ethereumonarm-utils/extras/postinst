@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+
+# Reload systemd, enable and start the timer
+echo "Reloading systemd"
+systemctl daemon-reload
+
+exit 0

@@ -7,6 +7,7 @@ EnvironmentFile=/etc/ethereum/nimbus-validator-hoodi-mev.conf
 ExecStart=/usr/bin/nimbus_validator_client $ARGS
 Restart=always
 User=ethereum
+SyslogIdentifier=nimbus-validator-hoodi-mev
 
 [Install]
 WantedBy=multi-user.target

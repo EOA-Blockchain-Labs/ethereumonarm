@@ -11,6 +11,7 @@ User=ethereum
 KillSignal=SIGTERM 
 TimeoutStopSec=600
 LimitNOFILE=32768
+SyslogIdentifier=fuel
 
 [Install]
 WantedBy=multi-user.target

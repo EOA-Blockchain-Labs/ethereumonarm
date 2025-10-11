@@ -1,0 +1,38 @@
+name: Update Package Status
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *'
+
+jobs:
+  update-status:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      
+      # 1. Checks out your repository's code AND its submodules
+      - name: Check out repository and submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+      
+      # 2. (MOVED UP) Pull latest changes to avoid conflicts
+      - name: Pull latest changes
+        run: git pull --rebase origin main
+      
+      # 3. (MOVED DOWN) Run the script to generate the status file
+      - name: Run version check script
+        run: |
+          bash ./fpm-package-builder/tools/get_versions.sh -m STATUS.md -t ${{ secrets.REPO_GITHUB_TOKEN }}
+      
+      # 4. Commits the changes to the repository if the file has been modified
+      - name: Commit and push if changed
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'docs(status): Auto-update package versions'
+          file_pattern: STATUS.md
+          commit_user_name: 'GitHub Actions Bot'
+          commit_user_email: 'github-actions[bot]@users.noreply.github.com'

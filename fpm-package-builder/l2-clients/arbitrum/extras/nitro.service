@@ -10,6 +10,8 @@ Restart=always
 User=ethereum
 KillSignal=SIGTERM 
 TimeoutStopSec=600
+SyslogIdentifier=arbitrum-nitro
+
 
 [Install]
 WantedBy=multi-user.target

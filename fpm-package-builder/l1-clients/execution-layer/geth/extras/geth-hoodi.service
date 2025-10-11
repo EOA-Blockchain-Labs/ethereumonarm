@@ -9,6 +9,7 @@ Restart=always
 User=ethereum
 KillSignal=SIGTERM 
 TimeoutStopSec=1200
+SyslogIdentifier=geth-hoodi
 
 [Install]
 WantedBy=multi-user.target

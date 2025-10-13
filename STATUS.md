@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-10-12 03:36:07 UTC_
+_Last updated: 2025-10-13 03:44:20 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).

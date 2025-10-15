@@ -136,7 +136,7 @@ tee /etc/systemd/timesyncd.conf.d/eoa.conf >/dev/null <<EOF
 
 [Time]
 # Use Google's public NTP servers for reliable time sources.
-NTP=time1.google.com time2.google.com time3.google.com time4.google.comhttps://forocoches.com/foro/forumdisplay.php?f=2
+NTP=time1.google.com time2.google.com time3.google.com time4.google.com
 # Adjust polling intervals: how often the system checks with the NTP servers.
 # PollIntervalMinSec: Minimum time between checks (16 seconds).
 # PollIntervalMaxSec: Maximum time between checks (64 seconds).
@@ -203,14 +203,31 @@ add-apt-repository -y -n "deb http://apt.ethereumonarm.com noble main" || {
     exit 1
 }
 
-echo "Adding the Grafana program repository to the system's sources..."
-# Download Grafana's GPG key, de-armor it (convert from ASCII to binary), and save it.
-wget -q -O - https://packages.grafana.com/gpg.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/grafana.gpg >/dev/null
-# Add the Grafana repository details to a new sources list file.
-echo "deb https://packages.grafana.com/oss/deb stable main" | tee /etc/apt/sources.list.d/grafana.list || {
-    echo "Failed to add the Grafana software repository. Stopping."
-    exit 1
-}
+
+echo "Cleaning up old Grafana keys from the deprecated apt-key keyring..."
+# Find the short ID of any key containing 'Grafana Labs' in the deprecated keyring.
+OLD_GRAFANA_KEY_ID=$(sudo apt-key list 2>/dev/null | grep -i 'Grafana Labs' -B 1 | head -n 1 | awk '{print $NF}' | cut -d/ -f2 | tail -c 9)
+if [ -n "$OLD_GRAFANA_KEY_ID" ]; then
+    # Delete the old key using the automatically found ID.
+    echo "Found old Grafana key ID in apt keyring: ${OLD_GRAFANA_KEY_ID}. Deleting it..."
+    sudo apt-key del "$OLD_GRAFANA_KEY_ID"
+else
+    echo "No old Grafana key found in the deprecated apt keyring. Skipping deletion."
+fi
+# Remove an old key file if it exists in a common deprecated location.
+sudo rm -f /usr/share/keyrings/grafana.key
+
+# Create the new secure keyring directory if it doesn't exist.
+mkdir -p /etc/apt/keyrings/
+
+# Download Grafana's GPG key, de-armor it (convert from ASCII to binary), and save it to the NEW, SECURE location.
+wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg >/dev/null
+
+# Add the Grafana repository details to a new sources list file using the secure 'signed-by' method.
+echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee /etc/apt/sources.list.d/grafana.list || {
+     echo "Failed to add the Grafana software repository. Stopping."
+     exit 1
+ }
 
 # Update the program list again to include packages from the newly added repositories.
 echo "Updating program lists again to include new repositories..."

@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-10-16 03:38:35 UTC_
+_Last updated: 2025-10-17 03:36:01 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -40,9 +40,9 @@ _Last updated: 2025-10-16 03:38:35 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
-| `besu` | `25.9.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `25.9.0` | ✅ Up-to-date |
+| `besu` | `25.10.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `25.10.0` | ✅ Up-to-date |
 | `erigon` | `3.2.0` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.2.0` | ✅ Up-to-date |
-| `geth` | `1.16.4` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.4` | ✅ Up-to-date |
+| `geth` | `1.16.5` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.5` | ✅ Up-to-date |
 | `nethermind` | `1.34.1` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.34.1` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.2.0` | ❌ Outdated |
 | `reth` | `1.8.2` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.8.2` | ✅ Up-to-date |
@@ -56,7 +56,7 @@ _Last updated: 2025-10-16 03:38:35 UTC_
 | `optimism-op-node` | `1.14.1` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.14.1` | ✅ Up-to-date |
 | `optimism-op-reth` | `1.8.2` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.8.2` | ✅ Up-to-date |
 | `starknet-juno` | `0.15.8` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.8` | ✅ Up-to-date |
-| `starknet-pathfinder` | `0.20.4` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.20.4` | ✅ Up-to-date |
+| `starknet-pathfinder` | `0.20.5` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.20.5` | ✅ Up-to-date |
 ### Web3
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |

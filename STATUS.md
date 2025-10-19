@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-10-18 03:31:03 UTC_
+_Last updated: 2025-10-19 03:48:36 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -51,7 +51,7 @@ _Last updated: 2025-10-18 03:31:03 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `arbitrum-nitro` | `3.7.6` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.7.6` | ✅ Up-to-date |
-| `fuel-network` | `0.46.0` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.46.0` | ✅ Up-to-date |
+| `fuel-network` | `0.47.0` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.47.0` | ✅ Up-to-date |
 | `optimism-op-geth` | `1.101603.1` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101603.1` | ✅ Up-to-date |
 | `optimism-op-node` | `1.14.1` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.14.1` | ✅ Up-to-date |
 | `optimism-op-reth` | `1.8.2` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.8.2` | ✅ Up-to-date |

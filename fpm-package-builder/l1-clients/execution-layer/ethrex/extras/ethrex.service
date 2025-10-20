@@ -1,0 +1,12 @@
+[Unit]
+Description=Ethereum Ethrex client daemon
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/ethrex.conf
+ExecStart=/usr/bin/ethrex $ARGS
+Restart=always
+User=ethereum
+SyslogIdentifier=ethrex
+[Install]
+WantedBy=multi-user.target

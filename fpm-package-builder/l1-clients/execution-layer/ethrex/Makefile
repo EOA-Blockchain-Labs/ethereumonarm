@@ -4,7 +4,7 @@ SHELL := /bin/bash
 # Using 'lambdaclass/ethrex' instead of 'erigontech/erigon'.
 ETHREX_VERSION := $(shell curl -sL "https://api.github.com/repos/lambdaclass/ethrex/releases/latest" | jq -r '.tag_name' | tr -d 'v')
 
-PKG_RELEASE := 1
+PKG_RELEASE := 2
 PKG_NAME := ethrex
 
 PKG_DESCRIPTION := "Ethrex Go implementation of the Ethereum protocol (execution client)"
@@ -28,7 +28,8 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(ETHREX_VERSION) --license $(PKG_LICEN
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
---deb-systemd extras/ethrex.service
+--deb-systemd extras/ethrex.service --deb-systemd extras/ethrex-holesky.service\
+--deb-systemd extras/ethrex-sepolia.service --deb-systemd extras/ethrex-hoodi.service
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(ETHREX_VERSION) --license $(PKG_LICENSE)\
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\

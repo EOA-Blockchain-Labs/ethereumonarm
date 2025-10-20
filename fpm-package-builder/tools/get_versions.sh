@@ -289,6 +289,7 @@ declare -A layer1_execution=(
   [NethermindEth/nethermind]=nethermind
   [paradigmxyz/reth]=reth
   [status-im/nimbus-eth1]=nimbus-ec
+  [lambdaclass/ethrex]=ethrex
 )
 declare -A layer2=(
   [OffchainLabs/nitro]=arbitrum-nitro

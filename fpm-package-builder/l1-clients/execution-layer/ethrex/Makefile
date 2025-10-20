@@ -4,7 +4,7 @@ SHELL := /bin/bash
 # Using 'lambdaclass/ethrex' instead of 'erigontech/erigon'.
 ETHREX_VERSION := $(shell curl -sL "https://api.github.com/repos/lambdaclass/ethrex/releases/latest" | jq -r '.tag_name' | tr -d 'v')
 
-PKG_RELEASE := 0
+PKG_RELEASE := 1
 PKG_NAME := ethrex
 
 PKG_DESCRIPTION := "Ethrex Go implementation of the Ethereum protocol (execution client)"

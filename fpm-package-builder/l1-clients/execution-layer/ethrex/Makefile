@@ -7,7 +7,7 @@ ETHREX_VERSION := $(shell curl -sL "https://api.github.com/repos/lambdaclass/eth
 PKG_RELEASE := 2
 PKG_NAME := ethrex
 
-PKG_DESCRIPTION := "Ethrex Go implementation of the Ethereum protocol (execution client)"
+PKG_DESCRIPTION := "Ethrex is a minimalist, stable, modular and fast implementation of the Ethereum protocol built to lower the barrier to entry in the crypto ecosystem"
 PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
 CATEGORY := science
 WEB_URL := https://github.com/lambdaclass/ethrex

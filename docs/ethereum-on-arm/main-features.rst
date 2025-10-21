@@ -12,7 +12,7 @@ These are the main features of Ethereum on ARM images:
 * Manages and configures swap memory to help avoid memory-related problems.
 * Pre-configured support for a wide range of Ethereum clients and related technologies, including:
 
-  * **Execution Layer Clients**: Geth, Erigon, Besu, Nethermind, Reth
+  * **Execution Layer Clients**: Geth, Erigon, Besu, Nethermind, Reth, EthRex
   * **Consensus Layer Clients**: Lighthouse, Prysm, Nimbus, Teku, Lodestar, Grandine
   * **L2 Solutions**: Optimism, Arbitrum, Starknet (Juno), Gnosis, Fuel
   * **Staking & DVT**: Lido and Obol

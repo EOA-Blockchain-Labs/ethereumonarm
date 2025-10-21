@@ -5,7 +5,7 @@ Wants=ethrex-l2.service
 
 [Service]
 EnvironmentFile=/etc/ethereum/ethrex-l2-prover.conf
-ExecStart=/usr/bin/ethrex-l2 prover $ARGS
+ExecStart=/usr/bin/ethrex-l2 l2 prover $ARGS
 Restart=always
 User=ethereum
 KillSignal=SIGTERM

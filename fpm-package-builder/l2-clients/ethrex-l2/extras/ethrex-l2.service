@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/ethrex-l2.conf
-ExecStart=/usr/bin/ethrex-l2 $ARGS
+ExecStart=/usr/bin/ethrex-l2 l2 $ARGS
 Restart=always
 User=ethereum
 KillSignal=SIGTERM

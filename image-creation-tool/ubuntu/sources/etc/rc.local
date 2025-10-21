@@ -111,7 +111,7 @@ export DEBIAN_FRONTEND=noninteractive
 BASE_PACKAGES="apt-utils nginx bash-completion file gdisk gpg parted net-tools rsync software-properties-common dphys-swapfile ufw vim wget kitty-terminfo"
 # These are various Ethereum client implementations and related tools.
 # This list includes clients for different layers (execution, consensus) and networks (e.g., Arbitrum, Optimism).
-ETHEREUM_PACKAGES="arbitrum-nitro besu dvt-obol erigon ethstaker-deposit-cli ethereumonarm-utils fuel-network geth grandine lighthouse lodestar ls-lido mev-boost nethermind nimbus optimism-op-geth optimism-op-node prysm reth starknet-juno teku"
+ETHEREUM_PACKAGES="arbitrum-nitro besu dvt-obol erigon ethstaker-deposit-cli ethereumonarm-utils ethrex fuel-network geth grandine lighthouse lodestar ls-lido mev-boost nethermind nimbus optimism-op-geth optimism-op-node prysm reth starknet-juno teku"
 # These packages are for monitoring the Ethereum node's performance and system health.
 MONITORING_PACKAGES="ethereumonarm-monitoring-extras grafana prometheus prometheus-node-exporter"
 # Nginx is a web server, often used as a reverse proxy. These packages include Nginx and related configurations.

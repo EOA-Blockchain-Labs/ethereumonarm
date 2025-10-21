@@ -4,7 +4,7 @@ SHELL := /bin/bash
 # Using 'lambdaclass/ethrex' instead of 'erigontech/erigon'.
 ETHREX_VERSION := $(shell curl -sL "https://api.github.com/repos/lambdaclass/ethrex/releases/latest" | jq -r '.tag_name' | tr -d 'v')
 
-PKG_RELEASE := 2
+PKG_RELEASE := 0
 PKG_NAME := ethrex
 
 PKG_DESCRIPTION := "Ethrex is a minimalist, stable, modular and fast implementation of the Ethereum protocol built to lower the barrier to entry in the crypto ecosystem"
@@ -41,7 +41,7 @@ all: prepare deb clean test
 prepare: ## Download the latest binary and prepare the package files
 	# WARNING: This DOWNLOAD URL is an assumption.
 	# Please verify the actual file name format on the Ethrex releases page.
-	wget https://github.com/lambdaclass/ethrex/releases/download/v$(ETHREX_VERSION)/ethrex-linux_aarch64 -O sources/usr/bin/ethrex
+	wget https://github.com/lambdaclass/ethrex/releases/download/v$(ETHREX_VERSION)/ethrex-linux-aarch64 -O sources/usr/bin/ethrex
 	chmod +x sources/usr/bin/ethrex
 
 deb: ## Create deb package

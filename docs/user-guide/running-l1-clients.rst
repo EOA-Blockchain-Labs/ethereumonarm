@@ -292,13 +292,17 @@ Ethereum on ARM supports all available Execution Layer clients.
 
    `Geth`, `Yes`, `Go`, geth.ethereum.org_
    `Nethermind`, `Yes`, `.NET`, nethermind.io_
-   `Erigon`,`No (crosscompiled)`, `Go`, `github.com/ledgerwatch/erigon`_
+   `Erigon`, `Yes`, `Go`, `github.com/ledgerwatch/erigon`_
    `Hyperledger Besu`, `Yes`, `Java`, hyperledger.org_
+   `EthRex`, `Yes`, `Rust`, ethrex.xyz_
+
 
 .. _geth.ethereum.org: https://geth.ethereum.org
 .. _nethermind.io: https://nethermind.io
 .. _github.com/ledgerwatch/erigon: https://github.com/ledgerwatch/erigon
 .. _hyperledger.org: https://hyperledger.org/use/besu
+.. _ethrex.io: https://ethrex.xyz/
+
 
 .. warning::
 
@@ -359,6 +363,25 @@ In order to start the client run:
 .. prompt:: bash $
 
   sudo systemctl start besu
+
+EthRex
+~~~~~~
+
+:guilabel:`EthRex` is a lightweight, performant, and modular Ethereum execution client powering next-gen L1 and L2 solutions.
+
+.. csv-table::
+  :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
+
+  `ethrex`, `/home/ethereum/.ethrex`, `/etc/ethereum/ethrex.conf`, `30303`
+
+In order to start the client run:
+
+.. prompt:: bash $
+
+  sudo systemctl start ethrex
+
+.. note::
+   :guilabel:`EthRex` is new in Ethereum on ARM ecosystem, and still under testing 
 
 Erigon
 ~~~~~~

@@ -24,8 +24,8 @@ the Ethereum network, either by running a full node or by staking from home.
 - **Graphical User Interface (EOA-gui)**: A console menu that simplifies the
   setup of L1/L2 nodes, for both full and archive nodes (currently in alpha).
 - **Multiple client support**:
-  - **Execution layer**: Geth, Erigon, Besu, Nethermind, Reth.
-  - **Consensus layer**: Prysm, Nimbus, Teku, Lodestar, Lighthouse.
+  - **Execution layer**: Geth, Erigon, Besu, Nethermind, Reth and EthRex.
+  - **Consensus layer**: Prysm, Nimbus, Teku, Lodestar, Lighthouse and Grandine.
 - **L2 support**: Compatible with Optimism, Arbitrum, Starknet, and Gnosis.
 - **Distributed Validator Technology (DVT)**: We support research and
   implementation for better decentralization.

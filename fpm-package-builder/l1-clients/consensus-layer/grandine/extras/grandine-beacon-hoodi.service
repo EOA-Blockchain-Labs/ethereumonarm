@@ -1,14 +1,17 @@
 [Unit]
-Description=Grandine Beacon chain daemon
-After=network.target
+Description=Grandine Beacon chain daemon (Hoodi)
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/grandine-beacon-hoodi.conf
 ExecStart=/usr/bin/grandine $ARGS
-Restart=always
+Restart=on-failure
+RestartSec=5
 User=ethereum
 SyslogIdentifier=grandine-beacon-hoodi
+LimitNOFILE=65536
+LimitNPROC=65536
 
 [Install]
 WantedBy=multi-user.target
-

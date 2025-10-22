@@ -1,17 +1,17 @@
 [Unit]
-Description=Lighthouse Beacon chain daemon (Holesky)
+Description=Lighthouse Validator client daemon (Sepolia-mev)
 # Waits for a full network connection
 After=network-online.target
 Wants=network-online.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/lighthouse-beacon-holesky.conf
+EnvironmentFile=/etc/ethereum/lighthouse-validator-sepolia-mev.conf
 ExecStart=/usr/bin/lighthouse $ARGS
-# Reliable restart policy
+# This policy will auto-retry if the beacon isn't ready
 Restart=on-failure
 RestartSec=5
 User=ethereum
-SyslogIdentifier=lighthouse-beacon-holesky
+SyslogIdentifier=lighthouse-validator-sepolia-mev
 # Increased resource limits
 LimitNOFILE=65536
 LimitNPROC=65536

@@ -32,10 +32,10 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(LIGHTHOUSE_VERSION) --license $(PKG_L
 	--deb-systemd extras/lighthouse-beacon.service --deb-systemd extras/lighthouse-validator.service\
 	--deb-systemd extras/lighthouse-beacon-mev.service --deb-systemd extras/lighthouse-validator-mev.service\
 	--deb-systemd extras/lighthouse-beacon-holesky.service --deb-systemd extras/lighthouse-validator-holesky.service\
-	--deb-systemd extras/lighthouse-beacon-gnosis.service --deb-systemd extras/lighthouse-validator-gnosis.service\
+	--deb-systemd extras/lighthouse-beacon-sepolia.service --deb-systemd extras/lighthouse-validator-sepolia.service\
+	--deb-systemd extras/lighthouse-beacon-sepolia-mev.service --deb-systemd extras/lighthouse-validator-sepolia-mev.service\
 	--deb-systemd extras/lighthouse-beacon-hoodi.service --deb-systemd extras/lighthouse-validator-hoodi.service\
 	--deb-systemd extras/lighthouse-beacon-hoodi-mev.service --deb-systemd extras/lighthouse-validator-hoodi-mev.service\
-	--deb-systemd extras/lighthouse-validator-hoodi-mev.service\
 	--depends merge-config
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(LIGHTHOUSE_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\

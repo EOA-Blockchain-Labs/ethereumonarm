@@ -1,14 +1,20 @@
 [Unit]
-Description=Lighthouse Beacon chain daemon
-After=network.target
+Description=Lighthouse Beacon chain daemon (Mainnet-mev)
+# Waits for a full network connection
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/lighthouse-beacon-mev.conf
 ExecStart=/usr/bin/lighthouse $ARGS
-Restart=always
+# Reliable restart policy
+Restart=on-failure
+RestartSec=5
 User=ethereum
 SyslogIdentifier=lighthouse-beacon-mev
+# Increased resource limits
+LimitNOFILE=65536
+LimitNPROC=65536
 
 [Install]
 WantedBy=multi-user.target
-

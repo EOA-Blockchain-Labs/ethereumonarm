@@ -9,7 +9,7 @@ You can choose several Layer 2 solutions to run an Ethereum L2 node:
 * Optimism_
 * Starknet_
 * Gnosis_
-* Ethrex
+* Ethrex_
 
 .. _Fuel: https://fuel.network/
 .. _Polygon: https://polygon.technology/

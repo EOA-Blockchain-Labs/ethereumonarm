@@ -6,8 +6,7 @@ Wants=network-online.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/lodestar-beacon-hoodi-mev.conf
-# Fix: Includes $NODE_OPTIONS for memory management
-ExecStart=/usr/bin/lodestar $NODE_OPTIONS $ARGS
+ExecStart=/usr/bin/lodestar $ARGS
 # Reliable restart policy
 Restart=on-failure
 RestartSec=5

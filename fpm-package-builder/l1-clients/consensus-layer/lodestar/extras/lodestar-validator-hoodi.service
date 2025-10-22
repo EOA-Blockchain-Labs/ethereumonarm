@@ -6,8 +6,7 @@ Wants=network-online.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/lodestar-validator-hoodi.conf
-# Fix: Includes $NODE_OPTIONS for memory management
-ExecStart=/usr/bin/lodestar $NODE_OPTIONS $ARGS
+ExecStart=/usr/bin/lodestar $ARGS
 # This policy will auto-retry if the beacon isn't ready
 Restart=on-failure
 RestartSec=5

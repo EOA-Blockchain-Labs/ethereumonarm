@@ -1,14 +1,17 @@
 [Unit]
-Description=Grandine Beacon chain daemon
-After=network.target
+Description=Grandine Validator client daemon (Hoodi)
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/grandine-validator-hoodi.conf
 ExecStart=/usr/bin/grandine $ARGS
-Restart=always
+Restart=on-failure
+RestartSec=5
 User=ethereum
 SyslogIdentifier=grandine-validator-hoodi
+LimitNOFILE=65536
+LimitNPROC=65536
 
 [Install]
 WantedBy=multi-user.target
-

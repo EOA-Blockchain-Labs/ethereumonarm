@@ -1,18 +1,18 @@
 [Unit]
-Description=Lodestar Validator daemon (Mainnet)
+Description=Lodestar Beacon chain daemon (Hoodi)
 # Waits for a full network connection
 After=network-online.target
 Wants=network-online.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/lodestar-validator.conf
+EnvironmentFile=/etc/ethereum/lodestar-beacon-hoodi.conf
 # Fix: Includes $NODE_OPTIONS for memory management
 ExecStart=/usr/bin/lodestar $NODE_OPTIONS $ARGS
-# This policy will auto-retry if the beacon isn't ready
+# Reliable restart policy
 Restart=on-failure
 RestartSec=5
 User=ethereum
-SyslogIdentifier=lodestar-validator
+SyslogIdentifier=lodestar-beacon-hoodi
 # Increased resource limits
 LimitNOFILE=65536
 LimitNPROC=65536

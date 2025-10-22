@@ -9,6 +9,7 @@ You can choose several Layer 2 solutions to run an Ethereum L2 node:
 * Optimism_
 * Starknet_
 * Gnosis_
+* Ethrex
 
 .. _Fuel: https://fuel.network/
 .. _Polygon: https://polygon.technology/
@@ -16,6 +17,7 @@ You can choose several Layer 2 solutions to run an Ethereum L2 node:
 .. _Optimism: https://www.optimism.io/
 .. _Starknet: https://www.starknet.io/
 .. _Gnosis: https://www.gnosis.io/
+.. _EthRex: https://ethrex.xyz
 
 As explained in the Node Types section there are various L2 technologies to 
 scale the Ethereum blockchain and lower the transaction fees.
@@ -94,8 +96,8 @@ In order to run an Ethrex L2 node you need to:
 3. Start the Ethrex L2 Sequencer and Prover systemd services
 
 
-1. Sync an Ethereum L1 node
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1. Sync an Ethereum L1 node.
+
 
 As with all rollups, an Ethrex L2 node requires access to a synced Ethereum Layer 1 node (Execution + Consensus). 
 You can run any L1 combination available in the Running L1 Clients section — for example Geth + Nimbus or Ethrex + Prysm.
@@ -106,7 +108,7 @@ You can run any L1 combination available in the Running L1 Clients section — f
 
 
 2. Installation
-~~~~~~~~~~~~~~~
+
 
 Install the ethrex-l2 package from the Ethereum on ARM repositories:
 
@@ -126,7 +128,7 @@ This package installs:
 
 
 3. Configure
-~~~~~~~~~~~~
+
 
 Edit /etc/ethereum/ethrex-l2.conf and make sure the following parameters are correctly set:
 
@@ -144,9 +146,7 @@ Edit /etc/ethereum/ethrex-l2.conf and make sure the following parameters are cor
    --metrics.port 9092
    --datadir /home/ethereum/.ethrex-l2
 
-
 4. Start the Sequencer
-~~~~~~~~~~~~~~~~~~~~~~
 
 Once configured, start the Ethrex L2 Sequencer service:
 
@@ -166,7 +166,6 @@ Example output:
 
 
 5. Start the Prover
-~~~~~~~~~~~~~~~~~~~
 
 The Ethrex L2 Prover generates and submits validity proofs for each batch committed by the sequencer.
 
@@ -180,7 +179,6 @@ For production, you can switch to SP1 or RISC0 backends in /etc/ethereum/ethrex-
 
 
 6. Verify that everything is running
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Check the sequencer RPC:
 
@@ -200,7 +198,6 @@ The value should increase every few seconds as new L2 blocks are produced.
 
 
 7. Manage services
-~~~~~~~~~~~~~~~~~~
 
 .. prompt:: bash $
 
@@ -211,7 +208,6 @@ The value should increase every few seconds as new L2 blocks are produced.
 
 
 Notes
-~~~~~
 
 - Default JWT secret path: /etc/ethereum/jwtsecret
 - Validium mode (no state diffs on L1): add --validium in /etc/ethereum/ethrex-l2.conf
@@ -220,7 +216,6 @@ Notes
 
 
 Quick start
-~~~~~~~~~~~
 
 .. prompt:: bash $
 

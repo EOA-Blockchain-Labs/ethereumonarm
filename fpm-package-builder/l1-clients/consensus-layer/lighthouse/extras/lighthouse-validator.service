@@ -1,14 +1,20 @@
 [Unit]
-Description=Lighthouse Validator chain daemon
-After=network.target
+Description=Lighthouse Validator client daemon (Mainnet)
+# Waits for a full network connection
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/lighthouse-validator.conf
 ExecStart=/usr/bin/lighthouse $ARGS
-Restart=always
+# This policy will auto-retry if the beacon isn't ready
+Restart=on-failure
+RestartSec=5
 User=ethereum
 SyslogIdentifier=lighthouse-validator
+# Increased resource limits
+LimitNOFILE=65536
+LimitNPROC=65536
 
 [Install]
 WantedBy=multi-user.target
-

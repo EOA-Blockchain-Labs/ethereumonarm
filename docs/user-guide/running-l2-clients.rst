@@ -76,6 +76,163 @@ You can check out the logs by running:
 
   sudo journalctl -u fuel -f
 
+
+Ethrex
+------
+
+Ethrex is a minimalist, modular, and high-performance implementation of the Ethereum protocol developed by LambdaClass. 
+It supports both Layer 1 and Layer 2 operation modes, enabling developers and node operators to deploy their own rollups, 
+sequencers, and provers on affordable ARM hardware.
+
+Ethrex L2 focuses on simplicity and speed while maintaining full compatibility with the Ethereum stack, offering native 
+support for snap-sync, metrics, auth-RPC, and proof coordination.
+
+In order to run an Ethrex L2 node you need to:
+
+1. Run and sync an Ethereum mainnet or testnet node
+2. Install the ethrex-l2 package
+3. Start the Ethrex L2 Sequencer and Prover systemd services
+
+
+1. Sync an Ethereum L1 node
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As with all rollups, an Ethrex L2 node requires access to a synced Ethereum Layer 1 node (Execution + Consensus). 
+You can run any L1 combination available in the Running L1 Clients section — for example Geth + Nimbus or Ethrex + Prysm.
+
+.. note::
+   The Ethrex L2 client is configured by default to connect to a local L1 node through the HTTP RPC and Beacon API.
+   If your L1 node runs on a different machine, update its IP and ports in /etc/ethereum/ethrex-l2.conf.
+
+
+2. Installation
+~~~~~~~~~~~~~~~
+
+Install the ethrex-l2 package from the Ethereum on ARM repositories:
+
+.. prompt:: bash $
+
+   sudo apt-get update && sudo apt-get install ethrex-l2
+
+This package installs:
+
+- The Ethrex L2 binary (/usr/bin/ethrex-l2)
+- Two systemd services:
+  - ethrex-l2.service → Sequencer
+  - ethrex-l2-prover.service → Prover
+- Default configuration files under /etc/ethereum/:
+  - /etc/ethereum/ethrex-l2.conf
+  - /etc/ethereum/ethrex-l2-prover.conf
+
+
+3. Configure
+~~~~~~~~~~~~
+
+Edit /etc/ethereum/ethrex-l2.conf and make sure the following parameters are correctly set:
+
+.. code-block:: bash
+
+   --eth.rpc-url https://sepolia.infura.io/v3/<YOUR_INFURA_KEY>
+   --l1.on-chain-proposer-address 0x1111111111111111111111111111111111111111
+   --l1.bridge-address 0x2222222222222222222222222222222222222222
+   --committer.l1-private-key 0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+   --proof-coordinator.l1-private-key 0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+   --block-producer.coinbase-address 0x3333333333333333333333333333333333333333
+   --http.addr 0.0.0.0
+   --http.port 1729
+   --metrics
+   --metrics.port 9092
+   --datadir /home/ethereum/.ethrex-l2
+
+
+4. Start the Sequencer
+~~~~~~~~~~~~~~~~~~~~~~
+
+Once configured, start the Ethrex L2 Sequencer service:
+
+.. prompt:: bash $
+
+   sudo systemctl start ethrex-l2
+   sudo journalctl -u ethrex-l2 -f
+
+Example output:
+
+.. code-block:: text
+
+   INFO ethrex_l2::sequencer: Connected to L1 RPC https://sepolia.infura.io/v3/...
+   INFO ethrex_l2::p2p: Connected peers: 45
+   INFO ethrex_l2::commit: New batch committed to L1 block #XXXXXXX
+   INFO ethrex_l2::sequencer: Block 0xabc123… produced (gas_used=8,100,000)
+
+
+5. Start the Prover
+~~~~~~~~~~~~~~~~~~~
+
+The Ethrex L2 Prover generates and submits validity proofs for each batch committed by the sequencer.
+
+.. prompt:: bash $
+
+   sudo systemctl start ethrex-l2-prover
+   sudo journalctl -u ethrex-l2-prover -f
+
+By default it connects to the local proof coordinator (tcp://127.0.0.1:3900) and uses the exec backend. 
+For production, you can switch to SP1 or RISC0 backends in /etc/ethereum/ethrex-l2-prover.conf.
+
+
+6. Verify that everything is running
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Check the sequencer RPC:
+
+.. prompt:: bash $
+
+   curl http://localhost:1729 \
+        -H 'content-type: application/json' \
+        -d '{"jsonrpc":"2.0","method":"eth_blockNumber","id":"1","params":[]}'
+
+Expected result:
+
+.. code-block:: json
+
+   {"id":"1","jsonrpc":"2.0","result":"0x5"}
+
+The value should increase every few seconds as new L2 blocks are produced.
+
+
+7. Manage services
+~~~~~~~~~~~~~~~~~~
+
+.. prompt:: bash $
+
+   sudo systemctl stop ethrex-l2
+   sudo systemctl stop ethrex-l2-prover
+   sudo systemctl enable ethrex-l2 ethrex-l2-prover
+   sudo journalctl -u ethrex-l2* -f
+
+
+Notes
+~~~~~
+
+- Default JWT secret path: /etc/ethereum/jwtsecret
+- Validium mode (no state diffs on L1): add --validium in /etc/ethereum/ethrex-l2.conf
+- Both services use the ethereum user
+- Data stored at /home/ethereum/.ethrex-l2/
+
+
+Quick start
+~~~~~~~~~~~
+
+.. prompt:: bash $
+
+   sudo apt-get update && sudo apt-get install ethrex-l2
+   sudo systemctl start ethrex-l2
+   sudo systemctl start ethrex-l2-prover
+   curl http://localhost:1729 -H 'content-type: application/json' \
+        -d '{"jsonrpc":"2.0","method":"eth_blockNumber","id":"1","params":[]}'
+
+
+Congrats, your Ethrex L2 Sequencer and Prover are now running on your Ethereum on ARM device.
+
 Polygon
 -------
 

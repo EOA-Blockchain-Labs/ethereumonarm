@@ -29,12 +29,8 @@ PKG_DEB := $(PKG_NAME)_$(LODESTAR_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(LODESTAR_VERSION) --license $(PKG_LICENSE)\
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-	--deb-systemd extras/lodestar-beacon.service --deb-systemd extras/lodestar-validator.service \
-	--deb-systemd extras/lodestar-beacon-mev.service --deb-systemd extras/lodestar-validator-mev.service\
-	--deb-systemd extras/lodestar-beacon-sepolia.service --deb-systemd extras/lodestar-validator-sepolia.service\
-	--deb-systemd extras/lodestar-beacon-sepolia-mev.service --deb-systemd extras/lodestar-validator-sepolia-mev.service\
-	--deb-systemd extras/lodestar-beacon-hoodi.service --deb-systemd extras/lodestar-validator-hoodi.service\
-	--deb-systemd extras/lodestar-beacon-hoodi-mev.service --deb-systemd extras/lodestar-validator-hoodi-mev.service
+	$(shell find extras -name 'lodestar-*.service' -printf "--deb-systemd %p ") \
+	--depends merge-config
 
 
 all: prepare deb clean test

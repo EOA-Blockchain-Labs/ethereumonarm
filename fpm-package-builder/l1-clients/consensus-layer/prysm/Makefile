@@ -29,18 +29,7 @@ PKG_DEB := ${PKG_NAME}_${PRYSM_VERSION}-${PKG_RELEASE}_${PKG_ARCH_DEB}.deb
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\
 	-a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-	--deb-systemd extras/prysm-beacon.service --deb-systemd extras/prysm-validator.service\
-	--deb-systemd extras/prysm-beacon-mev.service --deb-systemd extras/prysm-validator-mev.service\
-	--deb-systemd extras/prysm-beacon-hoodi.service --deb-systemd extras/prysm-validator-hoodi.service\
-	--deb-systemd extras/prysm-beacon-gnosis.service --deb-systemd extras/prysm-validator-gnosis.service\
-	--deb-systemd extras/prysm-beacon-hoodi-mev.service --deb-systemd extras/prysm-validator-hoodi-mev.service\
-	--deb-systemd extras/prysm-beacon-holesky.service --deb-systemd extras/prysm-validator-holesky.service\
-	--conflicts prysm-beacon\
-	--conflicts prysm-validator\
-	--provides prysm-beacon\
-	--provides prysm-validator\
-	--replaces prysm-beacon\
-	--replaces prysm-validator\
+	$(shell find extras -name 'prysm-*.service' -printf "--deb-systemd %p ") \
 	--depends merge-config
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(PRYSM_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\

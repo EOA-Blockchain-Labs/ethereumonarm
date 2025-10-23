@@ -1,5 +1,5 @@
 [Unit]
-Description=Teku Beacon chain daemon (Mainne)
+Description=Teku Beacon chain daemon (Mainnet)
 After=network-online.target
 Wants=network-online.target
 

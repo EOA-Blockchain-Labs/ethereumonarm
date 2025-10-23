@@ -29,10 +29,7 @@ PKG_DEB := $(PKG_NAME)_$(GRANDINE_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(GRANDINE_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\
 	-a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-	--deb-systemd extras/grandine-beacon.service --deb-systemd extras/grandine-validator.service \
-	--deb-systemd extras/grandine-beacon-sepolia.service \
-	--deb-systemd extras/grandine-beacon-hoodi.service --deb-systemd extras/grandine-validator-hoodi.service \
-	--deb-systemd extras/grandine-validator-sepolia.service \
+	$(shell find extras -name 'grandine-*.service' -printf "--deb-systemd %p ") \
 	--depends merge-config
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(GRANDINE_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\

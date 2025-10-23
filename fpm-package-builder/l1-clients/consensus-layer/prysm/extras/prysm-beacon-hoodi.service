@@ -1,14 +1,20 @@
 [Unit]
-Description=Prysm Beacon chain daemon
-After=network.target
+Description=Prysm Beacon chain daemon Hoodi
+
+After=network-online.target
+Wants=network-online.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/prysm-beacon-hoodi.conf
+EnvironmentFile=/etc/ethereum/prysm-beacon-hooodi.conf
 ExecStart=/usr/bin/beacon-chain $ARGS
-Restart=always
+
+Restart=on-failure
+RestartSec=5
 User=ethereum
 SyslogIdentifier=prysm-beacon-hoodi
 
+LimitNOFILE=65536
+LimitNPROC=65536
+
 [Install]
 WantedBy=multi-user.target
-

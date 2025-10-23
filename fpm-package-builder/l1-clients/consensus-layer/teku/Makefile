@@ -31,8 +31,11 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(TEKU_VERSION) --license $(PKG_LICENSE
 	--deb-systemd extras/teku-beacon.service --deb-systemd extras/teku-validator.service \
 	--deb-systemd extras/teku-beacon-mev.service --deb-systemd extras/teku-validator-mev.service \
 	--deb-systemd extras/teku-beacon-holesky.service --deb-systemd extras/teku-validator-holesky.service\
+	--deb-systemd extras/teku-beacon-holesky-mev.service --deb-systemd extras/teku-validator-holesky-mev.service\
 	--deb-systemd extras/teku-beacon-hoodi.service --deb-systemd extras/teku-validator-hoodi.service\
 	--deb-systemd extras/teku-beacon-hoodi-mev.service --deb-systemd extras/teku-validator-hoodi-mev.service\
+	--deb-systemd extras/teku-beacon-sepolia.service --deb-systemd extras/teku-validator-sepolia.service\
+	--deb-systemd extras/teku-beacon-sepolia-mev.service --deb-systemd extras/teku-validator-sepolia-mev.service\
 	--depends openjdk-21-jre-headless\
 	--depends merge-config
 

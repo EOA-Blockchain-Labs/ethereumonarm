@@ -5,6 +5,7 @@ Wants=network-online.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/teku-beacon-holesky-mev.conf
+Environment="JAVA_OPTS=-Xmx5g"
 ExecStart=/usr/bin/teku $ARGS
 Restart=on-failure
 RestartSec=5

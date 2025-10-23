@@ -4,6 +4,7 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
+Environment="JAVA_OPTS=-Xmx5g"
 EnvironmentFile=/etc/ethereum/teku-beacon-holesky.conf
 ExecStart=/usr/bin/teku $ARGS
 Restart=on-failure

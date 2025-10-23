@@ -1,15 +1,15 @@
 [Unit]
-Description=Teku Beacon chain daemon (Holesky)
+Description=Teku Beacon chain daemon (Sepolia)
 After=network-online.target
 Wants=network-online.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/teku-beacon-holesky.conf
+EnvironmentFile=/etc/ethereum/teku-beacon-sepolia.conf
 ExecStart=/usr/bin/teku $ARGS
 Restart=on-failure
 RestartSec=5
 User=ethereum
-SyslogIdentifier=teku-beacon-holesky
+SyslogIdentifier=teku-beacon-sepolia
 LimitNOFILE=65536
 LimitNPROC=65536
 

@@ -1,13 +1,17 @@
 [Unit]
-Description=Ethereum Teku client daemon
-After=network.target
+Description=Teku Validator daemon (Mainnet-mev)
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/teku-validator-mev.conf
 ExecStart=/usr/bin/teku $ARGS
-Restart=always
+Restart=on-failure
+RestartSec=5
 User=ethereum
 SyslogIdentifier=teku-validator-mev
+LimitNOFILE=65536
+LimitNPROC=65536
 
 [Install]
 WantedBy=multi-user.target

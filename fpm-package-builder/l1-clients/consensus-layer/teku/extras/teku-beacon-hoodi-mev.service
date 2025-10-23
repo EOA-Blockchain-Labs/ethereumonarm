@@ -1,14 +1,17 @@
 [Unit]
-Description=Ethereum Teku client daemon
-After=network.target
+Description=Teku Beacon chain daemon (Hoodi-mev)
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/teku-beacon-hoodi-mev.conf
 ExecStart=/usr/bin/teku $ARGS
-Restart=always
+Restart=on-failure
+RestartSec=5
 User=ethereum
 SyslogIdentifier=teku-beacon-hoodi-mev
-
+LimitNOFILE=65536
+LimitNPROC=65536
 
 [Install]
 WantedBy=multi-user.target

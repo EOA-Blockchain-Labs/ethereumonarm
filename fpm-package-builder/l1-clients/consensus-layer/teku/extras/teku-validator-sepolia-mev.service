@@ -1,15 +1,15 @@
 [Unit]
-Description=Teku Beacon chain daemon (Holesky)
+Description=Teku Validator daemon (Sepolia-mev)
 After=network-online.target
 Wants=network-online.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/teku-beacon-holesky.conf
+EnvironmentFile=/etc/ethereum/teku-validator-sepolia-mev.conf
 ExecStart=/usr/bin/teku $ARGS
 Restart=on-failure
 RestartSec=5
 User=ethereum
-SyslogIdentifier=teku-beacon-holesky
+SyslogIdentifier=teku-validator-sepolia-mev
 LimitNOFILE=65536
 LimitNPROC=65536
 

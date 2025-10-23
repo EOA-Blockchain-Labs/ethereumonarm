@@ -1,16 +1,15 @@
-
 [Unit]
-Description=Nimbus Beacon chain daemon (Mainnet)
+Description=Nimbus Beacon chain daemon (Sepolia-mev)
 After=network-online.target
 Wants=network-online.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/nimbus-beacon-mev.conf
+EnvironmentFile=/etc/ethereum/nimbus-beacon-sepolia-mev.conf
 ExecStart=/usr/bin/nimbus_beacon_node $ARGS
 Restart=on-failure
 RestartSec=5
 User=ethereum
-SyslogIdentifier=nimbus-beacon-mev
+SyslogIdentifier=nimbus-beacon-sepolia-mev
 LimitNOFILE=65536
 LimitNPROC=65536
 

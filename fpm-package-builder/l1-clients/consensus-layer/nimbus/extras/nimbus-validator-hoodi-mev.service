@@ -1,14 +1,17 @@
 [Unit]
-Description=Nimbus Beacon chain daemon
-After=network.target
+Description=Nimbus Validator client (Hoodi-mev)
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/nimbus-validator-hoodi-mev.conf
 ExecStart=/usr/bin/nimbus_validator_client $ARGS
-Restart=always
+Restart=on-failure
+RestartSec=5
 User=ethereum
 SyslogIdentifier=nimbus-validator-hoodi-mev
+LimitNOFILE=65536
+LimitNPROC=65536
 
 [Install]
 WantedBy=multi-user.target
-

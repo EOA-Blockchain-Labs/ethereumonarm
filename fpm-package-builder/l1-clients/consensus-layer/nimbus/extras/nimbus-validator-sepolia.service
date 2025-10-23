@@ -1,15 +1,15 @@
 [Unit]
-Description=Nimbus Validator client (Mainnet-mev)
+Description=Nimbus Validator client (Sepolia)
 After=network-online.target
 Wants=network-online.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/nimbus-validator-mev.conf
+EnvironmentFile=/etc/ethereum/nimbus-validator-sepolia.conf
 ExecStart=/usr/bin/nimbus_validator_client $ARGS
 Restart=on-failure
 RestartSec=5
 User=ethereum
-SyslogIdentifier=nimbus-validator-mev
+SyslogIdentifier=nimbus-validator-sepolia
 LimitNOFILE=65536
 LimitNPROC=65536
 

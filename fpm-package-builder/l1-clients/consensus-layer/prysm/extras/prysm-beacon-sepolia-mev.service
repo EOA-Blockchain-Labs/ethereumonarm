@@ -1,17 +1,17 @@
 [Unit]
-Description=Prysm Validator daemon (Mainnet-mev)
+Description=Prysm Beacon chain daemon Sepolia-mev
 
 After=network-online.target
 Wants=network-online.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/prysm-validator-mev.conf
-ExecStart=/usr/bin/validator $ARGS
+EnvironmentFile=/etc/ethereum/prysm-beacon-sepolia-mev.conf
+ExecStart=/usr/bin/beacon-chain $ARGS
 
 Restart=on-failure
 RestartSec=5
 User=ethereum
-SyslogIdentifier=prysm-validator-mev
+SyslogIdentifier=prysm-beacon-sepolia-mev
 
 LimitNOFILE=65536
 LimitNPROC=65536

@@ -1,15 +1,20 @@
 [Unit]
-Description=Prysm Validator daemon
-After=network.target
-Requires=prysm-beacon.service
+Description=Prysm Validator daemon (Mainnet)
+
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/prysm-validator.conf
 ExecStart=/usr/bin/validator $ARGS
-Restart=always
+
+Restart=on-failure
+RestartSec=5
 User=ethereum
 SyslogIdentifier=prysm-validator
 
+LimitNOFILE=65536
+LimitNPROC=65536
+
 [Install]
 WantedBy=multi-user.target
-

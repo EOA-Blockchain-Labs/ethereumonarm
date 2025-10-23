@@ -1,15 +1,15 @@
 [Unit]
-Description=Nimbus Validator client (Mainnet-mev)
+Description=Nimbus Validator client (Holesky-mev)
 After=network-online.target
 Wants=network-online.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/nimbus-validator-mev.conf
+EnvironmentFile=/etc/ethereum/nimbus-validator-holesky-mev.conf
 ExecStart=/usr/bin/nimbus_validator_client $ARGS
 Restart=on-failure
 RestartSec=5
 User=ethereum
-SyslogIdentifier=nimbus-validator-mev
+SyslogIdentifier=nimbus-validator-holesky-mev
 LimitNOFILE=65536
 LimitNPROC=65536
 

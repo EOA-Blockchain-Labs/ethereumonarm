@@ -1,18 +1,18 @@
 [Unit]
-Description=Ethereum geth client daemon (Holesky)
+Description=Ethereum geth client daemon (Sepolia)
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Environment="GODEBUG=netdns=go"
-EnvironmentFile=/etc/ethereum/geth-holesky.conf
+EnvironmentFile=/etc/ethereum/geth-sepolia.conf
 ExecStart=/usr/bin/geth $ARGS
 Restart=on-failure
 RestartSec=5
 User=ethereum
 KillSignal=SIGTERM 
-TimeoutStopSec=600
-SyslogIdentifier=geth-holesky
+TimeoutStopSec=1200
+SyslogIdentifier=geth-sepolia
 LimitNOFILE=65536
 LimitNPROC=65536
 

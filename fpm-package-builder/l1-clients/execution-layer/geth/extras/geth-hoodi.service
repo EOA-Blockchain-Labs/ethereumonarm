@@ -1,16 +1,20 @@
 [Unit]
-Description=Ethereum geth client daemon by The Ethereum Foundation
-After=network.target
+Description=Ethereum geth client daemon (Hoodi)
+After=network-online.target
+Wants=network-online.target
 
 [Service]
+Environment="GODEBUG=netdns=go"
 EnvironmentFile=/etc/ethereum/geth-hoodi.conf
 ExecStart=/usr/bin/geth $ARGS
-Restart=always
+Restart=on-failure
+RestartSec=5
 User=ethereum
 KillSignal=SIGTERM 
 TimeoutStopSec=1200
 SyslogIdentifier=geth-hoodi
+LimitNOFILE=65536
+LimitNPROC=65536
 
 [Install]
 WantedBy=multi-user.target
-

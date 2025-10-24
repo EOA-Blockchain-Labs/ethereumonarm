@@ -1,0 +1,18 @@
+[Unit]
+Description=Grandine Beacon chain daemon
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/grandine-beacon-mev.conf
+ExecStart=/usr/bin/grandine $ARGS
+Restart=on-failure
+RestartSec=5
+User=ethereum
+SyslogIdentifier=grandine-beacon-mev
+LimitNOFILE=65536
+LimitNPROC=65536
+
+[Install]
+WantedBy=multi-user.target
+

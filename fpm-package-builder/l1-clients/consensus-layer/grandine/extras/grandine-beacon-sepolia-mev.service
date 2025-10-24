@@ -1,0 +1,17 @@
+[Unit]
+Description=Grandine Beacon chain daemon (Sepolia)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/grandine-beacon-sepolia.conf
+ExecStart=/usr/bin/grandine $ARGS
+Restart=on-failure
+RestartSec=5
+User=ethereum
+SyslogIdentifier=grandine-beacon-sepolia
+LimitNOFILE=65536
+LimitNPROC=65536
+
+[Install]
+WantedBy=multi-user.target

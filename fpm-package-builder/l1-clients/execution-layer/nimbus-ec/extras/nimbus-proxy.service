@@ -1,13 +1,17 @@
 [Unit]
 Description=Nimbus Proxy daemon
-After=network.target
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/nimbus-proxy.conf
 ExecStart=/usr/bin/nimbus_verified_proxy $ARGS
-Restart=always
+Restart=on-failure
+RestartSec=5
 User=ethereum
-SyslogIdentifier=nimbus-verirified-proxy
+SyslogIdentifier=nimbus-verified-proxy
+LimitNOFILE=65536
+LimitNPROC=65536
 
 [Install]
 WantedBy=multi-user.target

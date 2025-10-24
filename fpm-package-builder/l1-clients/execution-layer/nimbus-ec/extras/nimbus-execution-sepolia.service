@@ -1,13 +1,17 @@
 [Unit]
-Description=Nimbus Execution client daemon
-After=network.target
+Description=Nimbus Execution client daemon (Sepolia)
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/nimbus-execution-sepolia.conf
 ExecStart=/usr/bin/nimbus_execution_client $ARGS
-Restart=always
+Restart=on-failure
+RestartSec=5
 User=ethereum
 SyslogIdentifier=nimbus-execution-sepolia
+LimitNOFILE=65536
+LimitNPROC=65536
 
 [Install]
 WantedBy=multi-user.target

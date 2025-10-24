@@ -5,7 +5,7 @@ Wants=network-online.target
 
 [Service]
 Environment="GODEBUG=netdns=go"
-EnvironmentFile=/etc/ethereum/erigon-sepollia.conf
+EnvironmentFile=/etc/ethereum/erigon-sepolia.conf
 ExecStart=/usr/bin/erigon $ARGS
 Restart=on-failure
 RestartSec=5
@@ -16,4 +16,3 @@ LimitNPROC=65536
 
 [Install]
 WantedBy=multi-user.target
-

@@ -28,13 +28,13 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(ETHREX_VERSION) --license $(PKG_LICEN
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
---deb-systemd extras/ethrex.service --deb-systemd extras/ethrex-holesky.service\
---deb-systemd extras/ethrex-sepolia.service --deb-systemd extras/ethrex-hoodi.service
+$(shell find extras -name 'ethrex-*.service' -printf "--deb-systemd %p ")
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(ETHREX_VERSION) --license $(PKG_LICENSE)\
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_RPM)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
+$(shell find extras -name 'ethrex-*.service' -printf "--rpm-systemd %p ")
 
 all: prepare deb clean test
 
@@ -63,4 +63,4 @@ test:
 	fi
 
 help: ## List targets.
-	"$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"
+	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

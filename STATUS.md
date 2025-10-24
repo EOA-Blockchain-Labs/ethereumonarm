@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-10-23 03:38:20 UTC_
+_Last updated: 2025-10-24 03:35:51 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -13,8 +13,8 @@ _Last updated: 2025-10-23 03:38:20 UTC_
 
 ### Summary
 - Total packages checked: **27**
-- ✅ Up-to-date: **24** (88.9%)
-- ❌ Outdated: **3** (11.1%)
+- ✅ Up-to-date: **25** (92.6%)
+- ❌ Outdated: **2** (7.4%)
 - ❓ N/A: **0** (0.0%)
 
 ### Infra
@@ -35,7 +35,7 @@ _Last updated: 2025-10-23 03:38:20 UTC_
 | `lodestar` | `1.35.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.35.0` | ✅ Up-to-date |
 | `nimbus` | `25.9.2` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.9.2` | ✅ Up-to-date |
 | `prysm` | `6.1.3` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `6.1.3` | ✅ Up-to-date |
-| `teku` | `25.10.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.9.3` | ❌ Outdated |
+| `teku` | `25.10.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.10.0` | ✅ Up-to-date |
 ### Layer 1 Execution
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |

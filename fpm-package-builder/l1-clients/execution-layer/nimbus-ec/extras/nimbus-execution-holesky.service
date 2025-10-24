@@ -5,7 +5,7 @@ Wants=network-online.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/nimbus-execution-holesky.conf
-ExecStart=/usr/bin/nimbus_execution_.client $ARGS
+ExecStart=/usr/bin/nimbus_execution_client $ARGS
 Restart=on-failure
 RestartSec=5
 User=ethereum

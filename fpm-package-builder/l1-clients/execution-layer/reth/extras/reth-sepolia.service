@@ -1,17 +1,17 @@
 [Unit]
-Description=Ethereum reth client daemon (Hoodi)
+Description=Ethereum reth client daemon (Sepolia)
 After=network-online.target
 Wants=network-online.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/reth-hoodi.conf
+EnvironmentFile=/etc/ethereum/reth-sepolia.conf
 ExecStart=/usr/bin/reth $ARGS
 Restart=on-failure
 RestartSec=5
 User=ethereum
 KillSignal=SIGTERM 
 TimeoutStopSec=600
-SyslogIdentifier=reth-hoodi
+SyslogIdentifier=reth-sepolia
 LimitNOFILE=65536
 LimitNPROC=65536
 

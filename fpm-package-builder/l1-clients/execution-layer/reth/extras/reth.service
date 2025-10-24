@@ -1,16 +1,19 @@
 [Unit]
-Description=Ethereum reth client daemon by Paradigm team
-After=network.target
+Description=Ethereum reth client daemon (Mainnet)
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/reth.conf
 ExecStart=/usr/bin/reth $ARGS
-Restart=always
+Restart=on-failure
+RestartSec=5
 User=ethereum
 KillSignal=SIGTERM 
 TimeoutStopSec=600
 SyslogIdentifier=reth
+LimitNOFILE=65536
+LimitNPROC=65536
 
 [Install]
 WantedBy=multi-user.target
-

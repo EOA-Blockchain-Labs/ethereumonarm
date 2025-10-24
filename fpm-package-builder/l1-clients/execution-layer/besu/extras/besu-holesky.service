@@ -1,13 +1,18 @@
 [Unit]
-Description=Ethereum Besu client daemon
-After=network.target
+Description=Ethereum Besu client daemon (Holesky)
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/besu-holesky.conf
+Environment="JAVA_OPTS=-Xmx5g"
 ExecStart=/usr/bin/besu $ARGS
-Restart=always
+Restart=on-failure
+RestartSec=5
 User=ethereum
 SyslogIdentifier=besu-holesky
+LimitNOFILE=65536
+LimitNPROC=65536
 
 [Install]
 WantedBy=multi-user.target

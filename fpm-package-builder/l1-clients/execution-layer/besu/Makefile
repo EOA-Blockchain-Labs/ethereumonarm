@@ -28,19 +28,20 @@ PKG_DEB := $(PKG_NAME)_$(BESU_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(BESU_VERSION) --license $(PKG_LICENSE)\
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-	--deb-systemd extras/besu.service --deb-systemd extras/besu-holesky.service --deb-systemd extras/besu-hoodi.service\
+	$(shell find extras -name 'besu-*.service' -printf "--deb-systemd %p ") \
 	--depends openjdk-21-jre-headless\
 	--depends "libsecp256k1-0|libsecp256k1-1"\
 	--depends merge-config\
-	--depends libjemalloc-dev\
-	--replaces hyperledger-besu\
-	--conflicts hyperledger-besu\
-	--provides hyperledger-besu
+	--depends libjemalloc-dev
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(BESU_VERSION) --license $(PKG_LICENSE)\
 	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_RPM) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-
+	$(shell find extras -name 'besu-*.service' -printf "--rpm-systemd %p ") \
+	--depends openjdk-21-jre-headless\
+	--depends "libsecp256k1-0 | libsecp256k1-1"\
+	--depends merge-config\
+	--depends libjemalloc-devel
 
 all: prepare deb clean test
 

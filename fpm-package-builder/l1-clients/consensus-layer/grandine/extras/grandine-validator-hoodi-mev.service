@@ -1,0 +1,17 @@
+[Unit]
+Description=Grandine Validator client daemon (Hoodi-mev)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/grandine-validator-hoodi-mev.conf
+ExecStart=/usr/bin/grandine $ARGS
+Restart=on-failure
+RestartSec=5
+User=ethereum
+SyslogIdentifier=grandine-validator-hoodi-mev
+LimitNOFILE=65536
+LimitNPROC=65536
+
+[Install]
+WantedBy=multi-user.target

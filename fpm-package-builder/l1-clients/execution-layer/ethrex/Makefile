@@ -28,13 +28,13 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(ETHREX_VERSION) --license $(PKG_LICEN
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-$(shell find extras -name 'ethrex-*.service' -printf "--deb-systemd %p ")
+$(shell find extras -name 'ethrex*.service' -printf "--deb-systemd %p ")
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(ETHREX_VERSION) --license $(PKG_LICENSE)\
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_RPM)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-$(shell find extras -name 'ethrex-*.service' -printf "--rpm-systemd %p ")
+$(shell find extras -name 'ethrex*.service' -printf "--rpm-systemd %p ")
 
 all: prepare deb clean test
 

@@ -1,16 +1,16 @@
 [Unit]
-Description=Ethereum Besu client daemon (Mainnet)
+Description=Ethereum Besu client daemon (Sepolia)
 After=network-online.target
 Wants=network-online.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/besu.conf
+EnvironmentFile=/etc/ethereum/besu-sepolia.conf
 Environment="JAVA_OPTS=-Xmx5g"
 ExecStart=/usr/bin/besu $ARGS
 Restart=on-failure
 RestartSec=5
 User=ethereum
-SyslogIdentifier=besu
+SyslogIdentifier=besu-sepolia
 LimitNOFILE=65536
 LimitNPROC=65536
 

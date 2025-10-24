@@ -1,18 +1,18 @@
 [Unit]
-Description=Nethermind Ethereum ECL Daemon (Optimism)
+Description=Nethermind Ethereum Daemon (Sepolia)
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 User=ethereum
-EnvironmentFile=/etc/ethereum/nethermind-op.conf
+EnvironmentFile=/etc/ethereum/nethermind-sepolia.conf
 ExecStart=/usr/bin/nethermind $ARGS
 Restart=on-failure
 RestartSec=5
 WorkingDirectory=/home/ethereum
 LimitNOFILE=1000000
 LimitNPROC=65536
-SyslogIdentifier=nethermind-op
+SyslogIdentifier=nethermind-sepolia
 
 [Install]
 WantedBy=multi-user.target

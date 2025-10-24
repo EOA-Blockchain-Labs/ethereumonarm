@@ -32,9 +32,7 @@ PKG_DEB := $(PKG_NAME)_$(NETHERMIND_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
 FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(NETHERMIND_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
 	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) -p $(OUTPUTDIR)\
 	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -x */.gitkeep\
-	--deb-systemd extras/nethermind.service --deb-systemd extras/nethermind-hoodi.service\
-	--deb-systemd extras/nethermind-holesky.service --deb-systemd extras/nethermind-gnosis.service\
-	--deb-systemd extras/nethermind-op.service --deb-systemd extras/nethermind-base.service\
+	$(shell find extras -name 'nethermind-*.service' -printf "--deb-systemd %p ") \
 	--deb-user ethereum\
 	--deb-group ethereum\
 	--directories /opt/nethermind\

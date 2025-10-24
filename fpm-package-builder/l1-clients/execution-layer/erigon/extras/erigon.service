@@ -1,14 +1,18 @@
 [Unit]
-Description=Ethereum Erigon client daemon
-After=network.target
+Description=Ethereum Erigon client daemon (Mainnet)
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Environment="GODEBUG=netdns=go"
 EnvironmentFile=/etc/ethereum/erigon.conf
 ExecStart=/usr/bin/erigon $ARGS
-Restart=always
+Restart=on-failure
+RestartSec=5
 User=ethereum
 SyslogIdentifier=erigon
+LimitNOFILE=65536
+LimitNPROC=65536
+
 [Install]
 WantedBy=multi-user.target
-

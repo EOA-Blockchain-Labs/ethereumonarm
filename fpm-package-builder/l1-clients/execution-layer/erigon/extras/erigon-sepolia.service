@@ -1,18 +1,19 @@
 [Unit]
-Description=Ethereum Erigon client daemon (Hoodi)
+Description=Ethereum Erigon client daemon (Sepolia)
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Environment="GODEBUG=netdns=go"
-EnvironmentFile=/etc/ethereum/erigon-hoodi.conf
+EnvironmentFile=/etc/ethereum/erigon-sepollia.conf
 ExecStart=/usr/bin/erigon $ARGS
 Restart=on-failure
 RestartSec=5
 User=ethereum
-SyslogIdentifier=erigon-hoodi
+SyslogIdentifier=erigon-sepolia
 LimitNOFILE=65536
 LimitNPROC=65536
 
 [Install]
 WantedBy=multi-user.target
+

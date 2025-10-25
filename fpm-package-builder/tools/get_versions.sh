@@ -306,6 +306,7 @@ declare -A infra=(
   [ObolNetwork/charon]=dvt-obol
   [flashbots/mev-boost]=mev-boost
   [ethpandaops/ethereum-metrics-exporter]=ethereum-metrics-exporter
+  [flashbots/mev-boost]=mev-boost
 )
 declare -A web3=(
   [ipfs/kubo]=kubo

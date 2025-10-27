@@ -158,6 +158,33 @@ separator
 echo -e "${BOLD}${BLUE}DISK USAGE${NC}"
 df -h --output=source,fstype,size,used,avail,pcent,target
 
+separator
+echo -e "${BOLD}${BLUE}USB DEVICES${NC}"
+if command -v lsusb >/dev/null; then
+    lsusb || echo "No USB devices detected or lsusb failed."
+else
+    echo "lsusb not installed"
+fi
+
+separator
+echo -e "${BOLD}${BLUE}LOADED KERNEL MODULES${NC}"
+lsmod | head -n 50
+echo -e "${YELLOW}(showing first 50 entries)${NC}"
+
+separator
+echo -e "${BOLD}${BLUE}PROCESS INFORMATION${NC}"
+total_procs=$(ps -e --no-headers | wc -l)
+echo -e "Total running processes: ${YELLOW}${total_procs}${NC}"
+ps -eo pid,ppid,comm,%cpu,%mem --sort=-%cpu | head -n 10 | \
+awk -v bold="$BOLD" -v nc="$NC" 'NR==1 { printf bold "%-6s %-6s %-30s %-6s %-6s\n", "PID", "PPID", "COMMAND", "%CPU", "%MEM" nc; next }
+{ printf "%-6s %-6s %-30s %-6s %-6s\n", $1, $2, $3, $4, $5 }'
+echo -e "${YELLOW}(top 10 processes by CPU)${NC}"
+
+separator
+echo -e "${BOLD}${BLUE}INTERRUPTS (TOP 30)${NC}"
+head -n 1 /proc/interrupts
+grep -v "^CPU" /proc/interrupts | head -n 30 || echo "Interrupt data not available."
+
 # ============================================================
 #  SECTION 2: NETWORK INFORMATION
 # ============================================================

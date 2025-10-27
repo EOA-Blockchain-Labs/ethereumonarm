@@ -10,8 +10,6 @@ Troubleshooting
 If you run into some issue with the image installation or running the Ethereum on ARM node, please **follow these
 steps** in order to solve the issue or get assistance.
 
-.. rubric:: EOA Check Script
-
 EOA Check script
 ----------------
 

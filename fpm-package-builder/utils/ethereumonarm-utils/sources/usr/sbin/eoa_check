@@ -231,7 +231,7 @@ apt-get --just-print upgrade 2>/dev/null | grep -Eo 'Inst [^ ]+' || echo "No pen
 
 separator
 echo -e "${BOLD}${BLUE}INSTALLED EOA PACKAGES${NC}"
-dpkg -l | grep -E 'ethereumonarm|eoa-|ethrex|reth|nimbus|lighthouse|teku|lodestar|prysm|erigon' || echo "No EOA packages found"
+dpkg -l | grep -E '(^ii\s)?(ethereumonarm|eoa-|ethrex(-l2)?|reth|geth|besu|erigon(-externalcl)?|nethermind|lighthouse|lodestar|nimbus|prysm|teku|grandine|charon|obol)' || echo "No EOA packages found"
 
 separator
 echo -e "${BOLD}${BLUE}LISTENING PORTS${NC}"
@@ -242,47 +242,70 @@ ss -tunlp | awk -v bold="$BOLD" -v nc="$NC" 'BEGIN{print bold"Proto\tLocal Addre
 # ============================================================
 section "ETHEREUM SOFTWARE"
 
-separator
-if id "ethereum" &>/dev/null; then
-    echo -e "User check ${GREEN}PASS${NC} (ethereum user exists)"
-else
-    echo -e "${RED}User 'ethereum' does not exist${NC}"
-fi
 
 separator
-echo -e "${BOLD}${BLUE}ETHEREUM CLIENTS${NC}"
-consensus_layer="grandine-beacon lodestar-beacon prysm-beacon teku-beacon lighthouse-beacon nimbus-beacon"
-execution_layer="reth geth besu nethermind ethrex nimbus-execution"
-consensus_is_running=false
-execution_is_running=false
+echo -e "${BOLD}${BLUE}ETHEREUM CLIENT DETECTION${NC}"
 
-if systemctl is-active --quiet erigon; then
-    echo -e "Client ${GREEN}erigon active${NC} (consensus + execution)"
-    consensus_is_running=true
-    execution_is_running=true
-fi
+# --- Configurable arrays ---
+EXECUTION_CLIENTS=(geth erigon erigon-externalcl nethermind besu reth ethrex nimbus-execution)
+CONSENSUS_CLIENTS=(lighthouse prysm teku nimbus lodestar grandine)
+VALIDATOR_SUFFIX="validator"
 
-if systemctl is-active --quiet erigon-externalcl; then
-    echo -e "Client ${GREEN}erigon-externalcl active${NC} (execution only)"
-    execution_is_running=true
-fi
+# List of active testnets — update here as networks evolve
+# Example: TESTNETS=(holesky sepolia hoodi gnosis devnet8)
+TESTNETS=(holesky sepolia hoodi)
 
-for c in $consensus_layer; do
-    if systemctl is-active "$c" >/dev/null 2>&1; then
-        echo -e "Consensus: ${GREEN}$c active${NC}"
-        consensus_is_running=true
+# Track detected clients
+execution_found=false
+consensus_found=false
+
+check_service() {
+    local svc="$1"
+    if systemctl is-active --quiet "$svc"; then
+        echo -e "${GREEN}$svc${NC} active"
+        return 0
     fi
+    return 1
+}
+
+# ---- Execution Layer ----
+echo -e "${BOLD}Execution layer:${NC}"
+for base in "${EXECUTION_CLIENTS[@]}"; do
+    # Check base service
+    check_service "$base" && execution_found=true
+    # Check all testnet variants
+    for net in "${TESTNETS[@]}"; do
+        check_service "${base}-${net}" && execution_found=true
+    done
 done
 
-for e in $execution_layer; do
-    if systemctl is-active "$e" >/dev/null 2>&1; then
-        echo -e "Execution: ${GREEN}$e active${NC}"
-        execution_is_running=true
-    fi
+# ---- Consensus Layer ----
+echo
+echo -e "${BOLD}Consensus layer:${NC}"
+for base in "${CONSENSUS_CLIENTS[@]}"; do
+    # Beacon + MEV
+    for suffix in "beacon" "beacon-mev"; do
+        check_service "${base}-${suffix}" && consensus_found=true
+        for net in "${TESTNETS[@]}"; do
+            check_service "${base}-${suffix}-${net}" && consensus_found=true
+        done
+    done
+    # Validator + MEV
+    for suffix in "$VALIDATOR_SUFFIX" "$VALIDATOR_SUFFIX-mev"; do
+        check_service "${base}-${suffix}" && consensus_found=true
+        for net in "${TESTNETS[@]}"; do
+            check_service "${base}-${suffix}-${net}" && consensus_found=true
+        done
+    done
 done
 
-$consensus_is_running || echo -e "${RED}No consensus client detected${NC}"
-$execution_is_running || echo -e "${RED}No execution client detected${NC}"
+echo
+if ! $execution_found; then
+    echo -e "${RED}No execution client detected${NC}"
+fi
+if ! $consensus_found; then
+    echo -e "${RED}No consensus client detected${NC}"
+fi
 
 separator
 jwtsecret_file="/etc/ethereum/jwtsecret"

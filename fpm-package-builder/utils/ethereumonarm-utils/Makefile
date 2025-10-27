@@ -6,8 +6,8 @@ SHELL := /bin/bash
 PKG_NAME := ethereumonarm-utils
 PKG_DESCRIPTION := "Ethereum on ARM utils"
 
-PKG_VERSION := 1.0.8
-PKG_RELEASE := 2
+PKG_VERSION := 1.0.9
+PKG_RELEASE := 0
 
 PKG_MAINTAINER := "Fernando Collado <fcollado@ethereumonarm.com>"
 PKG_ARCH := all

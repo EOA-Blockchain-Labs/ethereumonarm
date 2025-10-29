@@ -1,71 +1,126 @@
-.. Ethereum on ARM documentation documentation master file, created by
-   sphinx-quickstart on Wed Jan 13 19:04:18 2021.
+.. _using-your-node:
 
-Using your node
+Using Your Node
 ===============
 
-Besides contributing to the network decentralization, you can use your node for sending transactions  
-or to query the Ethereum API.
+Besides contributing to decentralization, your Ethereum on ARM node can be used
+to send transactions and query the Ethereum API.
 
-Our image includes an **Nginx proxy** that connects to the **Execution Layer RPC** and make the node communication easier.
+If this is your first time configuring network access, review
+:doc:`node-security` before exposing your node publicly.
 
-The Nginx proxy is included in the last images. If you are running an old one make sure it is installed by 
-typing:
+
+Pre-installed Nginx proxy
+-------------------------
+
+All recent Ethereum on ARM images include an **Nginx reverse proxy**
+preconfigured to route HTTPS (port 443) to the local Execution Layer
+JSON-RPC port 8545.
+
+This proxy makes wallet and dApp integration straightforward while keeping
+the internal RPC service bound to ``127.0.0.1``.
+
+To verify that Nginx and the proxy extras are installed:
 
 .. prompt:: bash $
 
-  sudo apt-get update
-  sudo apt-get install nginx
-  sudo apt-get install ethereumonarm-nginx-proxy-extras
+   sudo apt-get update
+   sudo apt-get install nginx
+   sudo apt-get install ethereumonarm-nginx-proxy-extras
+   sudo systemctl status nginx
+
+The configuration file is located at::
+
+   /etc/nginx/sites-available/ethereum-ssl.conf
+
+If you have a valid certificate (Let’s Encrypt or your own CA), edit this file
+and set the correct certificate paths:
+
+.. code-block:: nginx
+
+   ssl_certificate     /etc/letsencrypt/live/<your-domain>/fullchain.pem;
+   ssl_certificate_key /etc/letsencrypt/live/<your-domain>/privkey.pem;
+
+Reload Nginx to apply changes:
+
+.. prompt:: bash $
+
+   sudo systemctl reload nginx
 
 
-SSL config
-----------
-
-An SSL preconfiguration is included in the ``/etc/nginx/sites-available/ethereum-ssl.conf`` file as well. 
-It is intended to be used with your own certificate or Let's Encrypt. Use this only if you know what you 
-are doing.
-
-Sending transactions
+Firewall integration
 --------------------
 
-You can use your favourite wallet to send transactions to the network. For instance, let's 
-see how to connect **Metamask** to your node.
+UFW profiles make enabling HTTPS and node networking simple.
 
-1. Open the extension in your browser and click in the top network menu (probably showing "Ethereum Mainnet").
+Typical configuration:
 
-2. Click **"Add Network"** button.
+.. prompt:: bash $
 
-.. figure:: /_static/images/metamask-add-network.jpg
-   :figwidth: 600px
-   :align: center
+   sudo ufw allow "OpenSSH"
+   sudo ufw allow "Nginx HTTPS"
+   sudo ufw allow "Ethereum EL P2P"
+   sudo ufw allow "Ethereum CL P2P"
+   sudo ufw enable
 
-3. Click **"Add a network manually"** at the page bottom.
+Verify that the rules are active:
 
-.. figure:: /_static/images/metamask-add-network-manually.jpg
-   :figwidth: 600px
-   :align: center
+.. prompt:: bash $
 
-4. Fill in with your node data.
+   sudo ufw status verbose
+   sudo ss -tuln | grep -E "30303|9000|443|8545"
 
-.. figure:: /_static/images/metamask-settings.jpg
-   :figwidth: 600px
-   :align: center
 
-For instance. This is a configured local node:
+Connecting MetaMask
+-------------------
+
+1. Open the MetaMask extension and click the network selector  
+   (it likely shows “Ethereum Mainnet”).
+
+2. Click **“Add Network”**, then select **“Add a network manually.”**
+
+3. Enter your node details:
+
+   - **Network Name:** My Ethereum Node  
+   - **New RPC URL:** ``https://<your-node-domain>``  
+   - **Chain ID:** 1 (for Mainnet)  
+   - **Currency Symbol:** ETH
+
+4. Save and connect. MetaMask will now route all transactions securely
+   through your node’s HTTPS endpoint.
 
 .. figure:: /_static/images/metamask-node.jpg
    :figwidth: 600px
    :align: center
 
+
 Querying the blockchain
 -----------------------
 
-You can query the API using several methods. This is an example of how to get the last 
-block using ``curl`` (from your desktop terminal):
+You can query your node directly using ``curl`` or any JSON-RPC library.
 
-Replace ``$YOUR_NODE_IP`` for your node IP address.
+Example — get the latest block number (replace ``$YOUR_NODE_IP`` or domain):
 
 .. prompt:: bash $
 
-  curl --data '{"method":"eth_blockNumber","params":[],"id":1,"jsonrpc":"2.0"}' -H "Content-Type: application/json" -X POST $YOUR_NODE_IP
+   curl --data '{"method":"eth_blockNumber","params":[],"id":1,"jsonrpc":"2.0"}' \
+        -H "Content-Type: application/json" \
+        -X POST https://$YOUR_NODE_IP
+
+Expected output::
+
+   {"jsonrpc":"2.0","id":1,"result":"0x123456"}
+
+If you get a connection error:
+- Ensure Nginx is running and listening on 443.
+- Check that UFW includes “Nginx HTTPS”.
+- Confirm certificate paths in
+  ``/etc/nginx/sites-available/ethereum-ssl.conf``.
+
+
+Next steps
+----------
+
+For information about security, SSH access, and all available firewall
+profiles, refer back to:
+:doc:`node-security`

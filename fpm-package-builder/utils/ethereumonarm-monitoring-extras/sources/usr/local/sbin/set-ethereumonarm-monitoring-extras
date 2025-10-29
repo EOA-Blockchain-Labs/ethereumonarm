@@ -15,9 +15,6 @@ override() {
   cp /usr/lib/ethereumonarm/prometheus-node-exporter /etc/default/
   cp /usr/lib/ethereumonarm/prometheus.yml /etc/prometheus/
 
-  #A basic set of ufw rules WIP
-  cp /usr/lib/ethereumonarm/user.rules /etc/ufw/
-
   systemctl start grafana-server prometheus prometheus-node-exporter || true
 
 }

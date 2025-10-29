@@ -1,8 +1,23 @@
-### START UFW CONFIGURATION FOR ETHEREUM NODE ###
+### ====================================================================
+### UFW CONFIGURATION FOR ETHEREUM EXECUTION + CONSENSUS NODE (2025)
+### ====================================================================
+# Supports:
+#   Execution: Geth, Nethermind, Besu, Erigon, Reth, EthRex
+#   Consensus: Lighthouse, Teku, Prysm, Nimbus, Lodestar, Grandine
+#
+# Follows latest networking recommendations from official client docs.
+# Goal: Secure Ethereum node while ensuring proper P2P connectivity.
+#
+# Default inbound: DROP
+# Default outbound: ALLOW
+# Only essential P2P + SSH open
+# ====================================================================
 
-# Default policies: typically set to deny incoming and allow outgoing traffic to secure the server
-# Ensures that the node is not accessible unless a port is explicitly opened
 *filter
+
+# ---------------------------------------------------------------
+# Internal UFW chains
+# ---------------------------------------------------------------
 :ufw-user-input - [0:0]
 :ufw-user-output - [0:0]
 :ufw-user-forward - [0:0]
@@ -20,76 +35,115 @@
 :ufw-user-limit - [0:0]
 :ufw-user-limit-accept - [0:0]
 
-# Allow SSH (port 22) for remote server management
-# Consider rate limiting SSH externally (e.g., using 'ufw limit ssh')
--A ufw-user-input -p tcp --dport 22 -j ACCEPT
+# ---------------------------------------------------------------
+# DEFAULT POLICIES
+# ---------------------------------------------------------------
+# Drop all incoming and forwarding by default
+-A ufw-user-input -j DROP
+-A ufw-user-forward -j DROP
+# Allow all outgoing
+-A ufw-user-output -j ACCEPT
 
-# --- Ethereum EL/CL P2P Ports (Essential) ---
-# Standard Ethereum P2P Port (Geth, Nethermind, Besu etc.)
+# ---------------------------------------------------------------
+# SSH ACCESS
+# ---------------------------------------------------------------
+-A ufw-user-input -p tcp --dport 22 -j ACCEPT
+# Recommended: rate-limit SSH to protect against brute-force attacks
+#   ufw limit 22/tcp comment 'Limit SSH connections'
+
+# ---------------------------------------------------------------
+# EXECUTION LAYER (EL) CLIENTS — P2P PORTS
+# ---------------------------------------------------------------
+# Default ports for major execution clients
+#   Geth / Nethermind / Besu / Erigon / EthRex: 30303 TCP/UDP
+#   Reth: 30304 TCP/UDP (configurable, sometimes same as 30303)
+
+# Primary EL P2P
 -A ufw-user-input -p tcp --dport 30303 -j ACCEPT
 -A ufw-user-input -p udp --dport 30303 -j ACCEPT
-# Standard CL P2P Port (Lighthouse, Teku, Nimbus default)
+
+# Alternative/Secondary (Reth)
+-A ufw-user-input -p tcp --dport 30304 -j ACCEPT
+-A ufw-user-input -p udp --dport 30304 -j ACCEPT
+
+# ---------------------------------------------------------------
+# CONSENSUS LAYER (CL) CLIENTS — P2P PORTS
+# ---------------------------------------------------------------
+# Default P2P Ports:
+#   Lighthouse / Teku / Nimbus / Lodestar / Grandine: 9000 TCP+UDP
+#   Lighthouse QUIC (UDP): 9001
+#   Prysm: TCP 13000 / UDP 12000
+
+# Common CL P2P (TCP + UDP)
 -A ufw-user-input -p tcp --dport 9000 -j ACCEPT
 -A ufw-user-input -p udp --dport 9000 -j ACCEPT
-# Prysm Default CL P2P Ports
+
+# Lighthouse QUIC (UDP)
+-A ufw-user-input -p udp --dport 9001 -j ACCEPT
+
+# Prysm
 -A ufw-user-input -p tcp --dport 13000 -j ACCEPT
 -A ufw-user-input -p udp --dport 12000 -j ACCEPT
 
-# --- L2 P2P Ports (Optimism Stack - Essential if running OP) ---
-# op-geth P2P Ports
--A ufw-user-input -p tcp --dport 30403 -j ACCEPT
--A ufw-user-input -p udp --dport 30403 -j ACCEPT
-# op-node P2P Ports
--A ufw-user-input -p tcp --dport 9222 -j ACCEPT
--A ufw-user-input -p udp --dport 9222 -j ACCEPT
+# ---------------------------------------------------------------
+# RPC / API ENDPOINTS (RESTRICTED ACCESS)
+# ---------------------------------------------------------------
+# These should remain closed to the public internet.
+# Allow localhost or trusted IPs only.
 
-# --- RPC / API Ports (Optional - Open ONLY if external access needed) ---
-# Standard JSON-RPC (EL Clients)
--A ufw-user-input -p tcp --dport 8545 -j ACCEPT
-# Standard WebSocket RPC (EL Clients)
--A ufw-user-input -p tcp --dport 8546 -j ACCEPT
-# Standard Beacon API (CL Clients - REST/gRPC Gateway)
--A ufw-user-input -p tcp --dport 5052 -j ACCEPT
-# L2 Rollup RPC (op-node)
--A ufw-user-input -p tcp --dport 9545 -j ACCEPT
+# Execution layer (HTTP/WebSocket)
+# -A ufw-user-input -p tcp --dport 8545 -s 127.0.0.1 -j ACCEPT
+# -A ufw-user-input -p tcp --dport 8546 -s 127.0.0.1 -j ACCEPT
 
-# --- Metrics Ports (Optional - Open for external monitoring systems like Prometheus) ---
-# Common Node Exporter Ports
--A ufw-user-input -p tcp --dport 9090 -j ACCEPT
--A ufw-user-input -p tcp --dport 9100 -j ACCEPT # Note: 9100/udp was in original, but metrics are usually TCP
-# Erigon Metrics Port
--A ufw-user-input -p tcp --dport 5050 -j ACCEPT
-# Lodestar Metrics Port
--A ufw-user-input -p tcp --dport 4040 -j ACCEPT
-# Nethermind Metrics Port
--A ufw-user-input -p tcp --dport 7070 -j ACCEPT
-# op-geth Metrics Port
--A ufw-user-input -p tcp --dport 7301 -j ACCEPT
-# op-node Metrics Port
--A ufw-user-input -p tcp --dport 7300 -j ACCEPT
-# Teku Metrics Port
--A ufw-user-input -p tcp --dport 8009 -j ACCEPT
+# Beacon node (REST/gRPC)
+# -A ufw-user-input -p tcp --dport 5052 -s 127.0.0.1 -j ACCEPT
 
-# --- Other/Miscellaneous Ports (Check if needed for your specific setup) ---
-# Port 3000 (TCP) - Often used for Grafana or other web dashboards
--A ufw-user-input -p tcp --dport 3000 -j ACCEPT
-# Port 30607 (TCP) - Purpose Unclear from provided info
--A ufw-user-input -p tcp --dport 30607 -j ACCEPT
+# Reth (engine API)
+# -A ufw-user-input -p tcp --dport 8551 -s 127.0.0.1 -j ACCEPT
 
+# EthRex (engine API)
+# -A ufw-user-input -p tcp --dport 8550 -s 127.0.0.1 -j ACCEPT
 
-# Logging and Rate Limiting Configuration
-### LOGGING ###
--A ufw-after-logging-input -j LOG --log-prefix "[UFW BLOCK] " -m limit --limit 3/min --limit-burst 10
--A ufw-after-logging-forward -j LOG --log-prefix "[UFW BLOCK] " -m limit --limit 3/min --limit-burst 10
--I ufw-logging-deny -m conntrack --ctstate INVALID -j RETURN -m limit --limit 3/min --limit-burst 10
--A ufw-logging-deny -j LOG --log-prefix "[UFW BLOCK] " -m limit --limit 3/min --limit-burst 10
--A ufw-logging-allow -j LOG --log-prefix "[UFW ALLOW] " -m limit --limit 3/min --limit-burst 10
+# Optional external RPC (trusted IP only)
+# -A ufw-user-input -p tcp --dport 8545 -s <YOUR_TRUSTED_IP> -j ACCEPT
 
-### RATE LIMITING ###
-# Defines chains, apply using 'ufw limit <port>/<proto>' command if needed (e.g., for SSH)
--A ufw-user-limit -m limit --limit 3/minute -j LOG --log-prefix "[UFW LIMIT BLOCK] "
--A ufw-user-limit -j REJECT
--A ufw-user-limit-accept -j ACCEPT
+# ---------------------------------------------------------------
+# MONITORING / METRICS (OPTIONAL, LOCAL ONLY)
+# ---------------------------------------------------------------
+# Keep internal; restrict to localhost or private LAN
 
-COMMIT
-### END UFW CONFIGURATION FOR ETHEREUM NODE ###
+# Prometheus
+# -A ufw-user-input -p tcp --dport 9090 -s 127.0.0.1 -j ACCEPT
+# Node Exporter
+# -A ufw-user-input -p tcp --dport 9100 -s 127.0.0.1 -j ACCEPT
+# Grafana
+# -A ufw-user-input -p tcp --dport 3000 -s 127.0.0.1 -j ACCEPT
+
+# Metrics by client:
+# -A ufw-user-input -p tcp --dport 8008 -s 127.0.0.1 -j ACCEPT  # Nimbus
+# -A ufw-user-input -p tcp --dport 8009 -s 127.0.0.1 -j ACCEPT  # Teku
+# -A ufw-user-input -p tcp --dport 8080 -s 127.0.0.1 -j ACCEPT  # Prysm
+# -A ufw-user-input -p tcp --dport 5050 -s 127.0.0.1 -j ACCEPT  # Erigon
+# -A ufw-user-input -p tcp --dport 6060 -s 127.0.0.1 -j ACCEPT  # Reth
+# -A ufw-user-input -p tcp --dport 7301 -s 127.0.0.1 -j ACCEPT  # op-geth
+# -A ufw-user-input -p tcp --dport 9300 -s 127.0.0.1 -j ACCEPT  # Lodestar
+
+# ---------------------------------------------------------------
+# LAYER 2 / ROLLUPS (OPTIONAL)
+# ---------------------------------------------------------------
+# Uncomment if running Optimism / Base / Arbitrum / OP Stack clients
+# -A ufw-user-input -p tcp --dport 30403 -j ACCEPT  # op-geth P2P
+# -A ufw-user-input -p udp --dport 30403 -j ACCEPT
+# -A ufw-user-input -p tcp --dport 9222 -j ACCEPT   # op-node P2P
+# -A ufw-user-input -p udp --dport 9222 -j ACCEPT
+
+# ---------------------------------------------------------------
+# PRIVATE LAN / CLUSTER ACCESS (OPTIONAL)
+# ---------------------------------------------------------------
+# Uncomment to allow Prometheus/Grafana/RPC access from internal subnet
+# -A ufw-user-input -s 192.168.0.0/16 -j ACCEPT
+
+# ---------------------------------------------------------------
+# RATE LIMITING
+# ---------------------------------------------------------------
+-A ufw-user-limit -m limit --limit 3

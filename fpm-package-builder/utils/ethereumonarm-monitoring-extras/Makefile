@@ -5,8 +5,8 @@ SHELL := /bin/bash
 
 PKG_NAME := ethereumonarm-monitoring-extras
 PKG_DESCRIPTION := "Ethereum on ARM monitoring config"
-PKG_VERSION := 1.2.4
-PKG_RELEASE := 1
+PKG_VERSION := 1.2.5
+PKG_RELEASE := 0
 PKG_MAINTAINER := "Fernando Collado <fcollado@ethereumonarm.com>"
 PKG_ARCH := all
 SOURCESDIR := sources/

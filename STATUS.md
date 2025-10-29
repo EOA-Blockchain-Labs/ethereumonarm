@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-10-28 03:43:01 UTC_
+_Last updated: 2025-10-29 03:50:19 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -34,7 +34,7 @@ _Last updated: 2025-10-28 03:43:01 UTC_
 | `lighthouse` | `7.1.0` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `7.1.0` | ✅ Up-to-date |
 | `lodestar` | `1.35.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.35.0` | ✅ Up-to-date |
 | `nimbus` | `25.9.2` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.9.2` | ✅ Up-to-date |
-| `prysm` | `6.1.3` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `6.1.3` | ✅ Up-to-date |
+| `prysm` | `6.1.4` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `6.1.4` | ✅ Up-to-date |
 | `teku` | `25.10.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.10.0` | ✅ Up-to-date |
 ### Layer 1 Execution
 
@@ -56,7 +56,7 @@ _Last updated: 2025-10-28 03:43:01 UTC_
 | `optimism-op-geth` | `1.101603.2` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101603.2` | ✅ Up-to-date |
 | `optimism-op-node` | `1.14.3` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.14.3` | ✅ Up-to-date |
 | `optimism-op-reth` | `1.8.2` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.8.2` | ✅ Up-to-date |
-| `starknet-juno` | `0.15.8` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.8` | ✅ Up-to-date |
+| `starknet-juno` | `0.15.9` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.9` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.20.5` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.20.5` | ✅ Up-to-date |
 ### Web3
 

@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 PKG_NAME := ethereumonarm-monitoring-extras
 PKG_DESCRIPTION := "Ethereum on ARM monitoring config"
-PKG_VERSION := 1.2.6
+PKG_VERSION := 1.2.7
 PKG_RELEASE := 0
 PKG_MAINTAINER := "Fernando Collado <fcollado@ethereumonarm.com>"
 PKG_ARCH := all
@@ -14,7 +14,7 @@ OUTPUTDIR := ../../packages
 
 PKG_DEB := ${PKG_NAME}_${PKG_VERSION}-${PKG_RELEASE}_${PKG_ARCH}.deb
 
-FPM_OPTS := -s dir -n $(PKG_NAME) -v $(PKG_VERSION) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)  -a $(PKG_ARCH) -p $(OUTPUTDIR) -x */.gitkeep
+FPM_OPTS := -s dir -n $(PKG_NAME) -v $(PKG_VERSION) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)  -a $(PKG_ARCH) -p $(OUTPUTDIR) --after-install extras/postinst -x */.gitkeep
 
 all: deb test
 

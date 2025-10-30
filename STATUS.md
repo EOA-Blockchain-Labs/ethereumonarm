@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-10-29 03:50:19 UTC_
+_Last updated: 2025-10-30 03:44:43 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -13,8 +13,8 @@ _Last updated: 2025-10-29 03:50:19 UTC_
 
 ### Summary
 - Total packages checked: **27**
-- ✅ Up-to-date: **25** (92.6%)
-- ❌ Outdated: **2** (7.4%)
+- ✅ Up-to-date: **24** (88.9%)
+- ❌ Outdated: **3** (11.1%)
 - ❓ N/A: **0** (0.0%)
 
 ### Infra
@@ -46,7 +46,7 @@ _Last updated: 2025-10-29 03:50:19 UTC_
 | `geth` | `1.16.5` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.5` | ✅ Up-to-date |
 | `nethermind` | `1.35.0` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.35.0` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.2.0` | ❌ Outdated |
-| `reth` | `1.8.2` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.8.2` | ✅ Up-to-date |
+| `reth` | `1.8.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.8.3` | ✅ Up-to-date |
 ### Layer 2
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
@@ -55,7 +55,7 @@ _Last updated: 2025-10-29 03:50:19 UTC_
 | `fuel-network` | `0.46.0` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.47.1` | ❌ Outdated |
 | `optimism-op-geth` | `1.101603.2` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101603.2` | ✅ Up-to-date |
 | `optimism-op-node` | `1.14.3` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.14.3` | ✅ Up-to-date |
-| `optimism-op-reth` | `1.8.2` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.8.2` | ✅ Up-to-date |
+| `optimism-op-reth` | `1.8.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.8.3` | ✅ Up-to-date |
 | `starknet-juno` | `0.15.9` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.9` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.20.5` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.20.5` | ✅ Up-to-date |
 ### Web3
@@ -63,4 +63,4 @@ _Last updated: 2025-10-29 03:50:19 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `bee` | `2.6.0` ([ethersphere/bee](https://github.com/ethersphere/bee)) | `2.6.0` | ✅ Up-to-date |
-| `kubo` | `0.38.1` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.38.1` | ✅ Up-to-date |
+| `kubo` | `0.38.2` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.38.1` | ❌ Outdated |

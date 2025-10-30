@@ -1,0 +1,108 @@
+#!/bin/bash
+# ---------------------------------------------------------------------------
+# Ethereum on ARM - Restic + Rclone Backup Utility
+# ---------------------------------------------------------------------------
+# Description:
+#   Secure, encrypted, incremental backup solution for Ethereum on ARM nodes.
+#   Uses Restic (for encryption, deduplication) and Rclone (for remote storage).
+# ---------------------------------------------------------------------------
+# Author: Ethereum on ARM Project
+# License: MIT
+# ---------------------------------------------------------------------------
+
+set -euo pipefail
+
+# --- Initialization ---------------------------------------------------------
+
+CONFIG_FILE="/etc/ethereum/restic_eoa.conf"
+
+if [[ ! -f "$CONFIG_FILE" ]]; then
+    echo "[EOA Backup] ERROR: Configuration file not found: $CONFIG_FILE" | systemd-cat -t ethereum-backup
+    exit 1
+fi
+
+# shellcheck source=/etc/ethereum/restic_eoa.conf
+source "$CONFIG_FILE"
+
+LOG_TAG="ethereum-backup"
+TIMESTAMP="$(date '+%Y-%m-%d %H:%M:%S')"
+
+log_message() {
+    local message="[EOA Backup] $TIMESTAMP - $1"
+    echo "$message"
+    if [[ "$LOG_MODE" == "file" && -n "${LOG_FILE:-}" ]]; then
+        echo "$message" >> "$LOG_FILE"
+    fi
+    systemd-cat -t "$LOG_TAG" <<< "$message"
+}
+
+# --- Sanity Checks ----------------------------------------------------------
+
+if [[ -z "${RESTIC_REPOSITORY:-}" || -z "${RESTIC_PASSWORD_FILE:-}" ]]; then
+    log_message "FATAL: RESTIC_REPOSITORY or RESTIC_PASSWORD_FILE not defined."
+    exit 1
+fi
+
+if [[ ! -f "$RESTIC_PASSWORD_FILE" ]]; then
+    log_message "FATAL: Password file not found: $RESTIC_PASSWORD_FILE"
+    exit 1
+fi
+
+if ! command -v restic >/dev/null 2>&1; then
+    log_message "FATAL: Restic not installed. Run: sudo apt install restic"
+    exit 1
+fi
+
+if ! command -v rclone >/dev/null 2>&1; then
+    log_message "FATAL: Rclone not installed. Run: sudo apt install rclone"
+    exit 1
+fi
+
+# --- Environment ------------------------------------------------------------
+
+export RESTIC_REPOSITORY
+export RESTIC_PASSWORD_FILE
+
+# Combine optional runtime flags
+RESTIC_OPTS=()
+[[ -n "${RESTIC_UPLOAD_LIMIT:-}" ]] && RESTIC_OPTS+=("$RESTIC_UPLOAD_LIMIT")
+[[ -n "${RESTIC_NO_COMPRESS:-}" ]] && RESTIC_OPTS+=("$RESTIC_NO_COMPRESS")
+
+IFS=$'\n' read -r -d '' -a SOURCE_FOLDERS_ARRAY < <(grep -v '^#' <<< "$SOURCE_FOLDERS" | sed '/^\s*$/d' && printf '\0')
+
+# --- Repository Initialization ----------------------------------------------
+
+if ! restic snapshots >/dev/null 2>&1; then
+    log_message "Initializing new Restic repository at $RESTIC_REPOSITORY"
+    if ! restic init; then
+        log_message "FATAL: Failed to initialize Restic repository."
+        exit 1
+    fi
+fi
+
+# --- Backup Execution -------------------------------------------------------
+
+log_message "Starting Ethereum on ARM backup..."
+log_message "Backing up: ${SOURCE_FOLDERS_ARRAY[*]}"
+
+if restic backup "${SOURCE_FOLDERS_ARRAY[@]}" --host "$(hostname)" --tag "ethereumonarm" "${RESTIC_OPTS[@]}"; then
+    log_message "Backup completed successfully."
+else
+    log_message "ERROR: Restic backup failed."
+    exit 1
+fi
+
+# --- Retention Policy -------------------------------------------------------
+
+log_message "Applying retention policy: keep ${KEEP_DAILY:-7} daily, ${KEEP_WEEKLY:-4} weekly, ${KEEP_MONTHLY:-6} monthly"
+
+if restic forget --keep-daily "${KEEP_DAILY:-7}" --keep-weekly "${KEEP_WEEKLY:-4}" --keep-monthly "${KEEP_MONTHLY:-6}" --prune; then
+    log_message "Old snapshots pruned successfully."
+else
+    log_message "WARNING: Snapshot pruning failed."
+fi
+
+# --- Completion -------------------------------------------------------------
+
+log_message "--- Backup cycle completed successfully ---"
+exit 0

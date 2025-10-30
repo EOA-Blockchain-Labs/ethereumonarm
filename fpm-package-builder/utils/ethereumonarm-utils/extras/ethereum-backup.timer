@@ -1,0 +1,14 @@
+[Unit]
+Description=Daily Ethereum on ARM Restic Backup Timer
+Documentation=https://restic.net
+
+[Timer]
+OnCalendar=daily
+# Randomize start time by up to 30 minutes to avoid concurrent backups
+RandomizedDelaySec=30m
+# Ensure missed backups run at boot (e.g., after power loss)
+Persistent=true
+AccuracySec=10min
+
+[Install]
+WantedBy=timers.target

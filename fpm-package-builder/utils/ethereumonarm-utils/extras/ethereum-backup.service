@@ -1,0 +1,25 @@
+[Unit]
+Description=Ethereum on ARM Restic Backup Service
+Documentation=https://restic.net https://rclone.org
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+Nice=10
+IOSchedulingClass=idle
+EnvironmentFile=/etc/ethereum/restic_eoa.conf
+ExecStart=/usr/sbin/eoa_restic_backup
+# Ensure log output is captured by journald
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ethereum-backup
+# Limit resources for small SBC devices
+ProtectSystem=full
+ProtectHome=yes
+NoNewPrivileges=true
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

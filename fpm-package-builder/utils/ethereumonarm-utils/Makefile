@@ -6,7 +6,7 @@ SHELL := /bin/bash
 PKG_NAME := ethereumonarm-utils
 PKG_DESCRIPTION := "Ethereum on ARM utils"
 
-PKG_VERSION := 1.0.9
+PKG_VERSION := 1.1.0
 PKG_RELEASE := 0
 
 PKG_MAINTAINER := "Fernando Collado <fcollado@ethereumonarm.com>"
@@ -21,7 +21,8 @@ FPM_OPTS := -s dir -n $(PKG_NAME) -v $(PKG_VERSION) --iteration $(PKG_RELEASE)\
 	-C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\
 	-a $(PKG_ARCH) -p $(OUTPUTDIR) -x */.gitkeep\
 	--after-install extras/postinst --before-remove extras/prerm\
-	--depends rclone --depends fuse
+	--deb-systemd extras/ethereum-backup.service --deb-systemd extras/ethereum-backup.timer\
+	--depends rclone --depends fuse --depends restic
 
 all: deb test
 

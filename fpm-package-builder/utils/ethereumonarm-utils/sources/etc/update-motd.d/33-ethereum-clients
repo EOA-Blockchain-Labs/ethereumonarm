@@ -5,6 +5,7 @@
 # and per-network mev-boost services. Handles Erigon integrated CL.
 #
 # Install: place in /etc/update-motd.d/90-ethereum-clients and chmod +x
+# Config: /etc/ethereum-motd.conf (optional)
 #
 
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
@@ -13,25 +14,32 @@ DIM="\e[0;90m"
 OK="\e[0;92m"
 RESET="\x1B[0m"
 
-# --- Base definitions ---
+# --- Base definitions (Defaults) ---
 EL_BASES=(geth nethermind besu erigon reth ethrex)
 CL_BASES=(lighthouse prysm nimbus teku lodestar grandine)
 NETWORKS=(mainnet sepolia holesky hoodi)
 
+# --- Load User Config (if it exists) ---
+CONFIG_FILE="/etc/ethereum-motd.conf"
+if [[ -f "$CONFIG_FILE" ]]; then
+    # Source the config file, allowing it to override the defaults
+    source "$CONFIG_FILE"
+fi
+
 # --- systemd check ---
 command -v systemctl &>/dev/null || exit 0
 
-# --- Load running units ---
-readarray -t RUNNING_UNITS < <(systemctl list-units --type=service --state=running --no-legend --plain | awk '{print $1}')
+# --- Load running units into a fast-lookup map ---
+declare -A RUNNING_MAP
+for unit in $(systemctl list-units --type=service --state=running --no-legend --plain | awk '{print $1}'); do
+    RUNNING_MAP["$unit"]=1
+done
 
 strip_service() { echo "${1%.service}"; }
 
+# O(1) check
 has_unit() {
-  local u="$1"
-  for item in "${RUNNING_UNITS[@]}"; do
-    [[ "$item" == "$u" ]] && return 0
-  done
-  return 1
+    [[ -n "${RUNNING_MAP[$1]}" ]]
 }
 
 # --- Detect EL/CL clients ---
@@ -95,24 +103,28 @@ detect_clients() {
 active_el_clients="$(detect_clients EL_BASES EL)"
 active_cl_clients="$(detect_clients CL_BASES CL)"
 
-# --- mev-boost per-network ---
+# --- mev-boost per-network (Improved Logic) ---
 active_mev_boost=""
 for net in "${NETWORKS[@]}"; do
-  svc="mev-boost-${net}.service"
-  if has_unit "$svc"; then
-    active_mev_boost+="mev-boost@${net} "
-  fi
+    if [[ "$net" == "mainnet" ]]; then
+        # Check for mainnet-specific common names
+        if has_unit "mev-boost-mainnet.service" || has_unit "mev-boost.service" || has_unit "mevboost.service"; then
+            active_mev_boost+="mev-boost@mainnet "
+        fi
+    else
+        # Check for standard testnet name
+        if has_unit "mev-boost-${net}.service"; then
+            active_mev_boost+="mev-boost@${net} "
+        fi
+    fi
 done
-if has_unit "mev-boost.service" || has_unit "mevboost.service"; then
-  active_mev_boost+="mev-boost@mainnet "
-fi
 
-# --- Erigon integrated CL ---
-if has_unit "erigon.service" || has_unit "erigon-mev.service" || \
-   has_unit "erigon-holesky.service" || has_unit "erigon-sepolia.service" || has_unit "erigon-hoodi.service"; then
-  if ! has_unit "erigon-externalcl.service" && [[ -z "$active_cl_clients" ]]; then
-    active_cl_clients+="erigon (integrated) "
-  fi
+# --- Erigon integrated CL (Improved Logic) ---
+# Check if the main detection loop found any erigon client
+if [[ "$active_el_clients" == *erigon* ]]; then
+    if ! has_unit "erigon-externalcl.service" && [[ -z "$active_cl_clients" ]]; then
+        active_cl_clients+="erigon (integrated) "
+    fi
 fi
 
 # --- Cleanup ---

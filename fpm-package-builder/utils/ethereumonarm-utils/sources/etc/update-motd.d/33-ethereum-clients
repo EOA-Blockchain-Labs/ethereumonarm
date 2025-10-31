@@ -1,63 +1,150 @@
 #!/bin/bash
 #
-# Script to display running Ethereum clients in Armbian MOTD
-# Place this file in /etc/update-motd.d/ and make it executable.
+# Ethereum on ARM MOTD Client Status
+# Detects EL/CL clients with -mev, testnet variants (holesky, hoodi, sepolia)
+# and per-network mev-boost services. Handles Erigon integrated CL.
+#
+# Install: place in /etc/update-motd.d/90-ethereum-clients and chmod +x
 #
 
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-# --- Ethereum Client Detection ---
-# Add more service names if needed for your setup
-el_clients_to_check=("geth.service" "nethermind.service" "besu.service" "erigon.service" "reth.service")
-cl_clients_to_check=("lighthouse-beacon.service" "prysm-beacon.service" "nimbus-beacon.service" "teku-beacon.service" "lodestar-beacon.service" "grandine-beacon")
+DIM="\e[0;90m"
+OK="\e[0;92m"
+RESET="\x1B[0m"
 
-active_el_clients=""
-active_cl_clients=""
+# --- Base definitions ---
+EL_BASES=(geth nethermind besu erigon reth ethrex)
+CL_BASES=(lighthouse prysm nimbus teku lodestar grandine)
+NETWORKS=(mainnet sepolia holesky hoodi)
 
-# Check if systemctl command exists before trying to use it
-if command -v systemctl &>/dev/null; then
-    # Check Execution Clients
-    for service in "${el_clients_to_check[@]}"; do
-        if systemctl is-active --quiet "$service"; then
-            client_name="${service%.service}" # Remove .service suffix
-            active_el_clients+="${client_name} "
+# --- systemd check ---
+command -v systemctl &>/dev/null || exit 0
+
+# --- Load running units ---
+readarray -t RUNNING_UNITS < <(systemctl list-units --type=service --state=running --no-legend --plain | awk '{print $1}')
+
+strip_service() { echo "${1%.service}"; }
+
+has_unit() {
+  local u="$1"
+  for item in "${RUNNING_UNITS[@]}"; do
+    [[ "$item" == "$u" ]] && return 0
+  done
+  return 1
+}
+
+# --- Detect EL/CL clients ---
+detect_clients() {
+  local -n BASES=$1
+  local type="$2"
+  local result=""
+  local base net suffix role label
+
+  for base in "${BASES[@]}"; do
+    # Networks
+    for net in "${NETWORKS[@]}"; do
+      # Direct base-network(-mev)
+      for suffix in "" "-mev"; do
+        local svc="${base}-${net}${suffix}.service"
+        if has_unit "$svc"; then
+          label="${base}@${net}"
+          [[ "$suffix" == "-mev" ]] && label+="-mev"
+          result+="$label "
         fi
+      done
+      # beacon/validator for CL
+      if [[ "$type" == "CL" ]]; then
+        for role in beacon validator; do
+          for suffix in "" "-mev"; do
+            local svc="${base}-${role}-${net}${suffix}.service"
+            if has_unit "$svc"; then
+              label="${base}-${role}@${net}"
+              [[ "$suffix" == "-mev" ]] && label+="-mev"
+              result+="$label "
+            fi
+          done
+        done
+      fi
     done
 
-    # Check Consensus Clients
-    for service in "${cl_clients_to_check[@]}"; do
-        if systemctl is-active --quiet "$service"; then
-            client_name="${service%.service}" # Remove .service suffix
-            active_cl_clients+="${client_name} "
-        fi
+    # Mainnet (no suffix)
+    for suffix in "" "-mev"; do
+      local svc="${base}${suffix}.service"
+      if has_unit "$svc"; then
+        label="${base}"
+        [[ "$suffix" == "-mev" ]] && label+="-mev"
+        result+="$label "
+      fi
+      if [[ "$type" == "CL" ]]; then
+        for role in beacon validator; do
+          local svc2="${base}-${role}${suffix}.service"
+          if has_unit "$svc2"; then
+            label="${base}-${role}"
+            [[ "$suffix" == "-mev" ]] && label+="-mev"
+            result+="$label "
+          fi
+        done
+      fi
     done
+  done
+
+  echo "$result"
+}
+
+active_el_clients="$(detect_clients EL_BASES EL)"
+active_cl_clients="$(detect_clients CL_BASES CL)"
+
+# --- mev-boost per-network ---
+active_mev_boost=""
+for net in "${NETWORKS[@]}"; do
+  svc="mev-boost-${net}.service"
+  if has_unit "$svc"; then
+    active_mev_boost+="mev-boost@${net} "
+  fi
+done
+if has_unit "mev-boost.service" || has_unit "mevboost.service"; then
+  active_mev_boost+="mev-boost@mainnet "
 fi
-# Trim trailing spaces
-active_el_clients=$(echo "$active_el_clients" | xargs)
-active_cl_clients=$(echo "$active_cl_clients" | xargs)
 
-# --- Display Ethereum Clients ---
-# Only display the section if systemctl exists and at least one client was found active.
-if [[ -n "$active_el_clients" || -n "$active_cl_clients" ]] && command -v systemctl &>/dev/null; then
-    # Add a separating newline; adjust if spacing is off after testing
-    echo ""
-    # Header for the section
-    printf "\e[0;90mEthereum Clients:\x1B[0m\n"
-
-    # Display Execution clients status
-    if [[ -n "$active_el_clients" ]]; then
-        printf " Execution:    \e[0;92m%s\x1B[0m\n" "$active_el_clients"
-    else
-        printf " Execution:    \e[0;90m%s\x1B[0m\n" "None detected"
-    fi
-
-    # Display Consensus clients status
-    if [[ -n "$active_cl_clients" ]]; then
-        printf " Consensus:    \e[0;92m%s\x1B[0m\n" "$active_cl_clients"
-    else
-        printf " Consensus:    \e[0;90m%s\x1B[0m\n" "None detected"
-    fi
+# --- Erigon integrated CL ---
+if has_unit "erigon.service" || has_unit "erigon-mev.service" || \
+   has_unit "erigon-holesky.service" || has_unit "erigon-sepolia.service" || has_unit "erigon-hoodi.service"; then
+  if ! has_unit "erigon-externalcl.service" && [[ -z "$active_cl_clients" ]]; then
+    active_cl_clients+="erigon (integrated) "
+  fi
 fi
-echo ""
+
+# --- Cleanup ---
+dedupe() {
+  tr ' ' '\n' | sort -u | tr '\n' ' ' | xargs
+}
+active_el_clients=$(echo "$active_el_clients" | dedupe)
+active_cl_clients=$(echo "$active_cl_clients" | dedupe)
+active_mev_boost=$(echo "$active_mev_boost" | dedupe)
+
+# --- Output ---
+if [[ -n "$active_el_clients" || -n "$active_cl_clients" || -n "$active_mev_boost" ]]; then
+  echo ""
+  printf "${DIM}Ethereum Clients:${RESET}\n"
+
+  if [[ -n "$active_el_clients" ]]; then
+    printf " Execution: ${OK}%s${RESET}\n" "$active_el_clients"
+  else
+    printf " Execution: ${DIM}None detected${RESET}\n"
+  fi
+
+  if [[ -n "$active_cl_clients" ]]; then
+    printf " Consensus: ${OK}%s${RESET}\n" "$active_cl_clients"
+  else
+    printf " Consensus: ${DIM}None detected${RESET}\n"
+  fi
+
+  if [[ -n "$active_mev_boost" ]]; then
+    printf " MEV-Boost: ${OK}%s${RESET}\n" "$active_mev_boost"
+  fi
+
+  echo ""
+fi
 
 exit 0

@@ -4,7 +4,7 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/mev-boost.conf
+EnvironmentFile=/etc/ethereum/mev-boost-sepolia.conf
 ExecStart=/usr/bin/mev-boost $ARGS
 Restart=always
 RestartSec=5

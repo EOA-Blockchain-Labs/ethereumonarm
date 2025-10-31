@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-10-30 03:44:43 UTC_
+_Last updated: 2025-10-31 03:46:25 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -13,8 +13,8 @@ _Last updated: 2025-10-30 03:44:43 UTC_
 
 ### Summary
 - Total packages checked: **27**
-- ✅ Up-to-date: **24** (88.9%)
-- ❌ Outdated: **3** (11.1%)
+- ✅ Up-to-date: **25** (92.6%)
+- ❌ Outdated: **2** (7.4%)
 - ❓ N/A: **0** (0.0%)
 
 ### Infra
@@ -63,4 +63,4 @@ _Last updated: 2025-10-30 03:44:43 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `bee` | `2.6.0` ([ethersphere/bee](https://github.com/ethersphere/bee)) | `2.6.0` | ✅ Up-to-date |
-| `kubo` | `0.38.2` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.38.1` | ❌ Outdated |
+| `kubo` | `0.38.2` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.38.2` | ✅ Up-to-date |

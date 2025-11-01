@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-10-31 03:46:25 UTC_
+_Last updated: 2025-11-01 03:44:21 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -13,8 +13,8 @@ _Last updated: 2025-10-31 03:46:25 UTC_
 
 ### Summary
 - Total packages checked: **27**
-- ✅ Up-to-date: **25** (92.6%)
-- ❌ Outdated: **2** (7.4%)
+- ✅ Up-to-date: **22** (81.5%)
+- ❌ Outdated: **5** (18.5%)
 - ❓ N/A: **0** (0.0%)
 
 ### Infra
@@ -33,7 +33,7 @@ _Last updated: 2025-10-31 03:46:25 UTC_
 | `grandine` | `1.1.5` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `1.1.5` | ✅ Up-to-date |
 | `lighthouse` | `7.1.0` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `7.1.0` | ✅ Up-to-date |
 | `lodestar` | `1.35.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.35.0` | ✅ Up-to-date |
-| `nimbus` | `25.9.2` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.9.2` | ✅ Up-to-date |
+| `nimbus` | `25.10.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.9.2` | ❌ Outdated |
 | `prysm` | `6.1.4` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `6.1.4` | ✅ Up-to-date |
 | `teku` | `25.10.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.10.0` | ✅ Up-to-date |
 ### Layer 1 Execution
@@ -53,8 +53,8 @@ _Last updated: 2025-10-31 03:46:25 UTC_
 |:--------|:-------------------|:------------------------|:------:|
 | `arbitrum-nitro` | `3.7.6` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.7.6` | ✅ Up-to-date |
 | `fuel-network` | `0.46.0` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.47.1` | ❌ Outdated |
-| `optimism-op-geth` | `1.101603.2` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101603.2` | ✅ Up-to-date |
-| `optimism-op-node` | `1.14.3` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.14.3` | ✅ Up-to-date |
+| `optimism-op-geth` | `1.101603.3` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101603.2` | ❌ Outdated |
+| `optimism-op-node` | `1.16.0` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.14.3` | ❌ Outdated |
 | `optimism-op-reth` | `1.8.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.8.3` | ✅ Up-to-date |
 | `starknet-juno` | `0.15.9` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.9` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.20.5` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.20.5` | ✅ Up-to-date |

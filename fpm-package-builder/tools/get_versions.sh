@@ -263,11 +263,20 @@ print_table_and_store_result() {
   printf -v row "| %-23s | %-15s | %-15s |\n" "$pkg" "$gh_ver" "$repo_ver"
   
   if [[ "$gh_ver" != "N/A" && "$repo_ver" != "N/A" ]]; then
-    if [[ "$gh_ver" == "$repo_ver" ]]; then
-      # Up to date - green
+    # FIX: Wrap the call in an if/else to safely capture the
+    # return code (1 or 2) without triggering 'set -e'.
+    local comp_result
+    if compare_versions "$repo_ver" "$gh_ver"; then
+      comp_result=0
+    else
+      comp_result=$? # Will be 1 or 2
+    fi
+    
+    if (( comp_result == 0 || comp_result == 1 )); then
+      # Up to date or newer - green
       if (( is_tty )); then printf '%s\n' "$(green "${row%$'\n'}")"; else printf '%s' "$row"; fi
     else
-      # Outdated - red
+      # Outdated (repo < gh) - red
       if (( is_tty )); then printf '%s\n' "$(red "${row%$'\n'}")"; else printf '%s' "$row"; fi
     fi
   else
@@ -346,10 +355,21 @@ generate_markdown() {
     ((++total))
     if [[ "$gh_ver" == "N/A" || "$repo_ver" == "N/A" ]]; then
       ((++na_count))
-    elif [[ "$repo_ver" == "$gh_ver" ]]; then
-      ((++up_to_date))
     else
-      ((++outdated))
+      # FIX: Wrap the call in an if/else to safely capture the
+      # return code (1 or 2) without triggering 'set -e'.
+      local comp_result
+      if compare_versions "$repo_ver" "$gh_ver"; then
+        comp_result=0
+      else
+        comp_result=$? # Will be 1 or 2
+      fi
+      
+      if (( comp_result == 0 || comp_result == 1 )); then # repo_ver >= gh_ver
+        ((++up_to_date))
+      else # repo_ver < gh_ver
+        ((++outdated))
+      fi
     fi
   done < "$RESULTS_TMP_FILE"
   
@@ -371,7 +391,7 @@ generate_markdown() {
     echo "> - **Repo Version**: latest version published in the **Ethereum on ARM APT repository**."
     echo
     echo "### Legend"
-    echo "- ✅ **Up-to-date** — Repo matches GitHub."
+    echo "- ✅ **Up-to-date** — Repo version matches or is newer than GitHub."
     echo "- ❌ **Outdated** — Repo lags behind GitHub."
     echo "- ❓ **N/A** — Could not determine."
     echo
@@ -397,9 +417,18 @@ generate_markdown() {
     
     local status="❓ N/A"
     if [[ "$gh_ver" != "N/A" && "$repo_ver" != "N/A" ]]; then
-      if [[ "$repo_ver" == "$gh_ver" ]]; then
-        status="✅ Up-to-date"
+      # FIX: Wrap the call in an if/else to safely capture the
+      # return code (1 or 2) without triggering 'set -e'.
+      local comp_result
+      if compare_versions "$repo_ver" "$gh_ver"; then
+        comp_result=0
       else
+        comp_result=$? # Will be 1 or 2
+      fi
+
+      if (( comp_result == 0 || comp_result == 1 )); then # repo_ver >= gh_ver
+        status="✅ Up-to-date"
+      else # comp_result == 2
         status="❌ Outdated"
       fi
     fi

@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 MEV_VERSION := $(shell curl -s https://api.github.com/repos/flashbots/mev-boost/releases/latest | jq -r '.tag_name' | tr -d "v")
 
-PKG_RELEASE := 1
+PKG_RELEASE := 0
 PKG_NAME := mev-boost
 
 PKG_DESCRIPTION := "Mev Boost is open source middleware run by validators to access a competitive block-building market"
@@ -29,7 +29,7 @@ FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(MEV_VERSION) --license $(PKG_LICENSE)
 --vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
 --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB)\
 --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-$(shell find extras -name 'mev-boost-*.service' -printf "--deb-systemd %p ")
+$(shell find extras -name 'mev-boost*.service' -printf "--deb-systemd %p ")
 
 
 FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(MEV_VERSION) --license $(PKG_LICENSE)\

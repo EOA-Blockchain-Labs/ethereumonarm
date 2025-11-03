@@ -2,7 +2,7 @@
 #apt-get install ruby ruby-dev rubygems build-essential rpm
 #gem install --no-document fpm
 SHELL := /bin/bash
-NIMBUS_VERSION := 0.2.0
+NIMBUS_VERSION := 0.2.2
 #NIMBUS_VERSION := $(shell curl -sL https://api.github.com/repos/status-im/nimbus-eth1/releases/latest | jq -r '.name' | tr -d 'v')
 NIMBUS_CLIENT_URL := $(shell curl -sL https://api.github.com/repos/status-im/nimbus-eth1/releases/tags/v${NIMBUS_VERSION} | jq -r '.assets[] | select(.name | contains("client-linux-arm64")).browser_download_url')
 NIMBUS_PROXY_URL := $(shell curl -sL https://api.github.com/repos/status-im/nimbus-eth1/releases/tags/v${NIMBUS_VERSION} | jq -r '.assets[] | select(.name | contains("proxy-linux-arm64")).browser_download_url')

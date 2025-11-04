@@ -1,13 +1,13 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-11-03 21:42:34 UTC_
+_Last updated: 2025-11-04 03:44:22 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
 > - **Repo Version**: latest version published in the **Ethereum on ARM APT repository**.
 
 ### Legend
-- ✅ **Up-to-date** — Repo matches GitHub.
+- ✅ **Up-to-date** — Repo version matches or is newer than GitHub.
 - ❌ **Outdated** — Repo lags behind GitHub.
 - ❓ **N/A** — Could not determine.
 

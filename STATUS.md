@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-11-04 03:44:22 UTC_
+_Last updated: 2025-11-05 03:47:05 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -13,8 +13,8 @@ _Last updated: 2025-11-04 03:44:22 UTC_
 
 ### Summary
 - Total packages checked: **27**
-- ✅ Up-to-date: **27** (100.0%)
-- ❌ Outdated: **0** (0.0%)
+- ✅ Up-to-date: **25** (92.6%)
+- ❌ Outdated: **2** (7.4%)
 - ❓ N/A: **0** (0.0%)
 
 ### Infra
@@ -31,21 +31,21 @@ _Last updated: 2025-11-04 03:44:22 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `grandine` | `1.1.5` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `1.1.5` | ✅ Up-to-date |
-| `lighthouse` | `7.1.0` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `7.1.0` | ✅ Up-to-date |
-| `lodestar` | `1.35.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.35.0` | ✅ Up-to-date |
+| `lighthouse` | `8.0.0` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.0.0` | ✅ Up-to-date |
+| `lodestar` | `1.36.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.36.0` | ✅ Up-to-date |
 | `nimbus` | `25.11.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.11.0` | ✅ Up-to-date |
 | `prysm` | `6.1.4` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `6.1.4` | ✅ Up-to-date |
-| `teku` | `25.10.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.10.0` | ✅ Up-to-date |
+| `teku` | `25.11.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.11.0` | ✅ Up-to-date |
 ### Layer 1 Execution
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
-| `besu` | `25.10.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `25.10.0` | ✅ Up-to-date |
+| `besu` | `25.11.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `25.10.0` | ❌ Outdated |
 | `erigon` | `3.2.2` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.2.2` | ✅ Up-to-date |
-| `ethrex` | `5.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `5.0.0` | ✅ Up-to-date |
-| `geth` | `1.16.6` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.6` | ✅ Up-to-date |
+| `ethrex` | `6.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `6.0.0` | ✅ Up-to-date |
+| `geth` | `1.16.7` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.7` | ✅ Up-to-date |
 | `nethermind` | `1.35.0` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.35.0` | ✅ Up-to-date |
-| `nimbus-ec` | `0.2.2` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.2.2` | ✅ Up-to-date |
+| `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.2.2` | ❌ Outdated |
 | `reth` | `1.8.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.8.3` | ✅ Up-to-date |
 ### Layer 2
 

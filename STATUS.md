@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-11-05 03:47:05 UTC_
+_Last updated: 2025-11-05 13:37:17 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -13,8 +13,8 @@ _Last updated: 2025-11-05 03:47:05 UTC_
 
 ### Summary
 - Total packages checked: **27**
-- ✅ Up-to-date: **25** (92.6%)
-- ❌ Outdated: **2** (7.4%)
+- ✅ Up-to-date: **26** (96.3%)
+- ❌ Outdated: **1** (3.7%)
 - ❓ N/A: **0** (0.0%)
 
 ### Infra
@@ -30,7 +30,7 @@ _Last updated: 2025-11-05 03:47:05 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
-| `grandine` | `1.1.5` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `1.1.5` | ✅ Up-to-date |
+| `grandine` | `2.0.0` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.0` | ✅ Up-to-date |
 | `lighthouse` | `8.0.0` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.0.0` | ✅ Up-to-date |
 | `lodestar` | `1.36.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.36.0` | ✅ Up-to-date |
 | `nimbus` | `25.11.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.11.0` | ✅ Up-to-date |
@@ -40,7 +40,7 @@ _Last updated: 2025-11-05 03:47:05 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
-| `besu` | `25.11.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `25.10.0` | ❌ Outdated |
+| `besu` | `25.11.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `25.11.0` | ✅ Up-to-date |
 | `erigon` | `3.2.2` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.2.2` | ✅ Up-to-date |
 | `ethrex` | `6.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `6.0.0` | ✅ Up-to-date |
 | `geth` | `1.16.7` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.7` | ✅ Up-to-date |

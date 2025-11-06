@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-11-05 13:37:17 UTC_
+_Last updated: 2025-11-06 03:50:02 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -44,9 +44,9 @@ _Last updated: 2025-11-05 13:37:17 UTC_
 | `erigon` | `3.2.2` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.2.2` | ✅ Up-to-date |
 | `ethrex` | `6.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `6.0.0` | ✅ Up-to-date |
 | `geth` | `1.16.7` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.7` | ✅ Up-to-date |
-| `nethermind` | `1.35.0` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.35.0` | ✅ Up-to-date |
+| `nethermind` | `1.35.1` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.35.1` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.2.2` | ❌ Outdated |
-| `reth` | `1.8.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.8.3` | ✅ Up-to-date |
+| `reth` | `1.9.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.0` | ✅ Up-to-date |
 ### Layer 2
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
@@ -55,7 +55,7 @@ _Last updated: 2025-11-05 13:37:17 UTC_
 | `fuel-network` | `0.47.1` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.47.1` | ✅ Up-to-date |
 | `optimism-op-geth` | `1.101603.3` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101603.3` | ✅ Up-to-date |
 | `optimism-op-node` | `1.16.0` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.16.0` | ✅ Up-to-date |
-| `optimism-op-reth` | `1.8.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.8.3` | ✅ Up-to-date |
+| `optimism-op-reth` | `1.9.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.0` | ✅ Up-to-date |
 | `starknet-juno` | `0.15.9` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.9` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.20.5` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.20.5` | ✅ Up-to-date |
 ### Web3

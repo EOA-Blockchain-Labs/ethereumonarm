@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-11-08 03:37:35 UTC_
+_Last updated: 2025-11-09 03:46:11 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -13,8 +13,8 @@ _Last updated: 2025-11-08 03:37:35 UTC_
 
 ### Summary
 - Total packages checked: **27**
-- ✅ Up-to-date: **25** (92.6%)
-- ❌ Outdated: **2** (7.4%)
+- ✅ Up-to-date: **26** (96.3%)
+- ❌ Outdated: **1** (3.7%)
 - ❓ N/A: **0** (0.0%)
 
 ### Infra
@@ -56,7 +56,7 @@ _Last updated: 2025-11-08 03:37:35 UTC_
 | `optimism-op-geth` | `1.101603.4` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101603.4` | ✅ Up-to-date |
 | `optimism-op-node` | `1.16.1` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.16.1` | ✅ Up-to-date |
 | `optimism-op-reth` | `1.9.1` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.1` | ✅ Up-to-date |
-| `starknet-juno` | `0.15.10` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.9` | ❌ Outdated |
+| `starknet-juno` | `0.15.10` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.10` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.20.5` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.20.5` | ✅ Up-to-date |
 ### Web3
 

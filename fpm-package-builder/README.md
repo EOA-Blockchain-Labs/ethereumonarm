@@ -1,36 +1,25 @@
-=================================
-Ethereum on ARM – Package Builder
-=================================
+# Ethereum on ARM – Package Builder
 
-This repository contains the **Makefiles**, **helper scripts**, and **tooling**
-used to build and package all **Ethereum on ARM** software into ``.deb`` packages
-for ARM64 boards and multi-arch Ubuntu systems.
+This repository contains the Makefiles, helper scripts, and tooling used to build and package all Ethereum on ARM software into `.deb` packages for ARM64 boards and multi-arch Ubuntu systems.
 
-The builder creates reproducible ``.deb`` packages for:
-
+The builder creates reproducible `.deb` packages for:
 - Ethereum execution and consensus clients
 - Utilities and monitoring tools (Grafana, Prometheus, Node Exporter, etc.)
 - EOA-specific utilities (EOA-GUI, systemd templates, helper scripts)
 
-----
+---
 
-1. Recommended: Use the Provided Vagrantfile
-============================================
+## 1. Recommended: Use the Provided Vagrantfile
 
-The easiest and most reliable way to create a fully configured build environment
-is to use the included **Vagrantfile**. This will automatically set up an Ubuntu
-24.04 virtual machine with all required dependencies, compilers, and toolchains.
+The easiest and most reliable way to create a fully configured build environment is to use the included Vagrantfile.  
+It automatically sets up an Ubuntu 24.04 virtual machine with all required dependencies, compilers, and toolchains.
 
-Requirements
-------------
+### Requirements
 
-- `Vagrant <https://www.vagrantup.com/docs/installation>`__
-- `VirtualBox <https://www.virtualbox.org/wiki/Downloads>`__
+- [Vagrant](https://www.vagrantup.com/docs/installation)  
+- [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 
-Steps
------
-
-.. code-block:: bash
+### Steps
 
     git clone https://github.com/EOA-Blockchain-Labs/ethereumonarm.git
     cd ethereumonarm/fpm-package-builder
@@ -40,25 +29,20 @@ Steps
 
 The VM comes with:
 
-- All dependencies and cross-compilers installed
-- Docker configured for the ``vagrant`` user
-- Rust, Go, and Node environments ready to use
+- All dependencies and cross-compilers installed  
+- Docker configured for the `vagrant` user  
+- Rust, Go, and Node environments ready to use  
 
 Once inside the VM, you can immediately build packages (see section 3).
 
-----
+---
 
-2. Manual Setup (Ubuntu 24.04 LTS)
-==================================
+## 2. Manual Setup (Ubuntu 24.04 LTS)
 
-.. note::
-    Only use this method if you need to build directly on your host
-    system or in a CI pipeline. Otherwise, prefer the Vagrant option above.
+> Only use this method if you need to build directly on your host
+> system or in a CI pipeline. Otherwise, prefer the Vagrant option above.
 
-2.1 Prepare apt repositories
-----------------------------
-
-.. code-block:: bash
+### 2.1 Prepare apt repositories
 
     echo "# See /etc/apt/sources.list.d/ for repository configuration" | sudo tee /etc/apt/sources.list
     sudo rm -f /etc/apt/sources.list.d/ubuntu.sources
@@ -87,153 +71,111 @@ Once inside the VM, you can immediately build packages (see section 3).
     echo 'Acquire::http::Pipeline-Depth "0";' | sudo tee /etc/apt/apt.conf.d/90localsettings
     sudo apt-get update -y
 
-2.2 Install dependencies
-------------------------
+### 2.2 Install dependencies
 
-.. code-block:: bash
-
-    # Install base system dependencies and cross-compilers
     sudo apt-get install -y \
       libssl-dev:arm64 pkg-config software-properties-common docker.io docker-compose \
       clang file make cmake gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
       ruby ruby-dev rubygems build-essential rpm vim git jq curl wget python3-pip
 
-    # Install FPM
     sudo gem install --no-document fpm
 
-    # Install Go (from PPA)
+#### Install Go
+
     sudo add-apt-repository -y ppa:longsleep/golang-backports
     sudo apt-get update -y
     sudo apt-get install -y golang-go
 
-    # Add current user to the docker group
+#### Docker permissions
+
     sudo usermod -aG docker $USER
-    echo "!! User added to 'docker' group. You may need to log out and back in."
-    echo "!! As a temporary workaround for this shell, run: newgrp docker"
+    newgrp docker
 
-    # --- Install Rust (as current user) ---
-    echo "Installing Rust toolchain..."
+#### Install Rust
+
     curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain stable
-
-    # Add Rust to current shell PATH
     source "$HOME/.cargo/env"
     rustup target add aarch64-unknown-linux-gnu
 
-    # Configure Rust cross-linker
     mkdir -p "$HOME/.cargo"
     cat <<EOF > "$HOME/.cargo/config"
     [target.aarch64-unknown-linux-gnu]
     linker = "aarch64-linux-gnu-gcc"
     EOF
 
-    # --- Install Node.js, Yarn, PNPM (as current user) ---
-    echo "Installing NVM, Node.js, Yarn, and PNPM..."
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+#### Install Node.js, Yarn, PNPM
 
-    # Load NVM in a subshell and install packages
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
     export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    . "$NVM_DIR/nvm.sh"
 
     nvm install 20
     npm install -g yarn
     curl -fsSL https://get.pnpm.io/install.sh | sh -
 
-    echo "!! Manual setup complete. You may need to restart your shell"
-    echo "!! or run 'source ~/.bashrc' to make Rust/NVM available in your PATH."
+---
 
+## 3. Building Packages
 
-----
-
-3. Building Packages
-====================
-
-Build all ``.deb`` packages
----------------------------
-
-.. code-block:: bash
+### Build all `.deb` packages
 
     make
 
-Build a specific package
-------------------------
-
-.. code-block:: bash
+### Build a specific package
 
     cd l1-clients/execution-layer/geth
     make
 
 Each subdirectory includes a Makefile defining:
 
-- ``VERSION`` (package version)
-- ``SOURCE_URL`` (GitHub source repository)
+- `VERSION` (package version)
+- `SOURCE_URL` (GitHub source repository)
 - Build and packaging rules
 
-Resulting ``.deb`` files are placed in a central ``packages`` directory, relative to the component directory (e.g., ``../../packages`` as defined in the ``Makefile_template``).
+Resulting `.deb` files are placed in a central `packages` directory, relative to the component directory (e.g., `../../packages` as defined in the `Makefile_template`).
 
-----
+---
 
-4. Verifying Builds
-===================
-
-.. code-block:: bash
+## 4. Verifying Builds
 
     ls -l ../../packages/*.deb
     dpkg-deb -I ../../packages/geth_*.deb | grep Version
 
 To install locally for testing (adjust path):
 
-.. code-block:: bash
-
     sudo apt install ../../packages/geth_<version>_arm64.deb
 
-----
+---
 
-5. Adding a New Package
-=======================
+## 5. Adding a New Package
 
-1.  Create a new directory under ``fpm-package-builder/`` (e.g., ``utils/new-tool/``)
-2.  Copy the ``fpm-package-builder/Makefile_template`` file to your new directory and rename it to ``Makefile``.
-3.  Update all ``CHANGEME`` variables in the new ``Makefile``, paying close attention to:
-    * ``PKG_NAME``
-    * ``PKG_DESCRIPTION``
-    * ``PKG_MAINTAINER``
-    * ``WEB_URL``
-    * The entire **"Upstream version and source info"** section (this is the most critical part).
-    * ``OUTPUTDIR`` (adjust the path depth, e.g., ``../../packages`` or ``../../../packages``).
-4.  Run ``make`` inside the directory to build and test.
-5.  Test on an ARM board (e.g., Rock 5B, Orange Pi 5 Plus).
+1. Create a new directory under `fpm-package-builder/` (e.g., `utils/new-tool/`)
+2. Copy the `fpm-package-builder/Makefile_template` file to your new directory and rename it to `Makefile`.
+3. Update all `CHANGEME` variables in the new `Makefile`, paying close attention to:
+   - `PKG_NAME`
+   - `PKG_DESCRIPTION`
+   - `PKG_MAINTAINER`
+   - `WEB_URL`
+   - The entire “Upstream version and source info” section (this is the most critical part).
+   - `OUTPUTDIR` (adjust the path depth, e.g., `../../packages` or `../../../packages`).
+4. Run `make` inside the directory to build and test.
+5. Test on an ARM board (e.g., Rock 5B, Orange Pi 5 Plus).
 
-----
+---
 
-6. Troubleshooting
-==================
+## 6. Troubleshooting
 
-.. list-table::
-   :header-rows: 1
+| Problem                            | Cause                     | Solution                                                      |
+|------------------------------------|---------------------------|---------------------------------------------------------------|
+| `apt-get update` fails for ARM64   | Wrong codename or URI     | Verify `UBUNTU_CODENAME` and repo URLs                       |
+| Rust linker errors                 | Missing cross-compiler    | Ensure `aarch64-linux-gnu-gcc` is installed                  |
+| `nvm` not found                    | Path not sourced          | `export NVM_DIR="$HOME/.nvm" && [ -s ... ] && . "$NVM_DIR/nvm.sh"` |
+| Docker permission denied           | User not in group         | `sudo usermod -aG docker $USER && newgrp docker`             |
+| `fpm` not found                    | Ruby PATH issue           | `sudo gem install fpm` or export Ruby bin path               |
 
-   * - Problem
-     - Cause
-     - Solution
-   * - ``apt-get update`` fails for ARM64 repos
-     - Wrong codename or URI
-     - Verify ``UBUNTU_CODENAME`` and repo URLs
-   * - Rust linker errors
-     - Missing cross-compiler
-     - Ensure ``aarch64-linux-gnu-gcc`` is installed
-   * - ``nvm`` not found
-     - Path not sourced
-     - ``export NVM_DIR="$HOME/.nvm" && [ -s ... ] && \. "$NVM_DIR/nvm.sh"`` before use
-   * - Docker permission denied
-     - User not in group
-     - ``sudo usermod -aG docker $USER && newgrp docker``
-   * - ``fpm`` not found
-     - Ruby PATH issue
-     - ``sudo gem install fpm`` or export Ruby bin path
+---
 
-----
-
-7. Contributing
-===============
+## 7. Contributing
 
 We welcome contributions! You can help by:
 
@@ -241,20 +183,24 @@ We welcome contributions! You can help by:
 - Updating package versions
 - Improving documentation or Makefiles
 
-Join our `Discord <https://discord.gg/ve2Z8fxz5N>`__ to collaborate.
+Join our Discord to collaborate:  
+https://discord.gg/ve2Z8fxz5N
 
-----
+---
 
-8. Related Resources
-====================
+## 8. Related Resources
 
-- `Ethereum on ARM Main Repo <https://github.com/EOA-Blockchain-Labs/ethereumonarm>`__
-- `EOA Docs Portal <https://ethereum-on-arm-documentation.readthedocs.io>`__
-- `Status Page (package versions) <https://github.com/EOA-Blockchain-Labs/ethereumonarm/blob/main/STATUS.md>`__
+- Ethereum on ARM Main Repo:  
+  https://github.com/EOA-Blockchain-Labs/ethereumonarm
 
-----
+- EOA Docs Portal:  
+  https://ethereum-on-arm-documentation.readthedocs.io
 
-✅ **Done!**
+- Status Page (package versions):  
+  https://github.com/EOA-Blockchain-Labs/ethereumonarm/blob/main/STATUS.md
 
-Your ``.deb`` packages will appear inside the relative ``packages`` directory once the
-build completes successfully.
+---
+
+## ✅ Done
+
+Your `.deb` packages will appear inside the relative `packages` directory once the build completes successfully.

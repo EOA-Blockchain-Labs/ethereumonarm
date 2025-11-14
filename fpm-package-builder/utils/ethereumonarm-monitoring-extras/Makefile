@@ -1,34 +1,94 @@
-#Install FPM
-#apt-get install ruby ruby-dev rubygems build-essential
-#gem install --no-document fpm
+# ======================================================================
+# Ethereum on ARM — Production Packaging Makefile (Monitoring Extras)
+# ----------------------------------------------------------------------
+# Builds .deb and .rpm packages for ARM systems using FPM.
+# - This is a meta-package that ships monitoring config files
+# - Applies EOA packaging standards and metadata
+# ======================================================================
+
+.SILENT:
 SHELL := /bin/bash
+.DEFAULT_GOAL := all
 
-PKG_NAME := ethereumonarm-monitoring-extras
-PKG_DESCRIPTION := "Ethereum on ARM monitoring config"
-PKG_VERSION := 1.2.7
-PKG_RELEASE := 0
-PKG_MAINTAINER := "Fernando Collado <fcollado@ethereumonarm.com>"
-PKG_ARCH := all
-SOURCESDIR := sources/
-OUTPUTDIR := ../../packages
+# ----------------------------------------------------------------------
+# Package metadata
+# ----------------------------------------------------------------------
+PKG_NAME        ?= ethereumonarm-monitoring-extras
+PKG_RELEASE     ?= 0
+PKG_ARCH        ?= all
+PKG_ARCH_RPM    ?= noarch
+PKG_VENDOR      ?= Ethereum on ARM
+PKG_LICENSE     ?= GNU General Public License v3.0
+PKG_DESCRIPTION ?= Ethereum on ARM monitoring config
+PKG_MAINTAINER  ?= Fernando Collado <fcollado@ethereumonarm.com>
+CATEGORY        ?= science
+WEB_URL         ?= https://github.com/EOA-Blockchain-Labs/ethereumonarm
+SOURCESDIR      ?= sources
+OUTPUTDIR       ?= ../../packages
 
-PKG_DEB := ${PKG_NAME}_${PKG_VERSION}-${PKG_RELEASE}_${PKG_ARCH}.deb
+# ----------------------------------------------------------------------
+# Install/Remove Scripts
+# ----------------------------------------------------------------------
+PKG_AFTER_INSTALL ?= extras/postinst
 
-FPM_OPTS := -s dir -n $(PKG_NAME) -v $(PKG_VERSION) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)  -a $(PKG_ARCH) -p $(OUTPUTDIR) --after-install extras/postinst -x */.gitkeep
+# ----------------------------------------------------------------------
+# Upstream version and source info
+# ----------------------------------------------------------------------
+PKG_VERSION ?= 1.2.7
 
-all: deb test
+PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(PKG_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
+PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 
-deb: ## Create deb package
-	fpm -t deb -p $(PKG_DEB) $(FPM_OPTS) --depends grafana --depends prometheus --depends prometheus-node-exporter --depends ufw --depends ethereum-metrics-exporter
+# ----------------------------------------------------------------------
+# FPM common options
+# ----------------------------------------------------------------------
+FPM_COMMON_OPTS = \
+  -s dir \
+  -n $(PKG_NAME) \
+  -v $(PKG_VERSION) \
+  --iteration $(PKG_RELEASE) \
+  --vendor "$(PKG_VENDOR)" \
+  --license "$(PKG_LICENSE)" \
+  --description "$(PKG_DESCRIPTION)" \
+  --maintainer "$(PKG_MAINTAINER)" \
+  --category "$(CATEGORY)" \
+  --url "$(WEB_URL)" \
+  -C $(SOURCESDIR) \
+  -x '*/.gitkeep'
 
-.PHONY: test
-test:
-	@if [ -f $(OUTPUTDIR)/$(PKG_DEB) ]; then \
-        printf "\033[32mPackage $(PKG_DEB) successfully created\033[0m\n"; \
-    else \
-        printf "\033[31mError: Package $(PKG_DEB) not found\033[0m\n"; \
-        exit 1; \
-    fi
-	
-help:  ## List targets.
-	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"
+# ----------------------------------------------------------------------
+# Debian-specific options
+# ----------------------------------------------------------------------
+FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
+  -t deb \
+  --architecture $(PKG_ARCH) \
+  --after-install $(PKG_AFTER_INSTALL) \
+  --deb-no-default-config-files \
+  $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
+  --depends grafana \
+  --depends prometheus \
+  --depends prometheus-node-exporter \
+  --depends ufw \
+  --depends ethereum-metrics-exporter \
+  --depends merge-config
+
+# ----------------------------------------------------------------------
+# RPM-specific options
+# ----------------------------------------------------------------------
+FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
+  -t rpm \
+  --architecture $(PKG_ARCH_RPM) \
+  --after-install $(PKG_AFTER_INSTALL) \
+  --depends grafana \
+  --depends prometheus \
+  --depends prometheus-node-exporter \
+  --depends ufw \
+  --depends ethereum-metrics-exporter \
+  --depends merge-config
+
+# ----------------------------------------------------------------------
+# Targets
+# ----------------------------------------------------------------------
+.PHONY: all prepare deb rpm clean test release help
+
+# ----------------------------------------------------------------------

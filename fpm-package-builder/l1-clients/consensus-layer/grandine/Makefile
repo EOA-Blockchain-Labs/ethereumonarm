@@ -1,64 +1,170 @@
-#install fpm
-#apt-get install ruby ruby-dev rubygems build-essential rpm
-#gem install --no-document fpm
+# ======================================================================
+# Ethereum on ARM — Production Packaging Makefile (Grandine)
+# ----------------------------------------------------------------------
+# Builds .deb and .rpm packages for ARM systems using FPM.
+# - Downloads the latest upstream Grandine binary from GitHub
+# - Stages files into ./sources/usr/bin
+# - Applies EOA packaging standards and metadata
+# ======================================================================
+
+.SILENT:
 SHELL := /bin/bash
+.DEFAULT_GOAL := all
 
-GRANDINE_VERSION := $(shell curl -sL "https://api.github.com/repos/grandinetech/grandine/releases/latest" | jq '.tag_name' | tr -d  '"'| tr -d "v")
+# ----------------------------------------------------------------------
+# Package metadata
+# ----------------------------------------------------------------------
+PKG_NAME        ?= grandine
+PKG_RELEASE     ?= 0
+PKG_ARCH        ?= arm64
+PKG_ARCH_RPM    ?= aarch64
+PKG_VENDOR      ?= Ethereum on ARM
+PKG_LICENSE     ?= Apache License 2.0
+PKG_DESCRIPTION ?= Ethereum Consensus Layer Grandine Tech implementation
+PKG_MAINTAINER  ?= Diego Losada <dlosada@ethereumonarm.com>
+CATEGORY        ?= science
+WEB_URL         ?= https://grandine.io
+SOURCESDIR      ?= sources
+OUTPUTDIR       ?= ../../../packages
 
-PKG_RELEASE := 0
-PKG_NAME := grandine
+# ----------------------------------------------------------------------
+# Upstream version and source info
+# ----------------------------------------------------------------------
+# Get the tag with "v" (e.g., v0.1.0) for the download URL
+GRANDINE_TAG := $(shell curl -sL "https://api.github.com/repos/grandinetech/grandine/releases/latest" | jq -r '.tag_name')
+# Get the version without "v" (e.g., 0.1.0) for the package version
+GRANDINE_VERSION := $(shell echo "$(GRANDINE_TAG)" | tr -d "v")
 
-PKG_DESCRIPTION := "Ethereum Consensus Layer Grandine Tech implementation"
-PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
+# The download URL uses the arm64 arch tag, so we use $(PKG_ARCH)
+GRANDINE_URL := https://github.com/grandinetech/grandine/releases/download/$(GRANDINE_TAG)/grandine-$(GRANDINE_VERSION)-$(PKG_ARCH)
 
-CATEGORY := science
-WEB_URL :=  https://grandine.io
+PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(GRANDINE_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
+PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(GRANDINE_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 
-PKG_VENDOR := "Ethereum on ARM"
-PKG_LICENSE := "Apache License 2.0"
+# ----------------------------------------------------------------------
+# FPM common options
+# ----------------------------------------------------------------------
+FPM_COMMON_OPTS = \
+  -s dir \
+  -n $(PKG_NAME) \
+  -v $(GRANDINE_VERSION) \
+  --iteration $(PKG_RELEASE) \
+  --vendor "$(PKG_VENDOR)" \
+  --license "$(PKG_LICENSE)" \
+  --description "$(PKG_DESCRIPTION)" \
+  --maintainer "$(PKG_MAINTAINER)" \
+  --category "$(CATEGORY)" \
+  --url "$(WEB_URL)" \
+  -C $(SOURCESDIR) \
+  -x '*/.gitkeep'
 
-PKG_ARCH_DEB := arm64
-PKG_ARCH_RPM := arm64
+# ----------------------------------------------------------------------
+# Debian-specific options
+# ----------------------------------------------------------------------
+FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
+  -t deb \
+  --architecture $(PKG_ARCH) \
+  --deb-no-default-config-files \
+  $(shell test -d extras && find extras -name 'grandine-*.service' -printf "--deb-systemd %p ") \
+  $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
+  --depends merge-config
 
-SOURCESDIR := sources/
-OUTPUTDIR := ../../../packages
+# ----------------------------------------------------------------------
+# RPM-specific options
+# ----------------------------------------------------------------------
+FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
+  -t rpm \
+  --architecture $(PKG_ARCH_RPM) \
+  $(shell test -d extras && find extras -name 'grandine-*.service' -printf "--rpm-systemd %p ") \
+  --depends merge-config
 
-PKG_RPM := $(PKG_NAME)-$(GRANDINE_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_RPM).rpm
-PKG_DEB := $(PKG_NAME)_$(GRANDINE_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
+# ----------------------------------------------------------------------
+# Targets
+# ----------------------------------------------------------------------
+.PHONY: all prepare deb rpm clean test release help
 
-FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(GRANDINE_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
-	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\
-	-a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-	$(shell find extras -name 'grandine-*.service' -printf "--deb-systemd %p ") \
-	--depends merge-config
+# ----------------------------------------------------------------------
+# all — default target for local builds
+# ----------------------------------------------------------------------
+all: prepare deb clean test ## Default local build pipeline
 
-FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(GRANDINE_VERSION) --license $(PKG_LICENSE) --vendor $(PKG_VENDOR)\
-	--iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION)\
-	-a $(PKG_ARCH_RPM) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep
+# ----------------------------------------------------------------------
+# prepare — download & stage Grandine binary
+# ----------------------------------------------------------------------
+prepare: ## Download latest Grandine and stage into $(SOURCESDIR)/usr/bin
+	@echo "🔎 Resolving latest Grandine version..."
+	if [[ -z "$(GRANDINE_TAG)" || "$(GRANDINE_TAG)" == "null" ]]; then \
+	  echo "❌ Could not determine latest Grandine version via GitHub API."; exit 1; \
+	fi
+	@echo "🔽 Downloading Grandine $(GRANDINE_VERSION) ($(GRANDINE_TAG))..."
+	mkdir -p $(SOURCESDIR)/usr/bin
+	wget -q -O "$(SOURCESDIR)/usr/bin/$(PKG_NAME)" "$(GRANDINE_URL)" || { echo "❌ Download failed: $(GRANDINE_URL)"; exit 1; };
+	chmod 0755 "$(SOURCESDIR)/usr/bin/$(PKG_NAME)"
+	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/$(PKG_NAME)"
 
-all: prepare deb clean test
+# ----------------------------------------------------------------------
+# deb — build Debian package
+# ----------------------------------------------------------------------
+deb: prepare ## Build .deb package
+	mkdir -p $(OUTPUTDIR)
+	@echo "📦 Building DEB package..."
+	fpm $(FPM_DEB_OPTS) -p "$(PKG_DEB)" .
+	if [[ -f "$(PKG_DEB)" ]]; then \
+	  echo "✅ DEB package created at $(PKG_DEB)"; \
+	else \
+	  echo "❌ DEB package creation failed."; exit 1; \
+	fi
 
-prepare: ## Download the latest binary and prepare the package files
-	wget  https://github.com/grandinetech/grandine/releases/download/$(GRANDINE_VERSION)/grandine-$(GRANDINE_VERSION)-arm64 -O sources/usr/bin/grandine
-	chmod +x sources/usr/bin/grandine
+# ----------------------------------------------------------------------
+# rpm — build RPM package
+# ----------------------------------------------------------------------
+rpm: prepare ## Build .rpm package
+	mkdir -p $(OUTPUTDIR)
+	@echo "📦 Building RPM package..."
+	fpm $(FPM_RPM_OPTS) -p "$(PKG_RPM)" .
+	if [[ -f "$(PKG_RPM)" ]]; then \
+	  echo "✅ RPM package created at $(PKG_RPM)"; \
+	else \
+	  echo "❌ RPM package creation failed."; exit 1; \
+	fi
 
-deb: ## Create deb package
-	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)
+# ----------------------------------------------------------------------
+# clean — remove build artifacts
+# ----------------------------------------------------------------------
+clean: ## Remove staged binaries and temp files
+	rm -rf $(SOURCESDIR)/usr/bin/$(PKG_NAME)*
+	@echo "🧹 Clean complete (staged binaries removed)."
 
-rpm: ## Create rpm package
-	fpm -t rpm -p $(PKG_RPM) $(FPM_RPM_OPTS)
+# ----------------------------------------------------------------------
+# test — verify build success
+# ----------------------------------------------------------------------
+test: ## Check that .deb exists
+	if [[ -f "$(PKG_DEB)" ]]; then \
+	  echo "🧪 Test: .deb exists — OK ✅"; \
+	else \
+	  echo "🧪 Test: .deb missing — ❌"; exit 1; \
+	fi
 
-.PHONY: clean test
-clean: ## Clean up
-	rm sources/usr/bin/grandine
+# ----------------------------------------------------------------------
+# release — full CI build (includes RPM)
+# ----------------------------------------------------------------------
+release: clean prepare deb rpm test ## Clean + Prepare + Build + Test (all)
+	@echo "🎉 All packages built successfully for $(PKG_ARCH)"
 
-test:
-	@if [ -f $(OUTPUTDIR)/$(PKG_DEB) ]; then \
-        printf "\033[32mPackage $(PKG_DEB) successfully created\033[0m\n"; \
-    else \
-        printf "\033[31mError: Package $(PKG_DEB) not found\033[0m\n"; \
-        exit 1; \
-    fi
+# ----------------------------------------------------------------------
+# help — show all available targets
+# ----------------------------------------------------------------------
+help: ## Show available targets
+	echo ""
+	echo "EOA Packaging — $(PKG_NAME)"
+	echo ""
+	awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z0-9_%-]+:.*?##/ { printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
+	echo ""
+	echo "Version resolved: $(GRANDINE_VERSION) (Tag: $(GRANDINE_TAG))"
+	echo "Sources dir     : $(SOURCESDIR)"
+	echo "Output dir      : $(OUTPUTDIR)"
+	echo ""
 
-help:  ## List targets.
-	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"
+# ======================================================================
+# End of file
+# ======================================================================

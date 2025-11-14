@@ -1,66 +1,160 @@
+# ======================================================================
+# Ethereum on ARM — Production Packaging Makefile (Ethrex)
+# ----------------------------------------------------------------------
+# Builds .deb and .rpm packages for ARM systems using FPM.
+# - Downloads the latest upstream Ethrex binary from GitHub
+# - Stages files into ./sources/usr/bin and ./sources/etc
+# - Applies EOA packaging standards and metadata
+# ======================================================================
 
+.SILENT:
 SHELL := /bin/bash
+.DEFAULT_GOAL := all
 
-# Using 'lambdaclass/ethrex' instead of 'erigontech/erigon'.
+# ----------------------------------------------------------------------
+# Package metadata
+# ----------------------------------------------------------------------
+PKG_NAME        ?= ethrex
+PKG_RELEASE     ?= 0
+PKG_ARCH        ?= arm64
+PKG_ARCH_RPM    ?= aarch64
+PKG_VENDOR      ?= Ethereum on ARM
+PKG_LICENSE     ?= GNU Lesser General Public License v3.0
+PKG_DESCRIPTION ?= Ethrex is a minimalist, stable, modular and fast implementation of the Ethereum protocol
+PKG_MAINTAINER  ?= Diego Losada <dlosada@ethereumonarm.com>
+CATEGORY        ?= science
+WEB_URL         ?= https://github.com/lambdaclass/ethrex
+SOURCESDIR      ?= sources
+OUTPUTDIR       ?= ../../../packages
+
+# ----------------------------------------------------------------------
+# Upstream version and source info
+# ----------------------------------------------------------------------
 ETHREX_VERSION := $(shell curl -sL "https://api.github.com/repos/lambdaclass/ethrex/releases/latest" | jq -r '.tag_name' | tr -d 'v')
+ETHREX_URL     := https://github.com/lambdaclass/ethrex/releases/download/v$(ETHREX_VERSION)/ethrex-linux-$(PKG_ARCH_RPM)
 
-PKG_RELEASE := 0
-PKG_NAME := ethrex
+PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(ETHREX_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
+PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(ETHREX_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 
-PKG_DESCRIPTION := "Ethrex is a minimalist, stable, modular and fast implementation of the Ethereum protocol built to lower the barrier to entry in the crypto ecosystem"
-PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
-CATEGORY := science
-WEB_URL := https://github.com/lambdaclass/ethrex
+# ----------------------------------------------------------------------
+# FPM common options
+# ----------------------------------------------------------------------
+FPM_COMMON_OPTS = \
+  -s dir \
+  -n $(PKG_NAME) \
+  -v $(ETHREX_VERSION) \
+  --iteration $(PKG_RELEASE) \
+  --vendor "$(PKG_VENDOR)" \
+  --license "$(PKG_LICENSE)" \
+  --description "$(PKG_DESCRIPTION)" \
+  --maintainer "$(PKG_MAINTAINER)" \
+  --category "$(CATEGORY)" \
+  --url "$(WEB_URL)" \
+  -C $(SOURCESDIR) \
+  -x '*/.gitkeep'
 
-PKG_VENDOR := "Ethereum on ARM"
-PKG_LICENSE := "GNU Lesser General Public License v3.0"
+# ----------------------------------------------------------------------
+# Debian-specific options
+# ----------------------------------------------------------------------
+# Includes dynamic systemd unit detection and dynamic config-file tracking
+FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
+  -t deb \
+  --architecture $(PKG_ARCH) \
+  --deb-no-default-config-files \
+  $(shell test -d extras && find extras -name '$(PKG_NAME)*.service' -printf "--deb-systemd %p " || true) \
+  $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
+  --depends merge-config
 
-PKG_ARCH_DEB := arm64
-PKG_ARCH_RPM := arm64
+# ----------------------------------------------------------------------
+# RPM-specific options
+# ----------------------------------------------------------------------
+FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
+  -t rpm \
+  --architecture $(PKG_ARCH_RPM) \
+  $(shell test -d extras && find extras -name '$(PKG_NAME)*.service' -printf "--rpm-systemd %p " || true)
 
-SOURCESDIR := sources/
-OUTPUTDIR := ../../../packages
+# ----------------------------------------------------------------------
+# Targets
+# ----------------------------------------------------------------------
+.PHONY: all prepare deb rpm clean test release help
 
-PKG_RPM := $(PKG_NAME)-$(ETHREX_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_RPM).rpm
-PKG_DEB := $(PKG_NAME)_$(ETHREX_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
+# ----------------------------------------------------------------------
+# all — default target for local builds
+# ----------------------------------------------------------------------
+all: prepare deb clean test ## Default local build pipeline
 
-FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(ETHREX_VERSION) --license $(PKG_LICENSE)\
---vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
---maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB)\
---category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-$(shell find extras -name 'ethrex*.service' -printf "--deb-systemd %p ")
+# ----------------------------------------------------------------------
+# prepare — download & stage Ethrex binary
+# ----------------------------------------------------------------------
+prepare: ## Download latest Ethrex and stage directly into $(SOURCESDIR)/usr/bin
+	@echo "🔎 Resolving latest Ethrex version..."
+	if [[ -z "$(ETHREX_VERSION)" || "$(ETHREX_VERSION)" == "null" ]]; then \
+	  echo "❌ Could not determine latest Ethrex version via GitHub API."; exit 1; \
+	fi
+	@echo "🔽 Downloading Ethrex $(ETHREX_VERSION)..."
+	mkdir -p $(SOURCESDIR)/usr/bin
+	wget -q -O "$(SOURCESDIR)/usr/bin/$(PKG_NAME)" "$(ETHREX_URL)" || { echo "❌ Download failed: $(ETHREX_URL)"; exit 1; }; \
+	chmod 0755 "$(SOURCESDIR)/usr/bin/$(PKG_NAME)"
+	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/$(PKG_NAME)"
 
-FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(ETHREX_VERSION) --license $(PKG_LICENSE)\
---vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
---maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_RPM)\
---category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-$(shell find extras -name 'ethrex*.service' -printf "--rpm-systemd %p ")
-
-all: prepare deb clean test
-
-prepare: ## Download the latest binary and prepare the package files
-	# WARNING: This DOWNLOAD URL is an assumption.
-	# Please verify the actual file name format on the Ethrex releases page.
-	wget https://github.com/lambdaclass/ethrex/releases/download/v$(ETHREX_VERSION)/ethrex-linux-aarch64 -O sources/usr/bin/ethrex
-	chmod +x sources/usr/bin/ethrex
-
-deb: ## Create deb package
-	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)
-
-rpm: ## Create rpm package
-	fpm -t rpm -p $(PKG_RPM) $(FPM_RPM_OPTS)
-
-.PHONY: clean test
-clean: ## Clean up
-	rm sources/usr/bin/ethrex
-
-test:
-	@if [ -f $(OUTPUTDIR)/$(PKG_DEB) ]; then \
-		printf "\033[32mPackage $(PKG_DEB) successfully created\033[0m\n"; \
+# ----------------------------------------------------------------------
+# deb — build Debian package
+# ----------------------------------------------------------------------
+deb: prepare ## Build .deb package
+	mkdir -p $(OUTPUTDIR)
+	@echo "📦 Building DEB package..."
+	fpm $(FPM_DEB_OPTS) -p "$(PKG_DEB)" .
+	if [[ -f "$(PKG_DEB)" ]]; then \
+	  echo "✅ DEB package created at $(PKG_DEB)"; \
 	else \
-		printf "\033[31mError: Package $(PKG_DEB) not found\033[0m\n"; \
-		exit 1; \
+	  echo "❌ DEB package creation failed."; exit 1; \
 	fi
 
-help: ## List targets.
-	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"
+# ----------------------------------------------------------------------
+# rpm — build RPM package
+# ----------------------------------------------------------------------
+rpm: prepare ## Build .rpm package
+	mkdir -p $(OUTPUTDIR)
+	@echo "📦 Building RPM package..."
+	fpm $(FPM_RPM_OPTS) -p "$(PKG_RPM)" .
+	if [[ -f "$(PKG_RPM)" ]]; then \
+	  echo "✅ RPM package created at $(PKG_RPM)"; \
+	else \
+	  echo "❌ RPM package creation failed."; exit 1; \
+	fi
+
+# ----------------------------------------------------------------------
+# clean — remove build artifacts
+# ----------------------------------------------------------------------
+clean: ## Remove staged binaries and temp files
+	rm -rf $(SOURCESDIR)/usr/bin/$(PKG_NAME)*
+	@echo "🧹 Clean complete (staged binaries removed)."
+
+# ----------------------------------------------------------------------
+# test — verify build success
+# ----------------------------------------------------------------------
+test: ## Check that .deb exists
+	if [[ -f "$(PKG_DEB)" ]]; then \
+	  echo "🧪 Test: .deb exists — OK ✅"; \
+	else \
+	  echo "🧪 Test: .deb missing — ❌"; exit 1; \
+	fi
+
+
+# ----------------------------------------------------------------------
+# help — show all available targets
+# ----------------------------------------------------------------------
+help: ## Show available targets
+	echo ""
+	echo "EOA Packaging — $(PKG_NAME)"
+	echo ""
+	awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z0-9_%-]+:.*?##/ { printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
+	echo ""
+	echo "Version resolved: $(ETHREX_VERSION)"
+	echo "Sources dir     : $(SOURCESDIR)"
+	echo "Output dir      : $(OUTPUTDIR)"
+	echo ""
+
+# ======================================================================
+# End of file
+# ======================================================================

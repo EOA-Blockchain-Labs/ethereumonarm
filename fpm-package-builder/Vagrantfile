@@ -90,6 +90,10 @@ EOF'
   # The NVM installer script should modify .bashrc or .profile for persistence.
   su - vagrant -c 'export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && nvm install 20'
   su - vagrant -c 'export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm install -g yarn'
+  #Install pnpm
+  curl -fsSL https://get.pnpm.io/install.sh | sh -
+
+
 
   echo "Provisioning script finished!"
   SHELL

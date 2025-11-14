@@ -2,7 +2,7 @@
 # Ethereum on ARM — Production Packaging Makefile (ethstaker-deposit-cli)
 # ----------------------------------------------------------------------
 # Builds .deb and .rpm packages for ARM systems using FPM.
-# - Downloads the latest upstream deposit-cli binary from GitHub
+# - Downloads the latest upstream ethstaker-deposit-cli binary from GitHub
 # - Stages files into ./sources/usr/bin
 # - Applies EOA packaging standards and metadata
 # ======================================================================
@@ -20,28 +20,29 @@ PKG_ARCH        ?= arm64
 PKG_ARCH_RPM    ?= aarch64
 PKG_VENDOR      ?= Ethereum on ARM
 PKG_LICENSE     ?= Creative Commons Zero v1.0 Universal
-PKG_DESCRIPTION ?= deposit-cli is a tool for creating EIP-2335 format BLS12-381 keystores.
+PKG_DESCRIPTION ?= A tool for creating EIP-2335 format BLS12-381 keystores.
 PKG_MAINTAINER  ?= Diego Losada <dlosada@ethereumonarm.com>
 CATEGORY        ?= science
-WEB_URL         ?= https://github.com/ethereum/eth2.0-deposit-cli/
+WEB_URL         ?= https://github.com/eth-educators/ethstaker-deposit-cli/
 SOURCESDIR      ?= sources
 OUTPUTDIR       ?= ../../packages
 
 # ----------------------------------------------------------------------
 # Upstream version and source info
 # ----------------------------------------------------------------------
-# Make ONE API call to get the latest tag object
-LATEST_TAG_JSON := $(shell curl -s "https://api.github.com/repos/ethereum/staking-deposit-cli/tags" | jq -r '.[0]')
+# Use 'releases/latest' to get the package version (e.g., 1.2.2)
+DEPOSIT_VERSION := $(shell curl -sL "https://api.github.com/repos/eth-educators/ethstaker-deposit-cli/releases/latest" | jq -r '.tag_name' | tr -d "v")
+# Use 'tags' to get the latest tag name (e.g., v1.2.2) and its commit hash (e.g., b13dcb9)
+LATEST_TAG_JSON := $(shell curl -sL "https://api.github.com/repos/eth-educators/ethstaker-deposit-cli/tags" | jq -r 'if type=="array" then .[0] else empty end')
+DEPOSIT_TAG_V   := $(shell echo '$(LATEST_TAG_JSON)' | jq -r '.name')
+DEPOSIT_HASH    := $(shell echo '$(LATEST_TAG_JSON)' | jq -r '.commit.sha' | cut -c1-7)
 
-# Get the tag with "v" (e.g., v3.0.1) from the JSON
-DEPOSIT_TAG_V := $(shell echo '$(LATEST_TAG_JSON)' | jq -r '.name')
-# Get the version without "v" (e.g., 3.0.1)
-DEPOSIT_VERSION := $(shell echo "$(DEPOSIT_TAG_V)" | tr -d "v")
-# Get the 7-char hash from the JSON
-DEPOSIT_HASH := $(shell echo '$(LATEST_TAG_JSON)' | jq -r '.commit.sha' | cut -c1-7)
-
-DEPOSIT_TARBALL := staking_deposit-cli-$(DEPOSIT_HASH)-linux-$(PKG_ARCH).tar.gz
-DEPOSIT_URL     := https://github.com/ethereum/staking-deposit-cli/releases/download/$(DEPOSIT_TAG_V)/$(DEPOSIT_TARBALL)
+#
+# ----- THE FIX IS HERE -----
+# The asset filename uses an UNDERSCORE, not a hyphen like PKG_NAME.
+#
+DEPOSIT_TARBALL := ethstaker_deposit-cli-$(DEPOSIT_HASH)-linux-$(PKG_ARCH).tar.gz
+DEPOSIT_URL     := https://github.com/eth-educators/ethstaker-deposit-cli/releases/download/$(DEPOSIT_TAG_V)/$(DEPOSIT_TARBALL)
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(DEPOSIT_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(DEPOSIT_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
@@ -94,19 +95,23 @@ FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
 all: prepare deb clean test ## Default local build pipeline
 
 # ----------------------------------------------------------------------
-# prepare — download & stage deposit-cli binary
+# prepare — download & stage ethstaker-deposit-cli binary
 # ----------------------------------------------------------------------
-prepare: ## Download latest deposit-cli and stage into $(SOURCESDIR)/usr/bin
-	@echo "🔎 Resolving latest deposit-cli version..."
+prepare: ## Download latest ethstaker-deposit-cli and stage into $(SOURCESDIR)/usr/bin
+	@echo "🔎 Resolving latest ethstaker-deposit-cli version..."
 	if [[ -z "$(DEPOSIT_TAG_V)" || "$(DEPOSIT_TAG_V)" == "null" || -z "$(DEPOSIT_HASH)" ]]; then \
-	  echo "❌ Could not determine latest deposit-cli version or hash via GitHub API."; exit 1; \
+	  echo "❌ Could not determine latest ethstaker-deposit-cli version or hash via GitHub API."; \
+	  echo "   (This may be a network issue or a GitHub API rate limit.)"; exit 1; \
 	fi
-	@echo "🔽 Downloading deposit-cli $(DEPOSIT_VERSION) ($(DEPOSIT_TAG_V))..."
-	mkdir -p .build $(SOURCESDIR)/usr/bin
-	wget -q -O ".build/$(DEPOSIT_TARBALL)" "$(DEPOSIT_URL)" || { echo "❌ Download failed: $(DEPOSIT_URL)"; exit 1; };
+	@echo "🔽 Downloading ethstaker-deposit-cli $(DEPOSIT_VERSION) (Tag: $(DEPOSIT_TAG_V), Hash: $(DEPOSIT_HASH))..."
+	@echo "   URL: $(DEPOSIT_URL)"
+	mkdir -p $(SOURCESDIR)/usr/bin
+	# Use curl -L to follow redirects and pipe directly to tar
+	# The --fail flag ensures curl exits with an error if the download fails (e.g., 404)
+	curl -sLf "$(DEPOSIT_URL)" | tar -xz -C $(SOURCESDIR)/usr/bin --wildcards --absolute-names --no-anchored --strip-components 2
 	
-	@echo "📦 Extracting binary..."
-	tar -xzf ".build/$(DEPOSIT_TARBALL)" -C $(SOURCESDIR)/usr/bin --wildcards --absolute-names --no-anchored --strip-components 2
+	@echo "📦 Setting permissions..."
+	# The binary extracted by --strip-components 2 is named 'deposit'
 	chmod 0755 "$(SOURCESDIR)/usr/bin/deposit"
 	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/deposit"
 
@@ -163,15 +168,18 @@ release: clean prepare deb rpm test ## Clean + Prepare + Build + Test (all)
 # help — show all available targets
 # ----------------------------------------------------------------------
 help: ## Show available targets
-	echo ""
-	echo "EOA Packaging — $(PKG_NAME)"
-	echo ""
-	awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z0-9_%-]+:.*?##/ { printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
-	echo ""
-	echo "Version resolved: $(DEPOSIT_VERSION) (Tag: $(DEPOSIT_SATAG_V) Hash: $(DEPOSIT_HASH))"
-	echo "Sources dir     : $(SOURCESDIR)"
-	echo "Output dir      : $(OUTPUTDIR)"
-	echo ""
+	@echo ""
+	@echo "EOA Packaging — $(PKG_NAME)"
+	@echo ""
+	@awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z0-9_%-]+:.*?##/ { printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
+	@echo ""
+	@echo "Package Version : $(DEPOSIT_VERSION)"
+	@echo "Release Tag     : $(DEPOSIT_TAG_V)"
+	@echo "Release Hash    : $(DEPOSIT_HASH)"
+	@echo "Download URL    : $(DEPOSIT_URL)"
+	@echo "Sources dir     : $(SOURCESDIR)"
+	@echo "Output dir      : $(OUTPUTDIR)"
+	@echo ""
 
 # ======================================================================
 # End of file

@@ -1,70 +1,177 @@
-#install fpm
-#apt-get install ruby ruby-dev rubygems build-essential rpm
-#gem install --no-document fpm
+# ======================================================================
+# Ethereum on ARM — Production Packaging Makefile (op-node)
+# ----------------------------------------------------------------------
+# Builds .deb and .rpm packages for ARM systems using FPM.
+# - Clones and builds the 'op-node' binary from source
+# - Stages files into ./sources/usr/bin
+# - Applies EOA packaging standards and metadata
+# ======================================================================
+
+.SILENT:
 SHELL := /bin/bash
+.DEFAULT_GOAL := all
 
+# ----------------------------------------------------------------------
+# Package metadata
+# ----------------------------------------------------------------------
+PKG_NAME        ?= optimism-op-node
+PKG_RELEASE     ?= 0
+PKG_ARCH        ?= arm64
+PKG_ARCH_RPM    ?= aarch64
+PKG_VENDOR      ?= Ethereum on ARM
+PKG_LICENSE     ?= GNU Lesser General Public License v3.0
+PKG_DESCRIPTION ?= Op-node Optimism client
+PKG_MAINTAINER  ?= Diego Losada <dlosada@ethereumonarm.com>
+CATEGORY        ?= science
+WEB_URL         ?= https://github.com/ethereum-optimism/optimism/tree/develop/op-node
+SOURCESDIR      ?= sources
+OUTPUTDIR       ?= ../../../packages
 
-OP-NODE_VERSION := $(shell curl -s "https://api.github.com/repos/ethereum-optimism/optimism/releases" | jq -r '[.[] | select(.tag_name | startswith("op-node/"))] | sort_by(.published_at) | .[-1].tag_name | ltrimstr("op-node/v")')
+# ----------------------------------------------------------------------
+# Upstream version and source info
+# ----------------------------------------------------------------------
+# Get the full tag (e.g., op-node/v1.8.0) from the latest release
+OP_NODE_TAG := $(shell curl -s "https://api.github.com/repos/ethereum-optimism/optimism/releases" | jq -r '[.[] | select(.tag_name | startswith("op-node/"))] | sort_by(.published_at) | .[-1].tag_name')
 
-PKG_RELEASE := 0
-PKG_NAME := optimism-op-node
+# Get the version number (e.g., 1.8.0) by stripping the prefix using a Make function
+OP_NODE_VERSION := $(patsubst op-node/v%,%,$(OP_NODE_TAG))
 
-PKG_DESCRIPTION := "Op-node Optimism client"
-PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
-CATEGORY := science
-WEB_URL := https://github.com/ethereum-optimism/optimism/tree/develop/op-node
+PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(OP_NODE_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
+PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(OP_NODE_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 
-PKG_VENDOR := "Ethereum on ARM"
-PKG_LICENSE := "GNU Lesser General Public License v3.0"
+# ----------------------------------------------------------------------
+# FPM common options
+# ----------------------------------------------------------------------
+FPM_COMMON_OPTS = \
+  -s dir \
+  -n $(PKG_NAME) \
+  -v $(OP_NODE_VERSION) \
+  --iteration $(PKG_RELEASE) \
+  --vendor "$(PKG_VENDOR)" \
+  --license "$(PKG_LICENSE)" \
+  --description "$(PKG_DESCRIPTION)" \
+  --maintainer "$(PKG_MAINTAINER)" \
+  --category "$(CATEGORY)" \
+  --url "$(WEB_URL)" \
+  -C $(SOURCESDIR) \
+  -x '*/.gitkeep'
 
-PKG_ARCH_DEB := arm64
-PKG_ARCH_RPM := arm64
+# ----------------------------------------------------------------------
+# Debian-specific options
+# ----------------------------------------------------------------------
+FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
+  -t deb \
+  --architecture $(PKG_ARCH) \
+  --deb-no-default-config-files \
+  $(shell test -d extras && find extras -name 'op-node*.service' -printf "--deb-systemd %p ") \
+  $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
+  --depends merge-config
 
-#PKG_AFTER_INSTALL := extras/postinstall
+# ----------------------------------------------------------------------
+# RPM-specific options
+# ----------------------------------------------------------------------
+FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
+  -t rpm \
+  --architecture $(PKG_ARCH_RPM) \
+  $(shell test -d extras && find extras -name 'op-node*.service' -printf "--rpm-systemd %p ") \
+  --depends merge-config
 
-SOURCESDIR := sources/
-OUTPUTDIR := ../../../packages
+# ----------------------------------------------------------------------
+# Targets
+# ----------------------------------------------------------------------
+.PHONY: all prepare deb rpm clean test release help
 
-PKG_RPM := $(PKG_NAME)-$(OP-NODE_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_RPM).rpm
-PKG_DEB := $(PKG_NAME)_$(OP-NODE_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
+# ----------------------------------------------------------------------
+# all — default target for local builds
+# ----------------------------------------------------------------------
+all: prepare deb clean test ## Default local build pipeline
 
-FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(OP-NODE_VERSION) --license $(PKG_LICENSE)\
---vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
---maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB)\
---category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
---deb-systemd extras/op-node.service --deb-systemd extras/op-node-base.service\
+# ----------------------------------------------------------------------
+# prepare — Build binary from source
+# ----------------------------------------------------------------------
+prepare: ## Build binary from source
+	@echo "🔎 Resolving latest op-node version..."
+	if [[ -z "$(OP_NODE_TAG)" || "$(OP_NODE_TAG)" == "null" ]]; then \
+	  echo "❌ Could not determine latest op-node version via GitHub API."; exit 1; \
+	fi
+	@echo "🔽 Cloning optimism monorepo at tag $(OP_NODE_TAG)..."
+	mkdir -p .build/op-node_src $(SOURCESDIR)/usr/bin
+	git clone --depth 1 --branch $(OP_NODE_TAG) https://github.com/ethereum-optimism/optimism.git .build/op-node_src || { echo "❌ Git clone failed"; exit 1; }
+	
+	@echo "🛠 Building op-node binary from source (this may take a while)..."
+	cd .build/op-node_src/op-node && \
+	  env GO111MODULE=on CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 \
+	  go build -v -o ./build/bin/op-node ./cmd/main.go \
+	  || { echo "❌ Go build failed"; exit 1; }
+	
+	@echo "📂 Staging binary..."
+	cp .build/op-node_src/op-node/build/bin/op-node $(SOURCESDIR)/usr/bin/op-node
+	chmod 0755 $(SOURCESDIR)/usr/bin/op-node
+	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/op-node"
 
-FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(OP-NODE_VERSION) --license $(PKG_LICENSE)\
---vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR)\
---maintainer $(PKG_MAINTAINER) --description $(PKG_DESCRIPTION) -a $(PKG_ARCH_RPM)\
---category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
+# ----------------------------------------------------------------------
+# deb — build Debian package
+# ----------------------------------------------------------------------
+deb: prepare ## Build .deb package
+	mkdir -p $(OUTPUTDIR)
+	@echo "📦 Building DEB package..."
+	fpm $(FPM_DEB_OPTS) -p "$(PKG_DEB)" .
+	if [[ -f "$(PKG_DEB)" ]]; then \
+	  echo "✅ DEB package created at $(PKG_DEB)"; \
+	else \
+	  echo "❌ DEB package creation failed."; exit 1; \
+	fi
 
-all: prepare deb clean test
+# ----------------------------------------------------------------------
+# rpm — build RPM package
+# ----------------------------------------------------------------------
+rpm: prepare ## Build .rpm package
+	mkdir -p $(OUTPUTDIR)
+	@echo "📦 Building RPM package..."
+	fpm $(FPM_RPM_OPTS) -p "$(PKG_RPM)" .
+	if [[ -f "$(PKG_RPM)" ]]; then \
+	  echo "✅ RPM package created at $(PKG_RPM)"; \
+	else \
+	  echo "❌ RPM package creation failed."; exit 1; \
+	fi
 
-prepare: ## Download the latest binary and prepare the package files
-	mkdir -p /tmp/op-node_tmp
-	cd /tmp/op-node_tmp; git clone https://github.com/ethereum-optimism/optimism.git ; cd optimism/op-node ; git checkout v$(OP-NODE_VERSION) ; env GO111MODULE=on CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 go build  -o ./build/bin/op-node ./cmd/main.go
-	cp /tmp/op-node_tmp/optimism/op-node/build/bin/op-node sources/usr/bin/op-node
+# ----------------------------------------------------------------------
+# clean — remove build artifacts
+# ----------------------------------------------------------------------
+clean: ## Remove staged binaries and temp files
+	rm -rf $(SOURCESDIR)/usr/bin/op-node* .build
+	@echo "🧹 Clean complete (staged files and .build removed)."
 
-deb: ## Create deb package
-	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)
+# ----------------------------------------------------------------------
+# test — verify build success
+# ----------------------------------------------------------------------
+test: ## Check that .deb exists
+	if [[ -f "$(PKG_DEB)" ]]; then \
+	  echo "🧪 Test: .deb exists — OK ✅"; \
+	else \
+	  echo "🧪 Test: .deb missing — ❌"; exit 1; \
+	fi
 
-rpm: ## Create rpm package
-	fpm -t rpm -p $(PKG_RPM) $(FPM_RPM_OPTS)
+# ----------------------------------------------------------------------
+# release — full CI build (includes RPM)
+# ----------------------------------------------------------------------
+release: clean prepare deb rpm test ## Clean + Prepare + Build + Test (all)
+	@echo "🎉 All packages built successfully for $(PKG_ARCH)"
 
-.PHONY: clean test
-clean: ## Clean up
-	rm sources/usr/bin/op-node
-	rm -rf /tmp/op-node_tmp
-	rm -rf /tmp/op-node-base_tmp
+# ----------------------------------------------------------------------
+# help — show all available targets
+# ----------------------------------------------------------------------
+help: ## Show available targets
+	echo ""
+	echo "EOA Packaging — $(PKG_NAME)"
+	echo ""
+	awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z0-9_%-]+:.*?##/ { printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
+	echo ""
+	echo "Version resolved: $(OP_NODE_VERSION) (Tag: $(OP_NODE_TAG))"
+	echo "Sources dir     : $(SOURCESDIR)"
+	echo "Output dir      : $(OUTPUTDIR)"
+	echo ""
 
-test:
-	@if [ -f $(OUTPUTDIR)/$(PKG_DEB) ]; then \
-        printf "\033[32mPackage $(PKG_DEB) successfully created\033[0m\n"; \
-    else \
-        printf "\033[31mError: Package $(PKG_DEB) not found\033[0m\n"; \
-        exit 1; \
-    fi
-
-help:  ## List targets.
-	"$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"
+# ======================================================================
+# End of file
+# ======================================================================

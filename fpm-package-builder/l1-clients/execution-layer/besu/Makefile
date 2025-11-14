@@ -1,76 +1,177 @@
-#install fpm
-#apt-get install ruby ruby-dev rubygems build-essential rpm
-#gem install --no-document fpm
+# ======================================================================
+# Ethereum on ARM — Production Packaging Makefile (Besu)
+# ----------------------------------------------------------------------
+# Builds .deb and .rpm packages for ARM systems using FPM.
+# - Downloads the latest upstream Besu binary from GitHub
+# - Stages files into ./sources/usr/bin and ./sources/usr/share
+# - Applies EOA packaging standards and metadata
+# ======================================================================
+
+.SILENT:
 SHELL := /bin/bash
+.DEFAULT_GOAL := all
 
+# ----------------------------------------------------------------------
+# Package metadata
+# ----------------------------------------------------------------------
+PKG_NAME        ?= besu
+PKG_RELEASE     ?= 0
+PKG_ARCH        ?= arm64
+PKG_ARCH_RPM    ?= aarch64
+PKG_VENDOR      ?= Ethereum on ARM
+PKG_LICENSE     ?= Apache License 2.0
+PKG_DESCRIPTION ?= Hyperledger Ethereum 1.0 java client
+PKG_MAINTAINER  ?= Diego Losada <dlosada@ethereumonarm.com>
+CATEGORY        ?= science
+WEB_URL         ?= https://www.hyperledger.org/use/besu
+SOURCESDIR      ?= sources
+OUTPUTDIR       ?= ../../../packages
+
+# ----------------------------------------------------------------------
+# Upstream version and source info
+# ----------------------------------------------------------------------
 BESU_VERSION := $(shell curl -sL https://api.github.com/repos/hyperledger/besu/releases/latest | jq -r '.tag_name'| tr -d 'v')
-PKG_RELEASE := 0
-PKG_NAME := besu
+BESU_ZIP     := besu-$(BESU_VERSION).zip
+BESU_URL     := https://github.com/hyperledger/besu/releases/download/$(BESU_VERSION)/$(BESU_ZIP)
 
-PKG_DESCRIPTION := "Hyperledger Ethereum 1.0 java client"
-PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
+PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(BESU_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
+PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(BESU_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 
-CATEGORY := science
-WEB_URL := https://www.hyperledger.org/use/besu
+# ----------------------------------------------------------------------
+# FPM common options
+# ----------------------------------------------------------------------
+FPM_COMMON_OPTS = \
+  -s dir \
+  -n $(PKG_NAME) \
+  -v $(BESU_VERSION) \
+  --iteration $(PKG_RELEASE) \
+  --vendor "$(PKG_VENDOR)" \
+  --license "$(PKG_LICENSE)" \
+  --description "$(PKG_DESCRIPTION)" \
+  --maintainer "$(PKG_MAINTAINER)" \
+  --category "$(CATEGORY)" \
+  --url "$(WEB_URL)" \
+  -C $(SOURCESDIR) \
+  -x '*/.gitkeep'
 
-PKG_VENDOR := "Ethereum on ARM"
-PKG_LICENSE := "Apache License 2.0"
+# ----------------------------------------------------------------------
+# Debian-specific options
+# ----------------------------------------------------------------------
+# Includes dynamic systemd unit detection and dynamic config-file tracking
+FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
+  -t deb \
+  --architecture $(PKG_ARCH) \
+  --deb-no-default-config-files \
+  $(shell test -d extras && find extras -name '$(PKG_NAME)*.service' -printf "--deb-systemd %p " || true) \
+  $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
+  --depends openjdk-21-jre-headless \
+  --depends "libsecp256k1-0|libsecp256k1-1" \
+  --depends merge-config \
+  --depends libjemalloc-dev
 
-PKG_ARCH_DEB := arm64
-PKG_ARCH_RPM := arm64
+# ----------------------------------------------------------------------
+# RPM-specific options
+# ----------------------------------------------------------------------
+FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
+  -t rpm \
+  --architecture $(PKG_ARCH_RPM) \
+  $(shell test -d extras && find extras -name '$(PKG_NAME)*.service' -printf "--rpm-systemd %p " || true) \
+  --depends openjdk-21-jre-headless \
+  --depends "libsecp256k1-0 | libsecp256k1-1" \
+  --depends merge-config \
+  --depends libjemalloc-devel
 
-SOURCESDIR := sources/
-OUTPUTDIR := ../../../packages
+# ----------------------------------------------------------------------
+# Targets
+# ----------------------------------------------------------------------
+.PHONY: all prepare deb rpm clean test release help
 
-PKG_RPM := $(PKG_NAME)-$(BESU_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_RPM).rpm
-PKG_DEB := $(PKG_NAME)_$(BESU_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
+# ----------------------------------------------------------------------
+# all — default target for local builds
+# ----------------------------------------------------------------------
+all: prepare deb clean test ## Default local build pipeline
 
-FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(BESU_VERSION) --license $(PKG_LICENSE)\
-	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
-	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-	$(shell find extras -name 'besu*.service' -printf "--deb-systemd %p ") \
-	--depends openjdk-21-jre-headless\
-	--depends "libsecp256k1-0|libsecp256k1-1"\
-	--depends merge-config\
-	--depends libjemalloc-dev
+# ----------------------------------------------------------------------
+# prepare — download & stage Besu binary
+# ----------------------------------------------------------------------
+prepare: ## Download latest Besu and stage into $(SOURCESDIR)
+	@echo "🔎 Resolving latest Besu version..."
+	if [[ -z "$(BESU_VERSION)" || "$(BESU_VERSION)" == "null" ]]; then \
+	  echo "❌ Could not determine latest Besu version via GitHub API."; exit 1; \
+	fi
+	@echo "🔽 Downloading Besu $(BESU_VERSION)..."
+	# Use a local .build dir instead of /tmp
+	mkdir -p .build $(SOURCESDIR)/usr/bin $(SOURCESDIR)/usr/share/besu/lib
+	wget -q -O ".build/$(BESU_ZIP)" "$(BESU_URL)" || { echo "❌ Download failed: $(BESU_URL)"; exit 1; };
+	@echo "📦 Extracting files..."
+	unzip -o ".build/$(BESU_ZIP)" "besu-$(BESU_VERSION)/bin/besu" -d .build
+	unzip -o ".build/$(BESU_ZIP)" "besu-$(BESU_VERSION)/lib/*" -d .build
+	@echo "📂 Staging files..."
+	cp ".build/besu-$(BESU_VERSION)/bin/besu" "$(SOURCESDIR)/usr/bin/"
+	cp ".build/besu-$(BESU_VERSION)/lib/"* "$(SOURCESDIR)/usr/share/besu/lib/"
+	@echo "🔧 Patching binary paths..."
+	sed -i 's/`pwd -P`/\/usr\/share\/besu\//' "$(SOURCESDIR)/usr/bin/besu"
+	chmod 0755 "$(SOURCESDIR)/usr/bin/besu"
+	@echo "✅ Binary and libs ready in $(SOURCESDIR)"
 
-FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(BESU_VERSION) --license $(PKG_LICENSE)\
-	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
-	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_RPM) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-	$(shell find extras -name 'besu*.service' -printf "--rpm-systemd %p ") \
-	--depends openjdk-21-jre-headless\
-	--depends "libsecp256k1-0 | libsecp256k1-1"\
-	--depends merge-config\
-	--depends libjemalloc-devel
+# ----------------------------------------------------------------------
+# deb — build Debian package
+# ----------------------------------------------------------------------
+deb: prepare ## Build .deb package
+	mkdir -p $(OUTPUTDIR)
+	@echo "📦 Building DEB package..."
+	fpm $(FPM_DEB_OPTS) -p "$(PKG_DEB)" .
+	if [[ -f "$(PKG_DEB)" ]]; then \
+	  echo "✅ DEB package created at $(PKG_DEB)"; \
+	else \
+	  echo "❌ DEB package creation failed."; exit 1; \
+	fi
 
-all: prepare deb clean test
+# ----------------------------------------------------------------------
+# rpm — build RPM package
+# ----------------------------------------------------------------------
+rpm: prepare ## Build .rpm package
+	mkdir -p $(OUTPUTDIR)
+	@echo "📦 Building RPM package..."
+	fpm $(FPM_RPM_OPTS) -p "$(PKG_RPM)" .
+	if [[ -f "$(PKG_RPM)" ]]; then \
+	  echo "✅ RPM package created at $(PKG_RPM)"; \
+	else \
+	  echo "❌ RPM package creation failed."; exit 1; \
+	fi
 
-prepare: ## Download the latest binary and prepare the package files
-	mkdir /tmp/besu_temp
-	wget  https://github.com/hyperledger/besu/releases/download/$(BESU_VERSION)/besu-$(BESU_VERSION).zip -P /tmp/besu_temp
-	unzip /tmp/besu_temp/besu-$(BESU_VERSION).zip -d /tmp/besu_temp
-	cp /tmp/besu_temp/besu-$(BESU_VERSION)/bin/besu sources/usr/bin/
-	cp /tmp/besu_temp/besu-$(BESU_VERSION)/lib/*  sources/usr/share/besu/lib/
-	sed -i 's/`pwd -P`/\/usr\/share\/besu\//' sources/usr/bin/besu
-	rm -rf /tmp/besu_temp
-deb: ## Create deb package
-	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)
+# ----------------------------------------------------------------------
+# clean — remove build artifacts
+# ----------------------------------------------------------------------
+clean: ## Remove staged binaries, cache, and temp files
+	rm -rf $(SOURCESDIR)/usr/bin/$(PKG_NAME)* $(SOURCESDIR)/usr/share/besu/lib/* .build
+	@echo "🧹 Clean complete (staged files and .build removed)."
 
-rpm: ## Create rpm package
-	fpm -t rpm -p $(PKG_RPM) $(FPM_RPM_OPTS)
+# ----------------------------------------------------------------------
+# test — verify build success
+# ----------------------------------------------------------------------
+test: ## Check that .deb exists
+	if [[ -f "$(PKG_DEB)" ]]; then \
+	  echo "🧪 Test: .deb exists — OK ✅"; \
+	else \
+	  echo "🧪 Test: .deb missing — ❌"; exit 1; \
+	fi
 
-.PHONY: clean test
-clean: ## Clean up
-	rm sources/usr/share/besu/lib/*
-	rm sources/usr/bin/besu
 
-test:
-	@if [ -f $(OUTPUTDIR)/$(PKG_DEB) ]; then \
-        printf "\033[32mPackage $(PKG_DEB) successfully created\033[0m\n"; \
-    else \
-        printf "\033[31mError: Package $(PKG_DEB) not found\033[0m\n"; \
-        exit 1; \
-    fi
+# ----------------------------------------------------------------------
+# help — show all available targets
+# ----------------------------------------------------------------------
+help: ## Show available targets
+	echo ""
+	echo "EOA Packaging — $(PKG_NAME)"
+	echo ""
+	awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z0-9_%-]+:.*?##/ { printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
+	echo ""
+	echo "Version resolved: $(BESU_VERSION)"
+	echo "Sources dir     : $(SOURCESDIR)"
+	echo "Output dir      : $(OUTPUTDIR)"
+	echo ""
 
-help:  ## List targets.
-	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"
+# ======================================================================
+# End of file
+# ======================================================================

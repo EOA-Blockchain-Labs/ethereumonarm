@@ -1,65 +1,178 @@
-#install fpm
-#apt-get install ruby ruby-dev rubygems build-essential rpm
-#gem install --no-document fpm
+# ======================================================================
+# Ethereum on ARM — Production Packaging Makefile (ethstaker-deposit-cli)
+# ----------------------------------------------------------------------
+# Builds .deb and .rpm packages for ARM systems using FPM.
+# - Downloads the latest upstream deposit-cli binary from GitHub
+# - Stages files into ./sources/usr/bin
+# - Applies EOA packaging standards and metadata
+# ======================================================================
+
+.SILENT:
 SHELL := /bin/bash
+.DEFAULT_GOAL := all
 
-DEPOSIT_VERSION := $(shell curl -s "https://api.github.com/repos/eth-educators/ethstaker-deposit-cli/releases/latest" | jq -r '.tag_name'| tr -d "v")
-DEPOSIT_HASH := $(shell curl -s "https://api.github.com/repos/eth-educators/ethstaker-deposit-cli/tags" | jq -r '.[0].commit.sha' | cut -c1-7)
+# ----------------------------------------------------------------------
+# Package metadata
+# ----------------------------------------------------------------------
+PKG_NAME        ?= ethstaker-deposit-cli
+PKG_RELEASE     ?= 0
+PKG_ARCH        ?= arm64
+PKG_ARCH_RPM    ?= aarch64
+PKG_VENDOR      ?= Ethereum on ARM
+PKG_LICENSE     ?= Creative Commons Zero v1.0 Universal
+PKG_DESCRIPTION ?= deposit-cli is a tool for creating EIP-2335 format BLS12-381 keystores.
+PKG_MAINTAINER  ?= Diego Losada <dlosada@ethereumonarm.com>
+CATEGORY        ?= science
+WEB_URL         ?= https://github.com/ethereum/eth2.0-deposit-cli/
+SOURCESDIR      ?= sources
+OUTPUTDIR       ?= ../../packages
 
-PKG_RELEASE := 0
-PKG_NAME := ethstaker-deposit-cli
+# ----------------------------------------------------------------------
+# Upstream version and source info
+# ----------------------------------------------------------------------
+# Make ONE API call to get the latest tag object
+LATEST_TAG_JSON := $(shell curl -s "https://api.github.com/repos/ethereum/staking-deposit-cli/tags" | jq -r '.[0]')
 
-PKG_DESCRIPTION := "deposit-cli is a tool for creating EIP-2335 format BLS12-381 keystores and a corresponding deposit_data*.json file for Ethereum Staking Launchpad."
-PKG_MAINTAINER := "Diego Losada <dlosada@ethereumonarm.com>"
+# Get the tag with "v" (e.g., v3.0.1) from the JSON
+DEPOSIT_TAG_V := $(shell echo '$(LATEST_TAG_JSON)' | jq -r '.name')
+# Get the version without "v" (e.g., 3.0.1)
+DEPOSIT_VERSION := $(shell echo "$(DEPOSIT_TAG_V)" | tr -d "v")
+# Get the 7-char hash from the JSON
+DEPOSIT_HASH := $(shell echo '$(LATEST_TAG_JSON)' | jq -r '.commit.sha' | cut -c1-7)
 
-CATEGORY := science
-WEB_URL :=  https://github.com/ethereum/eth2.0-deposit-cli/
+DEPOSIT_TARBALL := staking_deposit-cli-$(DEPOSIT_HASH)-linux-$(PKG_ARCH).tar.gz
+DEPOSIT_URL     := https://github.com/ethereum/staking-deposit-cli/releases/download/$(DEPOSIT_TAG_V)/$(DEPOSIT_TARBALL)
 
-PKG_VENDOR := "Ethereum on ARM"
-PKG_LICENSE := "Creative Commons Zero v1.0 Universal"
+PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(DEPOSIT_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
+PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(DEPOSIT_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 
-PKG_ARCH_DEB := arm64
-PKG_ARCH_RPM := arm64
+# ----------------------------------------------------------------------
+# FPM common options
+# ----------------------------------------------------------------------
+FPM_COMMON_OPTS = \
+  -s dir \
+  -n $(PKG_NAME) \
+  -v $(DEPOSIT_VERSION) \
+  --iteration $(PKG_RELEASE) \
+  --vendor "$(PKG_VENDOR)" \
+  --license "$(PKG_LICENSE)" \
+  --description "$(PKG_DESCRIPTION)" \
+  --maintainer "$(PKG_MAINTAINER)" \
+  --category "$(CATEGORY)" \
+  --url "$(WEB_URL)" \
+  -C $(SOURCESDIR) \
+  -x '*/.gitkeep'
 
-SOURCESDIR := sources/
-OUTPUTDIR := ../../packages
+# ----------------------------------------------------------------------
+# Debian-specific options
+# ----------------------------------------------------------------------
+FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
+  -t deb \
+  --architecture $(PKG_ARCH) \
+  --deb-no-default-config-files \
+  $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
+  --conflicts eth2.0-deposit-cli --conflicts staking-deposit-cli \
+  --depends merge-config
 
-PKG_RPM := $(PKG_NAME)-$(DEPOSIT_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_RPM).rpm
-PKG_DEB := $(PKG_NAME)_$(DEPOSIT_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH_DEB).deb
+# ----------------------------------------------------------------------
+# RPM-specific options
+# ----------------------------------------------------------------------
+FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
+  -t rpm \
+  --architecture $(PKG_ARCH_RPM) \
+  --conflicts eth2.0-deposit-cli --conflicts staking-deposit-cli \
+  --depends merge-config
 
-FPM_DEB_OPTS := -s dir -n $(PKG_NAME) -v $(DEPOSIT_VERSION) --license $(PKG_LICENSE)\
-	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
-	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_DEB) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep\
-	--conflicts eth2.0-deposit-cli --conflicts staking-deposit-cli
+# ----------------------------------------------------------------------
+# Targets
+# ----------------------------------------------------------------------
+.PHONY: all prepare deb rpm clean test release help
 
-FPM_RPM_OPTS := -s dir -n $(PKG_NAME) -v $(DEPOSIT_VERSION) --license $(PKG_LICENSE)\
-	--vendor $(PKG_VENDOR) --iteration $(PKG_RELEASE) -C $(SOURCESDIR) --maintainer $(PKG_MAINTAINER)\
-	--description $(PKG_DESCRIPTION) -a $(PKG_ARCH_RPM) --category $(CATEGORY) --url $(WEB_URL) -p $(OUTPUTDIR) -x */.gitkeep
+# ----------------------------------------------------------------------
+# all — default target for local builds
+# ----------------------------------------------------------------------
+all: prepare deb clean test ## Default local build pipeline
 
-BUILD_ARCH := $(shell uname -p)
+# ----------------------------------------------------------------------
+# prepare — download & stage deposit-cli binary
+# ----------------------------------------------------------------------
+prepare: ## Download latest deposit-cli and stage into $(SOURCESDIR)/usr/bin
+	@echo "🔎 Resolving latest deposit-cli version..."
+	if [[ -z "$(DEPOSIT_TAG_V)" || "$(DEPOSIT_TAG_V)" == "null" || -z "$(DEPOSIT_HASH)" ]]; then \
+	  echo "❌ Could not determine latest deposit-cli version or hash via GitHub API."; exit 1; \
+	fi
+	@echo "🔽 Downloading deposit-cli $(DEPOSIT_VERSION) ($(DEPOSIT_TAG_V))..."
+	mkdir -p .build $(SOURCESDIR)/usr/bin
+	wget -q -O ".build/$(DEPOSIT_TARBALL)" "$(DEPOSIT_URL)" || { echo "❌ Download failed: $(DEPOSIT_URL)"; exit 1; };
+	
+	@echo "📦 Extracting binary..."
+	tar -xzf ".build/$(DEPOSIT_TARBALL)" -C $(SOURCESDIR)/usr/bin --wildcards --absolute-names --no-anchored --strip-components 2
+	chmod 0755 "$(SOURCESDIR)/usr/bin/deposit"
+	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/deposit"
 
-all: prepare deb clean test
+# ----------------------------------------------------------------------
+# deb — build Debian package
+# ----------------------------------------------------------------------
+deb: prepare ## Build .deb package
+	mkdir -p $(OUTPUTDIR)
+	@echo "📦 Building DEB package..."
+	fpm $(FPM_DEB_OPTS) -p "$(PKG_DEB)" .
+	if [[ -f "$(PKG_DEB)" ]]; then \
+	  echo "✅ DEB package created at $(PKG_DEB)"; \
+	else \
+	  echo "❌ DEB package creation failed."; exit 1; \
+	fi
 
-prepare: ## Download the latest binary and compile the package files
-	wget https://github.com/eth-educators/ethstaker-deposit-cli/releases/download/v$(DEPOSIT_VERSION)/ethstaker_deposit-cli-$(DEPOSIT_HASH)-linux-arm64.tar.gz -O - | tar -xz -C sources/usr/bin --wildcards --absolute-names --no-anchored --strip-components 2
+# ----------------------------------------------------------------------
+# rpm — build RPM package
+# ----------------------------------------------------------------------
+rpm: prepare ## Build .rpm package
+	mkdir -p $(OUTPUTDIR)
+	@echo "📦 Building RPM package..."
+	fpm $(FPM_RPM_OPTS) -p "$(PKG_RPM)" .
+	if [[ -f "$(PKG_RPM)" ]]; then \
+	  echo "✅ RPM package created at $(PKG_RPM)"; \
+	else \
+	  echo "❌ RPM package creation failed."; exit 1; \
+	fi
 
-deb: ## Create deb package
-	fpm -t deb -p $(PKG_DEB) $(FPM_DEB_OPTS)
+# ----------------------------------------------------------------------
+# clean — remove build artifacts
+# ----------------------------------------------------------------------
+clean: ## Remove staged binaries and temp files
+	rm -rf $(SOURCESDIR)/usr/bin/deposit* .build
+	@echo "🧹 Clean complete (staged files and .build removed)."
 
-rpm: ## Create rpm package
-	fpm -t rpm -p $(PKG_RPM) $(FPM_RPM_OPTS)
+# ----------------------------------------------------------------------
+# test — verify build success
+# ----------------------------------------------------------------------
+test: ## Check that .deb exists
+	if [[ -f "$(PKG_DEB)" ]]; then \
+	  echo "🧪 Test: .deb exists — OK ✅"; \
+	else \
+	  echo "🧪 Test: .deb missing — ❌"; exit 1; \
+	fi
 
-.PHONY: clean test
-clean: ## Clean up
-	rm sources/usr/bin/deposit
+# ----------------------------------------------------------------------
+# release — full CI build (includes RPM)
+# ----------------------------------------------------------------------
+release: clean prepare deb rpm test ## Clean + Prepare + Build + Test (all)
+	@echo "🎉 All packages built successfully for $(PKG_ARCH)"
 
-test:
-	@if [ -f $(OUTPUTDIR)/$(PKG_DEB) ]; then \
-        printf "\033[32mPackage $(PKG_DEB) successfully created\033[0m\n"; \
-    else \
-        printf "\033[31mError: Package $(PKG_DEB) not found\033[0m\n"; \
-        exit 1; \
-    fi
+# ----------------------------------------------------------------------
+# help — show all available targets
+# ----------------------------------------------------------------------
+help: ## Show available targets
+	echo ""
+	echo "EOA Packaging — $(PKG_NAME)"
+	echo ""
+	awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z0-9_%-]+:.*?##/ { printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
+	echo ""
+	echo "Version resolved: $(DEPOSIT_VERSION) (Tag: $(DEPOSIT_SATAG_V) Hash: $(DEPOSIT_HASH))"
+	echo "Sources dir     : $(SOURCESDIR)"
+	echo "Output dir      : $(OUTPUTDIR)"
+	echo ""
 
-help:  ## List targets.
-	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"
+# ======================================================================
+# End of file
+# ======================================================================

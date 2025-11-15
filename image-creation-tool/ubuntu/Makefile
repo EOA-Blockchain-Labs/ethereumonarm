@@ -30,7 +30,7 @@ rock5b_offset := 16777216
 orangepi5-plus_url := https://es.sbcmirror.org/dl/orangepi5-plus/archive/Armbian_25.8.1_Orangepi5-plus_noble_vendor_6.1.115_minimal.img.xz 
 orangepi5-plus_iso := Armbian_25.8.1_Orangepi5-plus_noble_vendor_6.1.115_minimal.img
 orangepi5-plus_offset := 16777216
-orange
+
 nanopct6_url := https://es.sbcmirror.org/dl/nanopct6-lts/archive/Armbian_25.8.1_Nanopct6-lts_noble_vendor_6.1.115_minimal.img.xz
 nanopct6_iso := Armbian_25.8.1_Nanopct6-lts_noble_vendor_6.1.115_minimal.img
 nanopct6_offset := 16777216

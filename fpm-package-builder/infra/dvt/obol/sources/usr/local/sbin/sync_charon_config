@@ -1,22 +1,31 @@
 #!/bin/bash
+#
+# Securely syncs the .charon directory to a backup.
+# Designed to be run by cron. Only outputs on error.
 
-# Source directory
-source_dir="/home/ethereum/.charon"
-# Destination directory
-dest="/etc/ethereum/charon_config_backup"
+set -e # Exit immediately if any command fails.
+set -u # Treat unset variables as an error.
 
-# Check if the source directory exists
-if [ -d "$source_dir" ]; then
-    # Create the destination directory if it does not exist
-    mkdir -p "$dest"
-    # Use rsync to sync the directories
-    rsync -avz --delete "$source_dir/" "$dest/" # Added trailing slashes for directory sync
-    # Print completion message
-    echo "Successfully synced $source_dir to $dest"
-else
-    # Print message if source directory does not exist
-    echo "Source directory $source_dir does not exist. Skipping rsync."
+SOURCE_DIR="/home/ethereum/.charon"
+DEST_DIR="/etc/ethereum/charon_config_backup"
+
+# 1. Check if the source directory exists.
+if [ ! -d "$SOURCE_DIR" ]; then
+    # Write to stderr. Cron will capture this and send an email.
+    echo "Error: Source directory $SOURCE_DIR does not exist. Cannot create backup." >&2
+    exit 1
 fi
 
-# Exit the script
+# 2. Create the destination directory if it does not exist.
+# -p prevents errors if the directory already exists.
+mkdir -p "$DEST_DIR"
+
+# 3. Run rsync.
+# -a: archive mode (preserves permissions, owner, etc.)
+# -q: quiet mode (suppresses all stdout, which is what we want for cron)
+# --delete: deletes files in dest that no longer exist in source.
+rsync -aq --delete "$SOURCE_DIR/" "$DEST_DIR/"
+
+# If the script reaches this point, everything was successful.
+# We print nothing to stdout.
 exit 0

@@ -1,30 +1,29 @@
 #!/bin/sh
 # postinst script for dvt-obol
-#
-# This script sets the correct permissions for the cron job file.
 
+# Exit immediately if a command fails.
 set -e
 
 case "$1" in
-configure | "")
-    echo "Setting permissions for /etc/cron.d/sync_charon_config (package dvt-obol)..."
-    # Set ownership to root:root
-    if [ -e /etc/cron.d/sync_charon_config ]; then
+    configure | "")
+        # Set the correct ownership and permissions for the
+        # cron.d file.
+        #
+        # This is a security requirement for cron.
+        # If the file doesn't exist, 'set -e' will cause the script
+        # to fail, notifying the user of the installation error.
+
         chown root:root /etc/cron.d/sync_charon_config
-        # Set permissions to rw-r--r-- (644)
         chmod 644 /etc/cron.d/sync_charon_config
-        echo "Permissions set for /etc/cron.d/sync_charon_config."
-    else
-        echo "Warning: /etc/cron.d/sync_charon_config not found. Skipping permission setting." >&2
-    fi
     ;;
 
-abort-upgrade | abort-remove | abort-deconfigure) ;;
+    abort-upgrade | abort-remove | abort-deconfigure)
+        # No action required on these cases.
+    ;;
 
-\
     *)
-    echo "postinst for dvt-obol called with unknown argument \`$1'" >&2
-    exit 1
+        echo "postinst for dvt-obol called with unknown argument \`$1'" >&2
+        exit 1
     ;;
 esac
 

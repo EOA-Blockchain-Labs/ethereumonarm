@@ -15,7 +15,7 @@ SHELL := /bin/bash
 # Package metadata
 # ----------------------------------------------------------------------
 PKG_NAME        ?= ethstaker-deposit-cli
-PKG_RELEASE     ?= 0
+PKG_RELEASE     ?= 1
 PKG_ARCH        ?= arm64
 PKG_ARCH_RPM    ?= aarch64
 PKG_VENDOR      ?= Ethereum on ARM

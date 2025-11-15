@@ -72,7 +72,7 @@ case "$DEVICE_MODEL" in
     SWAPPINESS=1               # A system setting (0-100) that controls how aggressively the system uses swap. 1 means "use swap only when absolutely necessary".
     ;;
 
-"FriendlyElec NanoPC-T6")
+"FriendlyElec NanoPC-T6" | "FriendlyElec NanoPC-T6 LTS")
     TARGET_DISK="/dev/nvme0n1"
     PARTITION1="p1"
     HOSTNAME_SEED="nanopct6"

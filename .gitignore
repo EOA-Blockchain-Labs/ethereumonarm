@@ -6,3 +6,4 @@ image-creation-tool/ubuntu/*.zip
 image-creation-tool/ubuntu/*.xz
 image-creation-tool/ubuntu-rescue/*.img
 image-creation-tool/ubuntu/manifest.txt
+.DS_Store

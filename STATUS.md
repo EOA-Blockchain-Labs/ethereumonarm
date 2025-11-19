@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-11-18 07:51:33 UTC_
+_Last updated: 2025-11-19 03:47:11 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -13,8 +13,8 @@ _Last updated: 2025-11-18 07:51:33 UTC_
 
 ### Summary
 - Total packages checked: **28**
-- ✅ Up-to-date: **27** (96.4%)
-- ❌ Outdated: **1** (3.6%)
+- ✅ Up-to-date: **24** (85.7%)
+- ❌ Outdated: **4** (14.3%)
 - ❓ N/A: **0** (0.0%)
 
 ### Infra
@@ -47,7 +47,7 @@ _Last updated: 2025-11-18 07:51:33 UTC_
 | `geth` | `1.16.7` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.7` | ✅ Up-to-date |
 | `nethermind` | `1.35.2` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.35.2` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.2.2` | ❌ Outdated |
-| `reth` | `1.9.2` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.2` | ✅ Up-to-date |
+| `reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.2` | ❌ Outdated |
 ### Layer 2
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
@@ -56,8 +56,8 @@ _Last updated: 2025-11-18 07:51:33 UTC_
 | `fuel-network` | `0.47.1` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.47.1` | ✅ Up-to-date |
 | `optimism-op-geth` | `1.101603.5` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101603.5` | ✅ Up-to-date |
 | `optimism-op-node` | `1.16.2` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.16.2` | ✅ Up-to-date |
-| `optimism-op-reth` | `1.9.2` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.2` | ✅ Up-to-date |
-| `starknet-juno` | `0.15.10` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.10` | ✅ Up-to-date |
+| `optimism-op-reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.2` | ❌ Outdated |
+| `starknet-juno` | `0.15.11` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.10` | ❌ Outdated |
 | `starknet-pathfinder` | `0.21.0` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.0` | ✅ Up-to-date |
 ### Web3
 

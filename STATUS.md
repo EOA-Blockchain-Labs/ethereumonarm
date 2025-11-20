@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-11-19 07:52:54 UTC_
+_Last updated: 2025-11-20 03:46:03 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -13,8 +13,8 @@ _Last updated: 2025-11-19 07:52:54 UTC_
 
 ### Summary
 - Total packages checked: **28**
-- ✅ Up-to-date: **27** (96.4%)
-- ❌ Outdated: **1** (3.6%)
+- ✅ Up-to-date: **26** (92.9%)
+- ❌ Outdated: **2** (7.1%)
 - ❓ N/A: **0** (0.0%)
 
 ### Infra
@@ -32,7 +32,7 @@ _Last updated: 2025-11-19 07:52:54 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `grandine` | `2.0.0` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.0` | ✅ Up-to-date |
-| `lighthouse` | `8.0.0` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.0.0` | ✅ Up-to-date |
+| `lighthouse` | `8.0.1` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.0.0` | ❌ Outdated |
 | `lodestar` | `1.36.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.36.0` | ✅ Up-to-date |
 | `nimbus` | `25.11.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.11.0` | ✅ Up-to-date |
 | `prysm` | `7.0.0` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.0.0` | ✅ Up-to-date |

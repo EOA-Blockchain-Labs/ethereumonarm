@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+chmod 600 /etc/ethereum/restic.passwd
+chmod 600 /etc/ethereum/restic_eoa.conf
+chown root:root /etc/ethereum/restic.passwd /etc/ethereum/restic_eoa.conf
+
 # Reload systemd, enable and start the timer
 echo "Reloading systemd"
 systemctl daemon-reload

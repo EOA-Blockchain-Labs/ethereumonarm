@@ -71,6 +71,10 @@ FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
   --depends rclone \
   --depends fuse \
   --depends restic \
+  --depends jq \
+  --depends curl \
+  --depends netcat-openbsd \
+  --depends speedtest-cli \
   --depends merge-config
 
 # ----------------------------------------------------------------------

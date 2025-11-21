@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-11-20 03:46:03 UTC_
+_Last updated: 2025-11-21 03:45:34 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -13,8 +13,8 @@ _Last updated: 2025-11-20 03:46:03 UTC_
 
 ### Summary
 - Total packages checked: **28**
-- ✅ Up-to-date: **26** (92.9%)
-- ❌ Outdated: **2** (7.1%)
+- ✅ Up-to-date: **27** (96.4%)
+- ❌ Outdated: **1** (3.6%)
 - ❓ N/A: **0** (0.0%)
 
 ### Infra
@@ -32,7 +32,7 @@ _Last updated: 2025-11-20 03:46:03 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `grandine` | `2.0.0` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.0` | ✅ Up-to-date |
-| `lighthouse` | `8.0.1` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.0.0` | ❌ Outdated |
+| `lighthouse` | `8.0.1` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.0.1` | ✅ Up-to-date |
 | `lodestar` | `1.36.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.36.0` | ✅ Up-to-date |
 | `nimbus` | `25.11.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.11.0` | ✅ Up-to-date |
 | `prysm` | `7.0.0` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.0.0` | ✅ Up-to-date |
@@ -58,7 +58,7 @@ _Last updated: 2025-11-20 03:46:03 UTC_
 | `optimism-op-node` | `1.16.2` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.16.2` | ✅ Up-to-date |
 | `optimism-op-reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
 | `starknet-juno` | `0.15.11` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.11` | ✅ Up-to-date |
-| `starknet-pathfinder` | `0.21.0` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.0` | ✅ Up-to-date |
+| `starknet-pathfinder` | `0.21.1` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.1` | ✅ Up-to-date |
 ### Web3
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |

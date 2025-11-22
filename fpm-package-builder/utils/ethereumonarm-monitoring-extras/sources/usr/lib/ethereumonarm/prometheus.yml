@@ -1,106 +1,344 @@
 global:
-  scrape_interval: 15s  # Default interval for scraping metrics.
-  evaluation_interval: 15s  # Default interval for evaluating rules.
+  scrape_interval: 15s  # Default interval for scraping metrics
+  evaluation_interval: 15s  # Default interval for evaluating rules
+  scrape_timeout: 10s  # Timeout for scraping metrics
 
 scrape_configs:
-  # Ethereum Execution Clients
-  - job_name: "geth"  # Go Ethereum client.
-    metrics_path: "/debug/metrics/prometheus"  # Metrics endpoint for Geth.
+  # ============================================================================
+  # Ethereum Execution Layer Clients (Layer 1)
+  # ============================================================================
+
+  - job_name: "geth"
+    metrics_path: "/debug/metrics/prometheus"
     static_configs:
-      - targets: ["127.0.0.1:6060"]  # Geth metrics endpoint address.
+      - targets: ["127.0.0.1:6060"]
+        labels:
+          client_type: "execution"
+          client_name: "geth"
+          layer: "l1"
 
-  - job_name: "erigon"  # Erigon: Performance-focused Ethereum client.
-    metrics_path: "/debug/metrics/prometheus"  # Metrics endpoint for Erigon.
+  - job_name: "erigon"
+    metrics_path: "/debug/metrics/prometheus"
     static_configs:
-      - targets: ["127.0.0.1:5050"]  # Erigon metrics endpoint address.
+      - targets: ["127.0.0.1:5050"]
+        labels:
+          client_type: "execution"
+          client_name: "erigon"
+          layer: "l1"
 
-  - job_name: "nethermind"  # Nethermind: .NET Ethereum client.
+  - job_name: "nethermind"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["127.0.0.1:7070"]  # Nethermind metrics endpoint address. (Assumed default)
+      - targets: ["127.0.0.1:7070"]
+        labels:
+          client_type: "execution"
+          client_name: "nethermind"
+          layer: "l1"
 
-  - job_name: "besu"  # Besu: Java Ethereum client.
+  - job_name: "besu"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["127.0.0.1:9545"]  # Besu metrics endpoint address. (Assumed default)
+      - targets: ["127.0.0.1:9545"]
+        labels:
+          client_type: "execution"
+          client_name: "besu"
+          layer: "l1"
 
-  - job_name: "reth"  # Reth: Rust Ethereum client.
-    metrics_path: "/"  # Reth metrics endpoint is at the root.
+  - job_name: "reth"
+    metrics_path: "/"
     static_configs:
-      - targets: ["127.0.0.1:9001"]  # Reth metrics endpoint address.
+      - targets: ["127.0.0.1:9001"]
+        labels:
+          client_type: "execution"
+          client_name: "reth"
+          layer: "l1"
 
-  # Ethereum Consensus Clients and Validators (ETH 2.0)
-  - job_name: "lighthouse_validator"  # Lighthouse Validator.
+  - job_name: "ethrex"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["127.0.0.1:5054"]  # Lighthouse Validator metrics endpoint address. (Assumed default)
+      - targets: ["127.0.0.1:3701"]
+        labels:
+          client_type: "execution"
+          client_name: "ethrex"
+          layer: "l1"
 
-  - job_name: "nimbus"  # Nimbus: Resource-efficient ETH 2.0 client.
+  - job_name: "nimbus_execution"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["127.0.0.1:8008"]  # Nimbus metrics endpoint address. (Assumed default)
+      - targets: ["127.0.0.1:8008"]
+        labels:
+          client_type: "execution"
+          client_name: "nimbus-ec"
+          layer: "l1"
 
-  - job_name: "validator"  # Prysm Validator.
+  # ============================================================================
+  # Ethereum Consensus Layer Clients (Layer 1)
+  # ============================================================================
+
+  # Lighthouse
+  - job_name: "lighthouse_beacon"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["127.0.0.1:8081"]  # Prysm Validator metrics endpoint address. (Assumed default)
+      - targets: ["127.0.0.1:5052"]
+        labels:
+          client_type: "consensus"
+          client_name: "lighthouse"
+          component: "beacon"
+          layer: "l1"
 
-  - job_name: "beacon_node"  # Prysm Beacon Node.
+  - job_name: "lighthouse_validator"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["127.0.0.1:8080"]  # Prysm Beacon Node metrics endpoint address. (Assumed default)
+      - targets: ["127.0.0.1:5054"]
+        labels:
+          client_type: "consensus"
+          client_name: "lighthouse"
+          component: "validator"
+          layer: "l1"
 
-  - job_name: "slasher"  # Prysm Slasher.
+  # Prysm
+  - job_name: "prysm_beacon"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["127.0.0.1:8082"]  # Prysm Slasher metrics endpoint address. (Assumed default)
+      - targets: ["127.0.0.1:8080"]
+        labels:
+          client_type: "consensus"
+          client_name: "prysm"
+          component: "beacon"
+          layer: "l1"
 
-  - job_name: "teku_dev"  # Teku Development client.
+  - job_name: "prysm_validator"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["127.0.0.1:8009"]  # Teku Development metrics endpoint address. (Assumed default)
+      - targets: ["127.0.0.1:8081"]
+        labels:
+          client_type: "consensus"
+          client_name: "prysm"
+          component: "validator"
+          layer: "l1"
 
-  - job_name: "lodestar_beacon"  # Lodestar Beacon Node.
+  - job_name: "prysm_slasher"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["localhost:4040"]  # Lodestar Beacon Node metrics endpoint address.
+      - targets: ["127.0.0.1:8082"]
+        labels:
+          client_type: "consensus"
+          client_name: "prysm"
+          component: "slasher"
+          layer: "l1"
 
-  - job_name: "lodestar_validator"  # Lodestar Validator.
+  # Teku
+  - job_name: "teku"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["localhost:5064"]  # Lodestar Validator metrics endpoint address.
+      - targets: ["127.0.0.1:8008"]
+        labels:
+          client_type: "consensus"
+          client_name: "teku"
+          layer: "l1"
 
-  # System Metrics and Monitoring
-  - job_name: "node"  # Node Exporter for system metrics.
+  - job_name: "teku_dev"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["127.0.0.1:9100"]  # Node Exporter metrics endpoint address.
+      - targets: ["127.0.0.1:8009"]
+        labels:
+          client_type: "consensus"
+          client_name: "teku"
+          environment: "development"
+          layer: "l1"
 
-  - job_name: "prometheus"  # Prometheus self-monitoring.
+  # Nimbus
+  - job_name: "nimbus"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["127.0.0.1:9090"]  # Prometheus metrics endpoint address.
+      - targets: ["127.0.0.1:8008"]
+        labels:
+          client_type: "consensus"
+          client_name: "nimbus"
+          layer: "l1"
 
-  # Miscellaneous Services
-  - job_name: "ethereum_metrics_exporter"  # Custom metrics exporter for Ethereum.
+  # Lodestar
+  - job_name: "lodestar_beacon"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["127.0.0.1:9095"]  # Ethereum metrics exporter endpoint address.
+      - targets: ["127.0.0.1:4040"]
+        labels:
+          client_type: "consensus"
+          client_name: "lodestar"
+          component: "beacon"
+          layer: "l1"
 
-  # DVT 
-
-  # Obol
-  - job_name: "charon_0"  # Charon node 0 for Distributed Validator Technology (DVT) with Obol.
+  - job_name: "lodestar_validator"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["node0:3620"]  # Charon node 0 metrics endpoint address.
+      - targets: ["127.0.0.1:5064"]
+        labels:
+          client_type: "consensus"
+          client_name: "lodestar"
+          component: "validator"
+          layer: "l1"
 
-  - job_name: "charon_1"  # Charon node 1 for DVT with Obol.
+  # Grandine
+  - job_name: "grandine_beacon"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["node1:3620"]  # Charon node 1 metrics endpoint address.
+      - targets: ["127.0.0.1:5054"]
+        labels:
+          client_type: "consensus"
+          client_name: "grandine"
+          component: "beacon"
+          layer: "l1"
 
-  - job_name: "charon_2"  # Charon node 2 for DVT with Obol.
+  - job_name: "grandine_validator"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["node2:3620"]  # Charon node 2 metrics endpoint address.
+      - targets: ["127.0.0.1:8009"]
+        labels:
+          client_type: "consensus"
+          client_name: "grandine"
+          component: "validator"
+          layer: "l1"
 
-  - job_name: "charon_3"  # Charon node 3 for DVT with Obol.
+  # ============================================================================
+  # Distributed Validator Technology (DVT)
+  # ============================================================================
+
+  # Obol Charon - Use either static configs OR DNS service discovery, not both
+  # Option 1: Static configuration for known nodes
+  - job_name: "charon_cluster"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["node3:3620"]  # Charon node 3 metrics endpoint address.
+      - targets: ["node0:3620"]
+        labels:
+          dvt_provider: "obol"
+          node_id: "0"
+      - targets: ["node1:3620"]
+        labels:
+          dvt_provider: "obol"
+          node_id: "1"
+      - targets: ["node2:3620"]
+        labels:
+          dvt_provider: "obol"
+          node_id: "2"
+      - targets: ["node3:3620"]
+        labels:
+          dvt_provider: "obol"
+          node_id: "3"
+      - targets: ["node4:3620"]
+        labels:
+          dvt_provider: "obol"
+          node_id: "4"
 
-  - job_name: "charon_4"  # Charon node 4 for DVT with Obol.
+  # Option 2: DNS service discovery (uncomment if using Docker Swarm/K8s)
+  # - job_name: "charon_dns_sd"
+  #   metrics_path: "/metrics"
+  #   dns_sd_configs:
+  #     - names: ["tasks.charon"]
+  #       type: "A"
+  #       port: 3620
+  #   relabel_configs:
+  #     - source_labels: [__address__]
+  #       target_label: instance
+  #     - target_label: dvt_provider
+  #       replacement: "obol"
+
+  # ============================================================================
+  # Layer 2 Solutions
+  # ============================================================================
+
+  # Optimism
+  - job_name: "optimism_execution"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["node4:3620"]  # Charon node 4 metrics endpoint address.
+      - targets: ["127.0.0.1:7300"]
+        labels:
+          client_type: "execution"
+          layer: "l2"
+          l2_network: "optimism"
 
-#Layer 2
-
-#Optimism
-  - job_name: "optimism_node" # Optimism execution client
+  # Ethrex L2
+  - job_name: "ethrex_l2"
+    metrics_path: "/metrics"
     static_configs:
-      - targets: ["127.0.0.1:7300"] # Replace with your Optimism node's metrics port
-    metrics_path: "/metrics" # Optimism's metrics endpoint
+      - targets: ["127.0.0.1:9092"]
+        labels:
+          client_type: "execution"
+          client_name: "ethrex"
+          layer: "l2"
+          l2_network: "ethrex"
+
+  # Arbitrum (uncomment if running)
+  # - job_name: "arbitrum_execution"
+  #   metrics_path: "/metrics"
+  #   static_configs:
+  #     - targets: ["127.0.0.1:7400"]
+  #       labels:
+  #         client_type: "execution"
+  #         layer: "l2"
+  #         l2_network: "arbitrum"
+
+  # Base (uncomment if running)
+  # - job_name: "base_execution"
+  #   metrics_path: "/metrics"
+  #   static_configs:
+  #     - targets: ["127.0.0.1:7500"]
+  #       labels:
+  #         client_type: "execution"
+  #         layer: "l2"
+  #         l2_network: "base"
+
+  # ============================================================================
+  # System Monitoring & Infrastructure
+  # ============================================================================
+
+  - job_name: "node_exporter"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["127.0.0.1:9100"]
+        labels:
+          exporter: "node"
+          monitoring_type: "system"
+
+  - job_name: "prometheus"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["127.0.0.1:9090"]
+        labels:
+          monitoring_type: "prometheus"
+
+  - job_name: "ethereum_metrics_exporter"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["127.0.0.1:9095"]
+        labels:
+          exporter: "ethereum_custom"
+          monitoring_type: "ethereum"
+
+  # ============================================================================
+  # Additional Exporters (uncomment as needed)
+  # ============================================================================
+
+  # Process Exporter
+  # - job_name: "process_exporter"
+  #   metrics_path: "/metrics"
+  #   static_configs:
+  #     - targets: ["127.0.0.1:9256"]
+  #       labels:
+  #         exporter: "process"
+
+  # Blackbox Exporter for endpoint monitoring
+  # - job_name: "blackbox"
+  #   metrics_path: "/probe"
+  #   params:
+  #     module: [http_2xx]
+  #   static_configs:
+  #     - targets:
+  #       - http://127.0.0.1:8545  # Execution client RPC
+  #       - http://127.0.0.1:5052  # Beacon node API
+  #   relabel_configs:
+  #     - source_labels: [__address__]
+  #       target_label: __param_target
+  #     - source_labels: [__param_target]
+  #       target_label: instance
+  #     - target_label: __address__
+  #       replacement: 127.0.0.1:9115

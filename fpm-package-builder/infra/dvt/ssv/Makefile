@@ -92,7 +92,7 @@ all: prepare deb clean test ## Default local build pipeline
 # ----------------------------------------------------------------------
 # prepare — Build binaries from source
 # ----------------------------------------------------------------------
-prepare: ## Build ssvnode and ssv-keys from source
+prepare: ## Extract ssvnode from Docker and build ssv-keys from source
 	@echo "🔎 Resolving latest SSV versions..."
 	if [[ -z "$(SSV_TAG_V)" || "$(SSV_TAG_V)" == "null" ]]; then \
 	  echo "❌ Could not determine latest ssv version via GitHub API."; exit 1; \
@@ -101,17 +101,15 @@ prepare: ## Build ssvnode and ssv-keys from source
 	  echo "❌ Could not determine latest ssv-keys version via GitHub API."; exit 1; \
 	fi
 	
-	@echo "🔽 Cloning ssv $(SSV_VERSION) ($(SSV_TAG_V))..."
-	mkdir -p .build/ssv_src .build/ssv_keys_src $(SOURCESDIR)/usr/bin
-	git clone --depth 1 --branch $(SSV_TAG_V) https://github.com/ssvlabs/ssv.git .build/ssv_src || { echo "❌ Git clone ssv failed"; exit 1; }
-	
-	@echo "🛠 Building ssvnode binary..."
-	cd .build/ssv_src && \
-	  COMMIT=$$(git rev-parse HEAD) && \
-	  VERSION=$$(git describe --tags $$(git rev-list --tags --max-count=1)) && \
-	  env GO111MODULE=on CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 \
-	  go build -o ./bin/ssvnode -ldflags "-X main.Commit=$$COMMIT -X main.Version=$$VERSION" ./cmd/ssvnode/ \
-	  || { echo "❌ Go build for ssvnode failed"; exit 1; }
+	@echo "� Pulling ssvnode Docker image: ssvlabs/ssv-node:$(SSV_TAG_V)..."
+	mkdir -p .build/ssv_keys_src $(SOURCESDIR)/usr/bin
+	docker pull --platform linux/arm64 ssvlabs/ssv-node:$(SSV_TAG_V) || { echo "❌ Docker pull failed"; exit 1; }
+
+	@echo "� Extracting ssvnode binary from container..."
+	CID=$$(docker create --platform linux/arm64 ssvlabs/ssv-node:$(SSV_TAG_V)); \
+	docker cp "$$CID:/go/bin/ssvnode" "$(SOURCESDIR)/usr/bin/ssvnode" || { echo "❌ Docker cp failed"; docker rm "$$CID"; exit 1; }; \
+	docker rm "$$CID" > /dev/null
+	chmod 0755 "$(SOURCESDIR)/usr/bin/ssvnode"
 
 	@echo "🔽 Cloning ssv-keys $(SSV_KEYS_VERSION) ($(SSV_KEYS_TAG_V))..."
 	git clone --depth 1 --branch $(SSV_KEYS_TAG_V) https://github.com/ssvlabs/ssv-keys.git .build/ssv_keys_src || { echo "❌ Git clone ssv-keys failed"; exit 1; }
@@ -129,10 +127,9 @@ prepare: ## Build ssvnode and ssv-keys from source
 	cd .build/ssv_keys_src && \
 	  pnpm package-linux-arm64 || { echo "❌ pnpm build failed"; exit 1; }
 
-	@echo "📂 Staging binaries..."
-	cp .build/ssv_src/bin/ssvnode $(SOURCESDIR)/usr/bin/ssvnode
+	@echo "📂 Staging ssv-keys binary..."
 	cp .build/ssv_keys_src/bin/linux/ssv-keys-lin-arm64 $(SOURCESDIR)/usr/bin/ssv-keys
-	chmod 0755 $(SOURCESDIR)/usr/bin/ssvnode $(SOURCESDIR)/usr/bin/ssv-keys
+	chmod 0755 $(SOURCESDIR)/usr/bin/ssv-keys
 	@echo "✅ Binaries ready at $(SOURCESDIR)/usr/bin"
 
 # ----------------------------------------------------------------------

@@ -1,10 +1,6 @@
 #!/bin/bash
 set -e
 
-# Configuration Variables (can be overridden by environment variables)
-NODE_VERSION="${NODE_VERSION:-24}"
-
-
 echo "Starting provisioning script..."
 
 # Ensure the main sources.list is empty or minimal, as we're using .sources files
@@ -47,8 +43,7 @@ apt-get update -y
 # Install development tools and dependencies
 # Installing libssl-dev:arm64 for ARM64 cross-compilation needs
 # Also installing cross-compilers for aarch64
-apt-get install -y libssl-dev:arm64 pkg-config software-properties-common docker.io docker-compose clang file make cmake gcc-aarch64-linux-gnu g++-aarch64-linux-gnu ruby ruby-dev rubygems build-essential rpm vim git jq curl wget python3-pip
-
+apt-get install -y libssl-dev:arm64 pkg-config software-properties-common docker.io docker-compose clang file make cmake gcc-aarch64-linux-gnu g++-aarch64-linux-gnu ruby ruby-dev rubygems build-essential rpm vim git jq curl wget python3-pip ca-certificates  gnupg
 # Install the fpm package management tool for Ruby
 gem install --no-document fpm
 
@@ -80,14 +75,25 @@ sudo -u vagrant bash -c 'mkdir -p /home/vagrant/.cargo && cat <<EOF > /home/vagr
 linker = "aarch64-linux-gnu-gcc"
 EOF'
 
-# Add nodejs and yarn installation for TS packages
-# Using NodeSource for Node.js installation as per official recommendations
-curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash -
+# Initialize the NodeSource repository for Node.js 24
+# This involves adding the GPG key and creating the source list file manually
+mkdir -p /etc/apt/keyrings
+curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+
+# Add the NodeSource repository to sources.list.d
+echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_24.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+
+# Install Node.js from the new repository
+apt-get update -y
 apt-get install -y nodejs
 
-# Install Yarn and pnpm globally
+# Install Yarn and pnpm globally using npm
 npm install -g yarn pnpm
 
-# Install pnpm as vagrant user (removed, installed via npm above)
+# Configure Git to suppress detached HEAD advice for the vagrant user
+sudo -u vagrant git config --global advice.detachedHead false
+
+# Configure pnpm to allow esbuild build scripts (required for ssv-keys)
+sudo -u vagrant pnpm config --global set only-built-dependencies esbuild
 
 echo "Provisioning script finished!"

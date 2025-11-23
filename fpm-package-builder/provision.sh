@@ -2,8 +2,8 @@
 set -e
 
 # Configuration Variables (can be overridden by environment variables)
-NODE_VERSION="${NODE_VERSION:-20}"
-NVM_VERSION="${NVM_VERSION:-v0.40.0}"
+NODE_VERSION="${NODE_VERSION:-24}"
+
 
 echo "Starting provisioning script..."
 
@@ -81,15 +81,13 @@ linker = "aarch64-linux-gnu-gcc"
 EOF'
 
 # Add nodejs and yarn installation for TS packages
-# Install NVM (Node Version Manager) for the vagrant user
-su - vagrant -c "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash"
+# Using NodeSource for Node.js installation as per official recommendations
+curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash -
+apt-get install -y nodejs
 
-# Source NVM script and install Node.js, then Yarn
-# The NVM installer script should modify .bashrc or .profile for persistence.
-su - vagrant -c "export NVM_DIR=\"\$HOME/.nvm\" && [ -s \"\$NVM_DIR/nvm.sh\" ] && \. \"\$NVM_DIR/nvm.sh\" && nvm install ${NODE_VERSION}"
-su - vagrant -c "export NVM_DIR=\"\$HOME/.nvm\" && [ -s \"\$NVM_DIR/nvm.sh\" ] && \. \"\$NVM_DIR/nvm.sh\" && npm install -g yarn"
+# Install Yarn and pnpm globally
+npm install -g yarn pnpm
 
-# Install pnpm as vagrant user
-su - vagrant -c "curl -fsSL https://get.pnpm.io/install.sh | sh -"
+# Install pnpm as vagrant user (removed, installed via npm above)
 
 echo "Provisioning script finished!"

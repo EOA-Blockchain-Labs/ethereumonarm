@@ -87,31 +87,31 @@ If you prefer to install dependencies directly on an Ubuntu 24.04 system, follow
 
   .. code-block:: bash
 
-     usermod -aG docker vagrant
+     usermod -aG docker $USER
 
 * **Install Rustup and add aarch64 target:**
 
   .. code-block:: bash
 
-     su - vagrant -c "curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain stable"
-     su - vagrant -c "source ~/.cargo/env && rustup target add aarch64-unknown-linux-gnu"
+     curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain stable
+     source ~/.cargo/env && rustup target add aarch64-unknown-linux-gnu
 
 * **Configure linker for aarch64 Rust target:**
 
   .. code-block:: bash
 
-     sudo -u vagrant bash -c 'mkdir -p /home/vagrant/.cargo && cat <<EOF > /home/vagrant/.cargo/config
+     mkdir -p ~/.cargo && cat <<EOF > ~/.cargo/config
      [target.aarch64-unknown-linux-gnu]
      linker = "aarch64-linux-gnu-gcc"
-     EOF'
+     EOF
 
 * **Add Node.js and Yarn installation:**
 
   .. code-block:: bash
 
-     su - vagrant -c "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash"
-     su - vagrant -c 'export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && nvm install 20'
-     su - vagrant -c 'export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm install -g yarn'
+     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+     export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && nvm install 20
+     export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm install -g yarn
 
 2.2. Alternatively, use the Provided Vagrantfile (Recommended)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

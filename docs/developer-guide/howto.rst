@@ -170,11 +170,14 @@ Understanding the file structure is key to customizing packages. Here is a break
 *   **Makefile**: The heart of the build process. It defines variables like ``PKG_NAME``, ``TEKU_VERSION``, and ``FPM_OPTS``. It orchestrates the download, staging, and FPM commands.
 
 *   **sources/**: This directory acts as a "fake root" for the package.
+
     *   ``sources/usr/bin/``: Contains the executable binaries.
     *   ``sources/etc/ethereum/``: Contains default configuration files.
+
         *   *Example:* ``l1-clients/consensus-layer/teku/sources/etc/ethereum/teku-beacon.conf`` defines the default flags for the Teku beacon node.
 
 *   **extras/**: Contains files that are not part of the main file tree but are used by the package manager, such as systemd service units.
+
     *   *Example:* ``l1-clients/consensus-layer/teku/extras/teku-beacon.service`` is the systemd unit file that manages the Teku service. It defines how the service starts, restarts, and what user it runs as.
 
 *   **scripts/** (optional): Contains ``post-install`` or ``pre-remove`` scripts that run during package installation or removal (e.g., creating a user, setting permissions).

@@ -143,12 +143,50 @@ Once your environment is set up (either manually or with Vagrant), you can creat
      cd geth
      make
 
-3. Image Creation Tool
+3. Deep Dive: Understanding the Packaging Process
+-------------------------------------------------
+
+This section provides a detailed look at how the packaging process works, why we use FPM, and the structure of the repository.
+
+3.1. Why FPM?
+^^^^^^^^^^^^^
+
+We use `FPM (Effing Package Management) <https://fpm.readthedocs.io/en/latest/>`_ because it simplifies the process of creating packages for multiple platforms (Debian/Ubuntu ``.deb``, RedHat/Fedora ``.rpm``, etc.) from a single source directory. It abstracts away much of the complexity associated with native packaging tools like ``dpkg-deb`` or ``rpmbuild``, allowing us to focus on the content and configuration of the package.
+
+3.2. The Generic Packaging Procedure
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The packaging process is automated via ``Makefile`` scripts in each client's directory. The general workflow is:
+
+1.  **Prepare**: The ``make prepare`` target downloads the upstream binary (e.g., Geth, Teku) and verifies its integrity.
+2.  **Stage**: Files are organized into a ``sources/`` directory that mirrors the target system's file structure (e.g., ``/usr/bin``, ``/etc/ethereum``).
+3.  **Build**: FPM takes the ``sources/`` directory and combines it with metadata (version, maintainer, dependencies) and extra files (systemd units) to generate the final ``.deb`` or ``.rpm`` package.
+
+3.3. Repository Structure & Key Files
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Understanding the file structure is key to customizing packages. Here is a breakdown using **Teku** as an example:
+
+*   **Makefile**: The heart of the build process. It defines variables like ``PKG_NAME``, ``TEKU_VERSION``, and ``FPM_OPTS``. It orchestrates the download, staging, and FPM commands.
+
+*   **sources/**: This directory acts as a "fake root" for the package.
+    *   ``sources/usr/bin/``: Contains the executable binaries.
+    *   ``sources/etc/ethereum/``: Contains default configuration files.
+        *   *Example:* ``l1-clients/consensus-layer/teku/sources/etc/ethereum/teku-beacon.conf`` defines the default flags for the Teku beacon node.
+
+*   **extras/**: Contains files that are not part of the main file tree but are used by the package manager, such as systemd service units.
+    *   *Example:* ``l1-clients/consensus-layer/teku/extras/teku-beacon.service`` is the systemd unit file that manages the Teku service. It defines how the service starts, restarts, and what user it runs as.
+
+*   **scripts/** (optional): Contains ``post-install`` or ``pre-remove`` scripts that run during package installation or removal (e.g., creating a user, setting permissions).
+
+By modifying files in ``sources/`` or ``extras/``, you can customize the default configuration or service behavior of the resulting package.
+
+4. Image Creation Tool
 ----------------------
 
 The ``image-creation-tool`` directory contains scripts to build custom Armbian images for various Single Board Computers (SBCs).
 
-3.1. Setup
+4.1. Setup
 ^^^^^^^^^^
 
 Navigate to the ``image-creation-tool/ubuntu`` directory:
@@ -157,7 +195,7 @@ Navigate to the ``image-creation-tool/ubuntu`` directory:
 
    cd ethereumonarm/image-creation-tool/ubuntu
 
-3.2. Building Images
+4.2. Building Images
 ^^^^^^^^^^^^^^^^^^^^
 
 The ``Makefile`` in this directory automates the download, customization, and packaging of Armbian images.
@@ -185,7 +223,7 @@ The ``Makefile`` in this directory automates the download, customization, and pa
   - ``orangepi5-plus`` (Orange Pi 5 Plus)
   - ``nanopct6`` (NanoPC T6)
 
-3.3. Clean Up
+4.3. Clean Up
 ^^^^^^^^^^^^^
 
 To remove all generated images and downloaded files, run:

@@ -481,6 +481,7 @@ declare -A infra=(
   [flashbots/mev-boost]=mev-boost
   [ethpandaops/ethereum-metrics-exporter]=ethereum-metrics-exporter
   [prometheus-community/json_exporter]=json-exporter
+  [ssvlabs/ssv]=dvt-ssv
 )
 
 declare -A web3=(

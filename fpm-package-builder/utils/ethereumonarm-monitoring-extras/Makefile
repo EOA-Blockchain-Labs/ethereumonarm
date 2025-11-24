@@ -92,3 +92,79 @@ FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
 .PHONY: all prepare deb rpm clean test release help
 
 # ----------------------------------------------------------------------
+# all — default target for local builds
+# ----------------------------------------------------------------------
+all: prepare deb clean test ## Default local build pipeline
+
+# ----------------------------------------------------------------------
+# prepare — Create source directories
+# ----------------------------------------------------------------------
+prepare: ## Create source directories
+	@echo "🌱 This is a configuration-only package. Creating source dirs..."
+	mkdir -p $(SOURCESDIR)
+
+# ----------------------------------------------------------------------
+# deb — build Debian package
+# ----------------------------------------------------------------------
+deb: prepare ## Build .deb package
+	mkdir -p $(OUTPUTDIR)
+	@echo "📦 Building DEB package..."
+	fpm $(FPM_DEB_OPTS) -p "$(PKG_DEB)" .
+	if [[ -f "$(PKG_DEB)" ]]; then \
+	  echo "✅ DEB package created at $(PKG_DEB)"; \
+	else \
+	  echo "❌ DEB package creation failed."; exit 1; \
+	fi
+
+# ----------------------------------------------------------------------
+# rpm — build RPM package
+# ----------------------------------------------------------------------
+rpm: prepare ## Build .rpm package
+	mkdir -p $(OUTPUTDIR)
+	@echo "📦 Building RPM package..."
+	fpm $(FPM_RPM_OPTS) -p "$(PKG_RPM)" .
+	if [[ -f "$(PKG_RPM)" ]]; then \
+	  echo "✅ RPM package created at $(PKG_RPM)"; \
+	else \
+	  echo "❌ RPM package creation failed."; exit 1; \
+	fi
+
+# ----------------------------------------------------------------------
+# clean — remove build artifacts
+# ----------------------------------------------------------------------
+clean: ## No binaries to clean
+	@echo "🧹 No binaries to clean for this package."
+
+# ----------------------------------------------------------------------
+# test — verify build success
+# ----------------------------------------------------------------------
+test: ## Check that .deb exists
+	if [[ -f "$(PKG_DEB)" ]]; then \
+	  echo "🧪 Test: .deb exists — OK ✅"; \
+	else \
+	  echo "🧪 Test: .deb missing — ❌"; exit 1; \
+	fi
+
+# ----------------------------------------------------------------------
+# release — full CI build (includes RPM)
+# ----------------------------------------------------------------------
+release: clean prepare deb rpm test ## Clean + Prepare + Build + Test (all)
+	@echo "🎉 All packages built successfully for $(PKG_ARCH)"
+
+# ----------------------------------------------------------------------
+# help — show all available targets
+# ----------------------------------------------------------------------
+help: ## Show available targets
+	echo ""
+	echo "EOA Packaging — $(PKG_NAME)"
+	echo ""
+	awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z0-9_%-]+:.*?##/ { printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
+	echo ""
+	echo "Version resolved: $(PKG_VERSION)"
+	echo "Sources dir     : $(SOURCESDIR)"
+	echo "Output dir      : $(OUTPUTDIR)"
+	echo ""
+
+# ======================================================================
+# End of file
+# ======================================================================

@@ -3518,7 +3518,11 @@
     "preload": false,
     "refresh": "5s",
     "schemaVersion": 42,
-    "tags": [],
+    "tags": [
+        "Execution",
+        "Full node",
+        "Ethrex"
+    ],
     "templating": {
         "list": [
             {
@@ -3583,19 +3587,13 @@
                     "text": "ethrex",
                     "value": "ethrex"
                 },
-                "definition": "label_values(up, job)",
                 "description": "",
+                "hide": 2,
                 "label": "job",
                 "name": "job",
-                "options": [],
-                "query": {
-                    "qryType": 5,
-                    "query": "label_values(up, job)",
-                    "refId": "PrometheusVariableQueryEditor-VariableQuery"
-                },
-                "refresh": 1,
-                "regex": "",
-                "type": "query"
+                "query": "ethrex",
+                "skipUrlSync": true,
+                "type": "constant"
             }
         ]
     },
@@ -3607,5 +3605,5 @@
     "timezone": "utc",
     "title": "Ethrex",
     "uid": "beoru4vp59yiof",
-    "version": 5
+    "version": 7
 }

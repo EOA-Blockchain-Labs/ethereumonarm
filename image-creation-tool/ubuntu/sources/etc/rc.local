@@ -113,7 +113,7 @@ BASE_PACKAGES="apt-utils nginx bash-completion file gdisk gpg parted net-tools r
 # This list includes clients for different layers (execution, consensus) and networks (e.g., Arbitrum, Optimism).
 ETHEREUM_PACKAGES="arbitrum-nitro besu dvt-obol erigon ethstaker-deposit-cli ethereumonarm-utils ethrex fuel-network geth grandine lighthouse lodestar ls-lido mev-boost nethermind nimbus optimism-op-geth optimism-op-node prysm reth starknet-juno teku"
 # These packages are for monitoring the Ethereum node's performance and system health.
-MONITORING_PACKAGES="ethereumonarm-monitoring-extras grafana prometheus prometheus-node-exporter"
+MONITORING_PACKAGES="ethereumonarm-monitoring-extras grafana prometheus prometheus-node-exporter ethereum-metrics-exporter"
 # Nginx is a web server, often used as a reverse proxy. These packages include Nginx and related configurations.
 NGINX_PACKAGES="ethereumonarm-config-sync ethereumonarm-nginx-proxy-extras"
 
@@ -653,7 +653,7 @@ apt-get -y install $MONITORING_PACKAGES || {
 echo "Enabling monitoring services to start on boot..."
 # Configure Grafana server, Prometheus, and Prometheus Node Exporter to start automatically when the system boots.
 systemctl enable grafana-server
-systemctl enable prometheus prometheus-node-exporter
+systemctl enable prometheus prometheus-node-exporter ethereum-metrics-exporter
 
 echo "Applying specific configurations for Ethereum on ARM monitoring tools..."
 # 'set-ethereumonarm-monitoring-extras -o' is a script likely provided by ethereumonarm-utils

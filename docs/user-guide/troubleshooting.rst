@@ -112,42 +112,46 @@ After booting, the system will **not** automatically restart your previous clien
 Replace NVMe Drive
 ~~~~~~~~~~~~~~~~~~
 
-If you replace your NVMe drive, the system will fail to mount ``/home`` during boot (since the previous drive is gone) and will use a temporary home directory.
+On Ethereum on ARM, the NVMe drive is mounted directly at ``/home`` (specifically ``/dev/nvme0n1p1`` on ``/home``). This means replacing the drive involves significant data loss beyond just the blockchain data.
+
+**What you will LOSE:**
+
+*   **Prometheus Metrics:** Historical charts stored in ``/home/prometheus/metrics2`` will reset to zero.
+*   **SSH Keys:** The ``/home/ethereum/.ssh`` folder. **Critical:** If you use keys to log in, backup this folder or you might lock yourself out.
+*   **Personal Configs:** Files like ``.bash_aliases`` or ``.bashrc``. Any custom shortcuts you made are here.
+*   **Validator/Wallet Info:** Even default installs have ``.ethereum/keystore`` and ``.nimbus-beacon/validators`` here. If you ever imported keys, they are gone.
 
 **Procedure:**
 
 1.  **Power off** the board and **replace** the NVMe drive.
 2.  **Power on** the board.
-3.  **Log in**. You will be in a temporary home directory.
-4.  **Create a partition** and **format** the new drive. Assuming your drive is ``/dev/nvme0n1``:
+3.  **Log in**. Since the system expects ``/home`` to be on the NVMe (which is now unformatted), the mount will fail. You will be logged into a temporary or fallback home directory on the SD card.
+4.  **Create partition and format**:
+
+    You need to create the partition and format it so it matches what ``fstab`` expects (partition 1, ext4).
 
     .. code-block:: bash
 
-       # Create a partition (e.g., using fdisk or sfdisk)
-       echo 'type=83' | sudo sfdisk /dev/nvme0n1
+       # Create GPT label
+       sudo parted /dev/nvme0n1 mklabel gpt
 
-       # Format the partition as ext4
+       # Create primary partition using 100% of the disk
+       sudo parted -a opt /dev/nvme0n1 mkpart primary ext4 0% 100%
+
+       # Format it to ext4
        sudo mkfs.ext4 /dev/nvme0n1p1
 
-5.  **Configure fstab**:
+5.  **Reboot**:
 
-    Open ``/etc/fstab`` and ensure the entry for ``/home`` uses the new partition:
-
-    .. code-block:: text
-
-       /dev/nvme0n1p1 /home ext4 defaults,noatime 0 2
-
-6.  **Mount** the new home:
+    Now that ``/dev/nvme0n1p1`` exists and is formatted, the system will mount it automatically at ``/home`` upon reboot.
 
     .. code-block:: bash
 
-       sudo mount -a
-       # Or simply reboot
        sudo reboot
 
 **Result:**
 
-No extra steps are needed. The clients will start automatically and begin **resyncing from scratch**.
+The system will mount the new drive at ``/home``. Your clients will start automatically and begin **resyncing from scratch**.
 
 .. rubric:: Getting Further Assistance
 

@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-11-24 03:58:45 UTC_
+_Last updated: 2025-11-25 03:50:52 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -12,9 +12,9 @@ _Last updated: 2025-11-24 03:58:45 UTC_
 - ❓ **N/A** — Could not determine.
 
 ### Summary
-- Total packages checked: **28**
-- ✅ Up-to-date: **26** (92.9%)
-- ❌ Outdated: **2** (7.1%)
+- Total packages checked: **29**
+- ✅ Up-to-date: **27** (93.1%)
+- ❌ Outdated: **2** (6.9%)
 - ❓ N/A: **0** (0.0%)
 
 ### Infra
@@ -22,6 +22,7 @@ _Last updated: 2025-11-24 03:58:45 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `dvt-obol` | `1.7.1` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.7.1` | ✅ Up-to-date |
+| `dvt-ssv` | `2.3.7` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.3.7` | ✅ Up-to-date |
 | `ethereum-metrics-exporter` | `0.28.3` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.28.3` | ✅ Up-to-date |
 | `ethstaker-deposit-cli` | `1.2.2` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.2.2` | ✅ Up-to-date |
 | `json-exporter` | `0.7.0` ([prometheus-community/json_exporter](https://github.com/prometheus-community/json_exporter)) | `0.7.0` | ✅ Up-to-date |
@@ -36,7 +37,7 @@ _Last updated: 2025-11-24 03:58:45 UTC_
 | `lodestar` | `1.36.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.36.0` | ✅ Up-to-date |
 | `nimbus` | `25.11.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.11.0` | ✅ Up-to-date |
 | `prysm` | `7.0.0` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.0.0` | ✅ Up-to-date |
-| `teku` | `25.11.1` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.11.0` | ❌ Outdated |
+| `teku` | `25.11.1` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.11.1` | ✅ Up-to-date |
 ### Layer 1 Execution
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
@@ -57,7 +58,7 @@ _Last updated: 2025-11-24 03:58:45 UTC_
 | `optimism-op-geth` | `1.101603.5` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101603.5` | ✅ Up-to-date |
 | `optimism-op-node` | `1.16.2` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.16.2` | ✅ Up-to-date |
 | `optimism-op-reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
-| `starknet-juno` | `0.15.11` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.11` | ✅ Up-to-date |
+| `starknet-juno` | `0.15.12` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.11` | ❌ Outdated |
 | `starknet-pathfinder` | `0.21.1` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.1` | ✅ Up-to-date |
 ### Web3
 

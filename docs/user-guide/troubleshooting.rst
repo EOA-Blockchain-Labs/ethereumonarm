@@ -75,6 +75,80 @@ If you are unsure how to interpret the output or wish to share it for assistance
 
 This command will return a URL that you can share to display your report.
 
+Real Case Scenarios
+-------------------
+
+This section covers common maintenance scenarios.
+
+Reflash SD Card
+~~~~~~~~~~~~~~~
+
+If you need to reflash your MicroSD card (e.g., for an OS upgrade or corruption fix), follow these steps.
+
+**Procedure:**
+
+1.  **Power off** your board safely.
+2.  **Remove** the MicroSD card.
+3.  **Flash** the new image onto the MicroSD card using Etcher or ``dd``.
+4.  **Insert** the card and **Power on**.
+
+**Post-Installation:**
+
+After booting, the system will **not** automatically restart your previous clients. You must manually re-enable the services you were using.
+
+**Example (using Geth and Nimbus):**
+
+.. code-block:: bash
+
+   # Enable and start the Execution Layer client
+   sudo systemctl enable --now geth
+
+   # Enable and start the Consensus Layer client
+   sudo systemctl enable --now nimbus-beacon
+
+   # If you are running a validator:
+   sudo systemctl enable --now nimbus-validator
+
+Replace NVMe Drive
+~~~~~~~~~~~~~~~~~~
+
+If you replace your NVMe drive, the system will fail to mount ``/home`` during boot (since the previous drive is gone) and will use a temporary home directory.
+
+**Procedure:**
+
+1.  **Power off** the board and **replace** the NVMe drive.
+2.  **Power on** the board.
+3.  **Log in**. You will be in a temporary home directory.
+4.  **Create a partition** and **format** the new drive. Assuming your drive is ``/dev/nvme0n1``:
+
+    .. code-block:: bash
+
+       # Create a partition (e.g., using fdisk or sfdisk)
+       echo 'type=83' | sudo sfdisk /dev/nvme0n1
+
+       # Format the partition as ext4
+       sudo mkfs.ext4 /dev/nvme0n1p1
+
+5.  **Configure fstab**:
+
+    Open ``/etc/fstab`` and ensure the entry for ``/home`` uses the new partition:
+
+    .. code-block:: text
+
+       /dev/nvme0n1p1 /home ext4 defaults,noatime 0 2
+
+6.  **Mount** the new home:
+
+    .. code-block:: bash
+
+       sudo mount -a
+       # Or simply reboot
+       sudo reboot
+
+**Result:**
+
+No extra steps are needed. The clients will start automatically and begin **resyncing from scratch**.
+
 .. rubric:: Getting Further Assistance
 
 Discord Channel

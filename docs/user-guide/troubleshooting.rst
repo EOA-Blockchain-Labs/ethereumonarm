@@ -85,6 +85,14 @@ Reflash SD Card
 
 If you need to reflash your MicroSD card (e.g., for an OS upgrade or corruption fix), follow these steps.
 
+**Before you begin:**
+
+The system automatically runs a config sync daily to backup your ``/etc/ethereum`` directory to your NVMe drive (``/home/ethereum/.etc/ethereum``). However, it is **highly recommended** to run this manually before reflashing to ensure you have the very latest configurations backed up.
+
+.. code-block:: bash
+
+   sudo ethereumonarm-config-sync.sh
+
 **Procedure:**
 
 1.  **Power off** your board safely.
@@ -94,7 +102,9 @@ If you need to reflash your MicroSD card (e.g., for an OS upgrade or corruption 
 
 **Post-Installation:**
 
-After booting, the system will **not** automatically restart your previous clients. You must manually re-enable the services you were using.
+On the first boot, the system will detect the backup on your NVMe drive and automatically restore your ``/etc/ethereum`` configurations.
+
+However, the system will **not** automatically restart your previous clients. You must manually re-enable the services you were using.
 
 **Example (using Geth and Nimbus):**
 

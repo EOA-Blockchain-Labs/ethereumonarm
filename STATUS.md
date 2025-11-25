@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-11-25 03:50:52 UTC_
+_Last updated: 2025-11-25 07:37:21 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -13,8 +13,8 @@ _Last updated: 2025-11-25 03:50:52 UTC_
 
 ### Summary
 - Total packages checked: **29**
-- ✅ Up-to-date: **27** (93.1%)
-- ❌ Outdated: **2** (6.9%)
+- ✅ Up-to-date: **28** (96.6%)
+- ❌ Outdated: **1** (3.4%)
 - ❓ N/A: **0** (0.0%)
 
 ### Infra
@@ -43,7 +43,7 @@ _Last updated: 2025-11-25 03:50:52 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `besu` | `25.11.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `25.11.0` | ✅ Up-to-date |
-| `erigon` | `3.2.2` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.2.2` | ✅ Up-to-date |
+| `erigon` | `3.2.3` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.2.3` | ✅ Up-to-date |
 | `ethrex` | `7.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `7.0.0` | ✅ Up-to-date |
 | `geth` | `1.16.7` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.7` | ✅ Up-to-date |
 | `nethermind` | `1.35.2` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.35.2` | ✅ Up-to-date |
@@ -58,7 +58,7 @@ _Last updated: 2025-11-25 03:50:52 UTC_
 | `optimism-op-geth` | `1.101603.5` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101603.5` | ✅ Up-to-date |
 | `optimism-op-node` | `1.16.2` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.16.2` | ✅ Up-to-date |
 | `optimism-op-reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
-| `starknet-juno` | `0.15.12` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.11` | ❌ Outdated |
+| `starknet-juno` | `0.15.12` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.12` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.21.1` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.1` | ✅ Up-to-date |
 ### Web3
 

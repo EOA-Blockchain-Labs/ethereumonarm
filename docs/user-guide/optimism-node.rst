@@ -117,8 +117,8 @@ Software Prerequisites - **Step-by-Step Guide**
 
         *   **For Rock 5B (32GB):**
 
-            *   Download Link: `ethonarm_rock5b_25.07.00.img.zip <https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v25.07.00/ethonarm_rock5b_25.07.00.img.zip`_
-            *   SHA256 Checksum: ``ac3d4cc46061e8d1c78042a5416f0a2f9974dbfb16cf2e7972f0f722aca13305``
+            *   Download Link: `ethonarm_rock5b_25.11.00.img.zip <https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v25.11.00/ethonarm_rock5b_25.11.00.img.zip`_
+            *   SHA256 Checksum: ``a61a0cd5bd41bfcb1528e527878c15c158aedad6f745eeeb02975d300b3d2b42``
 
             **Verifying Checksum on Windows:**
 
@@ -127,7 +127,7 @@ Software Prerequisites - **Step-by-Step Guide**
             3.  Right-click on the downloaded ``.img.zip`` file.
             4.  Select "Checksums" from the context menu.
             5.  HashCheck will calculate various checksums, including SHA256.
-            6.  **Compare the calculated SHA256 value to the provided checksum:** ``ac3d4cc46061e8d1c78042a5416f0a2f9974dbfb16cf2e7972f0f722aca13305``.  **They MUST match exactly.** If they do not match, re-download the image file.
+            6.  **Compare the calculated SHA256 value to the provided checksum:** ``a61a0cd5bd41bfcb1528e527878c15c158aedad6f745eeeb02975d300b3d2b42``.  **They MUST match exactly.** If they do not match, re-download the image file.
 
             **Verifying Checksum on macOS/Linux:**
 
@@ -137,17 +137,17 @@ Software Prerequisites - **Step-by-Step Guide**
 
             .. prompt:: bash $
 
-                sha256sum ethonarm_rock5b_25.07.00.img.zip
+                sha256sum ethonarm_rock5b_25.11.00.img.zip
 
-            10. **Compare the output to the provided checksum:** ``ac3d4cc46061e8d1c78042a5416f0a2f9974dbfb16cf2e7972f0f722aca13305``. **They MUST match exactly.** If they do not match, re-download the image file.
+            10. **Compare the output to the provided checksum:** ``a61a0cd5bd41bfcb1528e527878c15c158aedad6f745eeeb02975d300b3d2b42``. **They MUST match exactly.** If they do not match, re-download the image file.
 
         *   **For Orange Pi 5 Plus (32GB):**
 
-            *   Download Link: `ethonarm_orangepi5-plus_25.07.00.img.zip <https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v25.07.00/ethonarm_orangepi5-plus_25.07.00.img.zip>`_
+            *   Download Link: `ethonarm_orangepi5-plus_25.11.00.img.zip <https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v25.11.00/ethonarm_orangepi5-plus_25.11.00.img.zip>`_
             
-            *   SHA256 Checksum: ``9b15af4f15a144921b43037a24d8008021be568290bf75b31108f8a851e24c30``
+            *   SHA256 Checksum: ``1c28775acbe529e7cc31d1a819e76477820fea04c7e30a53a95488bf195ff8e0``
 
-            **Verify Checksum (using the same methods as described for Rock 5B, but comparing against the Orange Pi 5 Plus checksum: ``9b15af4f15a144921b43037a24d8008021be568290bf75b31108f8a851e24c30``).**
+            **Verify Checksum (using the same methods as described for Rock 5B, but comparing against the Orange Pi 5 Plus checksum: ``1c28775acbe529e7cc31d1a819e76477820fea04c7e30a53a95488bf195ff8e0``).**
 
     *   **Flashing the Image onto the MicroSD Card - Using Etcher (Recommended):**
 

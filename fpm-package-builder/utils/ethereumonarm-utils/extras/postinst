@@ -3,7 +3,7 @@ set -e
 
 chmod 600 /etc/ethereum/restic.passwd
 chmod 600 /etc/ethereum/restic_eoa.conf
-chmod 700 /usr/sbin/format_swapped_disk
+chmod 755 /usr/sbin/format_swapped_disk
 chown root:root /etc/ethereum/restic.passwd /etc/ethereum/restic_eoa.conf /usr/sbin/format_swapped_disk
 
 # Reload systemd, enable and start the timer

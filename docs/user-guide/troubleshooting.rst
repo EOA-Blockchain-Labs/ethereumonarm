@@ -88,7 +88,7 @@ If you need to reflash your MicroSD card (e.g., for an OS upgrade or corruption 
 **Before you begin:**
 
 The system automatically runs a config sync daily to backup your ``/etc/ethereum`` directory to your NVMe drive (``/home/ethereum/.etc/ethereum``). However, it is **highly recommended** to run this manually before reflashing to ensure you have the very latest configurations backed up.
-
+http://10.1.25.12:3000/d/matWff6Zk/01-home?orgId=1&from=now-6h&to=now&timezone=browser
 .. code-block:: bash
 
    sudo ethereumonarm-config-sync.sh
@@ -136,9 +136,21 @@ On Ethereum on ARM, the NVMe drive is mounted directly at ``/home`` (specificall
 1.  **Power off** the board and **replace** the NVMe drive.
 2.  **Power on** the board.
 3.  **Log in**. Since the system expects ``/home`` to be on the NVMe (which is now unformatted), the mount will fail. You will be logged into a temporary or fallback home directory on the SD card.
-4.  **Create partition and format**:
+    You have two options to prepare the drive:
 
-    You need to create the partition and format it so it matches what ``fstab`` expects (partition 1, ext4).
+    **Option A: Automatic (Recommended)**
+
+    Use the ``format_swapped_disk`` utility to automatically partition, format, and update your configuration.
+
+    .. code-block:: bash
+
+       sudo format_swapped_disk
+
+    Follow the on-screen prompts to confirm the operation.
+
+    **Option B: Manual**
+
+    If you prefer to do it manually, you must create the partition, format it, and ensure it matches what ``fstab`` expects (partition 1, ext4).
 
     .. code-block:: bash
 

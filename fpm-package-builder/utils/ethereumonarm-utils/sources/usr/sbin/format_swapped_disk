@@ -1,0 +1,112 @@
+#!/bin/bash
+
+# ==============================================================================
+# DISK FORMATTER FOR ETHEREUM ON ARM
+# Target: Prepares a new NVMe drive for use as /home 
+# ==============================================================================
+
+# --- Configuration ---
+TARGET_DISK="/dev/nvme0n1"
+PARTITION="${TARGET_DISK}p1"
+MOUNT_POINT="/home"
+FSTAB="/etc/fstab"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo -e "${YELLOW}Starting Disk Preparation Utility...${NC}"
+
+# 1. Root Check
+if [[ $EUID -ne 0 ]]; then
+   echo -e "${RED}Error: This script must be run as root.${NC}"
+   exit 1
+fi
+
+# 2. Check if Target Disk Exists
+if [[ ! -e "$TARGET_DISK" ]]; then
+    echo -e "${RED}Error: Disk $TARGET_DISK not found.${NC}"
+    echo "Please ensure the NVMe drive is inserted correctly."
+    exit 1
+fi
+
+# 3. Check if Mounted
+echo "Checking mount status..."
+if grep -qs "$TARGET_DISK" /proc/mounts; then
+    echo -e "${RED}Error: $TARGET_DISK is currently mounted.${NC}"
+    echo "You cannot format a disk while it is in use."
+    echo "If you are currently logged in via a user on /home, you must unmount it manually or boot from SD only."
+    exit 1
+else
+    echo -e "${GREEN}Disk is unmounted and ready.${NC}"
+fi
+
+# 4. Fstab Safety Check
+echo "Checking fstab configuration..."
+if [[ ! -f "$FSTAB" ]]; then
+    echo -e "${RED}Critical Error: $FSTAB file is missing.${NC}"
+    exit 1
+fi
+# Backup fstab
+cp "$FSTAB" "${FSTAB}.bak.$(date +%Y%m%d%H%M%S)"
+echo -e "${GREEN}Backup of fstab created.${NC}"
+
+# 5. User Confirmation (The "Point of No Return")
+echo -e "\n${YELLOW}WARNING: This will perform the following actions:${NC}"
+echo "1. DELETE ALL DATA on $TARGET_DISK"
+echo "2. Create a new GPT partition table and ext4 partition."
+echo "3. Ensure /etc/fstab contains the mount entry for $PARTITION."
+echo ""
+read -p "Are you sure you want to proceed? (yes/no): " confirmation
+if [[ "$confirmation" != "yes" ]]; then
+    echo "Operation cancelled."
+    exit 0
+fi
+
+# ================= OPERATION STARTS =================
+
+# 6. Partitioning & Formatting
+echo -e "\n${YELLOW}Formatting disk...${NC}"
+# Wipe signatures
+wipefs -a "$TARGET_DISK"
+# Create GPT label and Partition
+parted -s "$TARGET_DISK" mklabel gpt
+parted -s -a opt "$TARGET_DISK" mkpart primary ext4 0% 100%
+
+# Wait for kernel to register partition
+sleep 2
+
+# Format ext4
+mkfs.ext4 -F "$PARTITION"
+if [[ $? -ne 0 ]]; then
+    echo -e "${RED}Formatting failed.${NC}"
+    exit 1
+fi
+echo -e "${GREEN}Formatting complete.${NC}"
+
+# 7. Update Fstab (Conservative Approach)
+echo -e "\n${YELLOW}Checking /etc/fstab...${NC}"
+
+# Define the exact entry string
+FSTAB_ENTRY="$PARTITION $MOUNT_POINT ext4 defaults,noatime 0 2"
+
+# Check if the entry already exists (searching for the device path at start of line)
+if grep -Fq "$FSTAB_ENTRY" "$FSTAB"; then
+    echo -e "${GREEN}Entry already exists in fstab. No changes made.${NC}"
+else
+    echo "Entry not found. Appending to $FSTAB..."
+    echo "$FSTAB_ENTRY" >> "$FSTAB"
+    echo -e "${GREEN}Fstab updated.${NC}"
+fi
+
+# 8. Reboot
+echo -e "\n${GREEN}Success! The disk is ready.${NC}"
+read -p "Do you want to reboot the system now? (y/n): " reboot_ans
+if [[ "$reboot_ans" =~ ^[Yy]$ ]]; then
+    echo "Rebooting..."
+    reboot
+else
+    echo "Please reboot manually to mount the new /home."
+fi

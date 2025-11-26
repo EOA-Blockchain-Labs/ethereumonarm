@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-11-26 03:50:08 UTC_
+_Last updated: 2025-11-26 18:06:39 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
@@ -13,9 +13,14 @@ _Last updated: 2025-11-26 03:50:08 UTC_
 
 ### Summary
 - Total packages checked: **29**
-- ✅ Up-to-date: **27** (93.1%)
-- ❌ Outdated: **2** (6.9%)
+- ✅ Up-to-date: **28** (96.6%)
+- ❌ Outdated: **1** (3.4%)
 - ❓ N/A: **0** (0.0%)
+
+### Infra
+
+| Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
+|:--------|:-------------------|:------------------------|:------:|
 
 ### Infra
 
@@ -28,6 +33,7 @@ _Last updated: 2025-11-26 03:50:08 UTC_
 | `json-exporter` | `0.7.0` ([prometheus-community/json_exporter](https://github.com/prometheus-community/json_exporter)) | `0.7.0` | ✅ Up-to-date |
 | `mev-boost` | `1.10.1` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.10.1` | ✅ Up-to-date |
 | `staking-deposit-cli` | `2.8.0` ([ethereum/staking-deposit-cli](https://github.com/ethereum/staking-deposit-cli)) | `2.8.0` | ✅ Up-to-date |
+
 ### Layer 1 Consensus
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
@@ -38,6 +44,7 @@ _Last updated: 2025-11-26 03:50:08 UTC_
 | `nimbus` | `25.11.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.11.0` | ✅ Up-to-date |
 | `prysm` | `7.0.0` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.0.0` | ✅ Up-to-date |
 | `teku` | `25.11.1` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.11.1` | ✅ Up-to-date |
+
 ### Layer 1 Execution
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
@@ -46,9 +53,10 @@ _Last updated: 2025-11-26 03:50:08 UTC_
 | `erigon` | `3.2.3` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.2.3` | ✅ Up-to-date |
 | `ethrex` | `7.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `7.0.0` | ✅ Up-to-date |
 | `geth` | `1.16.7` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.7` | ✅ Up-to-date |
-| `nethermind` | `1.35.3` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.35.2` | ❌ Outdated |
+| `nethermind` | `1.35.3` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.35.3` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.2.2` | ❌ Outdated |
 | `reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
+
 ### Layer 2
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
@@ -60,6 +68,7 @@ _Last updated: 2025-11-26 03:50:08 UTC_
 | `optimism-op-reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
 | `starknet-juno` | `0.15.12` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.12` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.21.1` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.1` | ✅ Up-to-date |
+
 ### Web3
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |

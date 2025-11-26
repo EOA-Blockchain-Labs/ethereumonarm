@@ -36,7 +36,7 @@ PKG_BEFPRE_REMOVE ?= extras/ethereumonarm-armbian-extras.prerm
 # ----------------------------------------------------------------------
 # Upstream version and source info
 # ----------------------------------------------------------------------
-PKG_VERSION ?= 1.2.2
+PKG_VERSION ?= 1.2.3
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(PKG_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm

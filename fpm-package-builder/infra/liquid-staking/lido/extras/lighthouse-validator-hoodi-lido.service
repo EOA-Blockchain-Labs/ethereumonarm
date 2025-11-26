@@ -1,5 +1,5 @@
 [Unit]
-Description=Lighthouse Validator chain daemon
+Description=Lighthouse Validator Client (Lido Hoodi)
 After=network.target
 
 [Service]

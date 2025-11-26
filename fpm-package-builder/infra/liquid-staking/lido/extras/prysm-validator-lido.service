@@ -1,5 +1,5 @@
 [Unit]
-Description=Prysm Validator daemon
+Description=Prysm Validator Client (Lido)
 After=network.target
 Requires=prysm-beacon.service
 

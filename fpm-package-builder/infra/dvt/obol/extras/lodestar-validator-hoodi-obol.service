@@ -1,5 +1,5 @@
 [Unit]
-Description=Lodestar Validator daemon
+Description=Lodestar Validator Client (Obol Hoodi)
 After=network.target
 
 [Service]

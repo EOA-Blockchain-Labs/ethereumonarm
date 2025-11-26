@@ -1,5 +1,5 @@
 [Unit]
-Description=Lighthouse Validator chain daemon
+Description=Lighthouse Validator Client (Obol Lido)
 After=network.target
 
 [Service]

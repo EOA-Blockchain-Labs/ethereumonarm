@@ -437,11 +437,6 @@ generate_markdown() {
     echo "- ✅ Up-to-date: **$up_to_date** ($p_up%)"
     echo "- ❌ Outdated: **$outdated** ($p_out%)"
     echo "- ❓ N/A: **$na_count** ($p_na%)"
-    echo
-    echo "### Infra"
-    echo
-    echo "| Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |"
-    echo "|:--------|:-------------------|:------------------------|:------:|"
   } > "$MARKDOWN_FILE"
 
   # We need to process the results in the order of groups defined in packages.json

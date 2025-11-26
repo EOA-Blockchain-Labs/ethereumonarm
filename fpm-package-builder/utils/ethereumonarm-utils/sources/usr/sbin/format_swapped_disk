@@ -59,7 +59,7 @@ echo "1. DELETE ALL DATA on $TARGET_DISK"
 echo "2. Create a new GPT partition table and ext4 partition."
 echo "3. Ensure /etc/fstab contains the mount entry for $PARTITION."
 echo ""
-read -p "Are you sure you want to proceed? (yes/no): " confirmation
+read -r -p "Are you sure you want to proceed? (yes/no): " confirmation
 if [[ "$confirmation" != "yes" ]]; then
     echo "Operation cancelled."
     exit 0
@@ -79,8 +79,7 @@ parted -s -a opt "$TARGET_DISK" mkpart primary ext4 0% 100%
 sleep 2
 
 # Format ext4
-mkfs.ext4 -F "$PARTITION"
-if [[ $? -ne 0 ]]; then
+if ! mkfs.ext4 -F "$PARTITION"; then
     echo -e "${RED}Formatting failed.${NC}"
     exit 1
 fi
@@ -103,7 +102,7 @@ fi
 
 # 8. Reboot
 echo -e "\n${GREEN}Success! The disk is ready.${NC}"
-read -p "Do you want to reboot the system now? (y/n): " reboot_ans
+read -r -p "Do you want to reboot the system now? (y/n): " reboot_ans
 if [[ "$reboot_ans" =~ ^[Yy]$ ]]; then
     echo "Rebooting..."
     reboot

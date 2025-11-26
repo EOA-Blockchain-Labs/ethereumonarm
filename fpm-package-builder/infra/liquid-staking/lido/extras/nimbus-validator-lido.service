@@ -1,5 +1,5 @@
 [Unit]
-Description=Nimbus Beacon chain daemon
+Description=Nimbus Validator Client (Lido)
 After=network.target
 
 [Service]

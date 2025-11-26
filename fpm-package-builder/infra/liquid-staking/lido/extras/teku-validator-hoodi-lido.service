@@ -1,5 +1,5 @@
 [Unit]
-Description=Ethereum Teku client daemon
+Description=Teku Validator Client (Lido Hoodi)
 After=network.target
 
 [Service]

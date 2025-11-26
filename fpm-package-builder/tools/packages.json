@@ -1,0 +1,41 @@
+{
+    "Layer 1 Consensus": {
+        "grandinetech/grandine": "grandine",
+        "sigp/lighthouse": "lighthouse",
+        "ChainSafe/lodestar": "lodestar",
+        "status-im/nimbus-eth2": "nimbus",
+        "prysmaticlabs/prysm": "prysm",
+        "ConsenSys/teku": "teku"
+    },
+    "Layer 1 Execution": {
+        "hyperledger/besu": "besu",
+        "ledgerwatch/erigon": "erigon",
+        "ethereum/go-ethereum": "geth",
+        "NethermindEth/nethermind": "nethermind",
+        "paradigmxyz/reth": "reth",
+        "status-im/nimbus-eth1": "nimbus-ec",
+        "lambdaclass/ethrex": "ethrex"
+    },
+    "Layer 2": {
+        "OffchainLabs/nitro": "arbitrum-nitro",
+        "ethereum-optimism/op-geth": "optimism-op-geth",
+        "ethereum-optimism/optimism": "optimism-op-node",
+        "paradigmxyz/reth": "optimism-op-reth",
+        "eqlabs/pathfinder": "starknet-pathfinder",
+        "NethermindEth/juno": "starknet-juno",
+        "FuelLabs/fuel-core": "fuel-network"
+    },
+    "Infra": {
+        "ethereum/staking-deposit-cli": "staking-deposit-cli",
+        "eth-educators/ethstaker-deposit-cli": "ethstaker-deposit-cli",
+        "ObolNetwork/charon": "dvt-obol",
+        "flashbots/mev-boost": "mev-boost",
+        "ethpandaops/ethereum-metrics-exporter": "ethereum-metrics-exporter",
+        "prometheus-community/json_exporter": "json-exporter",
+        "ssvlabs/ssv": "dvt-ssv"
+    },
+    "Web3": {
+        "ipfs/kubo": "kubo",
+        "ethersphere/bee": "bee"
+    }
+}

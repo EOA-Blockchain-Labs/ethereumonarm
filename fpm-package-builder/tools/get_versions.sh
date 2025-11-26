@@ -3,11 +3,12 @@
 # and optionally generate a grouped Markdown report.
 #
 # Usage:
-#   get_versions.sh [-t <token>] [-m <STATUS.md>] [-h]
+#   get_versions.sh [-t <token>] [-m <STATUS.md>] [-c <packages.json>] [-h]
 #
 # Options:
 #   -t <token>     GitHub token (Bearer) to avoid rate limits; falls back to env GITHUB_TOKEN if not given.
 #   -m <file>      Generate a Markdown status report to the specified file (e.g., STATUS.md).
+#   -c <file>      Path to packages.json configuration file (default: ./packages.json).
 #   -h             Show help.
 #
 # Environment:
@@ -21,7 +22,7 @@ set -E
 trap 'rc=$?; echo "Error on line ${BASH_LINENO[0]}: ${BASH_COMMAND} (exit: $rc)" >&2' ERR
 IFS=$' \t\n'
 
-readonly USER_AGENT="EthRepoComparator/1.4"
+readonly USER_AGENT="EthRepoComparator/1.5"
 readonly API_VERSION="2022-11-28"
 readonly BASE_URL="https://repo.ethereumonarm.com/pool/main/"
 readonly RATE_LIMIT_SLEEP=0.5
@@ -29,6 +30,8 @@ readonly RATE_LIMIT_SLEEP=0.5
 
 MARKDOWN_FILE=""
 RESULTS_TMP_FILE=""
+REPO_CACHE_FILE=""
+PACKAGES_JSON="./packages.json"
 GITHUB_TOKEN="${GITHUB_TOKEN-}"
 VERBOSE="${VERBOSE:-0}"
 
@@ -42,6 +45,7 @@ Lists packages sorted alphabetically within their groups, and optionally generat
 Options:
   -t <token>      GitHub token (Bearer) to avoid rate limits (falls back to env GITHUB_TOKEN)
   -m <file>       Generate a Markdown status report to the specified file (e.g., STATUS.md)
+  -c <file>       Path to packages.json configuration file (default: ./packages.json)
   -h              Display help
 
 Environment:
@@ -60,14 +64,18 @@ cleanup() {
   if [[ -n "${RESULTS_TMP_FILE-}" && -f "${RESULTS_TMP_FILE}" ]]; then
     rm -f -- "${RESULTS_TMP_FILE}"
   fi
+  if [[ -n "${REPO_CACHE_FILE-}" && -f "${REPO_CACHE_FILE}" ]]; then
+    rm -f -- "${REPO_CACHE_FILE}"
+  fi
 }
 trap cleanup EXIT
 
-while getopts ":ht:m:" opt; do
+while getopts ":ht:m:c:" opt; do
   case "${opt}" in
     h) usage ;;
     t) GITHUB_TOKEN="${OPTARG}" ;;
     m) MARKDOWN_FILE="${OPTARG}" ;;
+    c) PACKAGES_JSON="${OPTARG}" ;;
     *) echo "Invalid option: -${OPTARG}" >&2; usage ;;
   esac
 done
@@ -81,6 +89,17 @@ if [[ -n "${PACKAGES_URL-}" && "${PACKAGES_URL}" == *.gz ]]; then
   command -v gzip >/dev/null 2>&1 || { echo "Error: gzip not installed (required for .gz Packages files)." >&2; exit 1; }
 fi
 
+if [[ ! -f "$PACKAGES_JSON" ]]; then
+  # Try looking in the same directory as the script
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  if [[ -f "${SCRIPT_DIR}/packages.json" ]]; then
+    PACKAGES_JSON="${SCRIPT_DIR}/packages.json"
+  else
+    echo "Error: packages.json not found at '$PACKAGES_JSON' or '${SCRIPT_DIR}/packages.json'" >&2
+    exit 1
+  fi
+fi
+
 is_tty=0
 if [[ -t 1 ]]; then is_tty=1; fi
 red() { if (( is_tty )); then printf '\033[1;31m%s\033[0m' "$*"; else printf '%s' "$*"; fi; }
@@ -90,6 +109,8 @@ yellow() { if (( is_tty )); then printf '\033[1;33m%s\033[0m' "$*"; else printf 
 if [[ -n "$MARKDOWN_FILE" ]]; then
   RESULTS_TMP_FILE="$(mktemp)"
 fi
+
+REPO_CACHE_FILE="$(mktemp)"
 
 declare -a API_HEADERS=(
   -H "Accept: application/vnd.github+json"
@@ -170,24 +191,31 @@ fetch_github_release() {
   printf 'N/A\n'
 }
 
+# Initialize the repository cache
+init_repo_cache() {
+  log_verbose "Initializing repository cache..."
+  if [[ -n "${PACKAGES_URL-}" ]]; then
+    if [[ "${PACKAGES_URL}" == *.gz ]]; then
+      curl -fsSL "${PACKAGES_URL}" | gzip -cd > "$REPO_CACHE_FILE"
+    else
+      curl -fsSL "${PACKAGES_URL}" > "$REPO_CACHE_FILE"
+    fi
+  else
+    curl -fsSL --max-time 30 "${BASE_URL}" > "$REPO_CACHE_FILE"
+  fi
+  
+  if [[ ! -s "$REPO_CACHE_FILE" ]]; then
+    echo "Warning: Failed to download repository index. All repo versions will be N/A." >&2
+  else
+    log_verbose "Repository cache initialized ($(wc -l < "$REPO_CACHE_FILE") lines)."
+  fi
+}
+
 get_latest_repo_version_from_packages() {
   local package="$1"
-  if [[ -z "${PACKAGES_URL-}" ]]; then 
-    printf 'N/A\n'
-    return 0
-  fi
-  
   local versions
-  local fetch_cmd
   
-  if [[ "${PACKAGES_URL}" == *.gz ]]; then
-    fetch_cmd="curl -fsSL '${PACKAGES_URL}' | gzip -cd"
-  else
-    fetch_cmd="curl -fsSL '${PACKAGES_URL}'"
-  fi
-  
-  versions="$(eval "$fetch_cmd" \
-    | awk -v pkg="$package" '
+  versions="$(awk -v pkg="$package" '
       BEGIN { RS=""; FS="\n" }
       $0 ~ "^Package: "pkg"($|\n)" {
         for (i=1; i<=NF; i++) {
@@ -197,8 +225,7 @@ get_latest_repo_version_from_packages() {
           }
         }
       }
-    ' \
-    | sort -V || true)"
+    ' "$REPO_CACHE_FILE" | sort -V || true)"
   
   if [[ -n "$versions" ]]; then
     printf '%s\n' "$versions" | tail -n1
@@ -210,20 +237,18 @@ get_latest_repo_version_from_packages() {
 
 get_latest_repo_version_from_html() {
   local package="$1"
-  local listing version
+  local version
   
-  if listing="$(curl -fsSL --max-time 20 "${BASE_URL}" 2>/dev/null)"; then
-    version="$(printf '%s\n' "$listing" \
-      | grep -oE "href=\"${package}_[^\"]*\.deb\"" \
-      | sed 's/^href="//; s/"$//' \
-      | sed -n "s/^${package}_\([^_][^_]*\)_.*/\1/p" \
-      | sed 's/-[^-]*$//' \
-      | sort -V \
-      | tail -n1)"
-    if [[ -n "$version" ]]; then
-      printf '%s\n' "$version"
-      return 0
-    fi
+  version="$(grep -oE "href=\"${package}_[^\"]*\.deb\"" "$REPO_CACHE_FILE" \
+    | sed 's/^href="//; s/"$//' \
+    | sed -n "s/^${package}_\([^_][^_]*\)_.*/\1/p" \
+    | sed 's/-[^-]*$//' \
+    | sort -V \
+    | tail -n1)"
+    
+  if [[ -n "$version" ]]; then
+    printf '%s\n' "$version"
+    return 0
   fi
   
   log_verbose "No version found for $package in HTML listing"
@@ -232,6 +257,11 @@ get_latest_repo_version_from_html() {
 
 get_latest_repo_version() {
   local package="$1"
+  if [[ ! -s "$REPO_CACHE_FILE" ]]; then
+    printf 'N/A\n'
+    return 0
+  fi
+
   if [[ -n "${PACKAGES_URL-}" ]]; then
     get_latest_repo_version_from_packages "$package"
   else
@@ -263,8 +293,6 @@ print_table_and_store_result() {
   printf -v row "| %-23s | %-15s | %-15s |\n" "$pkg" "$gh_ver" "$repo_ver"
   
   if [[ "$gh_ver" != "N/A" && "$repo_ver" != "N/A" ]]; then
-    # FIX: Wrap the call in an if/else to safely capture the
-    # return code (1 or 2) without triggering 'set -e'.
     local comp_result
     if compare_versions "$repo_ver" "$gh_ver"; then
       comp_result=0
@@ -310,22 +338,32 @@ guard_parallel() {
 
 compare_group() {
   local group_name="$1"
-  local -n group_ref="$2"
+  # We read the group from the JSON file
   
   printf '\n===== %s =====\n\n' "$group_name"
   echo "+-------------------------+-----------------+-----------------+"
   echo "| Package                 | GitHub Version  | Repo Version    |"
   echo "+-------------------------+-----------------+-----------------+"
   
-  local repo pkg gh_ver repo_ver
-  local IFS=$'\n'
-  local sorted_repos=($(printf '%s\n' "${!group_ref[@]}" | sort))
-  unset IFS
+  # Read repos and packages for this group from JSON
+  # Output format: "repo package"
+  local items
+  items="$(jq -r --arg g "$group_name" '.[$g] | to_entries[] | "\(.key) \(.value)"' "$PACKAGES_JSON")"
   
-  for repo in "${sorted_repos[@]}"; do
-    pkg="${group_ref[$repo]}"
+  if [[ -z "$items" ]]; then
+    echo "| No packages found in this group.                            |"
+    echo "+-------------------------+-----------------+-----------------+"
+    return
+  fi
+
+  local IFS=$'\n'
+  for item in $items; do
+    local repo="${item%% *}"
+    local pkg="${item#* }"
+    
     guard_parallel
     (
+      local gh_ver repo_ver
       # Special handling for op-node
       if [[ "$repo" == "ethereum-optimism/optimism" && "$pkg" == "optimism-op-node" ]]; then
         gh_ver="$(fetch_opnode_version)"
@@ -337,6 +375,7 @@ compare_group() {
       print_table_and_store_result "$repo" "$pkg" "$gh_ver" "$repo_ver" "$group_name"
     ) &
   done
+  unset IFS
   
   wait
   echo "+-------------------------+-----------------+-----------------+"
@@ -356,8 +395,6 @@ generate_markdown() {
     if [[ "$gh_ver" == "N/A" || "$repo_ver" == "N/A" ]]; then
       ((++na_count))
     else
-      # FIX: Wrap the call in an if/else to safely capture the
-      # return code (1 or 2) without triggering 'set -e'.
       local comp_result
       if compare_versions "$repo_ver" "$gh_ver"; then
         comp_result=0
@@ -401,103 +438,77 @@ generate_markdown() {
     echo "- ❌ Outdated: **$outdated** ($p_out%)"
     echo "- ❓ N/A: **$na_count** ($p_na%)"
     echo
+    echo "### Infra"
+    echo
+    echo "| Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |"
+    echo "|:--------|:-------------------|:------------------------|:------:|"
   } > "$MARKDOWN_FILE"
 
-  local current_group=""
-  sort -t';' -k1,1 -k2,2 "$RESULTS_TMP_FILE" | while IFS=';' read -r group_name pkg repo_ver gh_ver owner_repo; do
-    if [[ "$group_name" != "$current_group" ]]; then
-      {
-        echo "### $group_name"
-        echo
-        echo "| Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |"
-        echo "|:--------|:-------------------|:------------------------|:------:|"
-      } >> "$MARKDOWN_FILE"
-      current_group="$group_name"
-    fi
-    
-    local status="❓ N/A"
-    if [[ "$gh_ver" != "N/A" && "$repo_ver" != "N/A" ]]; then
-      # FIX: Wrap the call in an if/else to safely capture the
-      # return code (1 or 2) without triggering 'set -e'.
-      local comp_result
-      if compare_versions "$repo_ver" "$gh_ver"; then
-        comp_result=0
-      else
-        comp_result=$? # Will be 1 or 2
-      fi
+  # We need to process the results in the order of groups defined in packages.json
+  # But the results file is just lines. We can read the JSON keys and then grep the results for each group.
+  
+  local groups
+  groups="$(jq -r 'keys[]' "$PACKAGES_JSON")"
+  
+  local IFS=$'\n'
+  for group_name in $groups; do
+    # Check if we have results for this group
+    if grep -q "^${group_name};" "$RESULTS_TMP_FILE"; then
+       {
+         echo
+         echo "### $group_name"
+         echo
+         echo "| Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |"
+         echo "|:--------|:-------------------|:------------------------|:------:|"
+       } >> "$MARKDOWN_FILE"
+       
+       # Filter results for this group and sort by package name
+       grep "^${group_name};" "$RESULTS_TMP_FILE" | sort -t';' -k2,2 | while IFS=';' read -r _ pkg repo_ver gh_ver owner_repo; do
+          local status="❓ N/A"
+          if [[ "$gh_ver" != "N/A" && "$repo_ver" != "N/A" ]]; then
+            local comp_result
+            if compare_versions "$repo_ver" "$gh_ver"; then
+              comp_result=0
+            else
+              comp_result=$? # Will be 1 or 2
+            fi
 
-      if (( comp_result == 0 || comp_result == 1 )); then # repo_ver >= gh_ver
-        status="✅ Up-to-date"
-      else # comp_result == 2
-        status="❌ Outdated"
-      fi
+            if (( comp_result == 0 || comp_result == 1 )); then # repo_ver >= gh_ver
+              status="✅ Up-to-date"
+            else # comp_result == 2
+              status="❌ Outdated"
+            fi
+          fi
+          
+          local gh_link="https://github.com/${owner_repo}"
+          local gh_cell="\`${gh_ver:-N/A}\` ([${owner_repo}](${gh_link}))"
+          
+          printf '| `%s` | %s | `%s` | %s |%s' \
+            "$pkg" "$gh_cell" "${repo_ver:-N/A}" "$status" $'\n' >> "$MARKDOWN_FILE"
+       done
     fi
-    
-    local gh_link="https://github.com/${owner_repo}"
-    local gh_cell="\`${gh_ver:-N/A}\` ([${owner_repo}](${gh_link}))"
-    
-    printf '| `%s` | %s | `%s` | %s |%s' \
-      "$pkg" "$gh_cell" "${repo_ver:-N/A}" "$status" $'\n' >> "$MARKDOWN_FILE"
   done
+  unset IFS
   
   echo
   echo "✓ Markdown report generated at $MARKDOWN_FILE"
 }
 
-# --- Package definitions ---
-declare -A layer1_consensus=(
-  [grandinetech/grandine]=grandine
-  [sigp/lighthouse]=lighthouse
-  [ChainSafe/lodestar]=lodestar
-  [status-im/nimbus-eth2]=nimbus
-  [prysmaticlabs/prysm]=prysm
-  [ConsenSys/teku]=teku
-)
-
-declare -A layer1_execution=(
-  [hyperledger/besu]=besu
-  [ledgerwatch/erigon]=erigon
-  [ethereum/go-ethereum]=geth
-  [NethermindEth/nethermind]=nethermind
-  [paradigmxyz/reth]=reth
-  [status-im/nimbus-eth1]=nimbus-ec
-  [lambdaclass/ethrex]=ethrex
-)
-
-declare -A layer2=(
-  [OffchainLabs/nitro]=arbitrum-nitro
-  [ethereum-optimism/op-geth]=optimism-op-geth
-  [ethereum-optimism/optimism]=optimism-op-node
-  [paradigmxyz/reth]=optimism-op-reth
-  [eqlabs/pathfinder]=starknet-pathfinder
-  [NethermindEth/juno]=starknet-juno
-  [FuelLabs/fuel-core]=fuel-network
-)
-
-declare -A infra=(
-  [ethereum/staking-deposit-cli]=staking-deposit-cli
-  [eth-educators/ethstaker-deposit-cli]=ethstaker-deposit-cli
-  [ObolNetwork/charon]=dvt-obol
-  [flashbots/mev-boost]=mev-boost
-  [ethpandaops/ethereum-metrics-exporter]=ethereum-metrics-exporter
-  [prometheus-community/json_exporter]=json-exporter
-  [ssvlabs/ssv]=dvt-ssv
-)
-
-declare -A web3=(
-  [ipfs/kubo]=kubo
-  [ethersphere/bee]=bee
-)
-
 main() {
   echo "Starting Ethereum on ARM package version comparison..."
   echo
   
-  compare_group "Layer 1 Consensus" layer1_consensus
-  compare_group "Layer 1 Execution" layer1_execution
-  compare_group "Layer 2" layer2
-  compare_group "Infra" infra
-  compare_group "Web3" web3
+  init_repo_cache
+  
+  # Get groups from JSON
+  local groups
+  groups="$(jq -r 'keys[]' "$PACKAGES_JSON")"
+  
+  local IFS=$'\n'
+  for group in $groups; do
+    compare_group "$group"
+  done
+  unset IFS
   
   if [[ -n "$MARKDOWN_FILE" ]]; then
     generate_markdown

@@ -1,9 +1,0 @@
-#!/bin/sh
-set -eu
-
-if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
-	systemctl --system daemon-reload >/dev/null 2>&1 || true
-	systemctl restart chrony.service >/dev/null 2>&1 || true
-fi
-
-exit 0

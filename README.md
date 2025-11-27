@@ -10,7 +10,6 @@
 [![License](https://img.shields.io/github/license/diglos/ethereumonarm)](https://github.com/diglos/ethereumonarm/blob/main/LICENSE)
 [![GitPOAP Badge](https://public-api.gitpoap.io/v1/repo/diglos/ethereumonarm/badge)](https://www.gitpoap.io/gh/diglos/ethereumonarm)
 
-
 **Ethereum on ARM** is a project that makes it easy to run a full Ethereum node on
 low-power ARM devices. We provide Plug-and-Play (PnP) Ubuntu/Armbian images for a
 variety of ARM64 boards, allowing users to easily set up and maintain both
@@ -26,9 +25,9 @@ the Ethereum network, either by running a full node or by staking from home.
 - **Multiple client support**:
   - **Execution layer**: Geth, Erigon, Besu, Nethermind, Reth and EthRex.
   - **Consensus layer**: Prysm, Nimbus, Teku, Lodestar, Lighthouse and Grandine.
-- **L2 support**: Compatible with Optimism, Arbitrum, Starknet, and Gnosis.
+- **L2 support**: Compatible with Optimism, Arbitrum, Starknet and Fuel.
 - **Distributed Validator Technology (DVT)**: We support research and
-  implementation for better decentralization.
+  implementation for better decentralization like SSV and Obol.
 - **Client diversity**: We actively promote the use of minority clients.
 - **Advanced monitoring**: Ready-to-use dashboards with Prometheus and Grafana
   for detailed tracking of your node's performance.
@@ -42,15 +41,29 @@ the Ethereum network, either by running a full node or by staking from home.
 - Orange Pi 5 Plus
 - Raspberry Pi 5
 
+## 📂 Project Structure
+
+This repository is organized into several key components:
+
+- **[fpm-package-builder](fpm-package-builder/)**: Contains the tooling, Makefiles, and scripts used to build Debian (`.deb`) and RPM packages for all supported Ethereum clients and utilities. This is the core of our package distribution system.
+- **[image-creation-tool](image-creation-tool/)**: Scripts and configurations for generating the custom Ubuntu and Armbian images that come pre-configured with our optimizations.
+- **[docs](docs/)**: Source files for our official documentation.
+
 ## 📦 Package status
 
 For a detailed list of all supported packages and their current status, please
-see our **[Status Page](https://github.com/EOA-Blockchain-Labs/ethereumonarm/blob/main/STATUS.md)**.
+see our **[Status Page](STATUS.md)**.
 
 ## 🚀 Installation
 
-To get started, please follow our
+### Using our Images (Recommended)
+
+To get started quickly, we recommend using our pre-built images. Please follow our
 **[step-by-step installation guide](https://ethereum-on-arm-documentation.readthedocs.io)**.
+
+### Building from Source
+
+If you prefer to build packages yourself or contribute to the project, check out the **[Package Builder README](fpm-package-builder/README.md)** for detailed instructions on setting up a build environment.
 
 ## 🤝 Community and support
 

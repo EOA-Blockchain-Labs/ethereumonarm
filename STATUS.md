@@ -2,11 +2,10 @@
 
 _Last updated: 2025-11-27 12:21:27 UTC_
 
-> **What this report compares**
->
-> - **GitHub Version**: latest upstream release (or highest tag if no release).
-> - **Repo Version**: latest version published in the **Ethereum on ARM APT repository**.
+ **What this report compares**
 
+- **GitHub Version**: latest upstream release (or highest tag if no release).
+- **Repo Version**: latest version published in the **Ethereum on ARM APT repository**.
 
 ## Legend
 
@@ -14,14 +13,12 @@ _Last updated: 2025-11-27 12:21:27 UTC_
 - ❌ **Outdated** — Repo lags behind GitHub.
 - ❓ **N/A** — Could not determine.
 
-
 ## Summary
 
 - Total packages checked: **28**
 - ✅ Up-to-date: **27** (96.4%)
 - ❌ Outdated: **1** (3.6%)
 - ❓ N/A: **0** (0.0%)
-
 
 ## Infra
 
@@ -34,8 +31,6 @@ _Last updated: 2025-11-27 12:21:27 UTC_
 | `mev-boost` | `1.10.1` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.10.1` | ✅ Up-to-date |
 | `staking-deposit-cli` | `2.8.0` ([ethereum/staking-deposit-cli](https://github.com/ethereum/staking-deposit-cli)) | `2.8.0` | ✅ Up-to-date |
 
-
-
 ## Layer 1 Consensus
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
@@ -46,8 +41,6 @@ _Last updated: 2025-11-27 12:21:27 UTC_
 | `nimbus` | `25.11.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.11.0` | ✅ Up-to-date |
 | `prysm` | `7.0.0` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.0.0` | ✅ Up-to-date |
 | `teku` | `25.11.1` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.11.1` | ✅ Up-to-date |
-
-
 
 ## Layer 1 Execution
 
@@ -61,8 +54,6 @@ _Last updated: 2025-11-27 12:21:27 UTC_
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.2.2` | ❌ Outdated |
 | `reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
 
-
-
 ## Layer 2
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
@@ -75,12 +66,9 @@ _Last updated: 2025-11-27 12:21:27 UTC_
 | `starknet-juno` | `0.15.12` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.12` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.21.2` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.2` | ✅ Up-to-date |
 
-
-
 ## Web3
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `bee` | `2.6.0` ([ethersphere/bee](https://github.com/ethersphere/bee)) | `2.6.0` | ✅ Up-to-date |
 | `kubo` | `0.39.0` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.39.0` | ✅ Up-to-date |
-

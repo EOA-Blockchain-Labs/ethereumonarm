@@ -427,10 +427,10 @@ generate_markdown() {
     echo
     echo "_Last updated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')_"
     echo
-    echo "> **What this report compares**"
-    echo ">"
-    echo "> - **GitHub Version**: latest upstream release (or highest tag if no release)."
-    echo "> - **Repo Version**: latest version published in the **Ethereum on ARM APT repository**."
+    echo " **What this report compares**"
+    echo ""
+    echo "- **GitHub Version**: latest upstream release (or highest tag if no release)."
+    echo "- **Repo Version**: latest version published in the **Ethereum on ARM APT repository**."
     echo
     echo
     echo "## Legend"

@@ -19,6 +19,7 @@
 
 set -euo pipefail
 set -E
+# shellcheck disable=SC2154
 trap 'rc=$?; echo "Error on line ${BASH_LINENO[0]}: ${BASH_COMMAND} (exit: $rc)" >&2' ERR
 IFS=$' \t\n'
 
@@ -414,9 +415,12 @@ generate_markdown() {
     awk -v a="$1" -v b="$2" 'BEGIN{printf (b>0? "%.1f" : "0.0"), (a*100)/b}'
   }
   
-  local p_up="$(pct "$up_to_date" "$total")"
-  local p_out="$(pct "$outdated" "$total")"
-  local p_na="$(pct "$na_count" "$total")"
+  local p_up
+  p_up="$(pct "$up_to_date" "$total")"
+  local p_out
+  p_out="$(pct "$outdated" "$total")"
+  local p_na
+  p_na="$(pct "$na_count" "$total")"
 
   {
     echo "# Ethereum on ARM Package Status"
@@ -424,15 +428,20 @@ generate_markdown() {
     echo "_Last updated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')_"
     echo
     echo "> **What this report compares**"
+    echo ">"
     echo "> - **GitHub Version**: latest upstream release (or highest tag if no release)."
     echo "> - **Repo Version**: latest version published in the **Ethereum on ARM APT repository**."
     echo
-    echo "### Legend"
+    echo
+    echo "## Legend"
+    echo
     echo "- ✅ **Up-to-date** — Repo version matches or is newer than GitHub."
     echo "- ❌ **Outdated** — Repo lags behind GitHub."
     echo "- ❓ **N/A** — Could not determine."
     echo
-    echo "### Summary"
+    echo
+    echo "## Summary"
+    echo
     echo "- Total packages checked: **$total**"
     echo "- ✅ Up-to-date: **$up_to_date** ($p_up%)"
     echo "- ❌ Outdated: **$outdated** ($p_out%)"
@@ -451,7 +460,8 @@ generate_markdown() {
     if grep -q "^${group_name};" "$RESULTS_TMP_FILE"; then
        {
          echo
-         echo "### $group_name"
+         echo
+         echo "## $group_name"
          echo
          echo "| Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |"
          echo "|:--------|:-------------------|:------------------------|:------:|"
@@ -478,9 +488,11 @@ generate_markdown() {
           local gh_link="https://github.com/${owner_repo}"
           local gh_cell="\`${gh_ver:-N/A}\` ([${owner_repo}](${gh_link}))"
           
+          # shellcheck disable=SC2016
           printf '| `%s` | %s | `%s` | %s |%s' \
             "$pkg" "$gh_cell" "${repo_ver:-N/A}" "$status" $'\n' >> "$MARKDOWN_FILE"
-       done
+        done
+        echo >> "$MARKDOWN_FILE"
     fi
   done
   unset IFS

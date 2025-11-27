@@ -3,18 +3,21 @@
 _Last updated: 2025-11-27 03:47:38 UTC_
 
 > **What this report compares**
+>
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
 > - **Repo Version**: latest version published in the **Ethereum on ARM APT repository**.
 
 ### Legend
+
 - ✅ **Up-to-date** — Repo version matches or is newer than GitHub.
 - ❌ **Outdated** — Repo lags behind GitHub.
 - ❓ **N/A** — Could not determine.
 
 ### Summary
-- Total packages checked: **29**
-- ✅ Up-to-date: **27** (93.1%)
-- ❌ Outdated: **2** (6.9%)
+
+- Total packages checked: **28**
+- ✅ Up-to-date: **26** (92.9%)
+- ❌ Outdated: **2** (7.1%)
 - ❓ N/A: **0** (0.0%)
 
 ### Infra
@@ -25,7 +28,6 @@ _Last updated: 2025-11-27 03:47:38 UTC_
 | `dvt-ssv` | `2.3.7` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.3.7` | ✅ Up-to-date |
 | `ethereum-metrics-exporter` | `0.28.3` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.28.3` | ✅ Up-to-date |
 | `ethstaker-deposit-cli` | `1.2.2` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.2.2` | ✅ Up-to-date |
-| `json-exporter` | `0.7.0` ([prometheus-community/json_exporter](https://github.com/prometheus-community/json_exporter)) | `0.7.0` | ✅ Up-to-date |
 | `mev-boost` | `1.10.1` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.10.1` | ✅ Up-to-date |
 | `staking-deposit-cli` | `2.8.0` ([ethereum/staking-deposit-cli](https://github.com/ethereum/staking-deposit-cli)) | `2.8.0` | ✅ Up-to-date |
 

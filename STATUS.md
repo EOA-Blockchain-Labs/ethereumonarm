@@ -1,20 +1,17 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-11-27 03:47:38 UTC_
+_Last updated: 2025-11-27 09:33:04 UTC_
 
 > **What this report compares**
->
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
 > - **Repo Version**: latest version published in the **Ethereum on ARM APT repository**.
 
 ### Legend
-
 - ✅ **Up-to-date** — Repo version matches or is newer than GitHub.
 - ❌ **Outdated** — Repo lags behind GitHub.
 - ❓ **N/A** — Could not determine.
 
 ### Summary
-
 - Total packages checked: **28**
 - ✅ Up-to-date: **26** (92.9%)
 - ❌ Outdated: **2** (7.1%)
@@ -47,7 +44,7 @@ _Last updated: 2025-11-27 03:47:38 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `besu` | `25.11.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `25.11.0` | ✅ Up-to-date |
-| `erigon` | `3.3.0` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.2.3` | ❌ Outdated |
+| `erigon` | `3.3.0` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.3.0` | ✅ Up-to-date |
 | `ethrex` | `7.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `7.0.0` | ✅ Up-to-date |
 | `geth` | `1.16.7` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.7` | ✅ Up-to-date |
 | `nethermind` | `1.35.3` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.35.3` | ✅ Up-to-date |
@@ -64,11 +61,11 @@ _Last updated: 2025-11-27 03:47:38 UTC_
 | `optimism-op-node` | `1.16.2` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.16.2` | ✅ Up-to-date |
 | `optimism-op-reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
 | `starknet-juno` | `0.15.12` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.12` | ✅ Up-to-date |
-| `starknet-pathfinder` | `0.21.1` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.1` | ✅ Up-to-date |
+| `starknet-pathfinder` | `0.21.2` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.1` | ❌ Outdated |
 
 ### Web3
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `bee` | `2.6.0` ([ethersphere/bee](https://github.com/ethersphere/bee)) | `2.6.0` | ✅ Up-to-date |
-| `kubo` | `0.38.2` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.38.2` | ✅ Up-to-date |
+| `kubo` | `0.39.0` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.39.0` | ✅ Up-to-date |

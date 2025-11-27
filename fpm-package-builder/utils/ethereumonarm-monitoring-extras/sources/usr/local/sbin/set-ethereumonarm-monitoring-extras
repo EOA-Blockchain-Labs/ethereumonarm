@@ -46,12 +46,6 @@ override() {
     log_info "Stopping monitoring services..."
     systemctl stop grafana-server prometheus prometheus-node-exporter || true
 
-    # Stop and disable json-exporter service silently
-    if systemctl is-active --quiet json-exporter; then
-        systemctl stop json-exporter >/dev/null 2>&1 || true
-    fi
-    systemctl disable json-exporter >/dev/null 2>&1 || true
-
     # Configure Grafana
     log_info "Configuring Grafana..."
     cp /usr/lib/ethereumonarm/grafana.db /var/lib/grafana/grafana.db

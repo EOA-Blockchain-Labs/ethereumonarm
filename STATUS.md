@@ -1,71 +1,65 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-11-27 09:33:04 UTC_
+_Last updated: 2025-10-15 08:00:19 UTC_
 
 > **What this report compares**
 > - **GitHub Version**: latest upstream release (or highest tag if no release).
 > - **Repo Version**: latest version published in the **Ethereum on ARM APT repository**.
 
 ### Legend
-- ✅ **Up-to-date** — Repo version matches or is newer than GitHub.
+- ✅ **Up-to-date** — Repo matches GitHub.
 - ❌ **Outdated** — Repo lags behind GitHub.
 - ❓ **N/A** — Could not determine.
 
 ### Summary
-- Total packages checked: **28**
-- ✅ Up-to-date: **26** (92.9%)
-- ❌ Outdated: **2** (7.1%)
+- Total packages checked: **26**
+- ✅ Up-to-date: **25** (96.2%)
+- ❌ Outdated: **1** (3.8%)
 - ❓ N/A: **0** (0.0%)
 
 ### Infra
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
-| `dvt-obol` | `1.7.1` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.7.1` | ✅ Up-to-date |
-| `dvt-ssv` | `2.3.7` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.3.7` | ✅ Up-to-date |
+| `dvt-obol` | `1.7.0` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.7.0` | ✅ Up-to-date |
 | `ethereum-metrics-exporter` | `0.28.3` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.28.3` | ✅ Up-to-date |
 | `ethstaker-deposit-cli` | `1.2.2` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.2.2` | ✅ Up-to-date |
-| `mev-boost` | `1.10.1` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.10.1` | ✅ Up-to-date |
+| `mev-boost` | `1.9` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.9` | ✅ Up-to-date |
 | `staking-deposit-cli` | `2.8.0` ([ethereum/staking-deposit-cli](https://github.com/ethereum/staking-deposit-cli)) | `2.8.0` | ✅ Up-to-date |
-
 ### Layer 1 Consensus
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
-| `grandine` | `2.0.0` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.0` | ✅ Up-to-date |
-| `lighthouse` | `8.0.1` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.0.1` | ✅ Up-to-date |
-| `lodestar` | `1.36.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.36.0` | ✅ Up-to-date |
-| `nimbus` | `25.11.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.11.0` | ✅ Up-to-date |
-| `prysm` | `7.0.0` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.0.0` | ✅ Up-to-date |
-| `teku` | `25.11.1` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.11.1` | ✅ Up-to-date |
-
+| `grandine` | `1.1.5` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `1.1.5` | ✅ Up-to-date |
+| `lighthouse` | `7.1.0` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `7.1.0` | ✅ Up-to-date |
+| `lodestar` | `1.35.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.35.0` | ✅ Up-to-date |
+| `nimbus` | `25.9.2` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.9.2` | ✅ Up-to-date |
+| `prysm` | `6.1.2` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `6.1.2` | ✅ Up-to-date |
+| `teku` | `25.9.3` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.9.3` | ✅ Up-to-date |
 ### Layer 1 Execution
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
-| `besu` | `25.11.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `25.11.0` | ✅ Up-to-date |
-| `erigon` | `3.3.0` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.3.0` | ✅ Up-to-date |
-| `ethrex` | `7.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `7.0.0` | ✅ Up-to-date |
-| `geth` | `1.16.7` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.7` | ✅ Up-to-date |
-| `nethermind` | `1.35.3` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.35.3` | ✅ Up-to-date |
-| `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.2.2` | ❌ Outdated |
-| `reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
-
+| `besu` | `25.9.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `25.9.0` | ✅ Up-to-date |
+| `erigon` | `3.2.0` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.2.0` | ✅ Up-to-date |
+| `geth` | `1.16.4` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.4` | ✅ Up-to-date |
+| `nethermind` | `1.34.1` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.34.1` | ✅ Up-to-date |
+| `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.2.0` | ❌ Outdated |
+| `reth` | `1.8.2` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.8.2` | ✅ Up-to-date |
 ### Layer 2
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
-| `arbitrum-nitro` | `3.9.3` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.9.3` | ✅ Up-to-date |
-| `fuel-network` | `0.47.1` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.47.1` | ✅ Up-to-date |
-| `optimism-op-geth` | `1.101603.5` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101603.5` | ✅ Up-to-date |
-| `optimism-op-node` | `1.16.2` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.16.2` | ✅ Up-to-date |
-| `optimism-op-reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
-| `starknet-juno` | `0.15.12` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.12` | ✅ Up-to-date |
-| `starknet-pathfinder` | `0.21.2` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.1` | ❌ Outdated |
-
+| `arbitrum-nitro` | `3.7.6` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.7.6` | ✅ Up-to-date |
+| `fuel-network` | `0.46.0` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.46.0` | ✅ Up-to-date |
+| `optimism-op-geth` | `1.101603.1` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101603.1` | ✅ Up-to-date |
+| `optimism-op-node` | `1.14.1` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.14.1` | ✅ Up-to-date |
+| `optimism-op-reth` | `1.8.2` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.8.2` | ✅ Up-to-date |
+| `starknet-juno` | `0.15.8` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.8` | ✅ Up-to-date |
+| `starknet-pathfinder` | `0.20.4` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.20.4` | ✅ Up-to-date |
 ### Web3
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `bee` | `2.6.0` ([ethersphere/bee](https://github.com/ethersphere/bee)) | `2.6.0` | ✅ Up-to-date |
-| `kubo` | `0.39.0` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.39.0` | ✅ Up-to-date |
+| `kubo` | `0.38.1` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.38.1` | ✅ Up-to-date |

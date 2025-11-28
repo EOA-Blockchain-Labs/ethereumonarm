@@ -3,6 +3,7 @@
 This repository contains the Makefiles, helper scripts, and tooling used to build and package all Ethereum on ARM software into `.deb` packages for ARM64 boards and multi-arch Ubuntu systems.
 
 The builder creates reproducible `.deb` packages for:
+
 - Ethereum execution and consensus clients
 - Utilities and monitoring tools (Grafana, Prometheus, Node Exporter, etc.)
 - EOA-specific utilities (EOA-GUI, systemd templates, helper scripts)
@@ -150,7 +151,13 @@ To install locally for testing (adjust path):
 ## 5. Adding a New Package
 
 1. Create a new directory under `fpm-package-builder/` (e.g., `utils/new-tool/`)
-2. Copy the `fpm-package-builder/Makefile_template` file to your new directory and rename it to `Makefile`.
+2. Copy the template Makefile:
+
+   ```bash
+   cp ../../tools/templates/Makefile .
+   ```
+
+   (Or copy from `fpm-package-builder/tools/templates/Makefile` if you are elsewhere)
 3. Update all `CHANGEME` variables in the new `Makefile`, paying close attention to:
    - `PKG_NAME`
    - `PKG_DESCRIPTION`
@@ -158,8 +165,15 @@ To install locally for testing (adjust path):
    - `WEB_URL`
    - The entire “Upstream version and source info” section (this is the most critical part).
    - `OUTPUTDIR` (adjust the path depth, e.g., `../../packages` or `../../../packages`).
-4. Run `make` inside the directory to build and test.
-5. Test on an ARM board (e.g., Rock 5B, Orange Pi 5 Plus).
+4. (Optional) If you need a systemd service or config file, copy them from `tools/templates/`:
+
+   ```bash
+   cp ../../tools/templates/service.service extras/package-name.service
+   cp ../../tools/templates/config.toml sources/etc/package-name/config.toml
+   ```
+
+5. Run `make` inside the directory to build and test.
+6. Test on an ARM board (e.g., Rock 5B, Orange Pi 5 Plus).
 
 ---
 
@@ -184,20 +198,20 @@ We welcome contributions! You can help by:
 - Improving documentation or Makefiles
 
 Join our Discord to collaborate:  
-https://discord.gg/ve2Z8fxz5N
+<https://discord.gg/ve2Z8fxz5N>
 
 ---
 
 ## 8. Related Resources
 
 - Ethereum on ARM Main Repo:  
-  https://github.com/EOA-Blockchain-Labs/ethereumonarm
+  <https://github.com/EOA-Blockchain-Labs/ethereumonarm>
 
 - EOA Docs Portal:  
-  https://ethereum-on-arm-documentation.readthedocs.io
+  <https://ethereum-on-arm-documentation.readthedocs.io>
 
 - Status Page (package versions):  
-  https://github.com/EOA-Blockchain-Labs/ethereumonarm/blob/main/STATUS.md
+  <https://github.com/EOA-Blockchain-Labs/ethereumonarm/blob/main/STATUS.md>
 
 ---
 

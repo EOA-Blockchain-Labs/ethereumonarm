@@ -1,17 +1,19 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-11-27 12:21:27 UTC_
+_Last updated: 2025-11-28 03:47:25 UTC_
 
  **What this report compares**
 
 - **GitHub Version**: latest upstream release (or highest tag if no release).
 - **Repo Version**: latest version published in the **Ethereum on ARM APT repository**.
 
+
 ## Legend
 
 - ✅ **Up-to-date** — Repo version matches or is newer than GitHub.
 - ❌ **Outdated** — Repo lags behind GitHub.
 - ❓ **N/A** — Could not determine.
+
 
 ## Summary
 
@@ -20,16 +22,19 @@ _Last updated: 2025-11-27 12:21:27 UTC_
 - ❌ Outdated: **1** (3.6%)
 - ❓ N/A: **0** (0.0%)
 
+
 ## Infra
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `dvt-obol` | `1.7.1` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.7.1` | ✅ Up-to-date |
-| `dvt-ssv` | `2.3.7` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.3.7` | ✅ Up-to-date |
+| `dvt-ssv` | `2.3.8` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.3.8` | ✅ Up-to-date |
 | `ethereum-metrics-exporter` | `0.28.3` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.28.3` | ✅ Up-to-date |
 | `ethstaker-deposit-cli` | `1.2.2` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.2.2` | ✅ Up-to-date |
 | `mev-boost` | `1.10.1` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.10.1` | ✅ Up-to-date |
 | `staking-deposit-cli` | `2.8.0` ([ethereum/staking-deposit-cli](https://github.com/ethereum/staking-deposit-cli)) | `2.8.0` | ✅ Up-to-date |
+
+
 
 ## Layer 1 Consensus
 
@@ -41,6 +46,8 @@ _Last updated: 2025-11-27 12:21:27 UTC_
 | `nimbus` | `25.11.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.11.0` | ✅ Up-to-date |
 | `prysm` | `7.0.0` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.0.0` | ✅ Up-to-date |
 | `teku` | `25.11.1` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.11.1` | ✅ Up-to-date |
+
+
 
 ## Layer 1 Execution
 
@@ -54,6 +61,8 @@ _Last updated: 2025-11-27 12:21:27 UTC_
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.2.2` | ❌ Outdated |
 | `reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
 
+
+
 ## Layer 2
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
@@ -66,9 +75,12 @@ _Last updated: 2025-11-27 12:21:27 UTC_
 | `starknet-juno` | `0.15.12` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.12` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.21.2` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.2` | ✅ Up-to-date |
 
+
+
 ## Web3
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `bee` | `2.6.0` ([ethersphere/bee](https://github.com/ethersphere/bee)) | `2.6.0` | ✅ Up-to-date |
 | `kubo` | `0.39.0` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.39.0` | ✅ Up-to-date |
+

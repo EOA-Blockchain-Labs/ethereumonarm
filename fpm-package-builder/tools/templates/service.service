@@ -1,0 +1,16 @@
+[Unit]
+Description=CHANGEME: Service Description
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+# CHANGEME: Update the path to the config file
+EnvironmentFile=/etc/ethereum/CHANGEME-config.conf
+# CHANGEME: Update the binary path and arguments
+ExecStart=/usr/bin/CHANGEME-binary $ARGS
+Restart=always
+RestartSec=5
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target

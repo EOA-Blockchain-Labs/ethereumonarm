@@ -4,6 +4,7 @@
 # CHANGEME: Update this description to match your project.
 # Builds .deb and .rpm packages for ARM systems using FPM.
 # - Downloads the latest upstream binary from GitHub
+# - Verifies checksums (recommended)
 # - Stages files into ./sources/usr/bin
 # - Applies EOA packaging standards and metadata
 # ======================================================================
@@ -48,9 +49,15 @@ UPSTREAM_VERSION := $(shell echo "$(UPSTREAM_TAG_V)" | tr -d "v")
 # Example 1a: For a .tar.gz file
 # UPSTREAM_TARBALL := project-name-$(UPSTREAM_TAG_V)-linux-$(PKG_ARCH).tar.gz
 # UPSTREAM_URL     := $(WEB_URL)/releases/download/$(UPSTREAM_TAG_V)/$(UPSTREAM_TARBALL)
+
 # Example 1b: For a single binary file
 UPSTREAM_BINARY_NAME := project-binary # The name of the binary inside the release
 UPSTREAM_URL         := $(WEB_URL)/releases/download/$(UPSTREAM_TAG_V)/$(UPSTREAM_BINARY_NAME)-linux-$(PKG_ARCH)
+
+# CHANGEME: Checksum verification (Highly Recommended)
+# Define the URL for the checksum file (usually checksums.txt or SHA256SUMS)
+# CHECKSUM_URL := $(WEB_URL)/releases/download/$(UPSTREAM_TAG_V)/checksums.txt
+# CHECKSUM_FILE := checksums.txt
 
 # --- EXAMPLE 2: Build from Source (e.g., Go or Node.js projects) ---
 # This logic is used for projects like ssv or statusd
@@ -91,16 +98,20 @@ FPM_COMMON_OPTS = \
 # ----------------------------------------------------------------------
 # Debian-specific options
 # ----------------------------------------------------------------------
+# FPM_DEB_OPTS includes:
+# - Architecture definition
+# - Disabling default config files
+# - Dynamic systemd unit detection (finds .service files in 'extras')
+# - Dynamic config-file tracking (finds files in 'sources/etc')
+# - Dependencies (merge-config, etc.)
 FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
   -t deb \
   --architecture $(PKG_ARCH) \
   --deb-no-default-config-files \
-  # This command finds all .service files in 'extras' and adds them as systemd units
   $(shell test -d extras && find extras -name '*.service' -printf "--deb-systemd %p ") \
-  # This command finds all files in 'sources/etc' and flags them as config files
   $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P ") \
-  # CHANGEME: Add any dependencies your package needs
-  --depends merge-config # 'merge-config' is a common dependency in your projects
+  --depends merge-config
+
 #  --depends openjdk-21-jre-headless # Example for Java apps
 #  --depends jq # Example for scripts that use jq
 #  --after-install $(PKG_AFTER_INSTALL) # Example: add post-install script
@@ -112,8 +123,8 @@ FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
   -t rpm \
   --architecture $(PKG_ARCH_RPM) \
   $(shell test -d extras && find extras -name '*.service' -printf "--rpm-systemd %p ") \
-  # CHANGEME: Add any dependencies your package needs
   --depends merge-config
+
 #  --depends openjdk-21-jre-headless
 #  --depends jq
 #  --after-install $(PKG_AFTER_INSTALL)
@@ -121,7 +132,7 @@ FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
 # ----------------------------------------------------------------------
 # Targets
 # ----------------------------------------------------------------------
-.PHONY: all prepare deb rpm clean test release help
+.PHONY: all prepare deb rpm clean test release help docker-build
 
 # ----------------------------------------------------------------------
 # all — default target for local builds
@@ -133,27 +144,29 @@ all: prepare deb clean test ## Default local build pipeline
 # CHANGEME: Select the 'prepare' logic that matches your EXAMPLE above.
 # ----------------------------------------------------------------------
 
-# --- PREPARE EXAMPLE 1a: For a .tar.gz file ---
-prepare: ## Download latest binary tarball, extract, and stage it
-	@echo "🔎 Resolving latest $(PKG_NAME) version..."
-	if [[ -z "$(UPSTREAM_TAG_V)" || "$(UPSTREAM_TAG_V)" == "null" ]]; then \
-	  echo "❌ Could not determine latest version via GitHub API."; exit 1; \
-	fi
-	@echo "🔽 Downloading $(PKG_NAME) $(UPSTREAM_VERSION) ($(UPSTREAM_TAG_V))..."
-	mkdir -p .build $(SOURCESDIR)/usr/bin
-	wget -q -O ".build/$(UPSTREAM_TARBALL)" "$(UPSTREAM_URL)" || { echo "❌ Download failed: $(UPSTREAM_URL)"; exit 1; };
-	
-	@echo "📦 Extracting binary..."
-	# CHANGEME: Adjust tar command.
-	# This example extracts 'binary-name' from a subdir in the tarball
-	tar -xzf ".build/$(UPSTREAM_TARBALL)" -C $(SOURCESDIR)/usr/bin/ \
-	  --strip-components 1 "*/binary-name"
-	
-	# CHANGEME: Rename the binary if needed
-	# mv "$(SOURCESDIR)/usr/bin/binary-name" "$(SOURCESDIR)/usr/bin/$(PKG_NAME)"
-	
-	chmod 0755 "$(SOURCESDIR)/usr/bin/binary-name"
-	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/binary-name"
+# --- PREPARE EXAMPLE 1a: For a .tar.gz file with Checksum & Streaming ---
+# prepare: ## Download, verify, and stage binary
+# 	@echo "🔎 Resolving latest $(PKG_NAME) version..."
+# 	if [[ -z "$(UPSTREAM_TAG_V)" || "$(UPSTREAM_TAG_V)" == "null" ]]; then \
+# 	  echo "❌ Could not determine latest version via GitHub API."; exit 1; \
+# 	fi
+# 	@echo "🔽 Downloading $(PKG_NAME) $(UPSTREAM_VERSION) ($(UPSTREAM_TAG_V))..."
+# 	mkdir -p .build $(SOURCESDIR)/usr/bin
+#
+# 	# Optional: Download and verify checksum
+# 	# wget -q -O ".build/$(CHECKSUM_FILE)" "$(CHECKSUM_URL)"
+# 	# wget -q -O ".build/$(UPSTREAM_TARBALL)" "$(UPSTREAM_URL)"
+# 	# cd .build && sha256sum --ignore-missing -c $(CHECKSUM_FILE) || { echo "❌ Checksum failed!"; exit 1; }
+#
+# 	# Efficient Streaming Download (if no checksum needed or already verified)
+# 	# wget -qO- "$(UPSTREAM_URL)" | tar -xz -C $(SOURCESDIR)/usr/bin --strip-components=1 --wildcards '*/binary-name'
+#
+# 	# Standard Download & Extract
+# 	# wget -q -O ".build/$(UPSTREAM_TARBALL)" "$(UPSTREAM_URL)" || { echo "❌ Download failed: $(UPSTREAM_URL)"; exit 1; };
+# 	# tar -xzf ".build/$(UPSTREAM_TARBALL)" -C $(SOURCESDIR)/usr/bin/ --strip-components 1 "*/binary-name"
+#
+# 	chmod 0755 "$(SOURCESDIR)/usr/bin/binary-name"
+# 	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/binary-name"
 
 # --- PREPARE EXAMPLE 1b: For a single binary file ---
 # prepare: ## Download latest binary and stage it
@@ -163,7 +176,15 @@ prepare: ## Download latest binary tarball, extract, and stage it
 # 	fi
 # 	@echo "🔽 Downloading $(PKG_NAME) $(UPSTREAM_VERSION) ($(UPSTREAM_TAG_V))..."
 # 	mkdir -p $(SOURCESDIR)/usr/bin
-# 	# Download the binary directly into the staging dir
+#
+# 	# Optional: Download and verify checksum
+# 	# mkdir -p .build
+# 	# wget -q -O ".build/$(CHECKSUM_FILE)" "$(CHECKSUM_URL)"
+# 	# wget -q -O ".build/$(UPSTREAM_BINARY_NAME)" "$(UPSTREAM_URL)"
+# 	# cd .build && sha256sum --ignore-missing -c $(CHECKSUM_FILE) || { echo "❌ Checksum failed!"; exit 1; }
+# 	# mv ".build/$(UPSTREAM_BINARY_NAME)" "$(SOURCESDIR)/usr/bin/$(PKG_NAME)"
+#
+# 	# Download the binary directly into the staging dir (if no checksum or already verified)
 # 	wget -q -O "$(SOURCESDIR)/usr/bin/$(PKG_NAME)" "$(UPSTREAM_URL)" || { echo "❌ Download failed: $(UPSTREAM_URL)"; exit 1; };
 # 	chmod 0755 "$(SOURCESDIR)/usr/bin/$(PKG_NAME)"
 # 	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/$(PKG_NAME)"
@@ -177,13 +198,13 @@ prepare: ## Download latest binary tarball, extract, and stage it
 # 	@echo "🔽 Cloning $(PKG_NAME) $(UPSTREAM_VERSION) ($(UPSTREAM_TAG_V))..."
 # 	mkdir -p .build/src $(SOURCESDIR)/usr/bin
 # 	git clone --depth 1 --branch $(UPSTREAM_TAG_V) $(REPO_URL) .build/src || { echo "❌ Git clone failed"; exit 1; }
-# 	
+#
 # 	@echo "🛠 Building binary from source (this may take a while)..."
 # 	cd .build/src && \
 # 	  env GO111MODULE=on CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 \
 # 	  go build -v -o ./build/bin/$(PKG_NAME) ./cmd/main.go \
 # 	  || { echo "❌ Go build failed"; exit 1; }
-# 	
+#
 # 	@echo "📂 Staging binary..."
 # 	cp .build/src/build/bin/$(PKG_NAME) $(SOURCESDIR)/usr/bin/$(PKG_NAME)
 # 	chmod 0755 $(SOURCESDIR)/usr/bin/$(PKG_NAME)
@@ -238,6 +259,18 @@ test: ## Check that .deb exists
 # ----------------------------------------------------------------------
 release: clean prepare deb rpm test ## Clean + Prepare + Build + Test (all)
 	@echo "🎉 All packages built successfully for $(PKG_ARCH)"
+
+# ----------------------------------------------------------------------
+# docker-build — build inside a Docker container
+# ----------------------------------------------------------------------
+docker-build: ## Run the build inside a Docker container
+	@echo "🐳 Starting Docker build..."
+	# CHANGEME: Update image if needed (e.g. to ubuntu:22.04 or a custom builder image)
+	docker run --rm -v $(PWD):/workspace -w /workspace \
+		-e PKG_NAME=$(PKG_NAME) \
+		-e PKG_RELEASE=$(PKG_RELEASE) \
+		ubuntu:20.04 \
+		/bin/bash -c "apt-get update && apt-get install -y make curl jq wget ruby ruby-dev build-essential && gem install fpm && make release"
 
 # ----------------------------------------------------------------------
 # help — show all available targets

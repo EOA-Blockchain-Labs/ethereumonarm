@@ -47,6 +47,11 @@ apt-get install -y libssl-dev:arm64 pkg-config software-properties-common docker
 # Install the fpm package management tool for Ruby
 gem install --no-document fpm
 
+# Install LLVM 19 and dependencies for Madara
+# We use the official LLVM script to ensure we get version 19
+wget -qO- https://apt.llvm.org/llvm.sh | bash -s -- 19
+apt-get install -y libmlir-19-dev mlir-19-tools clang-19 llvm-19-dev libpolly-19-dev libzstd-dev libxml2-dev protobuf-compiler libudev-dev python3-full python3-pip python3-venv
+
 # Add the longsleep/golang-backports PPA to the list of repositories
 # This PPA provides more up-to-date Go versions.
 add-apt-repository -y ppa:longsleep/golang-backports

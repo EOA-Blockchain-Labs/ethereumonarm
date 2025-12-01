@@ -365,6 +365,34 @@ You can start the client just by running the systemd service:
   sudo systemctl start juno
   sudo journalctl -u juno -f
 
+Madara
+~~~~~~
+
+Madara is a high-performance Starknet sequencer, built on Substrate. It is designed to be fast, secure, and scalable.
+
+You can start the client just by running the systemd service:
+
+.. prompt:: bash $
+
+  sudo systemctl start madara
+  sudo journalctl -u madara -f
+
+Configuration
+^^^^^^^^^^^^^
+
+The default configuration file is located at ``/etc/ethereum/madara.conf``. You can edit this file to change the default parameters.
+
+.. code-block:: bash
+
+  # /etc/ethereum/madara.conf
+  MADARA_OPTS="--base-path /var/lib/madara --rpc-port 9944"
+
+After changing the configuration, remember to restart the service:
+
+.. prompt:: bash $
+
+  sudo systemctl restart madara
+
 Gnosis
 ------
 

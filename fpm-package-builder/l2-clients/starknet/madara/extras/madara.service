@@ -1,0 +1,15 @@
+[Unit]
+Description=Madara Starknet Client
+After=network.target
+
+[Service]
+Type=simple
+User=madara
+Group=madara
+EnvironmentFile=/etc/ethereum/madara.conf
+ExecStart=/usr/bin/madara $MADARA_OPTS
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

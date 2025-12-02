@@ -16,7 +16,7 @@ SHELL := /bin/bash
 # Package metadata
 # ----------------------------------------------------------------------
 PKG_NAME        ?= starknet-madara
-PKG_RELEASE     ?= 0
+PKG_RELEASE     ?= 1
 PKG_ARCH        ?= arm64
 PKG_ARCH_RPM    ?= aarch64
 PKG_VENDOR      ?= Ethereum on ARM
@@ -136,7 +136,10 @@ prepare: ## Build Madara from source using Docker
 	fi && \
 	echo "📦 Staging binary..." && \
 	mkdir -p $(CURDIR)/$(SOURCESDIR)/usr/bin && \
-	cp .build/madara/$$BINARY_PATH $(CURDIR)/$(SOURCESDIR)/usr/bin/madara
+	cp .build/madara/$$BINARY_PATH $(CURDIR)/$(SOURCESDIR)/usr/bin/madara && \
+	echo "📦 Staging presets..." && \
+	mkdir -p $(CURDIR)/$(SOURCESDIR)/etc/ethereum/madara/presets && \
+	cp -r .build/madara/configs/presets/* $(CURDIR)/$(SOURCESDIR)/etc/ethereum/madara/presets/
 	
 	chmod 0755 "$(SOURCESDIR)/usr/bin/madara"
 	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/madara"
@@ -171,7 +174,7 @@ rpm: prepare ## Build .rpm package
 # clean — remove build artifacts
 # ----------------------------------------------------------------------
 clean: ## Remove staged binaries and temp files
-	rm -rf $(SOURCESDIR)/usr/bin/madara* .build
+	rm -rf $(SOURCESDIR)/usr/bin/madara* .build $(SOURCESDIR)/etc/ethereum/madara/presets
 	@echo "🧹 Clean complete (staged files removed)."
 
 # ----------------------------------------------------------------------

@@ -353,7 +353,7 @@ Starknet
 StarkNet is a Layer 2 scaling solution for the Ethereum blockchain, designed to improve scalability, 
 transaction throughput, and efficiency using a technology called Zero-Knowledge (ZK) Rollups.  
 This approach allows StarkNet to bundle multiple transactions together, process them off-chain, and 
-then submit a proof of their validity to the Ethereum mainnet (Layer 1). 
+then submit a proof of their validity to the Ethereum mainnet (Layer 1). https://github.com/madara-alliance/madara  
 
 There are 2 available clients for the Starknet Network: :guilabel:`Juno` and :guilabel:`Papyrus`. 
 :guilabel:`Papyrus` is currently on Alpha so we will run :guilabel:`Juno`

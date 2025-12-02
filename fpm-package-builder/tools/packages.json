@@ -23,6 +23,7 @@
         "paradigmxyz/reth": "optimism-op-reth",
         "eqlabs/pathfinder": "starknet-pathfinder",
         "NethermindEth/juno": "starknet-juno",
+        "madara-alliance/madara": "starknet-madara",
         "FuelLabs/fuel-core": "fuel-network"
     },
     "Infra": {

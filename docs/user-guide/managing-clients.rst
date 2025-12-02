@@ -234,3 +234,54 @@ To access the dashboards just open your browser and type your ``Raspberry_IP`` f
   passwd: ethereum
 
 
+Validator Metrics
+-----------------
+
+The **Ethereum Validator Metrics Exporter** allows you to track your validator's performance, balance, and status using data from Beaconcha.in.
+
+Installation
+~~~~~~~~~~~~
+
+.. prompt:: bash $
+
+  sudo apt install ethereum-validator-metrics-exporter
+
+Configuration
+~~~~~~~~~~~~~
+
+The service requires a configuration file located at ``/etc/ethereum/validator-metrics-exporter.yaml``. You need to edit this file to add your **Beaconcha.in API Key** and your **Validator Public Keys**.
+
+.. prompt:: bash $
+
+  sudo nano /etc/ethereum/validator-metrics-exporter.yaml
+
+**Obtaining Beaconcha.in API Key:**
+
+1. Sign up for a free account at `beaconcha.in <https://beaconcha.in>`_.
+2. Go to your account settings and generate an API key.
+3. Add it to the config file under ``beaconcha_in.apikey``.
+
+**Finding your Validator Public Key:**
+
+If you are running a local validator client (e.g., Nimbus, Prysm), you can find your public key in your validator keys directory or in the service logs.
+
+For Nimbus:
+
+.. prompt:: bash $
+
+  ls /home/ethereum/.nimbus-beacon/validators
+  # Or check logs:
+  sudo journalctl -u nimbus-beacon | grep "Local validator attached"
+
+Add your public keys to the ``validators`` list in the config file.
+
+**Restarting the Service:**
+
+After saving your changes, restart the service:
+
+.. prompt:: bash $
+
+  sudo systemctl restart ethereum-validator-metrics-exporter
+
+
+

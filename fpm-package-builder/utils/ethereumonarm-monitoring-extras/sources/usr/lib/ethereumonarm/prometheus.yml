@@ -314,6 +314,14 @@ scrape_configs:
           exporter: "ethereum_custom"
           monitoring_type: "ethereum"
 
+  - job_name: "ethereum_validator_metrics_exporter"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["127.0.0.1:9096"]
+        labels:
+          exporter: "validator_metrics"
+          monitoring_type: "ethereum"
+
   # ============================================================================
   # Additional Exporters (uncomment as needed)
   # ============================================================================

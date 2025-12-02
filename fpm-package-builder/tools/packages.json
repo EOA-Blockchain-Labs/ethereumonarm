@@ -10,32 +10,32 @@
     "Layer 1 Execution": {
         "hyperledger/besu": "besu",
         "ledgerwatch/erigon": "erigon",
+        "lambdaclass/ethrex": "ethrex",
         "ethereum/go-ethereum": "geth",
         "NethermindEth/nethermind": "nethermind",
-        "paradigmxyz/reth": "reth",
         "status-im/nimbus-eth1": "nimbus-ec",
-        "lambdaclass/ethrex": "ethrex"
+        "paradigmxyz/reth": "reth"
     },
     "Layer 2": {
         "OffchainLabs/nitro": "arbitrum-nitro",
+        "FuelLabs/fuel-core": "fuel-network",
         "ethereum-optimism/op-geth": "optimism-op-geth",
         "ethereum-optimism/optimism": "optimism-op-node",
         "paradigmxyz/reth": "optimism-op-reth",
-        "eqlabs/pathfinder": "starknet-pathfinder",
         "NethermindEth/juno": "starknet-juno",
         "madara-alliance/madara": "starknet-madara",
-        "FuelLabs/fuel-core": "fuel-network"
+        "eqlabs/pathfinder": "starknet-pathfinder"
     },
     "Infra": {
-        "ethereum/staking-deposit-cli": "staking-deposit-cli",
-        "eth-educators/ethstaker-deposit-cli": "ethstaker-deposit-cli",
         "ObolNetwork/charon": "dvt-obol",
-        "flashbots/mev-boost": "mev-boost",
+        "ssvlabs/ssv": "dvt-ssv",
         "ethpandaops/ethereum-metrics-exporter": "ethereum-metrics-exporter",
-        "ssvlabs/ssv": "dvt-ssv"
+        "eth-educators/ethstaker-deposit-cli": "ethstaker-deposit-cli",
+        "flashbots/mev-boost": "mev-boost",
+        "ethereum/staking-deposit-cli": "staking-deposit-cli"
     },
     "Web3": {
-        "ipfs/kubo": "kubo",
-        "ethersphere/bee": "bee"
+        "ethersphere/bee": "bee",
+        "ipfs/kubo": "kubo"
     }
 }

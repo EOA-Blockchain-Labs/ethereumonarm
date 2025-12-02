@@ -291,7 +291,7 @@ print_table_and_store_result() {
   local owner_repo="$1" pkg="$2" gh_ver="$3" repo_ver="$4" group_name="$5"
   local row
   
-  printf -v row "| %-23s | %-15s | %-15s |\n" "$pkg" "$gh_ver" "$repo_ver"
+  printf -v row "| %-40s | %-15s | %-15s |\n" "$pkg" "$gh_ver" "$repo_ver"
   
   if [[ "$gh_ver" != "N/A" && "$repo_ver" != "N/A" ]]; then
     local comp_result
@@ -342,9 +342,9 @@ compare_group() {
   # We read the group from the JSON file
   
   printf '\n===== %s =====\n\n' "$group_name"
-  echo "+-------------------------+-----------------+-----------------+"
-  echo "| Package                 | GitHub Version  | Repo Version    |"
-  echo "+-------------------------+-----------------+-----------------+"
+  echo "+------------------------------------------+-----------------+-----------------+"
+  echo "| Package                                  | GitHub Version  | Repo Version    |"
+  echo "+------------------------------------------+-----------------+-----------------+"
   
   # Read repos and packages for this group from JSON
   # Output format: "repo package"
@@ -352,8 +352,8 @@ compare_group() {
   items="$(jq -r --arg g "$group_name" '.[$g] | to_entries[] | "\(.key) \(.value)"' "$PACKAGES_JSON")"
   
   if [[ -z "$items" ]]; then
-    echo "| No packages found in this group.                            |"
-    echo "+-------------------------+-----------------+-----------------+"
+    echo "| No packages found in this group.                                             |"
+    echo "+------------------------------------------+-----------------+-----------------+"
     return
   fi
 
@@ -379,7 +379,7 @@ compare_group() {
   unset IFS
   
   wait
-  echo "+-------------------------+-----------------+-----------------+"
+  echo "+------------------------------------------+-----------------+-----------------+"
 }
 
 generate_markdown() {

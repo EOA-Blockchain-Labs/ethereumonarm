@@ -30,6 +30,7 @@
         "ObolNetwork/charon": "dvt-obol",
         "ssvlabs/ssv": "dvt-ssv",
         "ethpandaops/ethereum-metrics-exporter": "ethereum-metrics-exporter",
+        "ethpandaops/ethereum-validator-metrics-exporter": "ethereum-validator-metrics-exporter",
         "eth-educators/ethstaker-deposit-cli": "ethstaker-deposit-cli",
         "flashbots/mev-boost": "mev-boost",
         "ethereum/staking-deposit-cli": "staking-deposit-cli"

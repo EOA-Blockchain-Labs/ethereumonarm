@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-12-01 04:13:57 UTC_
+_Last updated: 2025-12-02 03:54:11 UTC_
 
  **What this report compares**
 
@@ -18,8 +18,8 @@ _Last updated: 2025-12-01 04:13:57 UTC_
 ## Summary
 
 - Total packages checked: **28**
-- ✅ Up-to-date: **27** (96.4%)
-- ❌ Outdated: **1** (3.6%)
+- ✅ Up-to-date: **26** (92.9%)
+- ❌ Outdated: **2** (7.1%)
 - ❓ N/A: **0** (0.0%)
 
 
@@ -42,7 +42,7 @@ _Last updated: 2025-12-01 04:13:57 UTC_
 |:--------|:-------------------|:------------------------|:------:|
 | `grandine` | `2.0.0` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.0` | ✅ Up-to-date |
 | `lighthouse` | `8.0.1` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.0.1` | ✅ Up-to-date |
-| `lodestar` | `1.36.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.36.0` | ✅ Up-to-date |
+| `lodestar` | `1.37.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.36.0` | ❌ Outdated |
 | `nimbus` | `25.11.1` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.11.1` | ✅ Up-to-date |
 | `prysm` | `7.0.0` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.0.0` | ✅ Up-to-date |
 | `teku` | `25.11.1` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.11.1` | ✅ Up-to-date |

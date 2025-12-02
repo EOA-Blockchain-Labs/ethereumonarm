@@ -34,7 +34,7 @@ PKG_AFTER_INSTALL ?= extras/postinst
 # ----------------------------------------------------------------------
 # Upstream version and source info
 # ----------------------------------------------------------------------
-PKG_VERSION ?= 1.3.1
+PKG_VERSION ?= 1.3.2
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(PKG_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
@@ -69,6 +69,7 @@ FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
   --depends prometheus \
   --depends prometheus-node-exporter \
   --depends ufw \
+  --depends ethereum-validator-metrics-exporter \
   --depends ethereum-metrics-exporter \
   --depends merge-config
 
@@ -83,6 +84,7 @@ FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
   --depends prometheus \
   --depends prometheus-node-exporter \
   --depends ufw \
+  --depends ethereum-validator-metrics-exporter \
   --depends ethereum-metrics-exporter \
   --depends merge-config
 

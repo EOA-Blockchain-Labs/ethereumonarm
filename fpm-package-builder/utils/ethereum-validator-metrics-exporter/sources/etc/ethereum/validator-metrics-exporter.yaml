@@ -1,0 +1,18 @@
+global:
+  logging: "info" # panic,fatal,warn,info,debug,trace
+  metricsAddr: ":9096"
+  namespace: eth_validator
+  checkInterval: 24h
+  # optional labels applied to all metrics
+  labels:
+    network: mainnet
+
+# Add your beaconcha.in API key here
+# beaconcha_in:
+#   apikey: YOUR_API_KEY
+#   endpoint: https://beaconcha.in
+
+validators:
+  # - pubkey: 0x1234...
+  #   labels:
+  #     name: my-validator

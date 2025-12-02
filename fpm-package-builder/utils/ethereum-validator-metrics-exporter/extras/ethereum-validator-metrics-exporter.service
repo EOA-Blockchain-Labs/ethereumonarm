@@ -1,0 +1,16 @@
+[Unit]
+Description=Ethereum Validator Metrics Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=ethereum
+Group=ethereum
+Type=simple
+Restart=always
+RestartSec=5
+ExecStart=/usr/bin/ethereum-validator-metrics-exporter \
+    --config /etc/ethereum/validator-metrics-exporter.yaml
+
+[Install]
+WantedBy=multi-user.target

@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-12-02 03:54:11 UTC_
+_Last updated: 2025-12-03 03:53:12 UTC_
 
  **What this report compares**
 
@@ -17,9 +17,9 @@ _Last updated: 2025-12-02 03:54:11 UTC_
 
 ## Summary
 
-- Total packages checked: **28**
-- ✅ Up-to-date: **26** (92.9%)
-- ❌ Outdated: **2** (7.1%)
+- Total packages checked: **30**
+- ✅ Up-to-date: **29** (96.7%)
+- ❌ Outdated: **1** (3.3%)
 - ❓ N/A: **0** (0.0%)
 
 
@@ -30,6 +30,7 @@ _Last updated: 2025-12-02 03:54:11 UTC_
 | `dvt-obol` | `1.7.1` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.7.1` | ✅ Up-to-date |
 | `dvt-ssv` | `2.3.8` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.3.8` | ✅ Up-to-date |
 | `ethereum-metrics-exporter` | `0.28.3` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.28.3` | ✅ Up-to-date |
+| `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |
 | `ethstaker-deposit-cli` | `1.2.2` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.2.2` | ✅ Up-to-date |
 | `mev-boost` | `1.10.1` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.10.1` | ✅ Up-to-date |
 | `staking-deposit-cli` | `2.8.0` ([ethereum/staking-deposit-cli](https://github.com/ethereum/staking-deposit-cli)) | `2.8.0` | ✅ Up-to-date |
@@ -42,7 +43,7 @@ _Last updated: 2025-12-02 03:54:11 UTC_
 |:--------|:-------------------|:------------------------|:------:|
 | `grandine` | `2.0.0` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.0` | ✅ Up-to-date |
 | `lighthouse` | `8.0.1` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.0.1` | ✅ Up-to-date |
-| `lodestar` | `1.37.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.36.0` | ❌ Outdated |
+| `lodestar` | `1.37.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.37.0` | ✅ Up-to-date |
 | `nimbus` | `25.11.1` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.11.1` | ✅ Up-to-date |
 | `prysm` | `7.0.0` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.0.0` | ✅ Up-to-date |
 | `teku` | `25.11.1` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.11.1` | ✅ Up-to-date |
@@ -72,7 +73,8 @@ _Last updated: 2025-12-02 03:54:11 UTC_
 | `optimism-op-geth` | `1.101603.5` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101603.5` | ✅ Up-to-date |
 | `optimism-op-node` | `1.16.2` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.16.2` | ✅ Up-to-date |
 | `optimism-op-reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
-| `starknet-juno` | `0.15.13` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.13` | ✅ Up-to-date |
+| `starknet-juno` | `0.15.14` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.14` | ✅ Up-to-date |
+| `starknet-madara` | `0.9.0` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.9.0` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.21.2` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.2` | ✅ Up-to-date |
 
 

@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-12-03 03:53:12 UTC_
+_Last updated: 2025-12-04 03:54:20 UTC_
 
  **What this report compares**
 
@@ -41,7 +41,7 @@ _Last updated: 2025-12-03 03:53:12 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
-| `grandine` | `2.0.0` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.0` | ✅ Up-to-date |
+| `grandine` | `2.0.1` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.1` | ✅ Up-to-date |
 | `lighthouse` | `8.0.1` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.0.1` | ✅ Up-to-date |
 | `lodestar` | `1.37.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.37.0` | ✅ Up-to-date |
 | `nimbus` | `25.11.1` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.11.1` | ✅ Up-to-date |
@@ -75,7 +75,7 @@ _Last updated: 2025-12-03 03:53:12 UTC_
 | `optimism-op-reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
 | `starknet-juno` | `0.15.14` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.14` | ✅ Up-to-date |
 | `starknet-madara` | `0.9.0` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.9.0` | ✅ Up-to-date |
-| `starknet-pathfinder` | `0.21.2` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.2` | ✅ Up-to-date |
+| `starknet-pathfinder` | `0.21.3` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.3` | ✅ Up-to-date |
 
 
 

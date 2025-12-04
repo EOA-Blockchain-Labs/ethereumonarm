@@ -44,52 +44,52 @@ PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).$(PKG_ARC
 # FPM common options
 # ----------------------------------------------------------------------
 FPM_COMMON_OPTS = \
-  -s dir \
-  -n $(PKG_NAME) \
-  -v $(PKG_VERSION) \
-  --iteration $(PKG_RELEASE) \
-  --vendor "$(PKG_VENDOR)" \
-  --license "$(PKG_LICENSE)" \
-  --description "$(PKG_DESCRIPTION)" \
-  --maintainer "$(PKG_MAINTAINER)" \
-  --category "$(CATEGORY)" \
-  --url "$(WEB_URL)" \
-  -C $(SOURCESDIR) \
-  -x '*/.gitkeep'
+    -s dir \
+    -n $(PKG_NAME) \
+    -v $(PKG_VERSION) \
+    --iteration $(PKG_RELEASE) \
+    --vendor "$(PKG_VENDOR)" \
+    --license "$(PKG_LICENSE)" \
+    --description "$(PKG_DESCRIPTION)" \
+    --maintainer "$(PKG_MAINTAINER)" \
+    --category "$(CATEGORY)" \
+    --url "$(WEB_URL)" \
+    -C $(SOURCESDIR) \
+    -x '*/.gitkeep'
 
 # ----------------------------------------------------------------------
 # Debian-specific options
 # ----------------------------------------------------------------------
 FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
-  -t deb \
-  --architecture $(PKG_ARCH) \
-  --after-install $(PKG_AFTER_INSTALL) \
-  --before-remove $(PKG_BEFPRE_REMOVE) \
-  --deb-no-default-config-files \
-  $(shell test -d extras && find extras -name 'ethereum-backup.*' -printf "--deb-systemd %p ") \
-  $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
-  --depends rclone \
-  --depends fuse \
-  --depends restic \
-  --depends jq \
-  --depends curl \
-  --depends netcat-openbsd \
-  --depends speedtest-cli \
-  --depends merge-config
+    -t deb \
+    --architecture $(PKG_ARCH) \
+    --after-install $(PKG_AFTER_INSTALL) \
+    --before-remove $(PKG_BEFPRE_REMOVE) \
+    --deb-no-default-config-files \
+    $(shell test -d extras && find extras -name 'ethereum-backup.*' -printf "--deb-systemd %p ") \
+    $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
+    --depends rclone \
+    --depends fuse \
+    --depends restic \
+    --depends jq \
+    --depends curl \
+    --depends netcat-openbsd \
+    --depends speedtest-cli \
+    --depends merge-config
 
 # ----------------------------------------------------------------------
 # RPM-specific options
 # ----------------------------------------------------------------------
 FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
-  -t rpm \
-  --architecture $(PKG_ARCH_RPM) \
-  --after-install $(PKG_AFTER_INSTALL) \
-  --before-remove $(PKG_BEFPRE_REMOVE) \
-  $(shell test -d extras && find extras -name 'ethereum-backup.*' -printf "--rpm-systemd %p ") \
-  --depends rclone \
-  --depends fuse \
-  --depends restic \
-  --depends merge-config
+    -t rpm \
+    --architecture $(PKG_ARCH_RPM) \
+    --after-install $(PKG_AFTER_INSTALL) \
+    --before-remove $(PKG_BEFPRE_REMOVE) \
+    $(shell test -d extras && find extras -name 'ethereum-backup.*' -printf "--rpm-systemd %p ") \
+    --depends rclone \
+    --depends fuse \
+    --depends restic \
+    --depends merge-config
 
 # ----------------------------------------------------------------------
 # Targets
@@ -116,9 +116,9 @@ deb: prepare ## Build .deb package
 	@echo "📦 Building DEB package..."
 	fpm $(FPM_DEB_OPTS) -p "$(PKG_DEB)" .
 	if [[ -f "$(PKG_DEB)" ]]; then \
-	  echo "✅ DEB package created at $(PKG_DEB)"; \
+	    echo "✅ DEB package created at $(PKG_DEB)"; \
 	else \
-	  echo "❌ DEB package creation failed."; exit 1; \
+	    echo "❌ DEB package creation failed."; exit 1; \
 	fi
 
 # ----------------------------------------------------------------------
@@ -129,9 +129,9 @@ rpm: prepare ## Build .rpm package
 	@echo "📦 Building RPM package..."
 	fpm $(FPM_RPM_OPTS) -p "$(PKG_RPM)" .
 	if [[ -f "$(PKG_RPM)" ]]; then \
-	  echo "✅ RPM package created at $(PKG_RPM)"; \
+	    echo "✅ RPM package created at $(PKG_RPM)"; \
 	else \
-	  echo "❌ RPM package creation failed."; exit 1; \
+	    echo "❌ RPM package creation failed."; exit 1; \
 	fi
 
 # ----------------------------------------------------------------------
@@ -145,9 +145,9 @@ clean: ## No binaries to clean
 # ----------------------------------------------------------------------
 test: ## Check that .deb exists
 	if [[ -f "$(PKG_DEB)" ]]; then \
-	  echo "🧪 Test: .deb exists — OK ✅"; \
+	    echo "🧪 Test: .deb exists — OK ✅"; \
 	else \
-	  echo "🧪 Test: .deb missing — ❌"; exit 1; \
+	    echo "🧪 Test: .deb missing — ❌"; exit 1; \
 	fi
 
 # ----------------------------------------------------------------------

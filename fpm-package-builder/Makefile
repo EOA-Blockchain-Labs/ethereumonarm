@@ -70,19 +70,19 @@ do-run:
 	printf "\n➜ $(BLUE)Running target '$(GREEN)$(TARGET_NAME)$(BLUE)' in selected subdirs...$(RESET)\n\n"; \
 	total_start=$$(date +%s.%N); \
 	for dir in $(DIRS_TO_RUN); do \
-		start=$$(date +%s.%N); \
-		printf "➜ $(BLUE)Entering$(RESET) %s (Target: $(GREEN)$(TARGET_TO_RUN)$(RESET))\n" "$$dir"; \
-		if $(MAKE) -s -C "$$dir" $(TARGET_TO_RUN); then \
-			end=$$(date +%s.%N); \
-			elapsed=$$(printf "%.2f" $$(echo "$$end - $$start" | bc)); \
-			printf "   $(GREEN)✔ Success$(RESET) (%s) — $(YELLOW)%ss$(RESET)\n\n" "$$dir" "$$elapsed"; \
-			echo "$$dir|SUCCESS|$$elapsed" >> "$$RESULT_FILE"; \
-		else \
-			end=$$(date +%s.%N); \
-			elapsed=$$(printf "%.2f" $$(echo "$$end - $$start" | bc)); \
-			printf "   $(RED)✖ Error$(RESET) (%s) — $(YELLOW)%ss$(RESET)\n\n" "$$dir" "$$elapsed"; \
-			echo "$$dir|ERROR|$$elapsed" >> "$$RESULT_FILE"; \
-		fi; \
+	    start=$$(date +%s.%N); \
+	    printf "➜ $(BLUE)Entering$(RESET) %s (Target: $(GREEN)$(TARGET_TO_RUN)$(RESET))\n" "$$dir"; \
+	    if $(MAKE) -s -C "$$dir" $(TARGET_TO_RUN); then \
+	        end=$$(date +%s.%N); \
+	        elapsed=$$(printf "%.2f" $$(echo "$$end - $$start" | bc)); \
+	        printf "   $(GREEN)✔ Success$(RESET) (%s) — $(YELLOW)%ss$(RESET)\n\n" "$$dir" "$$elapsed"; \
+	        echo "$$dir|SUCCESS|$$elapsed" >> "$$RESULT_FILE"; \
+	    else \
+	        end=$$(date +%s.%N); \
+	        elapsed=$$(printf "%.2f" $$(echo "$$end - $$start" | bc)); \
+	        printf "   $(RED)✖ Error$(RESET) (%s) — $(YELLOW)%ss$(RESET)\n\n" "$$dir" "$$elapsed"; \
+	        echo "$$dir|ERROR|$$elapsed" >> "$$RESULT_FILE"; \
+	    fi; \
 	done; \
 	total_end=$$(date +%s.%N); \
 	total_elapsed=$$(printf "%.2f" $$(echo "$$total_end - $$total_start" | bc)); \
@@ -97,7 +97,7 @@ summary:
 	printf "%-65s %-10s %-10s\n" "-----------------------------------------------------------------" "--------" "--------"; \
 	[ ! -f "$(RESULT_FILE)" ] && { printf "$(RED)No results file found at $(RESULT_FILE)$(RESET)\n"; exit 1; }; \
 	while IFS="|" read -r dir result time; do \
-		if [ "$$result" = "SUCCESS" ]; then color="$(GREEN)"; else color="$(RED)"; fi; \
-		printf "%-65s %-10b %-10s\n" "$$dir" "$$color$$result$(RESET)" "$$time"; \
+	    if [ "$$result" = "SUCCESS" ]; then color="$(GREEN)"; else color="$(RED)"; fi; \
+	    printf "%-65s %-10b %-10s\n" "$$dir" "$$color$$result$(RESET)" "$$time"; \
 	done < "$(RESULT_FILE)"; \
 	printf "$(BLUE)──────────────────────$(RESET)\n"

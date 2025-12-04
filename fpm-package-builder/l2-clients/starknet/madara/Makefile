@@ -43,38 +43,38 @@ PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(MADARA_VERSION)-$(PKG_RELEASE).$(PKG_
 # FPM common options
 # ----------------------------------------------------------------------
 FPM_COMMON_OPTS = \
-  -s dir \
-  -n $(PKG_NAME) \
-  -v $(MADARA_VERSION) \
-  --iteration $(PKG_RELEASE) \
-  --vendor "$(PKG_VENDOR)" \
-  --license "$(PKG_LICENSE)" \
-  --description "$(PKG_DESCRIPTION)" \
-  --maintainer "$(PKG_MAINTAINER)" \
-  --category "$(CATEGORY)" \
-  --url "$(WEB_URL)" \
-  -C $(SOURCESDIR) \
-  -x '*/.gitkeep'
+    -s dir \
+    -n $(PKG_NAME) \
+    -v $(MADARA_VERSION) \
+    --iteration $(PKG_RELEASE) \
+    --vendor "$(PKG_VENDOR)" \
+    --license "$(PKG_LICENSE)" \
+    --description "$(PKG_DESCRIPTION)" \
+    --maintainer "$(PKG_MAINTAINER)" \
+    --category "$(CATEGORY)" \
+    --url "$(WEB_URL)" \
+    -C $(SOURCESDIR) \
+    -x '*/.gitkeep'
 
 # ----------------------------------------------------------------------
 # Debian-specific options
 # ----------------------------------------------------------------------
 FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
-  -t deb \
-  --architecture $(PKG_ARCH) \
-  --deb-no-default-config-files \
-  $(shell test -d extras && find extras -name 'madara*.service' -printf "--deb-systemd %p ") \
-  $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
-  --depends merge-config
+    -t deb \
+    --architecture $(PKG_ARCH) \
+    --deb-no-default-config-files \
+    $(shell test -d extras && find extras -name 'madara*.service' -printf "--deb-systemd %p ") \
+    $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
+    --depends merge-config
 
 # ----------------------------------------------------------------------
 # RPM-specific options
 # ----------------------------------------------------------------------
 FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
-  -t rpm \
-  --architecture $(PKG_ARCH_RPM) \
-  $(shell test -d extras && find extras -name 'madara*.service' -printf "--rpm-systemd %p ") \
-  --depends merge-config
+    -t rpm \
+    --architecture $(PKG_ARCH_RPM) \
+    $(shell test -d extras && find extras -name 'madara*.service' -printf "--rpm-systemd %p ") \
+    --depends merge-config
 
 # ----------------------------------------------------------------------
 # Targets
@@ -92,7 +92,7 @@ all: prepare deb clean test ## Default local build pipeline
 prepare: ## Build Madara from source using Docker
 	@echo "🔎 Resolving latest Madara version..."
 	if [[ -z "$(MADARA_TAG_V)" || "$(MADARA_TAG_V)" == "null" ]]; then \
-	  echo "❌ Could not determine latest Madara version via GitHub API."; exit 1; \
+	    echo "❌ Could not determine latest Madara version via GitHub API."; exit 1; \
 	fi
 	@echo "🏗️  Building Madara $(MADARA_VERSION) from source locally..."
 	mkdir -p $(SOURCESDIR)/usr/bin
@@ -100,39 +100,39 @@ prepare: ## Build Madara from source using Docker
 	
 	# Clone repository
 	if [ ! -d ".build/madara" ]; then \
-		git clone --depth 1 --branch $(MADARA_TAG_V) https://github.com/madara-alliance/madara.git .build/madara; \
+	    git clone --depth 1 --branch $(MADARA_TAG_V) https://github.com/madara-alliance/madara.git .build/madara; \
 	fi
 	
 	# Build Madara
 	if [ -z "$(SKIP_BUILD)" ]; then \
-		if [ ! -d ".build/venv" ]; then \
-			python3 -m venv .build/venv; \
-		fi; \
-		.build/venv/bin/python3 -m pip install sympy==1.12 cairo-lang==0.14.0.1; \
-		cd .build/madara && \
-		. ../venv/bin/activate && \
-		export PATH="/usr/lib/llvm-19/bin:$$PATH" && \
-		export LLVM_SYS_190_PREFIX=/usr/lib/llvm-19 && \
-		export MLIR_SYS_190_PREFIX=/usr/lib/llvm-19 && \
-		export TABLEGEN_190_PREFIX=/usr/lib/llvm-19 && \
-		if [ "$$(uname -m)" = "x86_64" ]; then \
-			echo "🖥️  Host is x86_64, cross-compiling for aarch64..."; \
-			export CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc; \
-			export CXX_aarch64_unknown_linux_gnu=aarch64-linux-gnu-g++; \
-			cargo build --release --target aarch64-unknown-linux-gnu --manifest-path madara/node/Cargo.toml; \
-		else \
-			echo "🖥️  Host is aarch64, building natively..."; \
-			cargo build --release --manifest-path madara/node/Cargo.toml; \
-		fi \
+	    if [ ! -d ".build/venv" ]; then \
+	        python3 -m venv .build/venv; \
+	    fi; \
+	    .build/venv/bin/python3 -m pip install sympy==1.12 cairo-lang==0.14.0.1; \
+	    cd .build/madara && \
+	    . ../venv/bin/activate && \
+	    export PATH="/usr/lib/llvm-19/bin:$$PATH" && \
+	    export LLVM_SYS_190_PREFIX=/usr/lib/llvm-19 && \
+	    export MLIR_SYS_190_PREFIX=/usr/lib/llvm-19 && \
+	    export TABLEGEN_190_PREFIX=/usr/lib/llvm-19 && \
+	    if [ "$$(uname -m)" = "x86_64" ]; then \
+	        echo "🖥️  Host is x86_64, cross-compiling for aarch64..."; \
+	        export CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc; \
+	        export CXX_aarch64_unknown_linux_gnu=aarch64-linux-gnu-g++; \
+	        cargo build --release --target aarch64-unknown-linux-gnu --manifest-path madara/node/Cargo.toml; \
+	    else \
+	        echo "🖥️  Host is aarch64, building natively..."; \
+	        cargo build --release --manifest-path madara/node/Cargo.toml; \
+	    fi \
 	else \
-		echo "⏭️  Skipping build (SKIP_BUILD is set)..."; \
+	    echo "⏭️  Skipping build (SKIP_BUILD is set)..."; \
 	fi
 	
 	# Determine binary path
 	if [ "$$(uname -m)" = "x86_64" ]; then \
-		BINARY_PATH="madara/target/aarch64-unknown-linux-gnu/release/madara"; \
+	    BINARY_PATH="madara/target/aarch64-unknown-linux-gnu/release/madara"; \
 	else \
-		BINARY_PATH="madara/target/release/madara"; \
+	    BINARY_PATH="madara/target/release/madara"; \
 	fi && \
 	echo "📦 Staging binary..." && \
 	mkdir -p $(CURDIR)/$(SOURCESDIR)/usr/bin && \
@@ -152,9 +152,9 @@ deb: prepare ## Build .deb package
 	@echo "📦 Building DEB package..."
 	fpm $(FPM_DEB_OPTS) -p "$(PKG_DEB)" .
 	if [[ -f "$(PKG_DEB)" ]]; then \
-	  echo "✅ DEB package created at $(PKG_DEB)"; \
+	    echo "✅ DEB package created at $(PKG_DEB)"; \
 	else \
-	  echo "❌ DEB package creation failed."; exit 1; \
+	    echo "❌ DEB package creation failed."; exit 1; \
 	fi
 
 # ----------------------------------------------------------------------
@@ -165,9 +165,9 @@ rpm: prepare ## Build .rpm package
 	@echo "📦 Building RPM package..."
 	fpm $(FPM_RPM_OPTS) -p "$(PKG_RPM)" .
 	if [[ -f "$(PKG_RPM)" ]]; then \
-	  echo "✅ RPM package created at $(PKG_RPM)"; \
+	    echo "✅ RPM package created at $(PKG_RPM)"; \
 	else \
-	  echo "❌ RPM package creation failed."; exit 1; \
+	    echo "❌ RPM package creation failed."; exit 1; \
 	fi
 
 # ----------------------------------------------------------------------
@@ -182,9 +182,9 @@ clean: ## Remove staged binaries and temp files
 # ----------------------------------------------------------------------
 test: ## Check that .deb exists
 	if [[ -f "$(PKG_DEB)" ]]; then \
-	  echo "🧪 Test: .deb exists — OK ✅"; \
+	    echo "🧪 Test: .deb exists — OK ✅"; \
 	else \
-	  echo "🧪 Test: .deb missing — ❌"; exit 1; \
+	    echo "🧪 Test: .deb missing — ❌"; exit 1; \
 	fi
 
 # ----------------------------------------------------------------------

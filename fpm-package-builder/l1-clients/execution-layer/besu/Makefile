@@ -41,45 +41,45 @@ PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(BESU_VERSION)-$(PKG_RELEASE).$(PKG_AR
 # FPM common options
 # ----------------------------------------------------------------------
 FPM_COMMON_OPTS = \
-  -s dir \
-  -n $(PKG_NAME) \
-  -v $(BESU_VERSION) \
-  --iteration $(PKG_RELEASE) \
-  --vendor "$(PKG_VENDOR)" \
-  --license "$(PKG_LICENSE)" \
-  --description "$(PKG_DESCRIPTION)" \
-  --maintainer "$(PKG_MAINTAINER)" \
-  --category "$(CATEGORY)" \
-  --url "$(WEB_URL)" \
-  -C $(SOURCESDIR) \
-  -x '*/.gitkeep'
+    -s dir \
+    -n $(PKG_NAME) \
+    -v $(BESU_VERSION) \
+    --iteration $(PKG_RELEASE) \
+    --vendor "$(PKG_VENDOR)" \
+    --license "$(PKG_LICENSE)" \
+    --description "$(PKG_DESCRIPTION)" \
+    --maintainer "$(PKG_MAINTAINER)" \
+    --category "$(CATEGORY)" \
+    --url "$(WEB_URL)" \
+    -C $(SOURCESDIR) \
+    -x '*/.gitkeep'
 
 # ----------------------------------------------------------------------
 # Debian-specific options
 # ----------------------------------------------------------------------
 # Includes dynamic systemd unit detection and dynamic config-file tracking
 FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
-  -t deb \
-  --architecture $(PKG_ARCH) \
-  --deb-no-default-config-files \
-  $(shell test -d extras && find extras -name '$(PKG_NAME)*.service' -printf "--deb-systemd %p " || true) \
-  $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
-  --depends openjdk-21-jre-headless \
-  --depends "libsecp256k1-0|libsecp256k1-1" \
-  --depends merge-config \
-  --depends libjemalloc-dev
+    -t deb \
+    --architecture $(PKG_ARCH) \
+    --deb-no-default-config-files \
+    $(shell test -d extras && find extras -name '$(PKG_NAME)*.service' -printf "--deb-systemd %p " || true) \
+    $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
+    --depends openjdk-21-jre-headless \
+    --depends "libsecp256k1-0|libsecp256k1-1" \
+    --depends merge-config \
+    --depends libjemalloc-dev
 
 # ----------------------------------------------------------------------
 # RPM-specific options
 # ----------------------------------------------------------------------
 FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
-  -t rpm \
-  --architecture $(PKG_ARCH_RPM) \
-  $(shell test -d extras && find extras -name '$(PKG_NAME)*.service' -printf "--rpm-systemd %p " || true) \
-  --depends openjdk-21-jre-headless \
-  --depends "libsecp256k1-0 | libsecp256k1-1" \
-  --depends merge-config \
-  --depends libjemalloc-devel
+    -t rpm \
+    --architecture $(PKG_ARCH_RPM) \
+    $(shell test -d extras && find extras -name '$(PKG_NAME)*.service' -printf "--rpm-systemd %p " || true) \
+    --depends openjdk-21-jre-headless \
+    --depends "libsecp256k1-0 | libsecp256k1-1" \
+    --depends merge-config \
+    --depends libjemalloc-devel
 
 # ----------------------------------------------------------------------
 # Targets
@@ -97,7 +97,7 @@ all: prepare deb clean test ## Default local build pipeline
 prepare: ## Download latest Besu and stage into $(SOURCESDIR)
 	@echo "🔎 Resolving latest Besu version..."
 	if [[ -z "$(BESU_VERSION)" || "$(BESU_VERSION)" == "null" ]]; then \
-	  echo "❌ Could not determine latest Besu version via GitHub API."; exit 1; \
+	    echo "❌ Could not determine latest Besu version via GitHub API."; exit 1; \
 	fi
 	@echo "🔽 Downloading Besu $(BESU_VERSION)..."
 	# Use a local .build dir instead of /tmp
@@ -122,9 +122,9 @@ deb: prepare ## Build .deb package
 	@echo "📦 Building DEB package..."
 	fpm $(FPM_DEB_OPTS) -p "$(PKG_DEB)" .
 	if [[ -f "$(PKG_DEB)" ]]; then \
-	  echo "✅ DEB package created at $(PKG_DEB)"; \
+	    echo "✅ DEB package created at $(PKG_DEB)"; \
 	else \
-	  echo "❌ DEB package creation failed."; exit 1; \
+	    echo "❌ DEB package creation failed."; exit 1; \
 	fi
 
 # ----------------------------------------------------------------------
@@ -135,9 +135,9 @@ rpm: prepare ## Build .rpm package
 	@echo "📦 Building RPM package..."
 	fpm $(FPM_RPM_OPTS) -p "$(PKG_RPM)" .
 	if [[ -f "$(PKG_RPM)" ]]; then \
-	  echo "✅ RPM package created at $(PKG_RPM)"; \
+	    echo "✅ RPM package created at $(PKG_RPM)"; \
 	else \
-	  echo "❌ RPM package creation failed."; exit 1; \
+	    echo "❌ RPM package creation failed."; exit 1; \
 	fi
 
 # ----------------------------------------------------------------------
@@ -152,9 +152,9 @@ clean: ## Remove staged binaries, cache, and temp files
 # ----------------------------------------------------------------------
 test: ## Check that .deb exists
 	if [[ -f "$(PKG_DEB)" ]]; then \
-	  echo "🧪 Test: .deb exists — OK ✅"; \
+	    echo "🧪 Test: .deb exists — OK ✅"; \
 	else \
-	  echo "🧪 Test: .deb missing — ❌"; exit 1; \
+	    echo "🧪 Test: .deb missing — ❌"; exit 1; \
 	fi
 
 

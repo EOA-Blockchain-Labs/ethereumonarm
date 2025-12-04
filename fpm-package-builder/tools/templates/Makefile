@@ -82,18 +82,18 @@ PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(UPSTREAM_VERSION)-$(PKG_RELEASE).$(PK
 # FPM common options
 # ----------------------------------------------------------------------
 FPM_COMMON_OPTS = \
-  -s dir \
-  -n $(PKG_NAME) \
-  -v $(UPSTREAM_VERSION) \
-  --iteration $(PKG_RELEASE) \
-  --vendor "$(PKG_VENDOR)" \
-  --license "$(PKG_LICENSE)" \
-  --description "$(PKG_DESCRIPTION)" \
-  --maintainer "$(PKG_MAINTAINER)" \
-  --category "$(CATEGORY)" \
-  --url "$(WEB_URL)" \
-  -C $(SOURCESDIR) \
-  -x '*/.gitkeep'
+    -s dir \
+    -n $(PKG_NAME) \
+    -v $(UPSTREAM_VERSION) \
+    --iteration $(PKG_RELEASE) \
+    --vendor "$(PKG_VENDOR)" \
+    --license "$(PKG_LICENSE)" \
+    --description "$(PKG_DESCRIPTION)" \
+    --maintainer "$(PKG_MAINTAINER)" \
+    --category "$(CATEGORY)" \
+    --url "$(WEB_URL)" \
+    -C $(SOURCESDIR) \
+    -x '*/.gitkeep'
 
 # ----------------------------------------------------------------------
 # Debian-specific options
@@ -105,12 +105,12 @@ FPM_COMMON_OPTS = \
 # - Dynamic config-file tracking (finds files in 'sources/etc')
 # - Dependencies (merge-config, etc.)
 FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
-  -t deb \
-  --architecture $(PKG_ARCH) \
-  --deb-no-default-config-files \
-  $(shell test -d extras && find extras -name '*.service' -printf "--deb-systemd %p ") \
-  $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P ") \
-  --depends merge-config
+    -t deb \
+    --architecture $(PKG_ARCH) \
+    --deb-no-default-config-files \
+    $(shell test -d extras && find extras -name '*.service' -printf "--deb-systemd %p ") \
+    $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P ") \
+    --depends merge-config
 
 #  --depends openjdk-21-jre-headless # Example for Java apps
 #  --depends jq # Example for scripts that use jq
@@ -120,10 +120,10 @@ FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
 # RPM-specific options
 # ----------------------------------------------------------------------
 FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
-  -t rpm \
-  --architecture $(PKG_ARCH_RPM) \
-  $(shell test -d extras && find extras -name '*.service' -printf "--rpm-systemd %p ") \
-  --depends merge-config
+    -t rpm \
+    --architecture $(PKG_ARCH_RPM) \
+    $(shell test -d extras && find extras -name '*.service' -printf "--rpm-systemd %p ") \
+    --depends merge-config
 
 #  --depends openjdk-21-jre-headless
 #  --depends jq
@@ -148,7 +148,7 @@ all: prepare deb clean test ## Default local build pipeline
 # prepare: ## Download, verify, and stage binary
 # 	@echo "🔎 Resolving latest $(PKG_NAME) version..."
 # 	if [[ -z "$(UPSTREAM_TAG_V)" || "$(UPSTREAM_TAG_V)" == "null" ]]; then \
-# 	  echo "❌ Could not determine latest version via GitHub API."; exit 1; \
+# 	    echo "❌ Could not determine latest version via GitHub API."; exit 1; \
 # 	fi
 # 	@echo "🔽 Downloading $(PKG_NAME) $(UPSTREAM_VERSION) ($(UPSTREAM_TAG_V))..."
 # 	mkdir -p .build $(SOURCESDIR)/usr/bin
@@ -172,7 +172,7 @@ all: prepare deb clean test ## Default local build pipeline
 # prepare: ## Download latest binary and stage it
 # 	@echo "🔎 Resolving latest $(PKG_NAME) version..."
 # 	if [[ -z "$(UPSTREAM_TAG_V)" || "$(UPSTREAM_TAG_V)" == "null" ]]; then \
-# 	  echo "❌ Could not determine latest version via GitHub API."; exit 1; \
+# 	    echo "❌ Could not determine latest version via GitHub API."; exit 1; \
 # 	fi
 # 	@echo "🔽 Downloading $(PKG_NAME) $(UPSTREAM_VERSION) ($(UPSTREAM_TAG_V))..."
 # 	mkdir -p $(SOURCESDIR)/usr/bin
@@ -193,7 +193,7 @@ all: prepare deb clean test ## Default local build pipeline
 # prepare: ## Build binary from source
 # 	@echo "🔎 Resolving latest $(PKG_NAME) version..."
 # 	if [[ -z "$(UPSTREAM_TAG_V)" || "$(UPSTREAM_TAG_V)" == "null" ]]; then \
-# 	  echo "❌ Could not determine latest version via GitHub API."; exit 1; \
+# 	    echo "❌ Could not determine latest version via GitHub API."; exit 1; \
 # 	fi
 # 	@echo "🔽 Cloning $(PKG_NAME) $(UPSTREAM_VERSION) ($(UPSTREAM_TAG_V))..."
 # 	mkdir -p .build/src $(SOURCESDIR)/usr/bin
@@ -201,9 +201,9 @@ all: prepare deb clean test ## Default local build pipeline
 #
 # 	@echo "🛠 Building binary from source (this may take a while)..."
 # 	cd .build/src && \
-# 	  env GO111MODULE=on CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 \
-# 	  go build -v -o ./build/bin/$(PKG_NAME) ./cmd/main.go \
-# 	  || { echo "❌ Go build failed"; exit 1; }
+# 	    env GO111MODULE=on CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 \
+# 	    go build -v -o ./build/bin/$(PKG_NAME) ./cmd/main.go \
+# 	    || { echo "❌ Go build failed"; exit 1; }
 #
 # 	@echo "📂 Staging binary..."
 # 	cp .build/src/build/bin/$(PKG_NAME) $(SOURCESDIR)/usr/bin/$(PKG_NAME)
@@ -218,9 +218,9 @@ deb: prepare ## Build .deb package
 	@echo "📦 Building DEB package..."
 	fpm $(FPM_DEB_OPTS) -p "$(PKG_DEB)" .
 	if [[ -f "$(PKG_DEB)" ]]; then \
-	  echo "✅ DEB package created at $(PKG_DEB)"; \
+	    echo "✅ DEB package created at $(PKG_DEB)"; \
 	else \
-	  echo "❌ DEB package creation failed."; exit 1; \
+	    echo "❌ DEB package creation failed."; exit 1; \
 	fi
 
 # ----------------------------------------------------------------------
@@ -231,9 +231,9 @@ rpm: prepare ## Build .rpm package
 	@echo "📦 Building RPM package..."
 	fpm $(FPM_RPM_OPTS) -p "$(PKG_RPM)" .
 	if [[ -f "$(PKG_RPM)" ]]; then \
-	  echo "✅ RPM package created at $(PKG_RPM)"; \
+	    echo "✅ RPM package created at $(PKG_RPM)"; \
 	else \
-	  echo "❌ RPM package creation failed."; exit 1; \
+	    echo "❌ RPM package creation failed."; exit 1; \
 	fi
 
 # ----------------------------------------------------------------------
@@ -249,9 +249,9 @@ clean: ## Remove staged binaries and temp files
 # ----------------------------------------------------------------------
 test: ## Check that .deb exists
 	if [[ -f "$(PKG_DEB)" ]]; then \
-	  echo "🧪 Test: .deb exists — OK ✅"; \
+	    echo "🧪 Test: .deb exists — OK ✅"; \
 	else \
-	  echo "🧪 Test: .deb missing — ❌"; exit 1; \
+	    echo "🧪 Test: .deb missing — ❌"; exit 1; \
 	fi
 
 # ----------------------------------------------------------------------
@@ -267,10 +267,10 @@ docker-build: ## Run the build inside a Docker container
 	@echo "🐳 Starting Docker build..."
 	# CHANGEME: Update image if needed (e.g. to ubuntu:22.04 or a custom builder image)
 	docker run --rm -v $(PWD):/workspace -w /workspace \
-		-e PKG_NAME=$(PKG_NAME) \
-		-e PKG_RELEASE=$(PKG_RELEASE) \
-		ubuntu:20.04 \
-		/bin/bash -c "apt-get update && apt-get install -y make curl jq wget ruby ruby-dev build-essential && gem install fpm && make release"
+	    -e PKG_NAME=$(PKG_NAME) \
+	    -e PKG_RELEASE=$(PKG_RELEASE) \
+	    ubuntu:20.04 \
+	    /bin/bash -c "apt-get update && apt-get install -y make curl jq wget ruby ruby-dev build-essential && gem install fpm && make release"
 
 # ----------------------------------------------------------------------
 # help — show all available targets

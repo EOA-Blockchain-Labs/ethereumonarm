@@ -1,0 +1,14 @@
+[Unit]
+Description=Commit-Boost client daemon
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/commit-boost.conf
+ExecStart=/usr/bin/commit-boost $ARGS
+Restart=always
+RestartSec=5
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target

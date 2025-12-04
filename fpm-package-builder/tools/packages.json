@@ -29,6 +29,7 @@
     "Infra": {
         "ObolNetwork/charon": "dvt-obol",
         "ssvlabs/ssv": "dvt-ssv",
+        "Commit-Boost/commit-boost-client": "commit-boost",
         "ethpandaops/ethereum-metrics-exporter": "ethereum-metrics-exporter",
         "ethpandaops/ethereum-validator-metrics-exporter": "ethereum-validator-metrics-exporter",
         "eth-educators/ethstaker-deposit-cli": "ethstaker-deposit-cli",

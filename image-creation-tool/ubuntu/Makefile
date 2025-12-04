@@ -43,16 +43,16 @@ nanopct6_offset := 16777216
 # Argument $1: URL of the compressed image.
 define download_image
 	@if [ -f $(notdir $1) ]; then \
-		echo "--> $(notdir $1) already exists. Skipping download."; \
+	    echo "--> $(notdir $1) already exists. Skipping download."; \
 	else \
-		echo "--> Downloading $1..."; \
-		wget -q --show-progress -O $(notdir $1) $1 || { echo "Download failed for $1"; exit 1; }; \
+	    echo "--> Downloading $1..."; \
+	    wget -q --show-progress -O $(notdir $1) $1 || { echo "Download failed for $1"; exit 1; }; \
 	fi
 	@if [ -f $(basename $(notdir $1)) ]; then \
-		echo "--> $(basename $(notdir $1)) already exists. Skipping decompression."; \
+	    echo "--> $(basename $(notdir $1)) already exists. Skipping decompression."; \
 	else \
-		echo "--> Decompressing $(notdir $1)..."; \
-		unxz -k $(notdir $1) || { echo "Failed to decompress $1"; exit 1; }; \
+	    echo "--> Decompressing $(notdir $1)..."; \
+	    unxz -k $(notdir $1) || { echo "Failed to decompress $1"; exit 1; }; \
 	fi
 endef
 

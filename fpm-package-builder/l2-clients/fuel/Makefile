@@ -25,7 +25,7 @@ PKG_MAINTAINER  ?= Diego Losada <dlosada@ethereumonarm.com>
 CATEGORY        ?= science
 WEB_URL         ?= https://fuel.network
 SOURCESDIR      ?= sources
-OUTPUTDIR       ?= ../../packages
+OUTPUTDIR       ?= ../../../packages
 
 # ----------------------------------------------------------------------
 # Upstream version and source info
@@ -45,38 +45,38 @@ PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(FUEL_VERSION)-$(PKG_RELEASE).$(PKG_AR
 # FPM common options
 # ----------------------------------------------------------------------
 FPM_COMMON_OPTS = \
-  -s dir \
-  -n $(PKG_NAME) \
-  -v $(FUEL_VERSION) \
-  --iteration $(PKG_RELEASE) \
-  --vendor "$(PKG_VENDOR)" \
-  --license "$(PKG_LICENSE)" \
-  --description "$(PKG_DESCRIPTION)" \
-  --maintainer "$(PKG_MAINTAINER)" \
-  --category "$(CATEGORY)" \
-  --url "$(WEB_URL)" \
-  -C $(SOURCESDIR) \
-  -x '*/.gitkeep'
+    -s dir \
+    -n $(PKG_NAME) \
+    -v $(FUEL_VERSION) \
+    --iteration $(PKG_RELEASE) \
+    --vendor "$(PKG_VENDOR)" \
+    --license "$(PKG_LICENSE)" \
+    --description "$(PKG_DESCRIPTION)" \
+    --maintainer "$(PKG_MAINTAINER)" \
+    --category "$(CATEGORY)" \
+    --url "$(WEB_URL)" \
+    -C $(SOURCESDIR) \
+    -x '*/.gitkeep'
 
 # ----------------------------------------------------------------------
 # Debian-specific options
 # ----------------------------------------------------------------------
 FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
-  -t deb \
-  --architecture $(PKG_ARCH) \
-  --deb-no-default-config-files \
-  $(shell test -d extras && find extras -name 'fuel*.service' -printf "--deb-systemd %p ") \
-  $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
-  --depends merge-config
+    -t deb \
+    --architecture $(PKG_ARCH) \
+    --deb-no-default-config-files \
+    $(shell test -d extras && find extras -name 'fuel*.service' -printf "--deb-systemd %p ") \
+    $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
+    --depends merge-config
 
 # ----------------------------------------------------------------------
 # RPM-specific options
 # ----------------------------------------------------------------------
 FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
-  -t rpm \
-  --architecture $(PKG_ARCH_RPM) \
-  $(shell test -d extras && find extras -name 'fuel*.service' -printf "--rpm-systemd %p ") \
-  --depends merge-config
+    -t rpm \
+    --architecture $(PKG_ARCH_RPM) \
+    $(shell test -d extras && find extras -name 'fuel*.service' -printf "--rpm-systemd %p ") \
+    --depends merge-config
 
 # ----------------------------------------------------------------------
 # Targets
@@ -94,7 +94,7 @@ all: prepare deb clean test ## Default local build pipeline
 prepare: ## Download latest Fuel and stage into $(SOURCESDIR)/usr/bin
 	@echo "🔎 Resolving latest Fuel version..."
 	if [[ -z "$(FUEL_TAG_V)" || "$(FUEL_TAG_V)" == "null" ]]; then \
-	  echo "❌ Could not determine latest Fuel version via GitHub API."; exit 1; \
+	    echo "❌ Could not determine latest Fuel version via GitHub API."; exit 1; \
 	fi
 	@echo "🔽 Downloading Fuel $(FUEL_VERSION) ($(FUEL_TAG_V))..."
 	mkdir -p .build $(SOURCESDIR)/usr/bin
@@ -117,9 +117,9 @@ deb: prepare ## Build .deb package
 	@echo "📦 Building DEB package..."
 	fpm $(FPM_DEB_OPTS) -p "$(PKG_DEB)" .
 	if [[ -f "$(PKG_DEB)" ]]; then \
-	  echo "✅ DEB package created at $(PKG_DEB)"; \
+	    echo "✅ DEB package created at $(PKG_DEB)"; \
 	else \
-	  echo "❌ DEB package creation failed."; exit 1; \
+	    echo "❌ DEB package creation failed."; exit 1; \
 	fi
 
 # ----------------------------------------------------------------------
@@ -130,9 +130,9 @@ rpm: prepare ## Build .rpm package
 	@echo "📦 Building RPM package..."
 	fpm $(FPM_RPM_OPTS) -p "$(PKG_RPM)" .
 	if [[ -f "$(PKG_RPM)" ]]; then \
-	  echo "✅ RPM package created at $(PKG_RPM)"; \
+	    echo "✅ RPM package created at $(PKG_RPM)"; \
 	else \
-	  echo "❌ RPM package creation failed."; exit 1; \
+	    echo "❌ RPM package creation failed."; exit 1; \
 	fi
 
 # ----------------------------------------------------------------------
@@ -147,9 +147,9 @@ clean: ## Remove staged binaries and temp files
 # ----------------------------------------------------------------------
 test: ## Check that .deb exists
 	if [[ -f "$(PKG_DEB)" ]]; then \
-	  echo "🧪 Test: .deb exists — OK ✅"; \
+	    echo "🧪 Test: .deb exists — OK ✅"; \
 	else \
-	  echo "🧪 Test: .deb missing — ❌"; exit 1; \
+	    echo "🧪 Test: .deb missing — ❌"; exit 1; \
 	fi
 
 # ----------------------------------------------------------------------
@@ -167,4 +167,11 @@ help: ## Show available targets
 	echo ""
 	awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z0-9_%-]+:.*?##/ { printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 	echo ""
-	echo "Version resolved: $(FUEL_
+	echo "Version resolved: $(FUEL_VERSION) (Tag: $(FUEL_TAG_V))"
+	echo "Sources dir     : $(SOURCESDIR)"
+	echo "Output dir      : $(OUTPUTDIR)"
+	echo ""
+
+# ======================================================================
+# End of file
+# ======================================================================

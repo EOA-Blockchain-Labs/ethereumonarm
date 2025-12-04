@@ -5,7 +5,7 @@
 # - Clones and builds the 'statusgo' binary from source
 # - Stages files into ./sources/usr/bin
 # - Applies EOA packaging standards and metadata
-# =================================T======================================
+# ======================================================================
 
 .SILENT:
 SHELL := /bin/bash
@@ -42,38 +42,38 @@ PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(STATUS_VERSION)-$(PKG_RELEASE).$(PKG_
 # FPM common options
 # ----------------------------------------------------------------------
 FPM_COMMON_OPTS = \
-  -s dir \
-  -n $(PKG_NAME) \
-  -v $(STATUS_VERSION) \
-  --iteration $(PKG_RELEASE) \
-  --vendor "$(PKG_VENDOR)" \
-  --license "$(PKG_LICENSE)" \
-  --description "$(PKG_DESCRIPTION)" \
-  --maintainer "$(PKG_MAINTAINER)" \
-  --category "$(CATEGORY)" \
-  --url "$(WEB_URL)" \
-  -C $(SOURCESDIR) \
-  -x '*/.gitkeep'
+    -s dir \
+    -n $(PKG_NAME) \
+    -v $(STATUS_VERSION) \
+    --iteration $(PKG_RELEASE) \
+    --vendor "$(PKG_VENDOR)" \
+    --license "$(PKG_LICENSE)" \
+    --description "$(PKG_DESCRIPTION)" \
+    --maintainer "$(PKG_MAINTAINER)" \
+    --category "$(CATEGORY)" \
+    --url "$(WEB_URL)" \
+    -C $(SOURCESDIR) \
+    -x '*/.gitkeep'
 
 # ----------------------------------------------------------------------
 # Debian-specific options
 # ----------------------------------------------------------------------
 FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
-  -t deb \
-  --architecture $(PKG_ARCH) \
-  --deb-no-default-config-files \
-  $(shell test -d extras && find extras -name 'statusd*.service' -printf "--deb-systemd %p ") \
-  $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
-  --depends merge-config
+    -t deb \
+    --architecture $(PKG_ARCH) \
+    --deb-no-default-config-files \
+    $(shell test -d extras && find extras -name 'statusd*.service' -printf "--deb-systemd %p ") \
+    $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
+    --depends merge-config
 
 # ----------------------------------------------------------------------
 # RPM-specific options
 # ----------------------------------------------------------------------
 FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
-  -t rpm \
-  --architecture $(PKG_ARCH_RPM) \
-  $(shell test -d extras && find extras -name 'statusd*.service' -printf "--rpm-systemd %p ") \
-  --depends merge-config
+    -t rpm \
+    --architecture $(PKG_ARCH_RPM) \
+    $(shell test -d extras && find extras -name 'statusd*.service' -printf "--rpm-systemd %p ") \
+    --depends merge-config
 
 # ----------------------------------------------------------------------
 # Targets
@@ -91,7 +91,7 @@ all: prepare deb clean test ## Default local build pipeline
 prepare: ## Build binary from source
 	@echo "🔎 Resolving latest status-go version..."
 	if [[ -z "$(STATUS_TAG_V)" || "$(STATUS_TAG_V)" == "null" ]]; then \
-	  echo "❌ Could not determine latest status-go version via GitHub API."; exit 1; \
+	    echo "❌ Could not determine latest status-go version via GitHub API."; exit 1; \
 	fi
 	@echo "🔽 Cloning status-go $(STATUS_VERSION) ($(STATUS_TAG_V))..."
 	mkdir -p .build/status_src $(SOURCESDIR)/usr/bin
@@ -99,13 +99,13 @@ prepare: ## Build binary from source
 	
 	@echo "🔧 Patching upstream Makefile for ARM64 build..."
 	cd .build/status_src && \
-	  sed -i 's/\(go build -mod=vendor -i\)/go build -mod=vendor/g' Makefile || { echo "❌ Makefile patch 1 failed"; exit 1; }
+	    sed -i 's/\(go build -mod=vendor -i\)/go build -mod=vendor/g' Makefile || { echo "❌ Makefile patch 1 failed"; exit 1; }
 	cd .build/status_src && \
-	  sed -i 's/\(go \)/ env CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 \1/' Makefile || { echo "❌ Makefile patch 2 failed"; exit 1; }
-
+	    sed -i 's/\(go \)/ env CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 \1/' Makefile || { echo "❌ Makefile patch 2 failed"; exit 1; }
+	
 	@echo "🛠 Building binary from source (this may take a while)..."
 	cd .build/status_src && \
-	  make statusgo || { echo "❌ Go build failed"; exit 1; }
+	    make statusgo || { echo "❌ Go build failed"; exit 1; }
 	
 	@echo "📂 Staging binary..."
 	cp .build/status_src/build/bin/statusd $(SOURCESDIR)/usr/bin/
@@ -120,9 +120,9 @@ deb: prepare ## Build .deb package
 	@echo "📦 Building DEB package..."
 	fpm $(FPM_DEB_OPTS) -p "$(PKG_DEB)" .
 	if [[ -f "$(PKG_DEB)" ]]; then \
-	  echo "✅ DEB package created at $(PKG_DEB)"; \
+	    echo "✅ DEB package created at $(PKG_DEB)"; \
 	else \
-	  echo "❌ DEB package creation failed."; exit 1; \
+	    echo "❌ DEB package creation failed."; exit 1; \
 	fi
 
 # ----------------------------------------------------------------------
@@ -133,9 +133,9 @@ rpm: prepare ## Build .rpm package
 	@echo "📦 Building RPM package..."
 	fpm $(FPM_RPM_OPTS) -p "$(PKG_RPM)" .
 	if [[ -f "$(PKG_RPM)" ]]; then \
-	  echo "✅ RPM package created at $(PKG_RPM)"; \
+	    echo "✅ RPM package created at $(PKG_RPM)"; \
 	else \
-	  echo "❌ RPM package creation failed."; exit 1; \
+	    echo "❌ RPM package creation failed."; exit 1; \
 	fi
 
 # ----------------------------------------------------------------------
@@ -150,9 +150,9 @@ clean: ## Remove staged binaries and temp files
 # ----------------------------------------------------------------------
 test: ## Check that .deb exists
 	if [[ -f "$(PKG_DEB)" ]]; then \
-	  echo "🧪 Test: .deb exists — OK ✅"; \
+	    echo "🧪 Test: .deb exists — OK ✅"; \
 	else \
-	  echo "🧪 Test: .deb missing — ❌"; exit 1; \
+	    echo "🧪 Test: .deb missing — ❌"; exit 1; \
 	fi
 
 # ----------------------------------------------------------------------

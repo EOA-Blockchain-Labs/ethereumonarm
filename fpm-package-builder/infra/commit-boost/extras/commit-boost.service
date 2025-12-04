@@ -4,8 +4,7 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-EnvironmentFile=/etc/ethereum/commit-boost.conf
-ExecStart=/usr/bin/commit-boost $ARGS
+ExecStart=/usr/bin/commit-boost /etc/ethereum/commit-boost.conf
 Restart=always
 RestartSec=5
 User=ethereum

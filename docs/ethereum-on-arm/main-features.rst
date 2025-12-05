@@ -4,22 +4,32 @@
 Main Features
 =============
 
-These are the main features of Ethereum on ARM images:
+The Ethereum on ARM images provide a "Plug & Play" experience, transforming simple ARM boards into fully functional Ethereum nodes. The core features include:
 
-* Based on Ubuntu 24.04 for ARM64.
-* Automatic configuration for essential settings like network, user accounts, etc.
-* Automatic NVMe disk partitioning and formatting capabilities, optimized for high-performance storage.
-* Manages and configures swap memory to help avoid memory-related problems.
-* Pre-configured support for a wide range of Ethereum clients and related technologies, including:
+**Optimized System Foundation**
 
-  * **Execution Layer Clients**: Geth, Erigon, Besu, Nethermind, Reth, EthRex
-  * **Consensus Layer Clients**: Lighthouse, Prysm, Nimbus, Teku, Lodestar, Grandine
-  * **L2 Solutions**: Optimism, Arbitrum, Starknet (Juno), Gnosis, Fuel
-  * **Staking & DVT**: Lido and Obol
+* **Base OS**: Built on **Ubuntu 24.04 LTS (Noble Numbat)** for ARM64, ensuring long-term stability and security.
+* **Kernel Enhancements**: Custom configuration optimized specifically for Ethereum node performance and stability, superior to default Armbian or stock OS settings.
+* **Storage Optimization**: Automatic NVMe disk partitioning and formatting, tuned for high-throughput I/O required by blockchain clients.
+* **Memory Management**: Smart swap memory configuration to prevent OOM (Out of Memory) kills and ensure smooth operation under load.
+* **Network & Security**:
+    * Automatic network configuration.
+    * pre-configured **UFW (Uncomplicated Firewall)** (disabled by default to allow custom user policies).
 
-* Includes an APT repository (``repo.ethereumonarm.com``) for installing and upgrading Ethereum software.
-* Includes the Ethereum Foundation's and EthStakers tool to assist in starting the staking process.
-* Includes pre-configured monitoring dashboards based on Grafana and Prometheus.
-* Includes UFW (Uncomplicated Firewall) configuration, which is available but not enabled by default, allowing users to customize their security settings.
-* Optimized operating system configurations over default Armbian settings, specifically for Ethereum node performance and stability.
+**Comprehensive Ethereum Stack**
+
+The images come pre-loaded with a wide array of clients and tools, installed as systemd services for reliability:
+
+* **Execution Clients**: Geth, Erigon, Besu, Nethermind, Reth, EthRex
+* **Consensus Clients**: Lighthouse, Prysm, Nimbus, Teku, Lodestar, Grandine
+* **Layer 2 Solutions**: Optimism, Arbitrum, Starknet (Juno), Gnosis, Fuel
+* **Staking Infrastructure**:
+    * **Obol Charon** & **Lido** for Distributed Validator Technology (DVT) and liquid staking.
+    * **Web3Signer** and other key management tools.
+
+**Integrated Tooling & Usability**
+
+* **Package Management**: Dedicated APT repository (``repo.ethereumonarm.com``) for easy installation, updates, and maintenance of all Ethereum software.
+* **Monitoring Stack**: Pre-configured **Grafana** and **Prometheus** dashboards to visualize node health, metrics, and performance instantly.
+* **Staking Wizard**: Integrated tools (Ethereum Foundation deposit CLI and EthStakers tools) to guide users through the validator deposit and key generation process.
 

@@ -85,6 +85,7 @@ information regarding the image and other Ethereum related software.
   /user-guide/running-web3-stack
   /user-guide/using-your-node
   /user-guide/mev-boost
+  /user-guide/commit-boost
   /user-guide/storage
   /user-guide/security
   /user-guide/troubleshooting

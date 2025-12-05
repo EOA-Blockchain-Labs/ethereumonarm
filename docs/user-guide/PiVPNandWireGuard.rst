@@ -310,6 +310,57 @@ Step 7: Verify the Connection
   - **Internet Test:** Open a web browser and navigate to a website (e.g., google.com) to confirm that internet traffic is not routed through the VPN.
 
 ---------------------------------------
+Step 8: Watchdog Script (Optional)
+---------------------------------------
+
+To ensure your WireGuard connection remains active, you can install a watchdog script that monitors the interface and restarts it if necessary.
+
+1. **Create the Watchdog Script:**
+
+   .. code-block:: bash
+
+      sudo tee /usr/local/bin/wg-watch.sh > /dev/null << 'EOF'
+      #!/bin/bash
+      INTERFACE="eoa"
+      LOG_FILE="/var/log/wg-watchdog.log"
+
+      # Function to restart VPN
+      restart_vpn() {
+          echo "$(date): $1. Restarting wg-quick@$INTERFACE..." >> "$LOG_FILE"
+          systemctl restart "wg-quick@$INTERFACE"
+      }
+
+      # Check if interface is missing entirely
+      if ! ip link show "$INTERFACE" > /dev/null 2>&1; then
+          restart_vpn "Interface $INTERFACE missing"
+          exit 0
+      fi
+
+      # Check if handshake is stale (>180 seconds)
+      LATEST=$(wg show "$INTERFACE" latest-handshakes | awk '{print $2}' | sort -nr | head -n 1)
+      CURRENT=$(date +%s)
+      DIFF=$((CURRENT - ${LATEST:-0}))
+
+      if [ "$DIFF" -gt 180 ]; then
+          restart_vpn "Handshake stale (${DIFF}s)"
+      fi
+      EOF
+
+2. **Make it Executable:**
+
+   .. code-block:: bash
+
+      sudo chmod +x /usr/local/bin/wg-watch.sh
+
+3. **Schedule in Crontab:**
+
+   Since the script needs to restart system services, it should run as root.
+
+   .. code-block:: bash
+
+      (sudo crontab -l 2>/dev/null | grep -v "wg-watch.sh"; echo "*/5 * * * * /usr/local/bin/wg-watch.sh") | sudo crontab -
+
+---------------------------------------
 Troubleshooting
 ---------------------------------------
 

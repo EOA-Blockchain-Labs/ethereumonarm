@@ -336,12 +336,12 @@ To ensure your WireGuard connection remains active, you can install a watchdog s
           exit 0
       fi
 
-      # Check if handshake is stale (>180 seconds)
+      # Check if handshake is stale (>300 seconds)
       LATEST=$(wg show "$INTERFACE" latest-handshakes | awk '{print $2}' | sort -nr | head -n 1)
       CURRENT=$(date +%s)
       DIFF=$((CURRENT - ${LATEST:-0}))
 
-      if [ "$DIFF" -gt 180 ]; then
+      if [ "$DIFF" -gt 300 ]; then
           restart_vpn "Handshake stale (${DIFF}s)"
       fi
       EOF

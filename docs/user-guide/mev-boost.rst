@@ -118,3 +118,41 @@ Edit the Validator config file:
   sudo vim /etc/ethereum/nimbus-validator.conf
 
 Add the flag ``--payload-builder=true`` at the end of the file.
+
+Lodestar
+~~~~~~~~
+
+Edit the Beacon config file:
+
+.. prompt:: bash $
+
+  sudo vim /etc/ethereum/lodestar-beacon.conf
+
+Add the flags ``--builder --builder.url http://localhost:18550`` at the end of the file.
+
+Edit the Validator config file:
+
+.. prompt:: bash $
+
+  sudo vim /etc/ethereum/lodestar-validator.conf
+
+Add the flag ``--builder`` at the end of the file.
+
+Grandine
+~~~~~~~~
+
+Edit the Beacon config file:
+
+.. prompt:: bash $
+
+  sudo vim /etc/ethereum/grandine-beacon.conf
+
+Add the flag ``--builder-url http://localhost:18550`` at the end of the file.
+
+Edit the Validator config file:
+
+.. prompt:: bash $
+
+  sudo vim /etc/ethereum/grandine-validator.conf
+
+Add the flag ``--builder-api-url http://localhost:18550`` at the end of the file.

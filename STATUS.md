@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-12-04 03:54:20 UTC_
+_Last updated: 2025-12-05 03:53:19 UTC_
 
  **What this report compares**
 
@@ -17,9 +17,9 @@ _Last updated: 2025-12-04 03:54:20 UTC_
 
 ## Summary
 
-- Total packages checked: **30**
-- ✅ Up-to-date: **29** (96.7%)
-- ❌ Outdated: **1** (3.3%)
+- Total packages checked: **31**
+- ✅ Up-to-date: **30** (96.8%)
+- ❌ Outdated: **1** (3.2%)
 - ❓ N/A: **0** (0.0%)
 
 
@@ -27,6 +27,7 @@ _Last updated: 2025-12-04 03:54:20 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
+| `commit-boost` | `0.9.2` ([Commit-Boost/commit-boost-client](https://github.com/Commit-Boost/commit-boost-client)) | `0.9.2` | ✅ Up-to-date |
 | `dvt-obol` | `1.7.1` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.7.1` | ✅ Up-to-date |
 | `dvt-ssv` | `2.3.8` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.3.8` | ✅ Up-to-date |
 | `ethereum-metrics-exporter` | `0.28.3` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.28.3` | ✅ Up-to-date |
@@ -71,7 +72,7 @@ _Last updated: 2025-12-04 03:54:20 UTC_
 | `arbitrum-nitro` | `3.9.3` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.9.3` | ✅ Up-to-date |
 | `fuel-network` | `0.47.1` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.47.1` | ✅ Up-to-date |
 | `optimism-op-geth` | `1.101603.5` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101603.5` | ✅ Up-to-date |
-| `optimism-op-node` | `1.16.2` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.16.2` | ✅ Up-to-date |
+| `optimism-op-node` | `1.16.3` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.16.3` | ✅ Up-to-date |
 | `optimism-op-reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
 | `starknet-juno` | `0.15.14` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.14` | ✅ Up-to-date |
 | `starknet-madara` | `0.9.0` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.9.0` | ✅ Up-to-date |

@@ -1,0 +1,131 @@
+# log-file is the location for Vouch log output.  If this is not provided logs will be written to the console.
+# log-file: /var/log/vouch.log
+# log-level is the global log level for Vouch logging.
+# Overrides can be set at any sub-level, giving fine-grained control over the specific
+# information logged.
+log-level: 'info'
+
+logging:
+  timestamp:
+    # format defines the format of the timestamp in the log.  This can be any valid Go timestamp formatting string,
+    # or the special values '', 'UNIXMS', 'UNIXMICRO' or 'UNIXNANO' for Unix timestamps of varying precision.
+    format: '2006-01-02T15:04:05.999Z07:00'
+
+# beacon-node-address is the address of the beacon node.  Can be lighthouse, nimbus, prysm or teku.
+# Overridden by beacon-node-addresses if present.
+beacon-node-address: 'localhost:4000'
+
+# beacon-node-addresses is the list of address of the beacon nodes.  Can be lighthouse, nimbus, prysm or teku.
+# If multiple addresses are supplied here it makes Vouch resilient in the situation where a beacon
+# node goes offline entirely.  If this occurs to the currently used node then the next in the list will
+# be used.  If a beacon node comes back online it is added to the end of the list of potential nodes to
+# use.
+beacon-node-addresses: [
+  'localhost:5052', # Lighthouse
+  # 'localhost:5051', # Teku
+  # 'localhost:3500', # Prysm
+  # 'localhost:5050', # Nimbus
+  # 'localhost:5053', # Lodestar
+  # 'localhost:5054', # Grandine
+]
+
+# timeout is the timeout for all validating operations, for example fetching attestation data from beacon nodes.
+timeout: '2s'
+
+# reduced-memory-usage can be set on memory-constrained systems to reduce memory usage, at the cost of increased processing time.
+reduced-memory-usage: false
+
+eth2client:
+  # timeout is the timeout for all operations against beacon nodes that are not related to a specific validating
+  # operation, for example fetching the current list of active validators.  These operations are not time-sensitive,
+  # and can contain large amounts of information, hence the longer timeout.
+  timeout: '2m'
+  #
+  # allow-delayed-start allows Vouch to start if some of the consensus nodes are unavailable.
+  # Note that this can result in Vouch being active without being able to validate, however, if strategies use
+  # a subset of beacon nodes that are all unavailable.
+  allow-delayed-start: true
+
+# metrics is the module that logs metrics, in this case using prometheus.
+metrics:
+  prometheus:
+    # log-level is the log level for this module, over-riding the global level.
+    log-level: 'warn'
+    # listen-address is the address on which prometheus listens for metrics requests.
+    listen-address: '0.0.0.0:8081'
+
+# graffiti provides graffiti data.
+graffiti:
+  static:
+    value: 'Ethereum on ARM'
+
+# controller controls when validating actions take place.
+controller:
+  fast-track:
+    # If attestations is true then Vouch will attest as soon as it receives notification that the head block has been updated
+    # for the duties' slot.  Otherwise it will wait until 4 seconds into the slot before attesting.
+    attestations: true
+    # If sync-committees is true then Vouch will generate sync committee messages as soon as it receives notification that
+    # the head block has been updated for the duties' slot.  Otherwise it will wait until 4 seconds into the slot before
+    # generating sync committee messages.
+    sync-committees: true
+    # grace is the delay between receiving the notification of the head block and starting the fast track process.  This allows
+    # the rest of the network to settle if we saw the head block early.
+    grace: '500ms'
+  # This flag enables verification of sync committee messages included in SyncAggregate. Exposes information via metrics and logs,
+  # defaults to false as this requires some extra processing to calculate the required metrics.
+  verify-sync-committee-inclusion: false
+
+# attester provides control of the attester process.
+attester:
+  # grace is the amount of time to wait between starting the attestation process and fetching attestation data.  This can be
+  # useful when using multiple beacon nodes to give them a chance to be up-to-date with block processing prior to fetching data.
+  grace: '0s'
+
+# strategies provide advanced strategies for dealing with multiple beacon nodes
+strategies:
+  # The attestationdata strategy obtains attestation data from multiple sources.
+  attestationdata:
+    # style can be 'best', which obtains attestation data from all nodes and selects the best, 'first', which uses the first returned,
+    # or 'majority', which obtains attestation data from all nodes and selects the most common.
+    style: 'best'
+  # The aggregateattestation strategy obtains aggregate attestations from multiple sources.
+  aggregateattestation:
+    # style can be 'best', which obtains aggregates from all nodes and selects the best, or 'first', which uses the first returned
+    style: 'best'
+  # The beaconblockproposal strategy obtains beacon block proposals from multiple beacon nodes.
+  beaconblockproposal:
+    # style can be 'best', which obtains blocks from all nodes and selects the best, or 'first', which uses the first returned
+    style: 'best'
+    # timeout defines the maximum amount of time the strategy will wait for a response.
+    timeout: '2s'
+  # The beaconblockheader strategy obtains the beacon block headers from multiple beacon nodes.
+  beaconblockheader:
+    # style can be 'first'. If not defined or set to another value Vouch will default to using the multiclient.
+    style: 'first'
+    first:
+      # timeout defines the maximum amount of time the strategy will wait for a response.
+      timeout: '2s'
+  # The beaconblockroot strategy obtains the beacon block root from multiple beacon nodes.
+  beaconblockroot:
+    # style can be 'first', which uses the first returned, 'latest', which uses the latest returned, or 'majority', which uses
+    # the one returned by most nodes (taking the latest in case of a tie).
+    style: 'latest'
+    # timeout defines the maximum amount of time the strategy will wait for a response.
+    timeout: '2s'
+  # The signedbeaconblock strategy obtains the signed beacon blocks from multiple beacon nodes.
+  signedbeaconblock:
+    # style can be 'first'. If not defined or set to another value Vouch will default to using the multiclient.
+    style: 'first'
+    first:
+      # timeout defines the maximum amount of time the strategy will wait for a response.
+      timeout: '2s'
+  # The synccommitteecontribution strategy obtains sync committee contributions from multiple sources.
+  synccommitteecontribution:
+    # style can be 'best', which obtains contributions from all nodes and selects the best, or 'first', which uses the first returned
+    style: 'best'
+
+# builderclient provides timeout configuration for builder/relay communication.
+builderclient:
+  # Global timeout for all builderclient operations. Falls back to the global 'timeout' value (2s) if not set.
+  timeout: '2s'

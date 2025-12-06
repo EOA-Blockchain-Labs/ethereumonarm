@@ -1,0 +1,16 @@
+[Unit]
+Description=Vouch Validator Client
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/bin/vouch --base-dir /etc/ethereum
+Restart=on-failure
+RestartSec=5
+User=ethereum
+SyslogIdentifier=vouch
+LimitNOFILE=65536
+LimitNPROC=65536
+
+[Install]
+WantedBy=multi-user.target

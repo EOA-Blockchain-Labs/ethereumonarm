@@ -74,6 +74,7 @@ Ethereum on ARM supports the main Consensus Layer clients available.
    `Teku`, `Yes`, `Java`, consensys.net_
    `Lodestar`, `Yes`, `Typescript`, lodestar.chainsafe.io_
    `Grandine`, `Yes`, `Rust`, grandine.io_
+   `Vouch`, `Yes`, `Go`, vouch.io_
 
 .. _lighthouse-book.sigmaprime.io: https://lighthouse-book.sigmaprime.io
 .. _docs.prylabs.network: https://docs.prylabs.network/docs/getting-started/
@@ -81,6 +82,7 @@ Ethereum on ARM supports the main Consensus Layer clients available.
 .. _consensys.net: https://consensys.net/knowledge-base/ethereum-2/teku/
 .. _lodestar.chainsafe.io: https://lodestar.chainsafe.io/
 .. _grandine.io: https://grandine.io/
+.. _vouch.io: https://vouch.io/
 
 
 Lighthouse
@@ -198,7 +200,7 @@ receiving tips and set the fee recipient flag:
 
 .. prompt:: bash $
 
-  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/nimbus-validator.conf
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS/' /etc/ethereum/nimbus-validator.conf
 
 3. Enable Checkpoint Sync. 
 
@@ -624,7 +626,7 @@ Then, type your previously defined password and copy and paste your Ethereum Add
 
 .. prompt:: bash $
 
-  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/lighthouse-validator.conf
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS/' /etc/ethereum/lighthouse-validator.conf
 
 .. prompt:: bash $
 
@@ -653,7 +655,7 @@ Now, copy and paste your Ethereum Address for receiving tips and set the fee rec
 
 .. prompt:: bash $
 
-  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/prysm-validator.conf
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS/' /etc/ethereum/prysm-validator.conf
 
 Lastly, set up your password and start the client:
 
@@ -684,7 +686,7 @@ Now, copy and paste your Ethereum Address for receiving tips and set the set the
 
 .. prompt:: bash $
 
-  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/nimbus-validator.conf
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS/' /etc/ethereum/nimbus-validator.conf
 
 Start the Nimbus Validator:
 
@@ -728,7 +730,7 @@ Copy and paste your Ethereum Address for receiving tips and set the set the fee 
 
 .. prompt:: bash $
 
-  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/teku-validator.conf
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS/' /etc/ethereum/teku-validator.conf
 
 Start the Teku Validator:
 
@@ -758,7 +760,7 @@ Now, copy and paste your Ethereum Address for receiving tips and set the set the
 
 .. prompt:: bash $
 
-  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/lodestar-validator.conf
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS/' /etc/ethereum/lodestar-validator.conf
 
 Start the Lodestar Validator service:
 
@@ -783,7 +785,7 @@ First, copy and paste your Ethereum Address for receiving tips and set the fee r
 
 .. prompt:: bash $
 
-  sudo sed -i 's/changeme/0xddd33DF1c333ad7CB5716B666cA26BC24569ee22/' /etc/ethereum/grandine-validator.conf
+  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS/' /etc/ethereum/grandine-validator.conf
 
 Lastly, set up your password and start the client:
 
@@ -793,6 +795,52 @@ Lastly, set up your password and start the client:
   sudo systemctl start grandine-validator
 
 The **Grandine validator** is now enabled. Wait for the **Beacon Chain** to sync and check the logs for further info.
+
+**VOUCH**
+
+:guilabel:`Vouch` is a multi-node validator client written in Go.
+
+.. csv-table::
+  :header: Systemd Services, Home Directory, Config Files, Default TCP/UDP Port
+
+  `vouch`, `/home/ethereum/.vouch`, `/etc/ethereum/vouch.yml`, `None`
+
+First, you need to edit the configuration file to add your Beacon Node(s) endpoint(s).
+
+.. prompt:: bash $
+
+  sudo nano /etc/ethereum/vouch.yml
+
+Add your beacon node endpoints in the `beacon-node-address` list.
+
+We need to import the validator keys. Run under the ethereum account:
+
+.. prompt:: bash $
+
+  /usr/local/bin/vouch account import --base-dir=/home/ethereum/.vouch --keys-dir=/home/ethereum/validator_keys
+
+Enter the password previously defined.
+
+Now, copy and paste your Ethereum Address for receiving tips and set the fee recipient flag.
+Edit the config file:
+
+.. prompt:: bash $
+
+  sudo nano /etc/ethereum/vouch.yml
+
+And set the `fee-recipient` field:
+
+.. code-block:: yaml
+
+  fee-recipient: "0xYOUR_ETH_ADDRESS"
+
+Start the Vouch service:
+
+.. prompt:: bash $
+
+  sudo systemctl start vouch
+
+The **Vouch validator** is now enabled. Check the logs for further info.
 
 Lido Liquid Staking
 ~~~~~~~~~~~~~~~~~~~

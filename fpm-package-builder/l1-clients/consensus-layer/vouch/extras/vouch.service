@@ -4,7 +4,7 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-ExecStart=/usr/bin/vouch --base-dir /etc/ethereum
+ExecStart=/usr/bin/vouch --base-dir /etc/ethereum/vouch
 Restart=on-failure
 RestartSec=5
 User=ethereum

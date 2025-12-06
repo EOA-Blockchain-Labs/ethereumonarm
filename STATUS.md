@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-12-05 03:53:19 UTC_
+_Last updated: 2025-12-06 03:44:42 UTC_
 
  **What this report compares**
 
@@ -28,7 +28,7 @@ _Last updated: 2025-12-05 03:53:19 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `commit-boost` | `0.9.2` ([Commit-Boost/commit-boost-client](https://github.com/Commit-Boost/commit-boost-client)) | `0.9.2` | ✅ Up-to-date |
-| `dvt-obol` | `1.7.1` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.7.1` | ✅ Up-to-date |
+| `dvt-obol` | `1.7.2` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.7.2` | ✅ Up-to-date |
 | `dvt-ssv` | `2.3.8` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.3.8` | ✅ Up-to-date |
 | `ethereum-metrics-exporter` | `0.28.3` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.28.3` | ✅ Up-to-date |
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |

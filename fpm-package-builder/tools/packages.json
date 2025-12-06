@@ -5,7 +5,8 @@
         "ChainSafe/lodestar": "lodestar",
         "status-im/nimbus-eth2": "nimbus",
         "prysmaticlabs/prysm": "prysm",
-        "ConsenSys/teku": "teku"
+        "ConsenSys/teku": "teku",
+        "attestantio/vouch": "vouch"
     },
     "Layer 1 Execution": {
         "hyperledger/besu": "besu",

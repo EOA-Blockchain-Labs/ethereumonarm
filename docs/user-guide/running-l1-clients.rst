@@ -260,7 +260,7 @@ You need to open the 9000 (TCP/UDP) ports in your router/firewall
 
 .. warning::
 
-  Curently, :guilabel:`Grandine` runs in one instance, so if you want to stake you will need to 
+  Currently, :guilabel:`Grandine` runs in one instance, so if you want to stake you will need to 
   configure the **Validator** file config and run the **grandine-validator** service that will start both 
   Beacon and Validator processes,. 
 
@@ -474,12 +474,12 @@ Staking
 
 .. warning::
 
-  **DISCLAIMER**: Ethereum is an experimental technology. **Running the Ethereum on ARM image as 
-  an a Consensus Layer validator node can lead you to ETH loss**. This is a risky operation and you 
-  alone are responsible for your actions using the Ethereum software included in this image 
+  **DISCLAIMER**: Ethereum is an experimental technology. **Running the Ethereum on ARM image as
+  a Consensus Layer validator node can lead you to ETH loss**. This is a risky operation and you
+  alone are responsible for your actions using the Ethereum software included in this image
   or following the instructions of this guide.
 
-  We strongly recommend to try first a Consensus Layer testnet and get 
+  We strongly recommend to try first a Consensus Layer testnet and get
   familiarized with the process before staking real ETH.
 
   **REMEMBER: Staking is NOT necessary for running a full Ethereum node**. For this, you just need a 
@@ -499,7 +499,7 @@ The validator client is included in all Consensus Layer clients along with the B
 .. warning::
 
   There is a chance of losing your ETH if your validator does something wrong (this is 
-  called being slashed), so be extremely carefull and always follow the protocol 
+  called being slashed), so be extremely careful and always follow the protocol 
   specification.
 
   And **never (EVER)** run the same validator keys in two different nodes at the same time. 
@@ -570,14 +570,14 @@ set the withdrawal address (where the staked ETH will be deposited periodically)
     cd && deposit new-mnemonic --num_validators 1 --execution_address YOUR_ETH_ADDRESS --chain mainnet
 
 7. You will see a warning about the withdrawal address. Please, **make sure you have control over the 
-address you are setting. Otherwise you won't be able to withdrawn your ETH and the staked ETH.**
+address you are setting. Otherwise you won't be able to withdraw your ETH and the staked ETH.**
 
 Choose your mnemonic language and type a password for keeping your keys safe.
 
 .. warning::
 
-  Now, **Make sure you wrote down the nnemonic on a safe place**. Without it you will NOT be
-  able to withdrawn your ETH in the future.
+  Now, **Make sure you wrote down the mnemonic in a safe place**. Without it you will NOT be
+  able to withdraw your ETH in the future.
 
   **Again, please, make sure your mnemonic is safe!!!**
 
@@ -598,7 +598,7 @@ my mnemonic phrase"** and click **"Continue"**.
   Again, **make sure you have both an Execution Layer client + a Consensus Layer client synced, 
   running along and properly configured**.
 
-10. It is time to send the 32 ETH deposit to the Ethereum mainnet contractg. You need the 
+10. It is time to send the 32 ETH deposit to the Ethereum mainnet contract. You need the 
 deposit file (located in your Board). You can, either copy and paste the 
 file content and save it as a new JSON file in your desktop computer or copy the file 
 from the Raspberry to your desktop through SSH.
@@ -643,7 +643,7 @@ Congrats!, you just started your validator activation process.
 Running Validator Client
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Once the Beacon Change is syncronized and we have our keys and deposit created, we need to start the Validator Client. These 
+Once the Beacon Chain is synchronized and we have our keys and deposit created, we need to start the Validator Client. These 
 are the instructions for each client, pick the one that are already running the Beacon Chain.
 
 **LIGHTHOUSE**
@@ -929,7 +929,7 @@ Prerrequisites
 - Ethereum on ARM :guilabel:`ls-lido` package
 
 .. note::
-  These are instructions for mainnet but **you can test the Lido setup on hoodie testnet** by starting the corresponding 
+  These are instructions for mainnet but **you can test the Lido setup on hoodi testnet** by starting the corresponding 
   services and accessing the CSM testnet portal. Refer to the bottom of this page for more details.
 
   **We strongly recommend first running the CSM Lido setup on the hoodi testnet.** 
@@ -994,7 +994,7 @@ Download the appropiate binary for your desktop and follow the instructions.
 
 2. Use the command line deposit tool. 2 options here:
 
-- You can do it directly in your node and run deposit tool command (it is already installed), as ``ethereum``user, run:
+- You can do it directly in your node and run deposit tool command (it is already installed), as ``ethereum`` user, run:
 
 .. prompt:: bash $
 
@@ -1106,7 +1106,7 @@ address** in both cases to: ``0x4473dCDDbf77679A643BdB654dbd86D67F8d32f2``
 
 .. warning::
 
-  **Again, be carefull, Lido withdrawal address for Hoodi is 0x4473dCDDbf77679A643BdB654dbd86D67F8d32f2**
+  **Again, be careful, Lido withdrawal address for Hoodi is 0x4473dCDDbf77679A643BdB654dbd86D67F8d32f2**
 
 4. Key import and validator start.
 

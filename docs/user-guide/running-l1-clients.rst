@@ -307,6 +307,35 @@ Ethereum on ARM supports all available Execution Layer clients.
 .. _ethrex.io: https://ethrex.xyz/
 .. _paradigmxyz.github.io: https://paradigmxyz.github.io/reth/
 
+Syncing Strategies and Times
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+One of the most frequently asked questions is: **"How long does it take to sync?"**. The answer depends heavily on the client you choose, specifically because different clients use different syncing technologies.
+
+.. csv-table:: Execution Layer (L1) Clients — Sync Types & Times (approx. on Rock 5B / RPi5)
+   :header: Client, Sync Type, Approx. Sync Time, Archive Node?
+   :widths: 18, 20, 20, 15
+
+   `Geth`, `Snap Sync`, `12–18 Hours`, `No (Full Pruned)`
+   `Nethermind`, `Snap Sync`, `12–18 Hours`, `No (Full Pruned)`
+   `Hyperledger Besu`, `Fast / Snap Sync`, `18–24 Hours`, `No (Full Pruned)`
+   `Reth`, `Execution / Pipeline`, `3–5 Days`, `No (Full Pruned)`
+   `Erigon`, `Execution / Staged`, `4–6 Days`, `No (Full Pruned)`
+   `EthRex`, `Execution / Modular`, `12–18 Hours`, `No (Full Pruned)`
+
+.. note::
+   The comparison above assumes all clients are configured as **Full Nodes** (pruned state).
+
+**Why are Reth and Erigon "slower" to sync?**
+
+It comes down to **Snap Sync** vs **Execution Sync**:
+
+*   **Snap Sync (Geth, Nethermind, Besu)**: The client downloads the latest "snapshot" of the blockchain state directly from peers. It trusts the Proof-of-Stake consensus to verify the chain head and then just fills in the data. This avoids re-calculating the entire history of the chain, making it significantly faster and less CPU intensive initially.
+
+*   **Execution Sync (Reth, Erigon)**: These clients download the raw block data and **re-execute** every single transaction from the Genesis block (or a check point) to the current head. This requires massive CPU computation and I/O operations because your little ARM board is effectively re-playing the entire history of Ethereum.
+
+**The Benefit**: While slower to sync, **Reth/Erigon** result in a highly optimized database structure that is often faster for RPC queries and, importantly, they run as **Archive Nodes** by default (keeping all historical data) with very efficient disk usage compared to a Geth Archive node.
+
 
 .. warning::
 

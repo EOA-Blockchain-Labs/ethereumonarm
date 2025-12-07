@@ -297,6 +297,7 @@ Ethereum on ARM supports all available Execution Layer clients.
    `Erigon`, `Yes`, `Go`, `github.com/ledgerwatch/erigon`_
    `Hyperledger Besu`, `Yes`, `Java`, hyperledger.org_
    `EthRex`, `Yes`, `Rust`, ethrex.xyz_
+   `Reth`, `Yes`, `Rust`, paradigmxyz.github.io_
 
 
 .. _geth.ethereum.org: https://geth.ethereum.org
@@ -304,6 +305,7 @@ Ethereum on ARM supports all available Execution Layer clients.
 .. _github.com/ledgerwatch/erigon: https://github.com/ledgerwatch/erigon
 .. _hyperledger.org: https://hyperledger.org/use/besu
 .. _ethrex.io: https://ethrex.xyz/
+.. _paradigmxyz.github.io: https://paradigmxyz.github.io/reth/
 
 
 .. warning::
@@ -384,6 +386,42 @@ In order to start the client run:
 
 .. note::
    :guilabel:`EthRex` is new in Ethereum on ARM ecosystem, and still under testing 
+
+Reth
+~~~~
+
+:guilabel:`Reth` (Rust Ethereum) is an Ethereum execution client implementation that focuses on friendliness, modularity, and speed.
+
+.. csv-table::
+  :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
+
+  `reth`, `/home/ethereum/.reth`, `/etc/ethereum/reth.conf`, `30303`
+
+In order to start the client run:
+
+.. prompt:: bash $
+
+  sudo systemctl start reth
+
+**Full vs Archive Node**
+
+By default, :guilabel:`Reth` runs as an **Archive Node**, storing all historical states. This requires significantly more disk space.
+
+If you wish to run a **Full Node** (pruned state) to save disk space, you must enable the full node mode.
+
+To do this, edit the configuration file for your network (e.g., ``/etc/ethereum/reth.conf`` for Mainnet) and add the ``--full`` flag to the ``ARGS`` variable.
+
+Example:
+
+.. code-block:: bash
+
+   ARGS="node ... --full"
+
+After saving the file, restart the service:
+
+.. prompt:: bash $
+
+  sudo systemctl restart reth
 
 Erigon
 ~~~~~~

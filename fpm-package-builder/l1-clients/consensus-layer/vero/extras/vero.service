@@ -1,0 +1,17 @@
+[Unit]
+Description=Vero Validator Client
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/vero.conf
+ExecStart=/opt/vero/bin/vero $VERO_OPTS
+Restart=on-failure
+RestartSec=10
+User=ethereum
+Type=simple
+# Increase open file limit for many validators
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-12-06 03:44:42 UTC_
+_Last updated: 2025-12-07 03:59:06 UTC_
 
  **What this report compares**
 
@@ -17,9 +17,9 @@ _Last updated: 2025-12-06 03:44:42 UTC_
 
 ## Summary
 
-- Total packages checked: **31**
-- ✅ Up-to-date: **30** (96.8%)
-- ❌ Outdated: **1** (3.2%)
+- Total packages checked: **32**
+- ✅ Up-to-date: **30** (93.8%)
+- ❌ Outdated: **2** (6.2%)
 - ❓ N/A: **0** (0.0%)
 
 
@@ -48,6 +48,7 @@ _Last updated: 2025-12-06 03:44:42 UTC_
 | `nimbus` | `25.11.1` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.11.1` | ✅ Up-to-date |
 | `prysm` | `7.0.0` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.0.0` | ✅ Up-to-date |
 | `teku` | `25.11.1` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.11.1` | ✅ Up-to-date |
+| `vouch` | `1.12.0` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.12.0` | ✅ Up-to-date |
 
 
 
@@ -56,7 +57,7 @@ _Last updated: 2025-12-06 03:44:42 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `besu` | `25.11.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `25.11.0` | ✅ Up-to-date |
-| `erigon` | `3.3.0` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.3.0` | ✅ Up-to-date |
+| `erigon` | `3.3.1` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.3.0` | ❌ Outdated |
 | `ethrex` | `7.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `7.0.0` | ✅ Up-to-date |
 | `geth` | `1.16.7` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.7` | ✅ Up-to-date |
 | `nethermind` | `1.35.3` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.35.3` | ✅ Up-to-date |

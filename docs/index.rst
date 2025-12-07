@@ -80,6 +80,7 @@ information regarding the image and other Ethereum related software.
   /user-guide/managing-clients
   /user-guide/node-types
   /user-guide/running-l1-clients
+  /user-guide/running-testnets
   /user-guide/running-l2-clients
   /user-guide/running-a-supernode
   /user-guide/running-web3-stack

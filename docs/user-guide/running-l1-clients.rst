@@ -321,7 +321,7 @@ One of the most frequently asked questions is: **"How long does it take to sync?
    `Hyperledger Besu`, `Fast / Snap Sync`, `18–24 Hours`, `No (Full Pruned)`
    `Reth`, `Execution / Pipeline`, `3–5 Days`, `No (Full Pruned)`
    `Erigon`, `Execution / Staged`, `4–6 Days`, `No (Full Pruned)`
-   `EthRex`, `Execution / Modular`, `12–18 Hours`, `No (Full Pruned)`
+   `EthRex`, `Snap Sync`, `12–18 Hours`, `No (Full Pruned)`
 
 .. note::
    The comparison above assumes all clients are configured as **Full Nodes** (pruned state).

@@ -71,7 +71,7 @@ For Nvme Hat, case and cooling, we recommend the following (you can find them in
 
 Make sure you get the 16 GB RAM version.
 
-You will need a **MicroSD** and an **NVMe disk** as well. A case with heathsink and 
+You will need a **MicroSD** and an **NVMe disk** as well. A case with heatsink and 
 the official Raspberry Pi 5 power supply is recommended.
 
 .. warning::
@@ -168,7 +168,7 @@ Once you have the Image download and decompressed you need to flash it
 Flashing the image
 ------------------
 
-Insert the microSD in your Desktop / Laptop and flash the image.
+Insert the MicroSD in your Desktop / Laptop and flash the image.
 
 .. note::
   If you are not comfortable with command line or if you are 
@@ -188,7 +188,7 @@ You should see a device named ``mmcblk0`` or ``sd(x)``.
   The ``dd`` command will completely erase your MicroSD device so make sure you are targeting 
   the correct one.
 
-Unzip and flash the image (we are using here the NanoPc T6 image):
+Unzip and flash the image (we are using here the NanoPC T6 image):
 
 .. prompt:: bash $
 

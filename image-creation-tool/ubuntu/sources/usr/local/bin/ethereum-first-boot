@@ -1,17 +1,11 @@
 #!/bin/bash
 # This script is designed to automatically set up an Ethereum node on a small computer.
-# It is intended to run only once, the very first time the computer starts up after its initial imaging or setup.
+# It is intended to run only once, controlled by ethereum-first-boot.service.
 
-# This file acts as a marker. Its presence tells the script that the setup has already been completed.
-# The script will create this file at the end of a successful setup.
+# This file acts as a marker. Its presence tells the system that the setup has already been completed.
+# The service ConditionPathExists=!/root/first-run.flag prevents re-execution.
 FLAG="/root/first-run.flag"
 
-# Check if the marker file already exists.
-# If it does, it means the setup process was completed previously, so the script will stop to avoid re-running.
-if [ -f "$FLAG" ]; then
-    echo "The setup script has already run successfully. No further action will be taken. Stopping."
-    exit 0 # Exit successfully, as this is expected behavior.
-fi
 
 # Define how long the script should wait for an internet connection to be established (in seconds).
 WAIT_TIME=20

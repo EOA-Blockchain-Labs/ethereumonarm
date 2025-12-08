@@ -19,16 +19,16 @@ ETHONARM_IMAGE = ethonarm_$(1)_$(DATE).$(RELEASE).img
 DEVICES = rpi5 rock5b orangepi5-plus nanopct6
 
 # NOTE: Armbian uses the rpi4b image for Raspberry Pi 4 & 5
-rpi5_url := https://es.sbcmirror.org/dl/rpi4b/archive/Armbian_25.8.1_Rpi4b_noble_current_6.12.41_minimal.img.xz
-rpi5_iso := Armbian_25.8.1_Rpi4b_noble_current_6.12.41_minimal.img
+rpi5_url := https://es.sbcmirror.org/dl/rpi4b/archive/Armbian_25.11.1_Rpi4b_noble_current_6.12.58_minimal.img.xz
+rpi5_iso := Armbian_25.11.1_Rpi4b_noble_current_6.12.58_minimal.img
 rpi5_offset := 272629760 # Partition start offset in bytes
 
-rock5b_url := https://es.sbcmirror.org/dl/rock-5b/archive/Armbian_25.8.2_Rock-5b_noble_vendor_6.1.115_minimal.img.xz
-rock5b_iso := Armbian_25.8.2_Rock-5b_noble_vendor_6.1.115_minimal.img
+rock5b_url := https://es.sbcmirror.org/dl/rock-5b/archive/Armbian_25.11.1_Rock-5b_noble_vendor_6.1.115_minimal.img.xz
+rock5b_iso := Armbian_25.11.1_Rock-5b_noble_vendor_6.1.115_minimal.img
 rock5b_offset := 16777216
 
-orangepi5-plus_url := https://es.sbcmirror.org/dl/orangepi5-plus/archive/Armbian_25.8.1_Orangepi5-plus_noble_vendor_6.1.115_minimal.img.xz 
-orangepi5-plus_iso := Armbian_25.8.1_Orangepi5-plus_noble_vendor_6.1.115_minimal.img
+orangepi5-plus_url := https://es.sbcmirror.org/dl/orangepi5-plus/archive/Armbian_25.11.1_Orangepi5-plus_noble_vendor_6.1.115_minimal.img.xz 
+orangepi5-plus_iso := Armbian_25.11.1_Orangepi5-plus_noble_vendor_6.1.115_minimal.img
 orangepi5-plus_offset := 16777216
 
 nanopct6_url := https://es.sbcmirror.org/dl/nanopct6-lts/archive/Armbian_25.8.1_Nanopct6-lts_noble_vendor_6.1.115_minimal.img.xz
@@ -67,7 +67,10 @@ define modify_image
 	@mount_dir=$$(mktemp -d); \
 	trap 'echo "--> Caught signal, cleaning up..."; sudo umount $$mount_dir 2>/dev/null; rm -rf $$mount_dir;' INT TERM EXIT; \
 	sudo mount -o loop,offset=$(2) $(notdir $1) $$mount_dir || { echo "Mount failed"; exit 1; }; \
-	sudo cp -a sources/etc/rc.local $$mount_dir/etc/rc.local; \
+	sudo cp -a sources/usr/local/bin/ethereum-first-boot $$mount_dir/usr/local/bin/ethereum-first-boot; \
+	sudo chmod +x $$mount_dir/usr/local/bin/ethereum-first-boot; \
+	sudo cp -a sources/etc/systemd/system/ethereum-first-boot.service $$mount_dir/etc/systemd/system/; \
+	sudo ln -sf /etc/systemd/system/ethereum-first-boot.service $$mount_dir/etc/systemd/system/multi-user.target.wants/ethereum-first-boot.service; \
 	sudo cp -a sources/usr/local/sbin/check_install $$mount_dir/usr/local/sbin/; \
 	sudo rm -f $$mount_dir/etc/systemd/system/getty@.service.d/override.conf || true; \
 	sudo rm -f $$mount_dir/etc/systemd/system/serial-getty@.service.d/override.conf || true; \

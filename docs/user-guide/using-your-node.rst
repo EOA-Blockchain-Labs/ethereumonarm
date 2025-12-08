@@ -51,7 +51,8 @@ Reload Nginx to apply changes:
 Firewall integration
 --------------------
 
-UFW profiles make enabling HTTPS and node networking simple.
+UFW profiles make enabling HTTPS and node networking simple. These profiles are pre-installed
+on all Ethereum on ARM images (via the ``ethereumonarm-monitoring-extras`` package).
 
 Typical configuration:
 

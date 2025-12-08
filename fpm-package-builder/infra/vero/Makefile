@@ -25,7 +25,7 @@ PKG_MAINTAINER  ?= Ethereum on ARM <info@ethereumonarm.com>
 CATEGORY        ?= science
 WEB_URL         ?= https://github.com/serenita-org/vero
 SOURCESDIR      ?= sources
-OUTPUTDIR       ?= ../../../packages
+OUTPUTDIR       ?= ../../packages
 
 # ----------------------------------------------------------------------
 # Upstream version and source info

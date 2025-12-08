@@ -5,8 +5,7 @@
         "ChainSafe/lodestar": "lodestar",
         "status-im/nimbus-eth2": "nimbus",
         "prysmaticlabs/prysm": "prysm",
-        "ConsenSys/teku": "teku",
-        "attestantio/vouch": "vouch"
+        "ConsenSys/teku": "teku"
     },
     "Layer 1 Execution": {
         "hyperledger/besu": "besu",
@@ -35,7 +34,9 @@
         "ethpandaops/ethereum-validator-metrics-exporter": "ethereum-validator-metrics-exporter",
         "eth-educators/ethstaker-deposit-cli": "ethstaker-deposit-cli",
         "flashbots/mev-boost": "mev-boost",
-        "ethereum/staking-deposit-cli": "staking-deposit-cli"
+        "ethereum/staking-deposit-cli": "staking-deposit-cli",
+        "attestantio/vouch": "vouch",
+        "serenita-org/vero": "vero"
     },
     "Web3": {
         "ethersphere/bee": "bee",

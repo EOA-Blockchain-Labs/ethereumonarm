@@ -25,7 +25,7 @@ PKG_MAINTAINER  ?= Diego Losada <dlosada@ethereumonarm.com>
 CATEGORY        ?= science
 WEB_URL         ?= https://github.com/attestantio/vouch
 SOURCESDIR      ?= sources
-OUTPUTDIR       ?= ../../../packages
+OUTPUTDIR       ?= ../../packages
 
 # ----------------------------------------------------------------------
 # Upstream version and source info

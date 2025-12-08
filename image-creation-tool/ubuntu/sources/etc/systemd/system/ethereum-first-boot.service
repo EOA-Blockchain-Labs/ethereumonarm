@@ -1,0 +1,16 @@
+[Unit]
+Description=Ethereum on ARM First Boot Setup
+Documentation=https://ethereumonarm.com
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=!/root/first-run.flag
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/ethereum-first-boot
+RemainAfterExit=yes
+TimeoutSec=infinity
+StandardOutput=journal+console
+
+[Install]
+WantedBy=multi-user.target

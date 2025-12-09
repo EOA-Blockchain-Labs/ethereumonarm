@@ -25,7 +25,7 @@ the Execution Layer where the chain head is. We will run :guilabel:`Lighthouse`.
 
 .. tip::
   All CL clients are configured to use **CheckPoint Sync** that will get the 
-  Beacon Chain in sync in just a few minutes. Take a look to our :doc:`User Guide </user-guide/consensus-clients.html#running-a-consensus-layer-client>`for 
+  Beacon Chain in sync in just a few minutes. Take a look to our :doc:`Layer 1 Guide <../operation/layer-1>` for 
   more info.
 
 For starting the :guilabel:`Lighthouse` CL Beacon Chain, follow these steps:

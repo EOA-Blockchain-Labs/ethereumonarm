@@ -21,6 +21,6 @@ Raspberry Pi 5
 --------------
 
 The optimal setup for the Raspberry Pi 5 involves using an NVMe hat. 
-For a detailed installation guide and recommended hardware, please see the :doc:`RaspberryPi5-storage`.
+For a detailed installation guide and recommended hardware, please see the :doc:`rpi5-storage`.
 
 

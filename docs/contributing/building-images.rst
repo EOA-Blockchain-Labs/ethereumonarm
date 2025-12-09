@@ -235,4 +235,4 @@ To remove all generated images and downloaded files, run:
 
    make clean
 
-For more information, the existing documentation includes a `Quick Start Guide </quick-guide/about-quick-start>`_ and a `User Guide </user-guide/about-user-guide>`_, which offer further details on Ethereum and client management.
+For more information, the existing documentation includes a `Getting Started Guide </getting-started/introduction>`_ and a `Operation Guide </operation/introduction>`_, which offer further details on Ethereum and client management.

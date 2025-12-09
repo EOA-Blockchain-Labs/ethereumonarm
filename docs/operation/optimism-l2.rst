@@ -1,5 +1,5 @@
-Running an Optimism Supernode on Rock 5B (32GB) or Orange Pi 5 Plus
-=======================================================================
+Running an Optimism Supernode
+=============================
 
 This comprehensive guide will walk you through setting up an Optimism "Supernode" on a Rock 5B (32GB model) or an Orange Pi 5 Plus (32GB model).  A Supernode is a powerful setup that simultaneously runs both a Layer 1 (L1) Ethereum node and a Layer 2 (L2) Optimism node on the same hardware. This allows you to fully participate in both the Ethereum mainnet and the Optimism network, contributing to network health and potentially accessing advanced features.
 
@@ -78,7 +78,7 @@ Choosing the right hardware is crucial for a stable and performant Supernode.  L
     *   **Check Compatibility Resources:**
 
         *   `SSD list <https://docs.google.com/spreadsheets/d/1B27_j9NDPU3cNlj2HKcrfpJKHkOf-Oi1DbuuQva2gT4/edit>`_ (Community-maintained list of SSD compatibility for SBCs)
-        *   `Great and less great SSDs for Ethereum nodes <https://gist.github.com/yorickdowne/f3a3e79a573bf35767cd002cc977b038>`_ (Guidance on choosing suitable SSDs for Ethereum node workloads)
+        *   `Great and less =great SSDs for Ethereum nodes <https://gist.github.com/yorickdowne/f3a3e79a573bf35767cd002cc977b038>`_ (Guidance on choosing suitable SSDs for Ethereum node workloads)
 
 *   **Power Supply:**  Use the official power supply for your chosen board.
 

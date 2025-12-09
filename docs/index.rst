@@ -83,10 +83,18 @@ Node Operation & Management
   /operation/web3-stack
   /operation/storage-management
   /operation/rpi5-storage
-  /operation/security
-  /operation/network-vpn
-  /operation/backup-restore
-  /operation/troubleshooting
+
+System & Image Utilities
+------------------------
+
+.. toctree::
+  :maxdepth: 2
+  :caption: System Utilities
+
+  /system/network-vpn
+  /system/backup-restore
+  /system/security
+  /system/troubleshooting
 
 Advanced Features
 -----------------

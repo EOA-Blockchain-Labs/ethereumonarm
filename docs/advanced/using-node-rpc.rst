@@ -7,7 +7,7 @@ Besides contributing to decentralization, your Ethereum on ARM node can be used
 to send transactions and query the Ethereum API.
 
 If this is your first time configuring network access, review
-:doc:`../operation/security` before exposing your node publicly.
+:doc:`../system/security` before exposing your node publicly.
 
 
 Pre-installed Nginx proxy
@@ -124,4 +124,4 @@ Next steps
 
 For information about security, SSH access, and all available firewall
 profiles, refer back to:
-:doc:`../operation/security`
+:doc:`../system/security`

@@ -69,9 +69,6 @@ For running a node, follow the step-by-step guide.
 Node Operation & Management
 ---------------------------
 
-This section describes in detail how to configure and run the Ethereum nodes as well as other
-information regarding the image and other Ethereum related software.
-
 .. toctree::
   :maxdepth: 2
   :caption: Node Operation

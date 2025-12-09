@@ -10,7 +10,7 @@ The next step is to get your client synced and more familiar with your
 node.
 
 For more info about how the node works and get sync info, please visit
-our :doc:`User Guide </user-guide/about-user-guide>`.
+our :doc:`Operation Guide <../operation/introduction>`.
 
 .. tip::
   Remember that you can stake with your ARM board. If you have

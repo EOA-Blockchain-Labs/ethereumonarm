@@ -669,6 +669,8 @@ and start the service (check the specific client documentation above for further
 
 Congrats!, you just started your validator activation process.
 
+.. _running-validator-client-internal:
+
 Running Validator Client
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1061,9 +1063,9 @@ Importing the keys and starting the validator
   Before going forward, we recommend to take a look at our section **"Running a Validator Client"** for more info 
   about importing the validator keys on each client:
 
-`running-validator-client`_
+`running-validator-client-internal`_
 
-.. _running-validator-client: https://ethereum-on-arm-documentation.readthedocs.io/en/latest/user-guide/running-l1-clients.html#running-validator-client
+.. _running-validator-client-internal: #running-validator-client-internal
 
 Once we have our private keys, we can import them into our validator client and start it.
 

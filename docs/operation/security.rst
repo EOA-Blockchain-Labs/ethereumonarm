@@ -127,7 +127,7 @@ local Execution Layer client (port 8545).
 
 You do **not** need to modify the Nginx configuration manually.
 For certificate setup and usage with MetaMask or wallets, see:
-:doc:`using-your-node`
+:doc:`../advanced/using-node-rpc`
 
 
 Recommended Practices
@@ -142,4 +142,4 @@ Recommended Practices
 - If using IPv6, ensure ``IPV6=yes`` in :file:`/etc/default/ufw`.
 
 For examples of wallet setup and blockchain queries, continue to:
-:doc:`using-your-node`
+:doc:`../advanced/using-node-rpc`

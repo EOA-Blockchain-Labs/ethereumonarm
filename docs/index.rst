@@ -46,7 +46,6 @@ Overview
 .. toctree::
   :maxdepth: 2
   :caption: Overview
-  :hidden:
 
   /overview/introduction
   /overview/why-arm
@@ -61,7 +60,6 @@ For running a node, follow the step-by-step guide.
 .. toctree::
   :maxdepth: 2
   :caption: Getting Started
-  :hidden:
 
   /getting-started/introduction
   /getting-started/installation
@@ -77,7 +75,6 @@ information regarding the image and other Ethereum related software.
 .. toctree::
   :maxdepth: 2
   :caption: Node Operation
-  :hidden:
 
   /operation/introduction
   /operation/managing-clients
@@ -100,7 +97,6 @@ Advanced Features
 .. toctree::
   :maxdepth: 2
   :caption: Advanced Features
-  :hidden:
 
   /advanced/mev-boost
   /advanced/commit-boost
@@ -113,7 +109,6 @@ Developer & Contributor Guide
 .. toctree::
   :maxdepth: 2
   :caption: Developer Guide
-  :hidden:
 
   /contributing/guidelines
   /contributing/building-images
@@ -124,6 +119,5 @@ Appendix / Reference
 .. toctree::
   :maxdepth: 2
   :caption: Reference
-  :hidden:
 
   /reference/sources

@@ -1,10 +1,10 @@
-Raspberry Pi 5 16GB with 52Pi Aluminum Case and NVMe HAT
-========================================================
+Raspberry Pi 5 Example Setup
+============================
 
 This guide helps you put together and use a Raspberry Pi 5 16GB with a 52Pi Aluminum Case and NVMe HAT.
 
 
-You can also follow along with a video tutorial: [Assembly Tutorial](https://youtu.be/uEBLLqBGBJc)
+You can also follow along with a video tutorial: `Assembly Tutorial <https://youtu.be/uEBLLqBGBJc>`_
 
 What's in the Box?
 ------------------
@@ -74,10 +74,10 @@ Where to Buy the Parts
 ----------------------
 
 * **Raspberry Pi 5 16GB:** You can buy this from the official Raspberry Pi website or stores that sell electronics.
-   * Example: [Raspberry Pi Official Website](https://www.raspberrypi.com/products/raspberry-pi-5/)
+   * Example: `Raspberry Pi Official Website <https://www.raspberrypi.com/products/raspberry-pi-5/>`_
 
 * **52Pi Aluminum Case with Cooler and NVMe HAT:** You can find this on the 52Pi website.
-   * Example: [52Pi Product Page](https://52pi.com/collections/new-arrivals/products/52pi-aluminum-case-for-raspberry-pi-5-with-official-active-cooler-p33-m-2-nvme-m-key-poe-hat) 
+   * Example: `52Pi Product Page <https://52pi.com/collections/new-arrivals/products/52pi-aluminum-case-for-raspberry-pi-5-with-official-active-cooler-p33-m-2-nvme-m-key-poe-hat>`_ 
 
 * **NVMe SSD:** * **Make sure it works:** Not all NVMe SSDs work with Raspberry Pi. Look for one with an **M Key** or **B Key**. Avoid SSDs with "Phison" controllers, they sometimes have problems.
     * **Size:** The case fits different sizes of SSDs. If you want a lot of storage (like 4TB), you'll need a bigger SSD.

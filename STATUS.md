@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-12-08 03:57:27 UTC_
+_Last updated: 2025-12-09 03:52:57 UTC_
 
  **What this report compares**
 
@@ -17,9 +17,9 @@ _Last updated: 2025-12-08 03:57:27 UTC_
 
 ## Summary
 
-- Total packages checked: **32**
-- ✅ Up-to-date: **31** (96.9%)
-- ❌ Outdated: **1** (3.1%)
+- Total packages checked: **33**
+- ✅ Up-to-date: **32** (97.0%)
+- ❌ Outdated: **1** (3.0%)
 - ❓ N/A: **0** (0.0%)
 
 
@@ -35,6 +35,8 @@ _Last updated: 2025-12-08 03:57:27 UTC_
 | `ethstaker-deposit-cli` | `1.2.2` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.2.2` | ✅ Up-to-date |
 | `mev-boost` | `1.10.1` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.10.1` | ✅ Up-to-date |
 | `staking-deposit-cli` | `2.8.0` ([ethereum/staking-deposit-cli](https://github.com/ethereum/staking-deposit-cli)) | `2.8.0` | ✅ Up-to-date |
+| `vero` | `1.3.0` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.3.0` | ✅ Up-to-date |
+| `vouch` | `1.12.0` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.12.0` | ✅ Up-to-date |
 
 
 
@@ -46,9 +48,8 @@ _Last updated: 2025-12-08 03:57:27 UTC_
 | `lighthouse` | `8.0.1` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.0.1` | ✅ Up-to-date |
 | `lodestar` | `1.37.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.37.0` | ✅ Up-to-date |
 | `nimbus` | `25.11.1` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.11.1` | ✅ Up-to-date |
-| `prysm` | `7.0.0` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.0.0` | ✅ Up-to-date |
+| `prysm` | `7.0.1` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.0.1` | ✅ Up-to-date |
 | `teku` | `25.11.1` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.11.1` | ✅ Up-to-date |
-| `vouch` | `1.12.0` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.12.0` | ✅ Up-to-date |
 
 
 

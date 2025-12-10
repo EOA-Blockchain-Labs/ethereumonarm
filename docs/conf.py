@@ -23,7 +23,7 @@ copyright = '2025, Diego Losada <dlosada@ethereumonarm.com>, Fernando Collado <f
 author = 'Diego Losada <dlosada@ethereumonarm.com>, Fernando Collado <fernando@ethereumonarm.com>'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.1'
+release = '25.11.00'
 
 
 # -- General configuration ---------------------------------------------------

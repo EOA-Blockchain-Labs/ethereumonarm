@@ -1,287 +1,250 @@
-.. Ethereum on ARM documentation documentation master file, created by
-   sphinx-quickstart on Wed Jan 13 19:04:18 2021.
-
 Download and Install
 ====================
 
-There are 4 images available for **NanoPC T6**,  **Rock 5B**, **Orange Pi 5 Plus** and **Raspberry Pi 5**
+Ethereum on ARM provides official support for the following Single Board Computers (SBCs):
 
-Getting the hardware
---------------------
+.. list-table:: Supported Hardware
+   :widths: 25 25 50
+   :header-rows: 1
+
+   * - Board
+     - Minimum RAM
+     - Notes
+   * - **Naopi NanoPC T6**
+     - 16 GB
+     - Compact and powerful
+   * - **Rock 5B**
+     - 16 GB
+     - Excellent performance
+   * - **Orange Pi 5 Plus**
+     - 16 GB (32 GB for Supernode)
+     - Supernode requires 32GB RAM for higher resource demands
+   * - **Raspberry Pi 5**
+     - 16 GB
+     - Widely available
+
+Prerequisites
+-------------
+
+Before you begin, ensure you have the following components:
+
+* **microSD Card**: For the operating system image.
+* **NVMe SSD**: M.2 2280 NVMe SSD. A high-end or mid-range disk is recommended.
+* **Ethernet Cable**: For a stable network connection.
+* **Power Supply**: Official or high-quality power supply recommended for your specific board.
+
+.. warning::
+   Avoid NVMe disks with a **Phison controller** due to known Linux kernel compatibility issues.
+   Check the `SSD Compatibility List <https://docs.google.com/spreadsheets/d/1B27_j9NDPU3cNlj2HKcrfpJKHkOf-Oi1DbuuQva2gT4/edit>`_ before purchasing.
+
+Hardware Purchase
+-----------------
 
 NanoPC T6
 ~~~~~~~~~
-
-You can acquire the NanoPC T6 from the Friendly Elec official site:
-
 * `NanoPC T6 board 16 GB`_
-
-You will need a **MicroSD** and a M2.2280 **NVME disk** as well.
-
-.. _NanoPC T6 board 16 GB: https://www.friendlyelec.com/index.php?route=product/product&product_id=292
 
 Rock 5B
 ~~~~~~~
-
-You can acquire the Rock 5B from several distributors. These are the recommended components (from Allnetchina):
-
 * `Rock 5B board 16 GB`_
 * `Acrylic protector with passive heatsink`_
 * `Radxa power supply`_
 
-You will need a **MicroSD** and an M2.2280 **NVME disk** as well.
+Orange Pi 5 Plus
+~~~~~~~~~~~~~~~~
+* `Orange Pi 5 Plus 16 GB RAM`_
+* `Orange Pi 5 Plus 32 GB RAM`_
+* `Orange Pi 5 Plus Case with heatsink`_
 
+Raspberry Pi 5
+~~~~~~~~~~~~~~
+* `Raspberry Pi 5 (16 GB RAM)`_
+* **Geekworm** P579 case and X1001 NVMe Hat or **GeeekPi** case with N04 NVMe Hat.
+
+.. _NanoPC T6 board 16 GB: https://www.friendlyelec.com/index.php?route=product/product&product_id=292
 .. _Rock 5B board 16 GB: https://shop.allnetchina.cn/products/rock5-model-b?variant=39514839515238
 .. _Acrylic protector with passive heatsink: https://shop.allnetchina.cn/products/rock5-b-acrylic-protector?variant=39877626396774
 .. _Radxa power supply: https://shop.allnetchina.cn/products/radxa-power-pd-30w?variant=39929851904102
-
-Orange Pi 5 Plus
-~~~~~~~~~~~~~~~~
-
-You can acquire the Orange Pi 5 plus from several distributors. Go to the official page and pick one at the top right corner 
-(make sure you are getting the 16 GB RAM model at least. If you are running a Supernode, pick the 32 GB RAM one).
-
-* `Orange Pi 5 Plus 16 GB RAM`_
-* `Orange Pi 5 Plus 32 GB RAM`_
-
-Try to find a set that includes the power supply as well. It is also recommended to get a proper case with a heatsink. 
-For example:
-
-* `Orange Pi 5 Plus Case with heatsink`_
-
-You will need a **MicroSD** and an M2.2280 **NVME** disk as well.
-
 .. _Orange Pi 5 Plus 16 GB RAM: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-5-plus.html
 .. _Orange Pi 5 Plus 32 GB RAM: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-5-plus-32GB.html
 .. _Orange Pi 5 Plus Case with heatsink: https://aliexpress.com/item/1005005728553439.html
-
-Raspberry Pi 5
-~~~~~~~~~~~~~~
-
-You can acquire a Raspberry Pi 5 from multiples sources. This is the official website.
-
-* `Raspberry Pi 5 (16 GB RAM)`_
-
 .. _Raspberry Pi 5 (16 GB RAM): https://www.raspberrypi.com/products/raspberry-pi-5/
 
-For Nvme Hat, case and cooling, we recommend the following (you can find them in several providers)
-
-* **Geekworm** P579 case and X1001 NVMe Hat
-* **GeeekPi** Raspberry Pi 5 case and N04 M.2 2280 NVMe Hat.
-
-Make sure you get the 16 GB RAM version.
-
-You will need a **MicroSD** and an **NVMe disk** as well. A case with heatsink and 
-the official Raspberry Pi 5 power supply is recommended.
-
-.. warning::
-  Again, make sure to buy an NVMe disk that **doesn't use a Phison controller**. Take a look at the SSD list below and check the 
-  Controller column of each disk. A High-end or Mid-Range disk is recommended.
-
-* `SSD list <https://docs.google.com/spreadsheets/d/1B27_j9NDPU3cNlj2HKcrfpJKHkOf-Oi1DbuuQva2gT4/edit>`_
-
-Images download
+Image Downloads
 ---------------
 
-NanoPC T6
-~~~~~~~~~
+Download the image for your board. You can verify the integrity of the file using the SHA256 checksum.
 
-Download link:
+**NanoPC T6**
 
-ethonarm_nanopct6_25.11.00.img.zip_
+* **Download**: `ethonarm_nanopct6_|release|.img.zip <https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v|release|/ethonarm_nanopct6_|release|.img.zip>`_
+* **SHA256**: ``f60ca9cdef2bd0815761f61b497f655dd5486c53da67e6e2487d33264a173664``
 
-.. _ethonarm_nanopct6_25.11.00.img.zip: https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v25.11.00/ethonarm_nanopct6_25.11.00.img.zip
+**Rock 5B**
 
-You can verify the file with the following ``SHA256`` Hash:
+* **Download**: `ethonarm_rock5b_|release|.img.zip <https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v|release|/ethonarm_rock5b_|release|.img.zip>`_
+* **SHA256**: ``a61a0cd5bd41bfcb1528e527878c15c158aedad6f745eeeb02975d300b3d2b42``
 
-``SHA256 f60ca9cdef2bd0815761f61b497f655dd5486c53da67e6e2487d33264a173664``
+**Orange Pi 5 Plus**
 
-By running:
+* **Download**: `ethonarm_orangepi5-plus_|release|.img.zip <https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v|release|/ethonarm_orangepi5-plus_|release|.img.zip>`_
+* **SHA256**: ``1c28775acbe529e7cc31d1a819e76477820fea04c7e30a53a95488bf195ff8e0``
 
-.. prompt:: bash $
+**Raspberry Pi 5**
 
-  sha256sum ethonarm_nanopct6_25.11.00.img.zip
+* **Download**: `ethonarm_rpi5_|release|.img.zip <https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v|release|/ethonarm_rpi5_|release|.img.zip>`_
+* **SHA256**: ``4cc62f68376bec1dca1cee6ec5b1cb284202de084f046559ac5cb32eb2c647c8``
 
-Rock 5B
-~~~~~~~
+To verify the checksum in your terminal:
 
-Download link:
+.. code-block:: bash
 
-ethonarm_rock5b_25.11.00.img.zip_
+   sha256sum <image_file_name.zip>
 
-.. _ethonarm_rock5b_25.11.00.img.zip: https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v25.11.00/ethonarm_rock5b_25.11.00.img.zip
-
-
-You can verify the file with the following ``SHA256`` Hash:
-
-``SHA256 a61a0cd5bd41bfcb1528e527878c15c158aedad6f745eeeb02975d300b3d2b42``
-
-By running:
-
-.. prompt:: bash $
-
-  sha256sum ethonarm_rock5b_25.11.00.img.zip
-
-Orange Pi 5 Plus
-~~~~~~~~~~~~~~~~
-
-Download link:
-
-ethonarm_orangepi5-plus_25.11.00.img.zip_
-
-.. _ethonarm_orangepi5-plus_25.11.00.img.zip: https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v25.11.00/ethonarm_orangepi5-plus_25.11.00.img.zip
-
-You can verify the file with the following ``SHA256`` Hash:
-
-``SHA256 1c28775acbe529e7cc31d1a819e76477820fea04c7e30a53a95488bf195ff8e0``
-
-By running:
-
-.. prompt:: bash $
-
-  sha256sum ethonarm_orangepi5-plus_25.11.00.img.zip
-
-Raspberry Pi 5
-~~~~~~~~~~~~~~
-
-Download link:
-
-ethonarm_rpi5_25.11.00.img.zip_
-
-.. _ethonarm_rpi5_25.11.00.img.zip: https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v25.11.00/ethonarm_rpi5_25.11.00.img.zip
-
-You can verify the file with the following ``SHA256`` Hash:
-
-``SHA256 4cc62f68376bec1dca1cee6ec5b1cb284202de084f046559ac5cb32eb2c647c8``
-
-By running:
-
-.. prompt:: bash $
-
-  sha256sum ethonarm_rpi5_25.11.00.img.zip
-
-Image installation
+Installation Guide
 ==================
 
-Once you have the Image download and decompressed you need to flash it
-
-Flashing the image
+Flashing the Image
 ------------------
 
-Insert the MicroSD in your Desktop / Laptop and flash the image.
+1. **Insert the microSD card** into your computer.
+2. **Flash the image**. We recommend using **Balena Etcher** (Windows/Mac/Linux) for an easy GUI experience.
+   
+   * `Download Balena Etcher <https://www.balena.io/etcher/>`_
 
-.. note::
-  If you are not comfortable with command line or if you are 
-  running Windows, you can use Etcher_
+   Alternatively, if you prefer the command line (Linux/Mac):
 
-.. _Etcher: https://www.balena.io/etcher/
+   identify your microSD device name (e.g., ``/dev/mmcblk0`` or ``/dev/sdX``).
 
-Open a terminal and check your MicroSD device name running:
+   .. code-block:: bash
 
-.. prompt:: bash $
+      # Linux
+      sudo fdisk -l
+      # Mac
+      diskutil list
 
-   sudo fdisk -l
+   .. warning::
+      The ``dd`` command is destructive. Double-check your device name to avoid data loss.
 
-You should see a device named ``mmcblk0`` or ``sd(x)``.
+   Unzip and flash (example for NanoPC T6):
+
+   .. code-block:: bash
+
+      unzip ethonarm_nanopct6_|release|.img.zip
+      sudo dd bs=1M if=ethonarm_nanopct6_|release|.img of=/dev/mmcblk0 conv=fdatasync status=progress
+
+First Boot
+----------
+
+1. Insert the **microSD card** into your board.
+2. Ensure the **NVMe SSD** and **Ethernet cable** are connected.
+3. Power on the board.
+
+The system will boot up quickly, but the **initial setup script** will run in the background to configure the node. This process is fully automated and involves:
+
+1.  **Internet Check**: Verifies connectivity (mandatory).
+2.  **Disk Preparation**: Automatically formats the NVMe drive to ext4 (unless a previous installation is detected).
+3.  **System Configuration**: 
+    *   Creates the ``ethereum`` user.
+    *   Generates a unique hostname (e.g., ``ethereumonarm-rpi5-a1b2c3d4``).
+    *   Optimizes kernel parameters (sysctl) for Ethereum performance.
+    *   Configures swap space (2x RAM, max 64GB).
+4.  **Software Installation**: Installs Execution and Consensus clients, monitoring tools, and utilities.
+5.  **Security Hardening**: Locks the root account and removes default users.
 
 .. warning::
-  The ``dd`` command will completely erase your MicroSD device so make sure you are targeting 
-  the correct one.
+   **Data Loss Warning**: If the script does not detect an existing Ethereum installation on the NVMe drive, **it will format the disk**. Ensure you have backed up any data on the NVMe drive before the first boot.
 
-Unzip and flash the image (we are using here the NanoPC T6 image):
+.. note::
+   Please wait approximately **10-15 minutes** for the installation script to complete. The board **will reboot automatically** once finished. Do not interrupt the power supply.
 
-.. prompt:: bash $
+Logging In
+----------
 
-   unzip ethonarm_nanopct6_25.11.00.img.zip
-   sudo dd bs=1M if=ethonarm_nanopct6_25.11.00.img of=/dev/mmcblk0 conv=fdatasync status=progress
+Once the installation is complete, log in via SSH or a locally connected monitor/keyboard.
 
-Insert MicroSD
---------------
-
-Insert the MicroSD into the board. Make sure you have your SSD disk and Ethernet cable connected.
-
-Power on
---------
-
-The Ubuntu OS will boot up in less than one minute and the installation script will start to perform the necessary tasks
-to turn the device into a full Ethereum node.
+* **User**: ``ethereum``
+* **Default Password**: ``ethereum``
 
 .. warning::
+   **Security Risk**: You MUST change the default password immediately upon first login. The system will prompt you to do so.
 
-  You need to wait for about 10-15 minutes to allow the script to install and configure all the software.
+.. warning::
+   **Firewall Disabled**: The system firewall (UFW) is **disabled by default** to prevent startup issues. If your node has a public IP, please refer to :doc:`../system/security` to enable and configure UFW immediately.
 
-Log in
-------
+**Connecting via SSH:**
 
-Once the device is available, You can log in through SSH or using the console (if you have a monitor 
-and keyboard attached) using the ``ethereum`` account::
+.. code-block:: bash
 
-  User: ethereum
-  Password: ethereum
+   ssh ethereum@<your_board_IP>
 
-Through SSH:
+**Finding your IP Address:**
 
-.. prompt:: bash $
+* **Router Admin Page**: Check your router's client list for a device named ``ethereum`` or similar.
+* **Network Scan**: Use tools like ``nmap`` or ``fping``.
 
-  ssh ethereum@your_board_IP
+   .. code-block:: bash
 
-.. tip::
-  If you don't have a monitor with a keyboard you can get your board ``IP`` address by looking into your router 
-  or using some kind of network tool such as ``fping`` or ``nmap``. For instance (assuming you are in the 192.168.1.0 network)).
+      # Using nmap
+      sudo nmap -sP 192.168.1.0/24
 
-  In your Linux Desktop / Laptop, run:
+System Maintenance
+==================
 
-  Using Nmap
+Update Ethereum Packages
+------------------------
 
-  .. prompt:: bash $
-  
-     sudo apt-get install nmap
-     nmap -sP 192.168.1.0/24
-  
-  Using Fping
+The system includes a convenient alias to update the Ethereum clients and tools. Run:
 
-  .. prompt:: bash $
+.. code-block:: bash
 
-     sudo apt-get install fping
-     fping -a -g 192.168.1.0/24
-  
-.. note::
-  You will be prompted to change the password on first login, so you will need to log in twice.
+   update-ethereum
+
+This command fetches the latest packages from the Ethereum on ARM repository and installs them.
 
 Image Upgrade
-=============
+-------------
 
-If you are already running an Ethereum on ARM node you can upgrade to the new image by following these steps:
+To upgrade an existing Ethereum on ARM node to the new version without losing your chain data:
 
-1. Install the package ethereumonarm-config-sync:
+.. note::
+   **How it works**: This process uses a script to backup your client configurations (`/etc/ethereum`) to a safe location on the NVMe drive (`/home/ethereum/.etc/ethereum`). When the new image boots, it detects this backup and restores your settings automatically.
 
-.. prompt:: bash $
+1. **Back up your config** (Optional but recommended).
+2. Install the sync tool on your **current** node:
 
-  sudo apt-get update && sudo apt-get install ethereumonarm-config-sync
+   .. code-block:: bash
 
-2. Run the config sync script
+      sudo apt-get update && sudo apt-get install ethereumonarm-config-sync
 
-.. prompt:: bash $
+3. Run the sync script:
 
-  ethereumonarm-config-sync.sh
+   .. code-block:: bash
 
-3. Flash the image as described in the above section and power on the device.
+      ethereumonarm-config-sync.sh
 
-The installer will detect a previous installation (if present) and restore the /etc/ethereum 
-clients config.
+4. **Flash the new image** to your microSD card (as described in "Flashing the Image").
+5. Power on. The installer will detect the previous configuration backups and restore your `/etc/ethereum` client settings.
 
-Once logged in, restart the clients you were running.
+Re-installation (Wipe)
+----------------------
 
-Image re-installation
-=====================
+To perform a clean install that **wipes all data** on the NVMe disk:
 
-If you are already running an Ethereum on ARM node and you want a fresh install (disk wipe out), follow these steps:
+1. On your current node, run:
 
-1. Log into you node and run the following command:
+   .. code-block:: bash
 
-.. prompt:: bash $
+      touch /home/ethereum/.format_me
 
-  touch /home/ethereum/.format_me
+   .. note::
+      **Mechanism**: The startup script checks for this specific file on the NVMe drive during boot. If found, it forces the script to bypass the "preservation check" and triggers a full reformat of the partition, effectively wiping all data.
 
-2. Follow the steps described in the "Image installation" section
+2. Reboot or power cycle. The startup script will detect this file and reformat the drive during the next boot process.
 
+Troubleshooting
+===============
+
+* **LEDs not blinking?** Check your power supply voltage and cable connection.
+* **No Network?** Ensure the Ethernet cable is plugged in *before* powering on.
+* **Boot Loops?** Verify your power supply delivers sufficient amperage (PD 30W+ recommended for Rock 5B/NanoPC T6).

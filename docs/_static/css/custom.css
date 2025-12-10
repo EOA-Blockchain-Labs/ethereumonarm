@@ -1,0 +1,19 @@
+/* Override the blue sidebar with a dark Ethereum-style grey */
+.wy-nav-side {
+    background: #484848;
+}
+
+/* Adjust the search box background to match */
+.wy-side-nav-search {
+    background: #4f4f4f;
+}
+
+/* Ensure links in the sidebar are readable */
+.wy-menu-vertical a {
+    color: #d9d9d9;
+}
+
+.wy-menu-vertical a:hover {
+    color: #ffffff;
+    background: #3a3a3a;
+}

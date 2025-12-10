@@ -29,8 +29,10 @@ OUTPUTDIR       ?= ../../packages
 # ----------------------------------------------------------------------
 # Upstream version and source info
 # ----------------------------------------------------------------------
-STAKEWISE_TAG     := v4.0.17
-STAKEWISE_VERSION := 4.0.17
+# Get the tag with "v" (e.g., v4.0.17) for the download URL
+STAKEWISE_TAG := $(shell curl -sL "https://api.github.com/repos/stakewise/v3-operator/releases/latest" | jq -r '.tag_name')
+# Get the version without "v" (e.g., 4.0.17) for the package version
+STAKEWISE_VERSION := $(shell echo "$(STAKEWISE_TAG)" | tr -d "v")
 
 # Ensure we are building for arm64
 ifneq ($(PKG_ARCH),arm64)

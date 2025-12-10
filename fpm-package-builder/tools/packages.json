@@ -36,7 +36,8 @@
         "flashbots/mev-boost": "mev-boost",
         "ethereum/staking-deposit-cli": "staking-deposit-cli",
         "attestantio/vouch": "vouch",
-        "serenita-org/vero": "vero"
+        "serenita-org/vero": "vero",
+        "stakewise/v3-operator": "stakewise-operator"
     },
     "Web3": {
         "ethersphere/bee": "bee",

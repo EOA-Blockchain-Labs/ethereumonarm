@@ -90,6 +90,7 @@ Explore our guides to set up, manage, and optimize your node.
    /advanced/commit-boost
    /advanced/testnets
    /advanced/using-node-rpc
+   /advanced/lido
 
 .. toctree::
    :maxdepth: 2

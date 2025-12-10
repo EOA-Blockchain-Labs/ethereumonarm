@@ -230,29 +230,29 @@ Restore specific directories:
 Security and Resource Recommendations
 =====================================
 
-==========================  ===============================================  ======================
-Setting                     Purpose                                         Recommended
-==========================  ===============================================  ======================
-**Encrypted Rclone Remote**  Adds an extra layer of encryption               ✅ Yes
-**Password File Permissions** Protect password secrecy                      ``chmod 600``
-**Exclude Blockchain Data**  Avoid huge backups of chain DB                 ✅ Yes
-**Systemd Timer**            Safe for unattended Armbian nodes              ✅ Yes
-**Upload Throttling**        Avoid bandwidth saturation                     ``--limit-upload 1M``
-**Disable Compression**      Reduce CPU load on SBC                         ``--no-compress``
-==========================  ===============================================  ======================
+==========================  ===============================================  =====================
+Setting                     Purpose                                          Recommended
+==========================  ===============================================  =====================
+**Encrypted Rclone Remote** Adds an extra layer of encryption                ✅ Yes
+**Password File Permissions** Protect password secrecy                       ``chmod 600``
+**Exclude Blockchain Data** Avoid huge backups of chain DB                   ✅ Yes
+**Systemd Timer**           Safe for unattended Armbian nodes                ✅ Yes
+**Upload Throttling**       Avoid bandwidth saturation                       ``--limit-upload 1M``
+**Disable Compression**     Reduce CPU load on SBC                           ``--no-compress``
+==========================  ===============================================  =====================
 
 Troubleshooting
 ===============
 
-==============================  =======================================  ===================================
-Problem                          Likely Cause                            Solution
-==============================  =======================================  ===================================
-``repository master key not found``  Incorrect password file             Check ``/etc/ethereum/restic.passwd``
-``rclone not configured``            Missing remote                      Run ``rclone config``
-``Permission denied``                Wrong ownership or permissions       Use ``root:root`` and mode ``600``
-``Upload too slow``                  Limited bandwidth                    Add ``--limit-upload 1M``
-``Out of memory``                    Small SBC RAM                        Limit number of source folders
-==============================  =======================================  ===================================
+===============================  =======================================  ===================================
+Problem                          Likely Cause                             Solution
+===============================  =======================================  ===================================
+``repository master key not found`` Incorrect password file               Check ``/etc/ethereum/restic.passwd``
+``rclone not configured``        Missing remote                           Run ``rclone config``
+``Permission denied``            Wrong ownership or permissions           Use ``root:root`` and mode ``600``
+``Upload too slow``              Limited bandwidth                        Add ``--limit-upload 1M``
+``Out of memory``                Small SBC RAM                            Limit number of source folders
+===============================  =======================================  ===================================
 
 Summary
 =======

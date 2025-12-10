@@ -105,7 +105,7 @@ Choosing the right hardware is crucial for a stable and performant Supernode.  L
     *   **Purpose:**  These are helpful for the initial operating system installation, network configuration, and troubleshooting if you encounter issues. Once the node is set up and running, you can operate it "headless" (without a monitor, keyboard, or mouse) via SSH.
 
 Software Prerequisites - **Step-by-Step Guide**
----------------------------------------------
+-----------------------------------------------
 
 1.  **Flash the Ethereum on ARM Image - Detailed Steps:**
 

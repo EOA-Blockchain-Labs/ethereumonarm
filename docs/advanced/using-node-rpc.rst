@@ -112,9 +112,8 @@ Expected output::
 
    {"jsonrpc":"2.0","id":1,"result":"0x123456"}
 
-If you get a connection error:
 - Ensure Nginx is running and listening on 443.
-- Check that UFW includes “Nginx HTTPS”.
+- Check that UFW includes "Nginx HTTPS".
 - Confirm certificate paths in
   ``/etc/nginx/sites-available/ethereum-ssl.conf``.
 

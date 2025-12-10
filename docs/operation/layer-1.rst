@@ -34,8 +34,7 @@ As stated above, for running a full Ethereum node you will need to start a Beaco
 and an Execution Layer client. The Beacon Chain is the one telling the Execution Layer client how to follow the head 
 of the chain, so, without it, the Execution Client would be lost and it could not start the sync.
 
-**You need a synced Beacon Chain Client for the Execution Client sync to start. As we configured Checkpoint 
-  Sync by default in all clients, the Beacon Chain should be in sync in a few minutes.**
+**You need a synced Beacon Chain Client for the Execution Client sync to start. As we configured Checkpoint Sync by default in all clients, the Beacon Chain should be in sync in a few minutes.**
 
 .. note::
   **REMEMBER: Staking is NOT necessary for running a full Ethereum node**. For this, you just need 
@@ -296,7 +295,7 @@ Ethereum on ARM supports all available Execution Layer clients.
    `Nethermind`, `Yes`, `.NET`, nethermind.io_
    `Erigon`, `Yes`, `Go`, `github.com/ledgerwatch/erigon`_
    `Hyperledger Besu`, `Yes`, `Java`, hyperledger.org_
-   `EthRex`, `Yes`, `Rust`, ethrex.xyz_
+   `EthRex`, `Yes`, `Rust`, ethrex.io_
    `Reth`, `Yes`, `Rust`, paradigmxyz.github.io_
 
 
@@ -669,7 +668,7 @@ and start the service (check the specific client documentation above for further
 
 Congrats!, you just started your validator activation process.
 
-.. _running-validator-client-internal:
+.. _running-validator-client-internal-alt:
 
 Running Validator Client
 ~~~~~~~~~~~~~~~~~~~~~~~~

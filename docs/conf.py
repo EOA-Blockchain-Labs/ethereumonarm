@@ -22,8 +22,35 @@ project = 'Ethereum on ARM documentation'
 copyright = '2025, Diego Losada <dlosada@ethereumonarm.com>, Fernando Collado <fernando@ethereumonarm.com>'
 author = 'Diego Losada <dlosada@ethereumonarm.com>, Fernando Collado <fernando@ethereumonarm.com>'
 
-# The full version, including alpha/beta/rc tags
 release = '25.11.00'
+
+rst_epilog = """
+.. |release| replace:: {release}
+""".format(release=release)
+
+# Generate dynamic download links for each board
+# We define both a substitution (|board_file|) and a target (_board_file)
+# This allows using |board_file|_ in RST to get a link with the filename as text.
+boards = [
+    # (board_id, file_prefix, sha256_checksum)
+    ('nanopct6', 'ethonarm_nanopct6', 'f60ca9cdef2bd0815761f61b497f655dd5486c53da67e6e2487d33264a173664'),
+    ('rock5b', 'ethonarm_rock5b', 'a61a0cd5bd41bfcb1528e527878c15c158aedad6f745eeeb02975d300b3d2b42'),
+    ('orangepi5-plus', 'ethonarm_orangepi5-plus', '1c28775acbe529e7cc31d1a819e76477820fea04c7e30a53a95488bf195ff8e0'),
+    ('rpi5', 'ethonarm_rpi5', '4cc62f68376bec1dca1cee6ec5b1cb284202de084f046559ac5cb32eb2c647c8')
+]
+
+for board_id, file_prefix, sha256 in boards:
+    filename = f"{file_prefix}_{release}.img.zip"
+    url = f"https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v{release}/{filename}"
+    token = f"{board_id}_file" # e.g., nanopct6_file
+    checksum_token = f"{board_id}_sha256" # e.g., nanopct6_sha256
+    
+    # Define substitution for the text (filename)
+    rst_epilog += f".. |{token}| replace:: {filename}\n"
+    # Define substitution for the checksum with inline code formatting
+    rst_epilog += f".. |{checksum_token}| replace:: ``{sha256}``\n"
+    # Define the link target
+    rst_epilog += f".. _{token}: {url}\n"
 
 
 # -- General configuration ---------------------------------------------------

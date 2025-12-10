@@ -77,23 +77,23 @@ Download the image for your board. You can verify the integrity of the file usin
 
 **NanoPC T6**
 
-* **Download**: `ethonarm_nanopct6_|release|.img.zip <https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v|release|/ethonarm_nanopct6_|release|.img.zip>`_
-* **SHA256**: ``f60ca9cdef2bd0815761f61b497f655dd5486c53da67e6e2487d33264a173664``
+* **Download**: |nanopct6_file|_
+* **SHA256**: |nanopct6_sha256|
 
 **Rock 5B**
 
-* **Download**: `ethonarm_rock5b_|release|.img.zip <https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v|release|/ethonarm_rock5b_|release|.img.zip>`_
-* **SHA256**: ``a61a0cd5bd41bfcb1528e527878c15c158aedad6f745eeeb02975d300b3d2b42``
+* **Download**: |rock5b_file|_
+* **SHA256**: |rock5b_sha256|
 
 **Orange Pi 5 Plus**
 
-* **Download**: `ethonarm_orangepi5-plus_|release|.img.zip <https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v|release|/ethonarm_orangepi5-plus_|release|.img.zip>`_
-* **SHA256**: ``1c28775acbe529e7cc31d1a819e76477820fea04c7e30a53a95488bf195ff8e0``
+* **Download**: |orangepi5-plus_file|_
+* **SHA256**: |orangepi5-plus_sha256|
 
 **Raspberry Pi 5**
 
-* **Download**: `ethonarm_rpi5_|release|.img.zip <https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v|release|/ethonarm_rpi5_|release|.img.zip>`_
-* **SHA256**: ``4cc62f68376bec1dca1cee6ec5b1cb284202de084f046559ac5cb32eb2c647c8``
+* **Download**: |rpi5_file|_
+* **SHA256**: |rpi5_sha256|
 
 To verify the checksum in your terminal:
 
@@ -210,7 +210,7 @@ To upgrade an existing Ethereum on ARM node to the new version without losing yo
 .. note::
    **How it works**: This process uses a script to backup your client configurations (`/etc/ethereum`) to a safe location on the NVMe drive (`/home/ethereum/.etc/ethereum`). When the new image boots, it detects this backup and restores your settings automatically.
 
-1. **Back up your config** (Optional but recommended).
+1. **Back up your config** (Optional but highly recommended).
 2. Install the sync tool on your **current** node:
 
    .. code-block:: bash

@@ -117,8 +117,8 @@ Software Prerequisites - **Step-by-Step Guide**
 
         *   **For Rock 5B (32GB):**
 
-            *   Download Link: `ethonarm_rock5b_25.11.00.img.zip <https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v25.11.00/ethonarm_rock5b_25.11.00.img.zip`_
-            *   SHA256 Checksum: ``a61a0cd5bd41bfcb1528e527878c15c158aedad6f745eeeb02975d300b3d2b42``
+            *   Download Link: |rock5b_file|_
+            *   SHA256 Checksum: |rock5b_sha256|
 
             **Verifying Checksum on Windows:**
 
@@ -127,7 +127,7 @@ Software Prerequisites - **Step-by-Step Guide**
             3.  Right-click on the downloaded ``.img.zip`` file.
             4.  Select "Checksums" from the context menu.
             5.  HashCheck will calculate various checksums, including SHA256.
-            6.  **Compare the calculated SHA256 value to the provided checksum:** ``a61a0cd5bd41bfcb1528e527878c15c158aedad6f745eeeb02975d300b3d2b42``.  **They MUST match exactly.** If they do not match, re-download the image file.
+            6.  **Compare the calculated SHA256 value to the provided checksum:** |rock5b_sha256|.  **They MUST match exactly.** If they do not match, re-download the image file.
 
             **Verifying Checksum on macOS/Linux:**
 
@@ -139,15 +139,15 @@ Software Prerequisites - **Step-by-Step Guide**
 
                 sha256sum ethonarm_rock5b_25.11.00.img.zip
 
-            10. **Compare the output to the provided checksum:** ``a61a0cd5bd41bfcb1528e527878c15c158aedad6f745eeeb02975d300b3d2b42``. **They MUST match exactly.** If they do not match, re-download the image file.
+            10. **Compare the output to the provided checksum:** |rock5b_sha256|. **They MUST match exactly.** If they do not match, re-download the image file.
 
         *   **For Orange Pi 5 Plus (32GB):**
 
-            *   Download Link: `ethonarm_orangepi5-plus_25.11.00.img.zip <https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases/download/v25.11.00/ethonarm_orangepi5-plus_25.11.00.img.zip>`_
+            *   Download Link: |orangepi5-plus_file|_
             
-            *   SHA256 Checksum: ``1c28775acbe529e7cc31d1a819e76477820fea04c7e30a53a95488bf195ff8e0``
+            *   SHA256 Checksum: |orangepi5-plus_sha256|
 
-            **Verify Checksum (using the same methods as described for Rock 5B, but comparing against the Orange Pi 5 Plus checksum: ``1c28775acbe529e7cc31d1a819e76477820fea04c7e30a53a95488bf195ff8e0``).**
+            **Verify Checksum (using the same methods as described for Rock 5B, but comparing against the Orange Pi 5 Plus checksum: |orangepi5-plus_sha256|).**
 
     *   **Flashing the Image onto the MicroSD Card - Using Etcher (Recommended):**
 

@@ -25,7 +25,7 @@ PKG_MAINTAINER  ?= Diego Losada <dlosada@ethereumonarm.com>
 CATEGORY        ?= science
 WEB_URL         ?= https://nitro.ethereum.org
 SOURCESDIR      ?= sources
-OUTPUTDIR       ?= ../../../packages
+OUTPUTDIR       ?= ../../packages
 
 # ----------------------------------------------------------------------
 # Upstream version and source info

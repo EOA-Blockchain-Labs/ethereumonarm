@@ -203,9 +203,7 @@ All packages with binary downloads are verified cryptographically before packagi
 1. Create a new directory under `fpm-package-builder/` (e.g., `utils/new-tool/`)
 2. Copy the template Makefile:
 
-   ```bash
-   cp ../../tools/templates/Makefile .
-   ```
+       cp ../../tools/templates/Makefile .
 
    (Or copy from `fpm-package-builder/tools/templates/Makefile` if you are elsewhere)
 3. Update all `CHANGEME` variables in the new `Makefile`, paying close attention to:
@@ -217,10 +215,8 @@ All packages with binary downloads are verified cryptographically before packagi
    - `OUTPUTDIR` (adjust the path depth, e.g., `../../packages` or `../../../packages`).
 4. (Optional) If you need a systemd service or config file, copy them from `tools/templates/`:
 
-   ```bash
-   cp ../../tools/templates/service.service extras/package-name.service
-   cp ../../tools/templates/config.toml sources/etc/package-name/config.toml
-   ```
+       cp ../../tools/templates/service.service extras/package-name.service
+       cp ../../tools/templates/config.toml sources/etc/package-name/config.toml
 
 5. Run `make` inside the directory to build and test.
 6. Test on an ARM board (e.g., Rock 5B, Orange Pi 5 Plus).

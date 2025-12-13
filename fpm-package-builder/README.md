@@ -177,6 +177,8 @@ All packages with binary downloads are verified cryptographically before packagi
 | **StakeWise Operator** | Infra | SHA256 | GitHub API digest |
 | **Fuel Network** | L2 | SHA256 | GitHub API digest |
 | **Starknet Juno** | L2 | SHA256 | GitHub API digest |
+| **Kubo (IPFS)** | Web3 | SHA256 | GitHub API digest |
+| **Swarm Bee** | Web3 | SHA256 | GitHub API digest |
 
 ### ⏳ Pending Verification
 

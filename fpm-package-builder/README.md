@@ -181,6 +181,7 @@ All packages with binary downloads are verified cryptographically before packagi
 | Package | Type | Notes |
 |---------|------|-------|
 | DVT-SSV | Infra | Needs research |
+| Vero | Infra | Source tarball (immutable releases, no checksum) |
 
 ### ⚠️ Deprecated (moved to `infra/deprecated/`)
 

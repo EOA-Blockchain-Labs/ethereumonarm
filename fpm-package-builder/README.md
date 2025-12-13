@@ -175,6 +175,8 @@ All packages with binary downloads are verified cryptographically before packagi
 | **Commit-Boost** | Infra | SHA256 | GitHub API digest |
 | **ethstaker-deposit-cli** | Infra | SHA256 | Downloaded .sha256 file |
 | **StakeWise Operator** | Infra | SHA256 | GitHub API digest |
+| **Fuel Network** | L2 | SHA256 | GitHub API digest |
+| **Starknet Juno** | L2 | SHA256 | GitHub API digest |
 
 ### ⏳ Pending Verification
 
@@ -182,6 +184,9 @@ All packages with binary downloads are verified cryptographically before packagi
 |---------|------|-------|
 | DVT-SSV | Infra | Needs research |
 | Vero | Infra | Source tarball (immutable releases, no checksum) |
+| Arbitrum Nitro | L2 | No release assets |
+| Optimism (op-geth, op-node) | L2 | No release assets |
+| Starknet Madara | L2 | No release assets |
 
 ### ⚠️ Deprecated (moved to `infra/deprecated/`)
 

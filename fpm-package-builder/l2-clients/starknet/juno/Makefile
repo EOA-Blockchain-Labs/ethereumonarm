@@ -39,6 +39,10 @@ JUNO_ZIP_FILE := juno-$(JUNO_TAG_V)-linux-$(PKG_ARCH).zip
 JUNO_BIN_FILE := juno-$(JUNO_TAG_V)-linux-$(PKG_ARCH)
 JUNO_URL      := https://github.com/NethermindEth/juno/releases/download/$(JUNO_TAG_V)/$(JUNO_ZIP_FILE)
 
+# SHA256 checksum extracted from GitHub API asset digest field
+JUNO_RELEASE_JSON := $(shell curl -s "https://api.github.com/repos/NethermindEth/juno/releases/latest")
+JUNO_SHA256 := $(shell echo '$(JUNO_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(JUNO_ZIP_FILE)") | .digest' | sed 's/sha256://')
+
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(JUNO_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(JUNO_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 
@@ -100,6 +104,8 @@ prepare: ## Download latest Juno and stage into $(SOURCESDIR)/usr/bin
 	@echo "🔽 Downloading Juno $(JUNO_VERSION) ($(JUNO_TAG_V))..."
 	mkdir -p .build $(SOURCESDIR)/usr/bin
 	wget -q -O ".build/$(JUNO_ZIP_FILE)" "$(JUNO_URL)" || { echo "❌ Download failed: $(JUNO_URL)"; exit 1; };
+	@echo "🔐 Verifying SHA256..."
+	@echo "$(JUNO_SHA256)  .build/$(JUNO_ZIP_FILE)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(JUNO_ZIP_FILE)"; exit 1; };
 	
 	@echo "📦 Extracting binary..."
 	unzip -o ".build/$(JUNO_ZIP_FILE)" -d .build
@@ -107,7 +113,7 @@ prepare: ## Download latest Juno and stage into $(SOURCESDIR)/usr/bin
 	@echo "📂 Staging binary..."
 	cp ".build/$(JUNO_BIN_FILE)" "$(SOURCESDIR)/usr/bin/juno"
 	chmod 0755 "$(SOURCESDIR)/usr/bin/juno"
-	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/juno"
+	@echo "✅ Binary downloaded and verified at $(SOURCESDIR)/usr/bin/juno"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package

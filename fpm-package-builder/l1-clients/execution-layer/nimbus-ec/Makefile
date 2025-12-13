@@ -36,10 +36,15 @@ OUTPUTDIR       ?= ../../../packages
 NIMBUS_VERSION      ?= 0.2.2
 
 # Make one API call to the specific version tag to get all assets
-NIMBUS_ASSETS_JSON  := $(shell curl -sL https://api.github.com/repos/status-im/nimbus-eth1/releases/tags/v$(NIMBUS_VERSION) | jq -r '.assets[]')
+NIMBUS_RELEASE_JSON := $(shell curl -sL https://api.github.com/repos/status-im/nimbus-eth1/releases/tags/v$(NIMBUS_VERSION))
+NIMBUS_ASSETS_JSON  := $(shell echo '$(NIMBUS_RELEASE_JSON)' | jq -r '.assets[]')
 NIMBUS_CLIENT_URL   := $(shell echo '$(NIMBUS_ASSETS_JSON)' | jq -r 'select(.name | contains("client-linux-arm64")).browser_download_url')
 NIMBUS_PROXY_URL    := $(shell echo '$(NIMBUS_ASSETS_JSON)' | jq -r 'select(.name | contains("proxy-linux-arm64")).browser_download_url')
 NIMBUS_DOWNLOADER_URL := https://raw.githubusercontent.com/status-im/nimbus-eth1/refs/heads/master/scripts/era_downloader.sh
+
+# SHA256 checksums from API digest field
+NIMBUS_CLIENT_SHA256 := $(shell echo '$(NIMBUS_ASSETS_JSON)' | jq -r 'select(.name | contains("client-linux-arm64")).digest' | sed 's/sha256://')
+NIMBUS_PROXY_SHA256  := $(shell echo '$(NIMBUS_ASSETS_JSON)' | jq -r 'select(.name | contains("proxy-linux-arm64")).digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(NIMBUS_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(NIMBUS_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
@@ -111,8 +116,13 @@ prepare: ## Download latest Nimbus and stage into $(SOURCESDIR)/usr/bin
 	
 	@echo "Downloading client..."
 	wget -q -O ".build/client.tar.gz" "$(NIMBUS_CLIENT_URL)" || { echo "❌ Client download failed: $(NIMBUS_CLIENT_URL)"; exit 1; }
+	@echo "🔐 Verifying client SHA256..."
+	@echo "$(NIMBUS_CLIENT_SHA256)  .build/client.tar.gz" | sha256sum -c - || { echo "❌ Client SHA256 verification FAILED!"; rm -f ".build/client.tar.gz"; exit 1; };
+	
 	@echo "Downloading proxy..."
 	wget -q -O ".build/proxy.tar.gz" "$(NIMBUS_PROXY_URL)" || { echo "❌ Proxy download failed: $(NIMBUS_PROXY_URL)"; exit 1; }
+	@echo "🔐 Verifying proxy SHA256..."
+	@echo "$(NIMBUS_PROXY_SHA256)  .build/proxy.tar.gz" | sha256sum -c - || { echo "❌ Proxy SHA256 verification FAILED!"; rm -f ".build/proxy.tar.gz"; exit 1; };
 	
 	@echo "Extracting binaries..."
 	tar -xzf ".build/client.tar.gz" -C $(SOURCESDIR)/usr/bin/ --wildcards --absolute-names --no-anchored --strip-components 2 '*/nimbus_*'
@@ -120,7 +130,7 @@ prepare: ## Download latest Nimbus and stage into $(SOURCESDIR)/usr/bin
 	
 	chmod 0755 $(SOURCESDIR)/usr/bin/era_downloader.sh
 	rm -f $(SOURCESDIR)/usr/bin/nimbus*.sha512sum
-	@echo "✅ Binaries ready in $(SOURCESDIR)/usr/bin"
+	@echo "✅ Binaries downloaded and verified in $(SOURCESDIR)/usr/bin"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package

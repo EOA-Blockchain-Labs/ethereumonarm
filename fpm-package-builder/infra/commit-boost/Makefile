@@ -39,6 +39,10 @@ CB_VERSION := $(shell echo "$(CB_TAG_V)" | tr -d "v")
 CB_TARBALL := commit-boost-pbs-$(CB_TAG_V)-linux_$(PKG_ARCH).tar.gz
 CB_URL     := https://github.com/Commit-Boost/commit-boost-client/releases/download/$(CB_TAG_V)/$(CB_TARBALL)
 
+# SHA256 checksum extracted from GitHub API asset digest field
+CB_RELEASE_JSON := $(shell curl -s https://api.github.com/repos/Commit-Boost/commit-boost-client/releases/latest)
+CB_SHA256 := $(shell echo '$(CB_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(CB_TARBALL)") | .digest' | sed 's/sha256://')
+
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(CB_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(CB_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 
@@ -100,15 +104,15 @@ prepare: ## Download latest commit-boost and stage into $(SOURCESDIR)/usr/bin
 	@echo "🔽 Downloading commit-boost $(CB_VERSION) ($(CB_TAG_V))..."
 	mkdir -p .build $(SOURCESDIR)/usr/bin
 	wget -q -O ".build/$(CB_TARBALL)" "$(CB_URL)" || { echo "❌ Download failed: $(CB_URL)"; exit 1; };
+	@echo "🔐 Verifying SHA256..."
+	@echo "$(CB_SHA256)  .build/$(CB_TARBALL)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(CB_TARBALL)"; exit 1; };
 	
 	@echo "📦 Extracting binary..."
-	# The tarball contains the binary directly or in a folder? Usually directly or top level.
-	# Let's assume it extracts 'commit-boost-pbs' binary.
 	tar -xzf ".build/$(CB_TARBALL)" -C .build/
 	# Move and rename to commit-boost
 	mv .build/commit-boost-pbs $(SOURCESDIR)/usr/bin/commit-boost
 	chmod 0755 "$(SOURCESDIR)/usr/bin/commit-boost"
-	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/commit-boost"
+	@echo "✅ Binary downloaded and verified at $(SOURCESDIR)/usr/bin/commit-boost"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package

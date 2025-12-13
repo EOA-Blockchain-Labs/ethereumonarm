@@ -169,6 +169,7 @@ All packages with binary downloads are verified cryptographically before packagi
 | **Nethermind** | L1 Execution | SHA256 | GitHub API digest |
 | **Ethrex** | L1 Execution | SHA256 | GitHub API digest |
 | **MEV-Boost** | Infra | SHA256 | GitHub API digest |
+| **Vouch** | Infra | SHA256 | GitHub API digest |
 
 ### ⏳ Pending Verification
 
@@ -177,7 +178,6 @@ All packages with binary downloads are verified cryptographically before packagi
 | Nimbus-EC | L1 Execution | Needs research |
 | DVT-Obol | Infra | Needs research |
 | DVT-SSV | Infra | Needs research |
-| Vouch | Infra | Needs research |
 | L2 clients | Layer 2 | Various |
 
 ---

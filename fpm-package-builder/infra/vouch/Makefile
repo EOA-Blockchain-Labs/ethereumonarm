@@ -30,9 +30,6 @@ OUTPUTDIR       ?= ../../packages
 # ----------------------------------------------------------------------
 # Upstream version and source info
 # ----------------------------------------------------------------------
-# ----------------------------------------------------------------------
-# Upstream version and source info
-# ----------------------------------------------------------------------
 # Get the tag with "v" (e.g., v1.12.0) for the download URL
 VOUCH_TAG := $(shell curl -sL "https://api.github.com/repos/attestantio/vouch/releases/latest" | jq -r '.tag_name')
 # Get the version without "v" (e.g., 1.12.0) for the package version
@@ -45,6 +42,10 @@ endif
 
 VOUCH_TARBALL := vouch-$(VOUCH_VERSION)-linux-arm64.tar.gz
 VOUCH_URL     := https://github.com/attestantio/vouch/releases/download/$(VOUCH_TAG)/$(VOUCH_TARBALL)
+
+# SHA256 checksum extracted from GitHub API asset digest field
+VOUCH_RELEASE_JSON := $(shell curl -sL "https://api.github.com/repos/attestantio/vouch/releases/latest")
+VOUCH_SHA256 := $(shell echo '$(VOUCH_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(VOUCH_TARBALL)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(VOUCH_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(VOUCH_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
@@ -105,10 +106,12 @@ prepare: ## Download latest Vouch and stage into $(SOURCESDIR)/usr/bin
 	@echo "🔽 Downloading Vouch $(VOUCH_VERSION) ($(VOUCH_TAG))..."
 	mkdir -p .build $(SOURCESDIR)/usr/bin
 	wget -q -O ".build/$(VOUCH_TARBALL)" "$(VOUCH_URL)" || { echo "❌ Download failed: $(VOUCH_URL)"; exit 1; };
+	@echo "🔐 Verifying SHA256..."
+	@echo "$(VOUCH_SHA256)  .build/$(VOUCH_TARBALL)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(VOUCH_TARBALL)"; exit 1; };
 	@echo "📦 Extracting binary..."
 	tar -xzf ".build/$(VOUCH_TARBALL)" -C $(SOURCESDIR)/usr/bin/ vouch
 	chmod 0755 "$(SOURCESDIR)/usr/bin/vouch"
-	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/vouch"
+	@echo "✅ Binary downloaded and verified at $(SOURCESDIR)/usr/bin/vouch"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package

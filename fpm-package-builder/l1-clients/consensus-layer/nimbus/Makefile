@@ -40,6 +40,9 @@ NIMBUS_ASSET_JSON  := $(shell echo '$(NIMBUS_LATEST_JSON)' | jq -r ".assets[] | 
 NIMBUS_TARBALL     := $(shell echo '$(NIMBUS_ASSET_JSON)' | jq -r '.name')
 NIMBUS_URL         := $(shell echo '$(NIMBUS_ASSET_JSON)' | jq -r '.browser_download_url')
 
+# SHA256 checksum extracted from GitHub API asset digest field
+NIMBUS_SHA256      := $(shell echo '$(NIMBUS_ASSET_JSON)' | jq -r '.digest' | sed 's/sha256://')
+
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(NIMBUS_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(NIMBUS_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 
@@ -104,11 +107,13 @@ prepare: ## Download latest Nimbus and stage into $(SOURCESDIR)/usr/bin
 	@echo "🔽 Downloading Nimbus $(NIMBUS_VERSION) ($(NIMBUS_TAG))..."
 	mkdir -p .build $(SOURCESDIR)/usr/bin
 	wget -q -O ".build/$(NIMBUS_TARBALL)" "$(NIMBUS_URL)" || { echo "❌ Download failed: $(NIMBUS_URL)"; exit 1; };
+	@echo "🔐 Verifying SHA256..."
+	@echo "$(NIMBUS_SHA256)  .build/$(NIMBUS_TARBALL)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(NIMBUS_TARBALL)"; exit 1; };
 	@echo "📦 Extracting binaries..."
 	tar -xzf ".build/$(NIMBUS_TARBALL)" -C $(SOURCESDIR)/usr/bin/ --wildcards --absolute-names --no-anchored --strip-components 2 '*/nimbus_*'
 	rm -f $(SOURCESDIR)/usr/bin/nimbus*.sha512sum
 	chmod 0755 $(SOURCESDIR)/usr/bin/nimbus*
-	@echo "✅ Binaries ready in $(SOURCESDIR)/usr/bin"
+	@echo "✅ Binaries downloaded and verified in $(SOURCESDIR)/usr/bin"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package

@@ -39,6 +39,10 @@ LODESTAR_VERSION := $(shell echo "$(LODESTAR_TAG)" | tr -d "v")
 LODESTAR_TARBALL := lodestar-$(LODESTAR_TAG)-linux-$(PKG_ARCH).tar.gz
 LODESTAR_URL     := https://github.com/ChainSafe/lodestar/releases/download/$(LODESTAR_TAG)/$(LODESTAR_TARBALL)
 
+# SHA256 checksum extracted from GitHub API asset digest field
+LODESTAR_RELEASE_JSON := $(shell curl -s "https://api.github.com/repos/ChainSafe/lodestar/releases/latest")
+LODESTAR_SHA256 := $(shell echo '$(LODESTAR_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(LODESTAR_TARBALL)") | .digest' | sed 's/sha256://')
+
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(LODESTAR_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(LODESTAR_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 
@@ -100,10 +104,12 @@ prepare: ## Download latest Lodestar and stage into $(SOURCESDIR)/usr/bin
 	@echo "🔽 Downloading Lodestar $(LODESTAR_VERSION) ($(LODESTAR_TAG))..."
 	mkdir -p .build $(SOURCESDIR)/usr/bin
 	wget -q -O ".build/$(LODESTAR_TARBALL)" "$(LODESTAR_URL)" || { echo "❌ Download failed: $(LODESTAR_URL)"; exit 1; };
+	@echo "🔐 Verifying SHA256..."
+	@echo "$(LODESTAR_SHA256)  .build/$(LODESTAR_TARBALL)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(LODESTAR_TARBALL)"; exit 1; };
 	@echo "📦 Extracting binary..."
 	tar -xzf ".build/$(LODESTAR_TARBALL)" -C $(SOURCESDIR)/usr/bin/
 	chmod 0755 "$(SOURCESDIR)/usr/bin/lodestar"
-	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/lodestar"
+	@echo "✅ Binary downloaded and verified at $(SOURCESDIR)/usr/bin/lodestar"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package

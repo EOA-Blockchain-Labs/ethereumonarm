@@ -1,0 +1,68 @@
+Reth for Ethereum on ARM
+========================
+
+Reth (Rust Ethereum) is an Ethereum execution client implementation that
+focuses on friendliness, modularity, and speed.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/reth.conf
+Data directory:      /home/ethereum/.reth
+JWT secret:          /etc/ethereum/jwtsecret
+
+The configuration file contains ARGS that are passed to the reth binary.
+Edit this file to customize your node's behavior.
+
+Systemd Services
+----------------
+
+Mainnet:   systemctl start reth
+Sepolia:   systemctl start reth-sepolia
+Holesky:   systemctl start reth-holesky
+
+View logs: journalctl -u reth -f
+
+Network Ports
+-------------
+
+Default P2P port: 30303 (TCP/UDP)
+  - Forward this port in your router for better peer connectivity
+
+Archive vs Full Node
+--------------------
+
+By default, Reth runs as an ARCHIVE NODE, storing all historical states.
+This requires significantly more disk space.
+
+To run as a Full Node (pruned state) and save disk space, edit the config
+file and add the --full flag:
+
+  ARGS="node ... --full"
+
+Then restart: systemctl restart reth
+
+Differences from Upstream
+-------------------------
+
+- Runs as 'ethereum' user (not root)
+- Data stored in /home/ethereum/.reth
+- Archive mode by default (add --full for pruned)
+- Systemd service with automatic restart
+
+Syncing
+-------
+
+Reth uses Execution Sync (pipeline sync), which re-executes all transactions
+from genesis. This takes 3-5 days on ARM64 devices but results in an
+optimized database ideal for RPC queries.
+
+IMPORTANT: You need a synced Consensus Layer client (beacon chain) running
+before Reth can start syncing.
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Upstream Docs:    https://paradigmxyz.github.io/reth/
+- Discord:          https://discord.gg/ve2Z8fxz5N

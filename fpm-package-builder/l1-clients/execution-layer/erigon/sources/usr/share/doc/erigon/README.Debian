@@ -1,0 +1,67 @@
+Erigon for Ethereum on ARM
+==========================
+
+Erigon is a high-performance Ethereum execution layer client with an
+integrated Caplin consensus layer.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/erigon.conf
+Data directory:      /home/ethereum/.erigon
+JWT secret:          /etc/ethereum/jwtsecret
+
+The configuration file contains ARGS that are passed to the erigon binary.
+Edit this file to customize your node's behavior.
+
+Systemd Services
+----------------
+
+With Caplin (default, full node):
+  systemctl start erigon
+
+With external consensus client:
+  systemctl start erigon-externalcl
+
+View logs: journalctl -u erigon -f
+
+Network Ports
+-------------
+
+Default P2P port: 30303 (TCP/UDP)
+  - Forward this port in your router for better peer connectivity
+
+Caplin Consensus Layer
+----------------------
+
+Erigon 3 includes Caplin, its own built-in consensus layer. By default,
+the 'erigon' service runs as a FULL Ethereum node without requiring a
+separate beacon chain client.
+
+If you need to use an external consensus client (Lighthouse, Prysm, etc.),
+use the 'erigon-externalcl' service instead.
+
+Differences from Upstream
+-------------------------
+
+- Runs as 'ethereum' user (not root)
+- Data stored in /home/ethereum/.erigon
+- Two service variants: with Caplin and with external CL
+- Systemd service with automatic restart
+
+Syncing
+-------
+
+Erigon uses Execution Sync (staged sync), which re-executes all transactions
+from genesis. This takes 4-6 days on ARM64 devices but results in an
+optimized database ideal for RPC queries.
+
+Unlike Snap Sync clients, Erigon can run as an Archive Node with efficient
+disk usage.
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Upstream Docs:    https://docs.erigon.tech
+- Discord:          https://discord.gg/ve2Z8fxz5N

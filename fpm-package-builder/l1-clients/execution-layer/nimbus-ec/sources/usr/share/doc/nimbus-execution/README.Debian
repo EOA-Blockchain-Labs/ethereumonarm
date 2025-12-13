@@ -1,0 +1,55 @@
+Nimbus Execution for Ethereum on ARM
+====================================
+
+Nimbus Execution (nimbus-eth1) is a lightweight Ethereum execution layer
+client written in Nim by the Status team.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/nimbus-execution.conf
+Data directory:      /home/ethereum/.nimbus-eth1
+JWT secret:          /etc/ethereum/jwtsecret
+
+The configuration file contains ARGS that are passed to the nimbus binary.
+Edit this file to customize your node's behavior.
+
+Systemd Services
+----------------
+
+Mainnet:   systemctl start nimbus-execution
+
+View logs: journalctl -u nimbus-execution -f
+
+Network Ports
+-------------
+
+Default P2P port: 30303 (TCP/UDP)
+  - Forward this port in your router for better peer connectivity
+
+Era Files Support
+-----------------
+
+Nimbus supports Era files for faster historical data access. The package
+includes an era_downloader.sh helper script to download Era files.
+
+Differences from Upstream
+-------------------------
+
+- Runs as 'ethereum' user (not root)
+- Data stored in /home/ethereum/.nimbus-eth1
+- Era downloader script included
+- Systemd service with automatic restart
+
+Syncing
+-------
+
+IMPORTANT: You need a synced Consensus Layer client (beacon chain) running
+before Nimbus Execution can start syncing.
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Upstream:         https://nimbus.team
+- Discord:          https://discord.gg/ve2Z8fxz5N

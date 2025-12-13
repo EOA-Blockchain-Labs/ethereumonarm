@@ -1,0 +1,54 @@
+Nethermind for Ethereum on ARM
+==============================
+
+Nethermind is a .NET enterprise-friendly Ethereum execution layer client.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /opt/nethermind/configs/mainnet.json
+Data directory:      /home/ethereum/.nethermind
+JWT secret:          /etc/ethereum/jwtsecret
+
+Nethermind uses JSON configuration files located in /opt/nethermind/configs/.
+The mainnet.json is the default configuration for Ethereum mainnet.
+
+Systemd Services
+----------------
+
+Mainnet:   systemctl start nethermind
+Sepolia:   systemctl start nethermind-sepolia
+Holesky:   systemctl start nethermind-holesky
+
+View logs: journalctl -u nethermind -f
+
+Network Ports
+-------------
+
+Default P2P port: 30303 (TCP/UDP)
+  - Forward this port in your router for better peer connectivity
+
+Differences from Upstream
+-------------------------
+
+- Runs as 'ethereum' user (not root)
+- Data stored in /home/ethereum/.nethermind
+- .NET runtime is embedded in the package
+- Systemd service with automatic restart
+- Pre-configured for ARM64 optimization
+
+Syncing
+-------
+
+Nethermind uses Snap Sync by default, which typically completes in 12-18 hours
+on ARM64 devices like Rock 5B or Raspberry Pi 5.
+
+IMPORTANT: You need a synced Consensus Layer client (beacon chain) running
+before Nethermind can start syncing.
+
+Documentation
+-------------
+
+- Ethereum on ARM:    https://ethereum-on-arm-documentation.readthedocs.io
+- Upstream Docs:      https://docs.nethermind.io
+- Discord:            https://discord.gg/ve2Z8fxz5N

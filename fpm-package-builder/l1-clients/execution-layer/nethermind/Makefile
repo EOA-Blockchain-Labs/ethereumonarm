@@ -39,6 +39,9 @@ NETHERMIND_ASSET_JSON := $(shell curl -sL "https://api.github.com/repos/Nethermi
 NETHERMIND_ZIP     := $(shell echo '$(NETHERMIND_ASSET_JSON)' | jq -r '.name')
 NETHERMIND_URL     := $(shell echo '$(NETHERMIND_ASSET_JSON)' | jq -r '.browser_download_url')
 
+# SHA256 checksum extracted from GitHub API asset digest field
+NETHERMIND_SHA256  := $(shell echo '$(NETHERMIND_ASSET_JSON)' | jq -r '.digest' | sed 's/sha256://')
+
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(NETHERMIND_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(NETHERMIND_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 
@@ -115,9 +118,11 @@ prepare: ## Download latest Nethermind and stage into $(SOURCESDIR)/opt
 	@echo "🔽 Downloading Nethermind $(NETHERMIND_VERSION) for $(PKG_ARCH)..."
 	mkdir -p .build $(SOURCESDIR)/opt/nethermind/logs
 	wget -q -O ".build/$(NETHERMIND_ZIP)" "$(NETHERMIND_URL)" || { echo "❌ Download failed: $(NETHERMIND_URL)"; exit 1; };
+	@echo "🔐 Verifying SHA256..."
+	@echo "$(NETHERMIND_SHA256)  .build/$(NETHERMIND_ZIP)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(NETHERMIND_ZIP)"; exit 1; };
 	@echo "📦 Extracting files..."
 	unzip -o ".build/$(NETHERMIND_ZIP)" -d "$(SOURCESDIR)/opt/nethermind"
-	@echo "✅ Files staged in $(SOURCESDIR)/opt/nethermind"
+	@echo "✅ Files downloaded and verified in $(SOURCESDIR)/opt/nethermind"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package

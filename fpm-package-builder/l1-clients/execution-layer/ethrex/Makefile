@@ -31,7 +31,12 @@ OUTPUTDIR       ?= ../../../packages
 # Upstream version and source info
 # ----------------------------------------------------------------------
 ETHREX_VERSION := $(shell curl -sL "https://api.github.com/repos/lambdaclass/ethrex/releases/latest" | jq -r '.tag_name' | tr -d 'v')
-ETHREX_URL     := https://github.com/lambdaclass/ethrex/releases/download/v$(ETHREX_VERSION)/ethrex-linux-$(PKG_ARCH_RPM)
+ETHREX_BINARY  := ethrex-linux-$(PKG_ARCH_RPM)
+ETHREX_URL     := https://github.com/lambdaclass/ethrex/releases/download/v$(ETHREX_VERSION)/$(ETHREX_BINARY)
+
+# SHA256 checksum extracted from GitHub API asset digest field
+ETHREX_RELEASE_JSON := $(shell curl -sL "https://api.github.com/repos/lambdaclass/ethrex/releases/latest")
+ETHREX_SHA256  := $(shell echo '$(ETHREX_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(ETHREX_BINARY)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(ETHREX_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(ETHREX_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
@@ -94,8 +99,10 @@ prepare: ## Download latest Ethrex and stage directly into $(SOURCESDIR)/usr/bin
 	@echo "🔽 Downloading Ethrex $(ETHREX_VERSION)..."
 	mkdir -p $(SOURCESDIR)/usr/bin
 	wget -q -O "$(SOURCESDIR)/usr/bin/$(PKG_NAME)" "$(ETHREX_URL)" || { echo "❌ Download failed: $(ETHREX_URL)"; exit 1; }; \
+	@echo "🔐 Verifying SHA256..."
+	@echo "$(ETHREX_SHA256)  $(SOURCESDIR)/usr/bin/$(PKG_NAME)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f "$(SOURCESDIR)/usr/bin/$(PKG_NAME)"; exit 1; };
 	chmod 0755 "$(SOURCESDIR)/usr/bin/$(PKG_NAME)"
-	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/$(PKG_NAME)"
+	@echo "✅ Binary downloaded and verified at $(SOURCESDIR)/usr/bin/$(PKG_NAME)"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package

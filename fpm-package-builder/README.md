@@ -166,15 +166,15 @@ All packages with binary downloads are verified cryptographically before packagi
 | **Reth** | L1 Execution | SHA256 | GitHub API digest |
 | **Erigon** | L1 Execution | SHA256 | GitHub API digest |
 | **Besu** | L1 Execution | SHA256 | Release changelog |
+| **Nethermind** | L1 Execution | SHA256 | GitHub API digest |
+| **Ethrex** | L1 Execution | SHA256 | GitHub API digest |
 | **MEV-Boost** | Infra | SHA256 | GitHub API digest |
 
 ### ⏳ Pending Verification
 
 | Package | Type | Notes |
 |---------|------|-------|
-| Nethermind | L1 Execution | Needs research |
 | Nimbus-EC | L1 Execution | Needs research |
-| Ethrex | L1 Execution | Needs research |
 | DVT-Obol | Infra | Needs research |
 | DVT-SSV | Infra | Needs research |
 | Vouch | Infra | Needs research |

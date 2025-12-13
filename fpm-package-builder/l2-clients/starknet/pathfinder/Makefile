@@ -38,6 +38,10 @@ PATHFINDER_VERSION := $(shell echo "$(PATHFINDER_TAG_V)" | tr -d "v")
 PATHFINDER_TARBALL := pathfinder-$(PKG_ARCH_RPM)-unknown-linux-gnu.tar.gz
 PATHFINDER_URL     := https://github.com/eqlabs/pathfinder/releases/download/$(PATHFINDER_TAG_V)/$(PATHFINDER_TARBALL)
 
+# SHA256 checksum extracted from GitHub API asset digest field
+PATHFINDER_RELEASE_JSON := $(shell curl -s "https://api.github.com/repos/eqlabs/pathfinder/releases/latest")
+PATHFINDER_SHA256 := $(shell echo '$(PATHFINDER_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(PATHFINDER_TARBALL)") | .digest' | sed 's/sha256://')
+
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(PATHFINDER_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(PATHFINDER_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 
@@ -99,11 +103,13 @@ prepare: ## Download latest Pathfinder and stage into $(SOURCESDIR)/usr/bin
 	@echo "🔽 Downloading Pathfinder $(PATHFINDER_VERSION) ($(PATHFINDER_TAG_V))..."
 	mkdir -p .build $(SOURCESDIR)/usr/bin
 	wget -q -O ".build/$(PATHFINDER_TARBALL)" "$(PATHFINDER_URL)" || { echo "❌ Download failed: $(PATHFINDER_URL)"; exit 1; };
+	@echo "🔐 Verifying SHA256..."
+	@echo "$(PATHFINDER_SHA256)  .build/$(PATHFINDER_TARBALL)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(PATHFINDER_TARBALL)"; exit 1; };
 	
 	@echo "📦 Extracting binary..."
 	tar -xzf ".build/$(PATHFINDER_TARBALL)" -C $(SOURCESDIR)/usr/bin/
 	chmod 0755 "$(SOURCESDIR)/usr/bin/pathfinder"
-	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/pathfinder"
+	@echo "✅ Binary downloaded and verified at $(SOURCESDIR)/usr/bin/pathfinder"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package

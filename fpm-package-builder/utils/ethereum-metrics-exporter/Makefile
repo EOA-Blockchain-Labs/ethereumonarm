@@ -45,6 +45,10 @@ EME_VERSION := $(shell echo "$(EME_TAG_V)" | tr -d "v")
 EME_TARBALL := ethereum-metrics-exporter_$(EME_VERSION)_linux_$(PKG_ARCH).tar.gz
 EME_URL     := https://github.com/ethpandaops/ethereum-metrics-exporter/releases/download/$(EME_TAG_V)/$(EME_TARBALL)
 
+# SHA256 checksum extracted from GitHub API asset digest field
+EME_RELEASE_JSON := $(shell curl -s https://api.github.com/repos/ethpandaops/ethereum-metrics-exporter/releases/latest)
+EME_SHA256 := $(shell echo '$(EME_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(EME_TARBALL)") | .digest' | sed 's/sha256://')
+
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(EME_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(EME_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 
@@ -112,6 +116,8 @@ prepare: ## Download latest ethereum-metrics-exporter and stage
 	@echo "🔽 Downloading EME $(EME_VERSION) ($(EME_TAG_V))..."
 	mkdir -p .build $(SOURCESDIR)/usr/bin
 	wget -q -O ".build/$(EME_TARBALL)" "$(EME_URL)" || { echo "❌ Download failed: $(EME_URL)"; exit 1; };
+	@echo "🔐 Verifying SHA256..."
+	@echo "$(EME_SHA256)  .build/$(EME_TARBALL)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(EME_TARBALL)"; exit 1; };
 	
 	@echo "📦 Extracting binary..."
 	# Find the versioned binary and rename it to the unversioned name on extraction
@@ -120,7 +126,7 @@ prepare: ## Download latest ethereum-metrics-exporter and stage
 	    "ethereum-metrics-exporter-$(EME_VERSION)"
 	
 	chmod 0755 "$(SOURCESDIR)/usr/bin/ethereum-metrics-exporter"
-	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/ethereum-metrics-exporter"
+	@echo "✅ Binary downloaded and verified at $(SOURCESDIR)/usr/bin/ethereum-metrics-exporter"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package

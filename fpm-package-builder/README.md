@@ -170,13 +170,13 @@ All packages with binary downloads are verified cryptographically before packagi
 | **Ethrex** | L1 Execution | SHA256 | GitHub API digest |
 | **MEV-Boost** | Infra | SHA256 | GitHub API digest |
 | **Vouch** | Infra | SHA256 | GitHub API digest |
+| **DVT-Obol** | Infra | SHA256 | GitHub API digest |
 
 ### ⏳ Pending Verification
 
 | Package | Type | Notes |
 |---------|------|-------|
 | Nimbus-EC | L1 Execution | Needs research |
-| DVT-Obol | Infra | Needs research |
 | DVT-SSV | Infra | Needs research |
 | L2 clients | Layer 2 | Various |
 

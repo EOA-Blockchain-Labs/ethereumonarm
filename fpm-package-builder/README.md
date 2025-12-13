@@ -148,7 +148,41 @@ To install locally for testing (adjust path):
 
 ---
 
-## 5. Adding a New Package
+## 5. Binary Verification Status
+
+All packages with binary downloads are verified cryptographically before packaging.
+
+### ✅ Verified Packages
+
+| Package | Type | Verification | Source |
+|---------|------|--------------|--------|
+| **Prysm** | L1 Consensus | SHA256 | GitHub API digest |
+| **Lighthouse** | L1 Consensus | SHA256 | GitHub API digest |
+| **Grandine** | L1 Consensus | SHA256 | GitHub API digest |
+| **Teku** | L1 Consensus | SHA256 | Release changelog |
+| **Lodestar** | L1 Consensus | SHA256 | GitHub API digest |
+| **Nimbus** | L1 Consensus | SHA256 | GitHub API digest |
+| **Geth** | L1 Execution | PGP | Key `9BA28146` from geth.ethereum.org |
+| **Reth** | L1 Execution | SHA256 | GitHub API digest |
+| **Erigon** | L1 Execution | SHA256 | GitHub API digest |
+| **Besu** | L1 Execution | SHA256 | Release changelog |
+| **MEV-Boost** | Infra | SHA256 | GitHub API digest |
+
+### ⏳ Pending Verification
+
+| Package | Type | Notes |
+|---------|------|-------|
+| Nethermind | L1 Execution | Needs research |
+| Nimbus-EC | L1 Execution | Needs research |
+| Ethrex | L1 Execution | Needs research |
+| DVT-Obol | Infra | Needs research |
+| DVT-SSV | Infra | Needs research |
+| Vouch | Infra | Needs research |
+| L2 clients | Layer 2 | Various |
+
+---
+
+## 6. Adding a New Package
 
 1. Create a new directory under `fpm-package-builder/` (e.g., `utils/new-tool/`)
 2. Copy the template Makefile:
@@ -177,7 +211,7 @@ To install locally for testing (adjust path):
 
 ---
 
-## 6. Troubleshooting
+## 7. Troubleshooting
 
 | Problem                            | Cause                     | Solution                                                      |
 |------------------------------------|---------------------------|---------------------------------------------------------------|
@@ -189,7 +223,7 @@ To install locally for testing (adjust path):
 
 ---
 
-## 7. Contributing
+## 8. Contributing
 
 We welcome contributions! You can help by:
 
@@ -202,7 +236,7 @@ Join our Discord to collaborate:
 
 ---
 
-## 8. Related Resources
+## 9. Related Resources
 
 - Ethereum on ARM Main Repo:  
   <https://github.com/EOA-Blockchain-Labs/ethereumonarm>

@@ -35,8 +35,17 @@ PRYSM_TAG_V := $(shell curl -Ls "https://api.github.com/repos/prysmaticlabs/prys
 # Get the version without "v" (e.g., 5.0.0)
 PRYSM_VERSION := $(shell echo "$(PRYSM_TAG_V)" | tr -d "v")
 
-BEACON_CHAIN_URL := https://github.com/prysmaticlabs/prysm/releases/download/$(PRYSM_TAG_V)/beacon-chain-$(PRYSM_TAG_V)-linux-$(PKG_ARCH)
-VALIDATOR_URL    := https://github.com/prysmaticlabs/prysm/releases/download/$(PRYSM_TAG_V)/validator-$(PRYSM_TAG_V)-linux-$(PKG_ARCH)
+# Binary names for this architecture
+BEACON_CHAIN_BINARY := beacon-chain-$(PRYSM_TAG_V)-linux-$(PKG_ARCH)
+VALIDATOR_BINARY    := validator-$(PRYSM_TAG_V)-linux-$(PKG_ARCH)
+
+BEACON_CHAIN_URL := https://github.com/prysmaticlabs/prysm/releases/download/$(PRYSM_TAG_V)/$(BEACON_CHAIN_BINARY)
+VALIDATOR_URL    := https://github.com/prysmaticlabs/prysm/releases/download/$(PRYSM_TAG_V)/$(VALIDATOR_BINARY)
+
+# SHA256 checksums extracted from GitHub API asset digest field
+PRYSM_RELEASE_JSON := $(shell curl -Ls "https://api.github.com/repos/prysmaticlabs/prysm/releases/latest")
+BEACON_CHAIN_SHA256 := $(shell echo '$(PRYSM_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(BEACON_CHAIN_BINARY)") | .digest' | sed 's/sha256://')
+VALIDATOR_SHA256    := $(shell echo '$(PRYSM_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(VALIDATOR_BINARY)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(PRYSM_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(PRYSM_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
@@ -101,11 +110,16 @@ prepare: ## Download latest Prysm binaries and stage into $(SOURCESDIR)/usr/bin
 	
 	@echo "Downloading beacon-chain..."
 	wget -q -O "$(SOURCESDIR)/usr/bin/beacon-chain" "$(BEACON_CHAIN_URL)" || { echo "❌ beacon-chain download failed: $(BEACON_CHAIN_URL)"; exit 1; };
+	@echo "🔐 Verifying beacon-chain SHA256..."
+	@echo "$(BEACON_CHAIN_SHA256)  $(SOURCESDIR)/usr/bin/beacon-chain" | sha256sum -c - || { echo "❌ beacon-chain SHA256 verification FAILED!"; rm -f "$(SOURCESDIR)/usr/bin/beacon-chain"; exit 1; };
+	
 	@echo "Downloading validator..."
 	wget -q -O "$(SOURCESDIR)/usr/bin/validator" "$(VALIDATOR_URL)" || { echo "❌ validator download failed: $(VALIDATOR_URL)"; exit 1; };
+	@echo "🔐 Verifying validator SHA256..."
+	@echo "$(VALIDATOR_SHA256)  $(SOURCESDIR)/usr/bin/validator" | sha256sum -c - || { echo "❌ validator SHA256 verification FAILED!"; rm -f "$(SOURCESDIR)/usr/bin/validator"; exit 1; };
 	
 	chmod 0755 $(SOURCESDIR)/usr/bin/beacon-chain $(SOURCESDIR)/usr/bin/validator
-	@echo "✅ Binaries ready in $(SOURCESDIR)/usr/bin"
+	@echo "✅ Binaries downloaded and verified in $(SOURCESDIR)/usr/bin"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package

@@ -35,8 +35,13 @@ GRANDINE_TAG := $(shell curl -sL "https://api.github.com/repos/grandinetech/gran
 # Get the version without "v" (e.g., 0.1.0) for the package version
 GRANDINE_VERSION := $(shell echo "$(GRANDINE_TAG)" | tr -d "v")
 
-# The download URL uses the arm64 arch tag, so we use $(PKG_ARCH)
-GRANDINE_URL := https://github.com/grandinetech/grandine/releases/download/$(GRANDINE_TAG)/grandine-$(GRANDINE_VERSION)-$(PKG_ARCH)
+# The binary name for this architecture
+GRANDINE_BINARY := grandine-$(GRANDINE_VERSION)-$(PKG_ARCH)
+GRANDINE_URL := https://github.com/grandinetech/grandine/releases/download/$(GRANDINE_TAG)/$(GRANDINE_BINARY)
+
+# SHA256 checksum extracted from GitHub API asset digest field
+GRANDINE_RELEASE_JSON := $(shell curl -sL "https://api.github.com/repos/grandinetech/grandine/releases/latest")
+GRANDINE_SHA256 := $(shell echo '$(GRANDINE_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(GRANDINE_BINARY)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(GRANDINE_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(GRANDINE_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
@@ -99,8 +104,10 @@ prepare: ## Download latest Grandine and stage into $(SOURCESDIR)/usr/bin
 	@echo "🔽 Downloading Grandine $(GRANDINE_VERSION) ($(GRANDINE_TAG))..."
 	mkdir -p $(SOURCESDIR)/usr/bin
 	wget -q -O "$(SOURCESDIR)/usr/bin/$(PKG_NAME)" "$(GRANDINE_URL)" || { echo "❌ Download failed: $(GRANDINE_URL)"; exit 1; };
+	@echo "🔐 Verifying SHA256..."
+	@echo "$(GRANDINE_SHA256)  $(SOURCESDIR)/usr/bin/$(PKG_NAME)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f "$(SOURCESDIR)/usr/bin/$(PKG_NAME)"; exit 1; };
 	chmod 0755 "$(SOURCESDIR)/usr/bin/$(PKG_NAME)"
-	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/$(PKG_NAME)"
+	@echo "✅ Binary downloaded and verified at $(SOURCESDIR)/usr/bin/$(PKG_NAME)"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package

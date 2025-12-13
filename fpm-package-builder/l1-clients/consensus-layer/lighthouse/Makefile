@@ -38,6 +38,10 @@ LIGHTHOUSE_VERSION := $(shell echo "$(LIGHTHOUSE_TAG)" | tr -d "v")
 LIGHTHOUSE_TARBALL := lighthouse-$(LIGHTHOUSE_TAG)-$(PKG_ARCH_RPM)-unknown-linux-gnu.tar.gz
 LIGHTHOUSE_URL     := https://github.com/sigp/lighthouse/releases/download/$(LIGHTHOUSE_TAG)/$(LIGHTHOUSE_TARBALL)
 
+# SHA256 checksum extracted from GitHub API asset digest field
+LIGHTHOUSE_RELEASE_JSON := $(shell curl -sL "https://api.github.com/repos/sigp/lighthouse/releases/latest")
+LIGHTHOUSE_SHA256 := $(shell echo '$(LIGHTHOUSE_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(LIGHTHOUSE_TARBALL)") | .digest' | sed 's/sha256://')
+
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(LIGHTHOUSE_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(LIGHTHOUSE_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 
@@ -99,10 +103,12 @@ prepare: ## Download latest Lighthouse and stage into $(SOURCESDIR)/usr/bin
 	@echo "🔽 Downloading Lighthouse $(LIGHTHOUSE_VERSION) ($(LIGHTHOUSE_TAG))..."
 	mkdir -p .build $(SOURCESDIR)/usr/bin
 	wget -q -O ".build/$(LIGHTHOUSE_TARBALL)" "$(LIGHTHOUSE_URL)" || { echo "❌ Download failed: $(LIGHTHOUSE_URL)"; exit 1; };
+	@echo "🔐 Verifying SHA256..."
+	@echo "$(LIGHTHOUSE_SHA256)  .build/$(LIGHTHOUSE_TARBALL)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(LIGHTHOUSE_TARBALL)"; exit 1; };
 	@echo "📦 Extracting binary..."
 	tar -xzf ".build/$(LIGHTHOUSE_TARBALL)" -C $(SOURCESDIR)/usr/bin/ lighthouse
 	chmod 0755 "$(SOURCESDIR)/usr/bin/lighthouse"
-	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/lighthouse"
+	@echo "✅ Binary downloaded and verified at $(SOURCESDIR)/usr/bin/lighthouse"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package

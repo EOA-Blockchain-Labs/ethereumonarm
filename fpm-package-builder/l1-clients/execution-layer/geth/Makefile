@@ -34,6 +34,10 @@ GETH_VERSION := $(shell curl -s https://api.github.com/repos/ethereum/go-ethereu
 GETH_DHASH   := $(shell curl -s https://api.github.com/repos/ethereum/go-ethereum/tags | jq -r '.[0].commit.sha' | cut -c1-8)
 GETH_TARBALL := geth-linux-$(PKG_ARCH)-$(GETH_VERSION)-$(GETH_DHASH).tar.gz
 GETH_URL     := https://gethstore.blob.core.windows.net/builds/$(GETH_TARBALL)
+GETH_SIG_URL := $(GETH_URL).asc
+
+# Go Ethereum Linux Builder PGP key ID (from https://geth.ethereum.org/downloads#pgpsignatures)
+GETH_PGP_KEY := 9BA28146
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(GETH_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(GETH_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
@@ -88,13 +92,28 @@ all: prepare deb clean test ## Default local build pipeline
 # ----------------------------------------------------------------------
 # prepare — download & stage Geth binary
 # ----------------------------------------------------------------------
-prepare: ## Download latest Geth and stage directly into $(SOURCESDIR)/usr/bin
-	@echo "🔽 Streaming Geth $(GETH_VERSION) ($(GETH_DHASH))..."
-	mkdir -p $(SOURCESDIR)/usr/bin
-	# Download stdout -> Gunzip/Untar -> Strip root folder -> Place in source dir
-	wget -qO- "$(GETH_URL)" | tar -xz -C $(SOURCESDIR)/usr/bin --strip-components=1 --wildcards '*/geth'
+prepare: ## Download latest Geth and verify PGP signature
+	@echo "🔎 Resolving latest Geth version..."
+	@if [[ -z "$(GETH_VERSION)" || "$(GETH_VERSION)" == "null" ]]; then \
+	    echo "❌ Could not determine latest Geth version via GitHub API."; exit 1; \
+	fi
+	@echo "🔽 Downloading Geth $(GETH_VERSION) ($(GETH_DHASH))..."
+	mkdir -p .build $(SOURCESDIR)/usr/bin
+	
+	# Download tarball and signature
+	wget -q -O ".build/$(GETH_TARBALL)" "$(GETH_URL)" || { echo "❌ Download failed: $(GETH_URL)"; exit 1; };
+	wget -q -O ".build/$(GETH_TARBALL).asc" "$(GETH_SIG_URL)" || { echo "❌ Signature download failed: $(GETH_SIG_URL)"; exit 1; };
+	
+	@echo "🔐 Verifying PGP signature..."
+	# Import Geth Linux Builder key if not present (key ID: 9BA28146)
+	gpg --list-keys $(GETH_PGP_KEY) >/dev/null 2>&1 || gpg --keyserver keyserver.ubuntu.com --recv-keys $(GETH_PGP_KEY) || { echo "❌ Failed to import GPG key $(GETH_PGP_KEY)"; exit 1; };
+	# Verify signature
+	gpg --verify ".build/$(GETH_TARBALL).asc" ".build/$(GETH_TARBALL)" || { echo "❌ PGP signature verification FAILED!"; rm -f ".build/$(GETH_TARBALL)"*; exit 1; };
+	
+	@echo "📦 Extracting binary..."
+	tar -xzf ".build/$(GETH_TARBALL)" -C $(SOURCESDIR)/usr/bin --strip-components=1 --wildcards '*/geth'
 	chmod 0755 "$(SOURCESDIR)/usr/bin/geth"
-	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/geth"
+	@echo "✅ Binary downloaded and verified at $(SOURCESDIR)/usr/bin/geth"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package
@@ -126,8 +145,8 @@ rpm: prepare ## Build .rpm package
 # clean — remove build artifacts
 # ----------------------------------------------------------------------
 clean: ## Remove staged binaries and temp files
-	rm -rf $(SOURCESDIR)/usr/bin/$(PKG_NAME)*
-	@echo "🧹 Clean complete (staged binaries removed)."
+	rm -rf $(SOURCESDIR)/usr/bin/$(PKG_NAME)* .build
+	@echo "🧹 Clean complete (staged files and .build removed)."
 
 # ----------------------------------------------------------------------
 # test — verify build success

@@ -38,6 +38,10 @@ MEV_VERSION := $(shell echo "$(MEV_TAG_V)" | tr -d "v")
 MEV_TARBALL := mev-boost_$(MEV_VERSION)_linux_$(PKG_ARCH).tar.gz
 MEV_URL     := https://github.com/flashbots/mev-boost/releases/download/$(MEV_TAG_V)/$(MEV_TARBALL)
 
+# SHA256 checksum extracted from GitHub API asset digest field
+MEV_RELEASE_JSON := $(shell curl -s https://api.github.com/repos/flashbots/mev-boost/releases/latest)
+MEV_SHA256 := $(shell echo '$(MEV_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(MEV_TARBALL)") | .digest' | sed 's/sha256://')
+
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(MEV_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(MEV_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 
@@ -99,11 +103,13 @@ prepare: ## Download latest mev-boost and stage into $(SOURCESDIR)/usr/bin
 	@echo "🔽 Downloading mev-boost $(MEV_VERSION) ($(MEV_TAG_V))..."
 	mkdir -p .build $(SOURCESDIR)/usr/bin
 	wget -q -O ".build/$(MEV_TARBALL)" "$(MEV_URL)" || { echo "❌ Download failed: $(MEV_URL)"; exit 1; };
+	@echo "🔐 Verifying SHA256..."
+	@echo "$(MEV_SHA256)  .build/$(MEV_TARBALL)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(MEV_TARBALL)"; exit 1; };
 	
 	@echo "📦 Extracting binary..."
 	tar -xzf ".build/$(MEV_TARBALL)" -C $(SOURCESDIR)/usr/bin/ mev-boost
 	chmod 0755 "$(SOURCESDIR)/usr/bin/mev-boost"
-	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/mev-boost"
+	@echo "✅ Binary downloaded and verified at $(SOURCESDIR)/usr/bin/mev-boost"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package

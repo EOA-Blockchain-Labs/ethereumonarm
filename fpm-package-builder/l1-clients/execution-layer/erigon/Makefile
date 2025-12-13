@@ -34,6 +34,10 @@ ERIGON_VERSION := $(shell curl -sL "https://api.github.com/repos/erigontech/erig
 ERIGON_TARBALL := erigon_v$(ERIGON_VERSION)_linux_$(PKG_ARCH).tar.gz
 ERIGON_URL     := https://github.com/erigontech/erigon/releases/download/v$(ERIGON_VERSION)/$(ERIGON_TARBALL)
 
+# SHA256 checksum extracted from GitHub API asset digest field
+ERIGON_RELEASE_JSON := $(shell curl -sL "https://api.github.com/repos/erigontech/erigon/releases/latest")
+ERIGON_SHA256 := $(shell echo '$(ERIGON_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(ERIGON_TARBALL)") | .digest' | sed 's/sha256://')
+
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(ERIGON_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(ERIGON_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 
@@ -98,13 +102,15 @@ prepare: ## Download latest Erigon and stage directly into $(SOURCESDIR)/usr/bin
 	
 	# Download to a file first to prevent piping issues
 	wget -q -O ".build/$(ERIGON_TARBALL)" "$(ERIGON_URL)" || { echo "❌ Download failed: $(ERIGON_URL)"; exit 1; }
+	@echo "🔐 Verifying SHA256..."
+	@echo "$(ERIGON_SHA256)  .build/$(ERIGON_TARBALL)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(ERIGON_TARBALL)"; exit 1; };
 	
 	@echo "📦 Extracting binary..."
 	# Extract from the downloaded file
 	tar -xzf ".build/$(ERIGON_TARBALL)" -C $(SOURCESDIR)/usr/bin --wildcards --absolute-names --no-anchored --strip-components 1 '*/erigon'
 	
 	chmod 0755 "$(SOURCESDIR)/usr/bin/erigon"
-	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/erigon"
+	@echo "✅ Binary downloaded and verified at $(SOURCESDIR)/usr/bin/erigon"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package

@@ -1,0 +1,56 @@
+Geth for Ethereum on ARM
+=========================
+
+Geth (Go Ethereum) is the most widely-used Ethereum execution layer client,
+developed by the Ethereum Foundation team.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/geth.conf
+Data directory:      /home/ethereum/.geth
+JWT secret:          /etc/ethereum/jwtsecret
+
+The configuration file contains ARGS that are passed to the geth binary.
+Edit this file to customize your node's behavior.
+
+Systemd Services
+----------------
+
+Mainnet:   systemctl start geth
+Sepolia:   systemctl start geth-sepolia
+Holesky:   systemctl start geth-holesky
+Hoodi:     systemctl start geth-hoodi
+
+View logs: journalctl -u geth -f
+
+Network Ports
+-------------
+
+Default P2P port: 30303 (TCP/UDP)
+  - Forward this port in your router for better peer connectivity
+
+Differences from Upstream
+-------------------------
+
+- Runs as 'ethereum' user (not root)
+- Data stored in /home/ethereum/.geth (not ~/.ethereum)
+- Configuration via /etc/ethereum/geth.conf
+- Systemd service with automatic restart
+- Metrics and pprof enabled by default
+
+Syncing
+-------
+
+Geth uses Snap Sync by default, which typically completes in 12-18 hours
+on ARM64 devices like Rock 5B or Raspberry Pi 5.
+
+IMPORTANT: You need a synced Consensus Layer client (beacon chain) running
+before Geth can start syncing.
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Upstream Geth:    https://geth.ethereum.org/docs
+- Discord:          https://discord.gg/ve2Z8fxz5N

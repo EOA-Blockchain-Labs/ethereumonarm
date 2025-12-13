@@ -1,0 +1,57 @@
+Ethrex for Ethereum on ARM
+==========================
+
+Ethrex is a lightweight, performant, and modular Ethereum execution client
+written in Rust, powering next-gen L1 and L2 solutions.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/ethrex.conf
+Data directory:      /home/ethereum/.ethrex
+JWT secret:          /etc/ethereum/jwtsecret
+
+The configuration file contains ARGS that are passed to the ethrex binary.
+Edit this file to customize your node's behavior.
+
+Systemd Services
+----------------
+
+Mainnet:   systemctl start ethrex
+
+View logs: journalctl -u ethrex -f
+
+Network Ports
+-------------
+
+Default P2P port: 30303 (TCP/UDP)
+  - Forward this port in your router for better peer connectivity
+
+Differences from Upstream
+-------------------------
+
+- Runs as 'ethereum' user (not root)
+- Data stored in /home/ethereum/.ethrex
+- Systemd service with automatic restart
+
+Status
+------
+
+NOTE: Ethrex is new to the Ethereum on ARM ecosystem and is still under
+active testing. Use with caution in production environments.
+
+Syncing
+-------
+
+Ethrex uses Snap Sync, which typically completes in 12-18 hours
+on ARM64 devices like Rock 5B or Raspberry Pi 5.
+
+IMPORTANT: You need a synced Consensus Layer client (beacon chain) running
+before Ethrex can start syncing.
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Upstream:         https://ethrex.xyz
+- Discord:          https://discord.gg/ve2Z8fxz5N

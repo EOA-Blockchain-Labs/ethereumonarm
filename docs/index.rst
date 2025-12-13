@@ -4,6 +4,9 @@
 Ethereum on ARM
 ===============
 
+.. meta::
+   :description lang=en: Ethereum on ARM provides custom Linux images to turn ARM boards like NanoPC T6, Rock 5B, and Raspberry Pi into full Ethereum nodes. Supports Geth, Nethermind, Lighthouse, Teku, and more.
+
 .. figure:: /_static/images/ethereum_node.jpg
    :figwidth: 100%
    :align: center

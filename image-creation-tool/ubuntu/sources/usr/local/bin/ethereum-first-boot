@@ -177,6 +177,7 @@ echo "Installing essential basic programs..."
 # 'apt-get -y install' installs packages.
 # -y: Assume "yes" to all prompts (non-interactive).
 # If this fails, the script exits.
+# shellcheck disable=SC2086 # Word splitting is intentional for package list
 apt-get -y install $BASE_PACKAGES || {
     echo "Failed to install one or more basic programs. Stopping."
     exit 1
@@ -248,7 +249,7 @@ format_disk() {
     # -b "$PART_DEVICE": Checks if it's a block device (like a partition).
     # file -s "$PART_DEVICE": Gets information about the partition.
     # grep -oP 'Linux.*filesystem': Searches for "Linux" followed by "filesystem".
-    if [[ -b "$PART_DEVICE" && $(file -s "$PART_DEVICE" | grep -oP 'Linux.*filesystem') ]]; then
+    if [[ -b "$PART_DEVICE" ]] && file -s "$PART_DEVICE" | grep -qP 'Linux.*filesystem'; then
         # Create a temporary directory to mount the partition for inspection.
         TMP_DIR=$(mktemp -d) # 'mktemp -d' creates a unique temporary directory.
         echo "Attempting to temporarily mount ${PART_DEVICE} to check its contents..."
@@ -577,6 +578,7 @@ echo "Performance-related sysctl tweaks applied successfully."
 echo "Installing Ethereum client software and related tools..."
 # Install the packages listed in the ETHEREUM_PACKAGES variable.
 # -y: Assume "yes" to prompts.
+# shellcheck disable=SC2086 # Word splitting is intentional for package list
 apt-get -y install $ETHEREUM_PACKAGES || {
     echo "ERROR: Failed to install one or more Ethereum programs. Stopping."
     exit 1
@@ -639,6 +641,7 @@ chown -R prometheus:prometheus /home/prometheus/{metrics2,node-exporter}
 
 echo "Installing monitoring-related packages..."
 # Install packages listed in MONITORING_PACKAGES.
+# shellcheck disable=SC2086 # Word splitting is intentional for package list
 apt-get -y install $MONITORING_PACKAGES || {
     echo "ERROR: Failed to install one or more monitoring programs. Stopping."
     exit 1
@@ -661,6 +664,7 @@ echo "Monitoring programs setup and services enabled."
 echo "Setting up Nginx web server..."
 echo "Installing Nginx and related packages..."
 # Install packages listed in NGINX_PACKAGES.
+# shellcheck disable=SC2086 # Word splitting is intentional for package list
 apt-get -y install $NGINX_PACKAGES || {
     echo "ERROR: Failed to install Nginx or related packages. Stopping."
     exit 1

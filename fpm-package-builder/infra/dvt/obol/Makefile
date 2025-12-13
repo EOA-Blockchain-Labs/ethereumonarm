@@ -26,7 +26,7 @@ CATEGORY        ?= science
 WEB_URL         ?= https://github.com/ObolNetwork/charon
 SOURCESDIR      ?= sources
 OUTPUTDIR       ?= ../../../packages
-PKG_AFTER_INSTALL ?= extras/dvt-obol.postinst
+PKG_AFTER_INSTALL ?= extras/postinst
 
 # ----------------------------------------------------------------------
 # Upstream version and source info

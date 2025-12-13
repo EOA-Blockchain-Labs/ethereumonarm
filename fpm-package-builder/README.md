@@ -174,6 +174,7 @@ All packages with binary downloads are verified cryptographically before packagi
 | **DVT-Obol** | Infra | SHA256 | GitHub API digest |
 | **Commit-Boost** | Infra | SHA256 | GitHub API digest |
 | **ethstaker-deposit-cli** | Infra | SHA256 | Downloaded .sha256 file |
+| **StakeWise Operator** | Infra | SHA256 | GitHub API digest |
 
 ### ⏳ Pending Verification
 

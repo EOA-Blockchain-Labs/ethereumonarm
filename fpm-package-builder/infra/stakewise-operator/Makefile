@@ -43,6 +43,10 @@ endif
 STAKEWISE_TARBALL := operator-$(STAKEWISE_TAG)-ubuntu-22.04-arm64.tar.gz
 STAKEWISE_URL     := https://github.com/stakewise/v3-operator/releases/download/$(STAKEWISE_TAG)/$(STAKEWISE_TARBALL)
 
+# SHA256 checksum extracted from GitHub API asset digest field
+STAKEWISE_RELEASE_JSON := $(shell curl -sL "https://api.github.com/repos/stakewise/v3-operator/releases/latest")
+STAKEWISE_SHA256 := $(shell echo '$(STAKEWISE_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(STAKEWISE_TARBALL)") | .digest' | sed 's/sha256://')
+
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(STAKEWISE_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(STAKEWISE_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 
@@ -92,10 +96,11 @@ prepare:
 	@echo "🔽 Downloading StakeWise Operator $(STAKEWISE_VERSION)..."
 	mkdir -p .build $(SOURCESDIR)/usr/local/bin
 	wget -q -O ".build/$(STAKEWISE_TARBALL)" "$(STAKEWISE_URL)" || { echo "❌ Download failed: $(STAKEWISE_URL)"; exit 1; };
+	@echo "🔐 Verifying SHA256..."
+	@echo "$(STAKEWISE_SHA256)  .build/$(STAKEWISE_TARBALL)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(STAKEWISE_TARBALL)"; exit 1; };
 	@echo "📦 Extracting binary..."
 	tar -xzf ".build/$(STAKEWISE_TARBALL)" -C .build/
-	# The tarball contains a binary named 'operator' (verified assumption based on common Go/Python builds, user to verify if differs)
-	# We rename it to stakewise-operator to identify it clearly in the system
+	# The tarball contains a binary named 'operator' - rename to stakewise-operator
 	if [[ -f ".build/operator" ]]; then \
 		mv .build/operator $(SOURCESDIR)/usr/local/bin/stakewise-operator; \
 	else \
@@ -103,8 +108,7 @@ prepare:
 		find .build -name operator -exec mv {} $(SOURCESDIR)/usr/local/bin/stakewise-operator \;; \
 	fi
 	chmod 0755 "$(SOURCESDIR)/usr/local/bin/stakewise-operator"
-	
-	# Config file is now static in sources/etc/ethereum/stakewise-operator.conf
+	@echo "✅ Binary downloaded and verified"
 
 deb: prepare
 	mkdir -p $(OUTPUTDIR)

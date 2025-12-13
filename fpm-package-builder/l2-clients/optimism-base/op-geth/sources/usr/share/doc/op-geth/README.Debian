@@ -1,0 +1,38 @@
+OP-Geth for Ethereum on ARM
+===========================
+
+OP-Geth is the Optimism execution layer client, a modified version of
+Go-Ethereum optimized for OP Stack chains (Optimism, Base, etc.).
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/op-geth.conf
+Data directory:      /home/ethereum/.op-geth
+JWT secret:          /etc/ethereum/jwtsecret
+
+Systemd Services
+----------------
+
+Optimism Mainnet:  systemctl start op-geth
+Base Mainnet:      systemctl start op-geth-base
+
+View logs: journalctl -u op-geth -f
+
+Network Ports
+-------------
+
+Default P2P port: 30303 (TCP/UDP)
+
+Requirements
+------------
+
+OP-Geth requires an OP-Node (rollup node) running alongside it.
+Start both services together for a complete L2 node.
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Optimism Docs:    https://docs.optimism.io
+- Discord:          https://discord.gg/ve2Z8fxz5N

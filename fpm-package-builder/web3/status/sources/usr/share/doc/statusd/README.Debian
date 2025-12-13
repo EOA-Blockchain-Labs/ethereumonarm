@@ -1,0 +1,29 @@
+Status Node for Ethereum on ARM
+===============================
+
+statusd is the Status network node daemon.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/statusd.conf
+
+Systemd Services
+----------------
+
+Status Node:  systemctl start statusd
+
+View logs: journalctl -u statusd -f
+
+What is Status?
+---------------
+
+Status is a secure messaging platform and Web3 browser built on
+Ethereum. Running a statusd node helps support the network.
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Status:           https://status.im
+- Discord:          https://discord.gg/ve2Z8fxz5N

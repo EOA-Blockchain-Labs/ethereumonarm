@@ -1,0 +1,55 @@
+Teku for Ethereum on ARM
+========================
+
+Teku is a full Consensus Layer client written in Java by Consensys.
+
+EOA Configuration
+-----------------
+
+Beacon config:     /etc/ethereum/teku-beacon.conf
+Validator config:  /etc/ethereum/teku-validator.conf
+Beacon data:       /home/ethereum/.teku/beacon
+Validator data:    /home/ethereum/.teku/validator
+JWT secret:        /etc/ethereum/jwtsecret
+
+Systemd Services
+----------------
+
+Beacon Chain:  systemctl start teku-beacon
+Validator:     systemctl start teku-validator
+
+View logs: journalctl -u teku-beacon -f
+
+Network Ports
+-------------
+
+Default P2P port: 9000 (TCP/UDP)
+  - Forward this port in your router for better peer connectivity
+
+Dependencies
+------------
+
+Teku requires Java 21 runtime, which is installed as a package dependency.
+
+Syncing
+-------
+
+Checkpoint Sync is enabled by default. The beacon chain syncs in minutes.
+
+IMPORTANT: Start the beacon chain first. Once synced, start your execution
+client (Geth, Nethermind, etc.).
+
+Staking
+-------
+
+To run a validator:
+1. Create password file: echo "PASSWORD" > validator_keys/KEYSTORE_NAME.txt
+2. Set fee recipient in /etc/ethereum/teku-validator.conf
+3. Start validator: systemctl start teku-validator
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Upstream Docs:    https://docs.teku.consensys.io
+- Discord:          https://discord.gg/ve2Z8fxz5N

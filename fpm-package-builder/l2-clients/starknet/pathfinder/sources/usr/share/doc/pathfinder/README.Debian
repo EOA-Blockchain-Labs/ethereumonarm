@@ -1,0 +1,31 @@
+Pathfinder for Ethereum on ARM
+==============================
+
+Pathfinder is a Starknet full node client written in Rust.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/pathfinder.conf
+Data directory:      /home/ethereum/.pathfinder
+
+Systemd Services
+----------------
+
+Starknet Mainnet:  systemctl start pathfinder
+
+View logs: journalctl -u pathfinder -f
+
+Starknet
+--------
+
+Starknet is a Layer 2 zero-knowledge rollup on Ethereum.
+Pathfinder allows you to run your own Starknet node.
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Pathfinder:       https://github.com/eqlabs/pathfinder
+- Starknet:         https://starknet.io
+- Discord:          https://discord.gg/ve2Z8fxz5N

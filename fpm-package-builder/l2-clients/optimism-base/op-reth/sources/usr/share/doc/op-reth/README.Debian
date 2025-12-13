@@ -1,0 +1,40 @@
+OP-Reth for Ethereum on ARM
+===========================
+
+OP-Reth is the Optimism execution layer client based on Reth,
+optimized for OP Stack chains (Optimism, Base, etc.).
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/op-reth.conf
+Data directory:      /home/ethereum/.op-reth
+
+Systemd Services
+----------------
+
+Optimism Mainnet:  systemctl start op-reth
+Base Mainnet:      systemctl start op-reth-base
+
+View logs: journalctl -u op-reth -f
+
+Network Ports
+-------------
+
+Default P2P port: 30303 (TCP/UDP)
+
+Requirements
+------------
+
+OP-Reth requires an OP-Node (rollup node) running alongside it.
+Start both services together for a complete L2 node.
+
+NOTE: OP-Reth conflicts with OP-Geth. Only install one.
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Optimism Docs:    https://docs.optimism.io
+- Reth Docs:        https://paradigmxyz.github.io/reth/
+- Discord:          https://discord.gg/ve2Z8fxz5N

@@ -1,0 +1,30 @@
+Swarm Bee for Ethereum on ARM
+=============================
+
+Bee is a Swarm node implementation for decentralized storage.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/bee.yaml
+
+Systemd Services
+----------------
+
+Bee Node:  systemctl start bee
+
+View logs: journalctl -u bee -f
+
+What is Swarm?
+--------------
+
+Swarm is a decentralized storage and communication system, designed
+to work seamlessly with Ethereum. Bee allows you to participate in
+the Swarm network.
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Swarm Docs:       https://docs.ethswarm.org
+- Discord:          https://discord.gg/ve2Z8fxz5N

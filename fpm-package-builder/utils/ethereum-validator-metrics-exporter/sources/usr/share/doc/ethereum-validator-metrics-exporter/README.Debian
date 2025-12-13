@@ -1,0 +1,29 @@
+ethereum-validator-metrics-exporter for Ethereum on ARM
+========================================================
+
+A metrics exporter specifically for Ethereum validators.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/ethereum-validator-metrics-exporter.conf
+
+Systemd Services
+----------------
+
+Exporter:  systemctl start ethereum-validator-metrics-exporter
+
+View logs: journalctl -u ethereum-validator-metrics-exporter -f
+
+Metrics
+-------
+
+The exporter provides Prometheus-compatible metrics about your
+validator performance, attestations, and rewards.
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Project:          https://github.com/ethpandaops/ethereum-validator-metrics-exporter
+- Discord:          https://discord.gg/ve2Z8fxz5N

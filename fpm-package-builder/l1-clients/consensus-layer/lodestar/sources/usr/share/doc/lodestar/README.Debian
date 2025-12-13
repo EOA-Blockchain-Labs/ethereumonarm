@@ -1,0 +1,41 @@
+Lodestar for Ethereum on ARM
+============================
+
+Lodestar is a full Consensus Layer client written in TypeScript by ChainSafe.
+
+EOA Configuration
+-----------------
+
+Beacon config:     /etc/ethereum/lodestar-beacon.conf
+Validator config:  /etc/ethereum/lodestar-validator.conf
+Data directory:    /home/ethereum/.lodestar
+JWT secret:        /etc/ethereum/jwtsecret
+
+Systemd Services
+----------------
+
+Beacon Chain:  systemctl start lodestar-beacon
+Validator:     systemctl start lodestar-validator
+
+View logs: journalctl -u lodestar-beacon -f
+
+Network Ports
+-------------
+
+Default P2P port: 9000 (TCP/UDP)
+  - Forward this port in your router for better peer connectivity
+
+Syncing
+-------
+
+Checkpoint Sync is enabled by default. The beacon chain syncs in minutes.
+
+IMPORTANT: Start the beacon chain first. Once synced, start your execution
+client (Geth, Nethermind, etc.).
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Upstream Docs:    https://lodestar.chainsafe.io
+- Discord:          https://discord.gg/ve2Z8fxz5N

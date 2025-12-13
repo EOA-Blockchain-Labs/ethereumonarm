@@ -1,0 +1,36 @@
+Vero for Ethereum on ARM
+========================
+
+Vero is a validator effectiveness and reward optimization tool.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/vero/config.yaml
+Installation:        /opt/vero/
+
+Systemd Services
+----------------
+
+Vero:  systemctl start vero
+
+View logs: journalctl -u vero -f
+
+What is Vero?
+-------------
+
+Vero helps monitor and optimize validator performance, tracking
+effectiveness, rewards, and identifying improvement opportunities.
+
+Python Environment
+------------------
+
+Vero runs in an isolated Python virtual environment at /opt/vero/.
+The 'vero' command is available system-wide.
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Vero:             https://github.com/serenita-org/vero
+- Discord:          https://discord.gg/ve2Z8fxz5N

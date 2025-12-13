@@ -1,0 +1,36 @@
+SSV Node for Ethereum on ARM
+============================
+
+SSV Node is the client for SSV.Network Distributed Validator Technology.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/ssv.yaml
+
+Systemd Services
+----------------
+
+SSV Node:  systemctl start ssv-node
+
+View logs: journalctl -u ssv-node -f
+
+SSV Network
+-----------
+
+SSV (Secret Shared Validators) allows validator keys to be split among
+multiple operators. This improves security and fault tolerance.
+
+Setup
+-----
+
+1. Register as an operator on SSV Network
+2. Configure /etc/ethereum/ssv.yaml with your operator keys
+3. Start the service: systemctl start ssv-node
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- SSV Docs:         https://docs.ssv.network
+- Discord:          https://discord.gg/ve2Z8fxz5N

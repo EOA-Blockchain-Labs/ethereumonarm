@@ -1,0 +1,29 @@
+StakeWise Operator for Ethereum on ARM
+======================================
+
+StakeWise Operator is the node software for StakeWise liquid staking.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/stakewise-operator.yaml
+
+Systemd Services
+----------------
+
+Operator:  systemctl start stakewise-operator
+
+View logs: journalctl -u stakewise-operator -f
+
+StakeWise
+---------
+
+StakeWise is a liquid staking protocol. The operator software allows
+you to run a node for the StakeWise network.
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- StakeWise:        https://docs.stakewise.io
+- Discord:          https://discord.gg/ve2Z8fxz5N

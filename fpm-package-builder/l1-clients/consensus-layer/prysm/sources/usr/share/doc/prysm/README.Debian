@@ -1,0 +1,50 @@
+Prysm for Ethereum on ARM
+=========================
+
+Prysm is a full Consensus Layer client written in Go by Prysmatic Labs.
+
+EOA Configuration
+-----------------
+
+Beacon config:     /etc/ethereum/prysm-beacon.conf
+Validator config:  /etc/ethereum/prysm-validator.conf
+Data directory:    /home/ethereum/.eth2
+JWT secret:        /etc/ethereum/jwtsecret
+
+Systemd Services
+----------------
+
+Beacon Chain:  systemctl start prysm-beacon
+Validator:     systemctl start prysm-validator
+
+View logs: journalctl -u prysm-beacon -f
+
+Network Ports
+-------------
+
+Default P2P ports: 13000 (TCP), 12000 (UDP)
+  - Forward both ports in your router for better peer connectivity
+
+Syncing
+-------
+
+Checkpoint Sync is enabled by default. The beacon chain syncs in minutes.
+
+IMPORTANT: Start the beacon chain first. Once synced, start your execution
+client (Geth, Nethermind, etc.).
+
+Staking
+-------
+
+To run a validator:
+1. Import keys: validator accounts import --keys-dir=/home/ethereum/validator_keys
+2. Set fee recipient in /etc/ethereum/prysm-validator.conf
+3. Create password file: echo "PASSWORD" > /home/ethereum/validator_keys/prysm-password.txt
+4. Start validator: systemctl start prysm-validator
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Upstream Docs:    https://docs.prylabs.network
+- Discord:          https://discord.gg/ve2Z8fxz5N

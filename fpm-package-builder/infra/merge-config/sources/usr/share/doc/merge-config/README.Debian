@@ -1,0 +1,24 @@
+merge-config for Ethereum on ARM
+================================
+
+merge-config is an EOA utility for managing Ethereum client configurations.
+
+EOA Configuration
+-----------------
+
+Configuration templates:  /etc/ethereum/
+JWT secret:              /etc/ethereum/jwtsecret
+
+What It Does
+------------
+
+merge-config helps manage configuration files across Ethereum clients,
+ensuring consistent settings for JWT secrets and network configurations.
+
+This package is a dependency for most Ethereum client packages.
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Discord:          https://discord.gg/ve2Z8fxz5N

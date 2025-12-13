@@ -1,0 +1,33 @@
+OP-Node for Ethereum on ARM
+===========================
+
+OP-Node is the Optimism rollup node that connects the L2 execution
+client to Ethereum L1.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/op-node.conf
+Data directory:      /home/ethereum/.op-node
+
+Systemd Services
+----------------
+
+Optimism Mainnet:  systemctl start op-node
+Base Mainnet:      systemctl start op-node-base
+
+View logs: journalctl -u op-node -f
+
+Requirements
+------------
+
+OP-Node requires:
+- An L1 Ethereum node (Geth, Nethermind, etc.) for chain data
+- An L2 execution client (OP-Geth or OP-Reth) running alongside
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Optimism Docs:    https://docs.optimism.io
+- Discord:          https://discord.gg/ve2Z8fxz5N

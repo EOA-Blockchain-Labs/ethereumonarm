@@ -1,0 +1,31 @@
+Madara for Ethereum on ARM
+==========================
+
+Madara is a Starknet sequencer/full node built on Substrate.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/madara.conf
+Data directory:      /home/ethereum/.madara
+
+Systemd Services
+----------------
+
+Starknet:  systemctl start madara
+
+View logs: journalctl -u madara -f
+
+Starknet
+--------
+
+Starknet is a Layer 2 zero-knowledge rollup on Ethereum.
+Madara can be used as a sequencer or full node.
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Madara:           https://github.com/keep-starknet-strange/madara
+- Starknet:         https://starknet.io
+- Discord:          https://discord.gg/ve2Z8fxz5N

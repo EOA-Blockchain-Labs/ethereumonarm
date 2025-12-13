@@ -1,0 +1,55 @@
+Nimbus for Ethereum on ARM
+==========================
+
+Nimbus is a lightweight Consensus Layer client written in Nim by Status.
+
+EOA Configuration
+-----------------
+
+Beacon config:     /etc/ethereum/nimbus-beacon.conf
+Validator config:  /etc/ethereum/nimbus-validator.conf
+Beacon data:       /home/ethereum/.nimbus-beacon
+Validator data:    /home/ethereum/.nimbus-validator
+JWT secret:        /etc/ethereum/jwtsecret
+
+Systemd Services
+----------------
+
+Beacon Chain:  systemctl start nimbus-beacon
+Validator:     systemctl start nimbus-validator
+
+View logs: journalctl -u nimbus-beacon -f
+
+Network Ports
+-------------
+
+Default P2P port: 9000 (TCP/UDP)
+  - Forward this port in your router for better peer connectivity
+
+Checkpoint Sync
+---------------
+
+Nimbus requires running a manual command before starting:
+
+  nimbus_beacon_node trustedNodeSync --network=mainnet \
+    --data-dir=/home/ethereum/.nimbus-beacon \
+    --trusted-node-url=https://beaconstate.ethstaker.cc \
+    --backfill=false
+
+Then start: systemctl start nimbus-beacon
+
+Staking
+-------
+
+To run a validator:
+1. Import keys: nimbus_beacon_node deposits import /home/ethereum/validator_keys \
+     --data-dir=/home/ethereum/.nimbus-validator
+2. Set fee recipient in /etc/ethereum/nimbus-validator.conf
+3. Start validator: systemctl start nimbus-validator
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Upstream Docs:    https://nimbus.team
+- Discord:          https://discord.gg/ve2Z8fxz5N

@@ -1,0 +1,28 @@
+ethereumonarm-utils for Ethereum on ARM
+=======================================
+
+A collection of utilities for managing Ethereum on ARM nodes.
+
+Included Tools
+--------------
+
+- Backup utilities (using rclone and restic)
+- Network diagnostics
+- Node management scripts
+
+Systemd Services
+----------------
+
+Backup timer:  systemctl enable ethereum-backup.timer
+
+Configuration
+-------------
+
+Scripts directory:  /usr/lib/ethereumonarm/
+Configuration:      /etc/ethereum/
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Discord:          https://discord.gg/ve2Z8fxz5N

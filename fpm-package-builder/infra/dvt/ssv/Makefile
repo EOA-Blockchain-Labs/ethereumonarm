@@ -26,7 +26,7 @@ CATEGORY        ?= science
 WEB_URL         ?= https://github.com/ssvlabs/ssv
 SOURCESDIR      ?= sources
 OUTPUTDIR       ?= ../../../packages
-PKG_AFTER_INSTALL ?= extras/postinstall
+PKG_AFTER_INSTALL ?= extras/postinst
 
 # ----------------------------------------------------------------------
 # Upstream version and source info

@@ -30,9 +30,9 @@ OUTPUTDIR       ?= ../../packages
 # ----------------------------------------------------------------------
 # Install/Remove Scripts
 # ----------------------------------------------------------------------
-PKG_AFTER_INSTALL ?= extras/ethereum-metrics-exporter.postinst
-PKG_AFTER_REMOVE  ?= extras/ethereum-metrics-exporter.postrm
-PKG_BEFPRE_REMOVE ?= extras/ethereum-metrics-exporter.prerm
+PKG_AFTER_INSTALL ?= extras/postinst
+PKG_AFTER_REMOVE  ?= extras/postrm
+PKG_BEFPRE_REMOVE ?= extras/prerm
 
 # ----------------------------------------------------------------------
 # Upstream version and source info

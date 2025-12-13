@@ -35,7 +35,12 @@ BEE_TAG_V := $(shell curl -s "https://api.github.com/repos/ethersphere/bee/relea
 # Get the version without "v" (e.g., 2.0.0)
 BEE_VERSION := $(shell echo "$(BEE_TAG_V)" | tr -d "v")
 
-BEE_URL     := https://github.com/ethersphere/bee/releases/download/$(BEE_TAG_V)/bee-linux-$(PKG_ARCH)
+BEE_BINARY := bee-linux-$(PKG_ARCH)
+BEE_URL     := https://github.com/ethersphere/bee/releases/download/$(BEE_TAG_V)/$(BEE_BINARY)
+
+# SHA256 checksum extracted from GitHub API asset digest field
+BEE_RELEASE_JSON := $(shell curl -s "https://api.github.com/repos/ethersphere/bee/releases/latest")
+BEE_SHA256 := $(shell echo '$(BEE_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(BEE_BINARY)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(BEE_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(BEE_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
@@ -96,10 +101,14 @@ prepare: ## Download latest Bee and stage into $(SOURCESDIR)/usr/bin
 	    echo "❌ Could not determine latest Bee version via GitHub API."; exit 1; \
 	fi
 	@echo "🔽 Downloading Bee $(BEE_VERSION) ($(BEE_TAG_V))..."
-	mkdir -p $(SOURCESDIR)/usr/bin
-	wget -q -O "$(SOURCESDIR)/usr/bin/bee" "$(BEE_URL)" || { echo "❌ Download failed: $(BEE_URL)"; exit 1; };
+	mkdir -p .build $(SOURCESDIR)/usr/bin
+	wget -q -O ".build/$(BEE_BINARY)" "$(BEE_URL)" || { echo "❌ Download failed: $(BEE_URL)"; exit 1; };
+	@echo "🔐 Verifying SHA256..."
+	@echo "$(BEE_SHA256)  .build/$(BEE_BINARY)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(BEE_BINARY)"; exit 1; };
+	
+	cp ".build/$(BEE_BINARY)" "$(SOURCESDIR)/usr/bin/bee"
 	chmod 0755 "$(SOURCESDIR)/usr/bin/bee"
-	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/bee"
+	@echo "✅ Binary downloaded and verified at $(SOURCESDIR)/usr/bin/bee"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package

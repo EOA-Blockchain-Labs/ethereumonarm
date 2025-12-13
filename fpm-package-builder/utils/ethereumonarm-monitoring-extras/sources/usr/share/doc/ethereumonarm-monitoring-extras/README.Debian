@@ -1,0 +1,33 @@
+ethereumonarm-monitoring-extras for Ethereum on ARM
+====================================================
+
+Pre-configured monitoring stack for Ethereum nodes.
+
+Included Components
+-------------------
+
+- Grafana dashboards for all Ethereum clients
+- Prometheus configuration
+- Node Exporter setup
+
+Dashboards
+----------
+
+Dashboards are installed to:
+  /usr/lib/ethereumonarm/Grafana dashboards/
+
+Categories:
+- Consensus/ - Beacon chain client dashboards
+- Execution/ - Execution client dashboards
+- System/    - System resource dashboards
+
+Accessing Grafana
+-----------------
+
+Default URL: http://your-node-ip:3000
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Discord:          https://discord.gg/ve2Z8fxz5N

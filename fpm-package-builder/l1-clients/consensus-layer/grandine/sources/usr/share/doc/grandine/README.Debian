@@ -1,0 +1,48 @@
+Grandine for Ethereum on ARM
+============================
+
+Grandine is a high-performance Consensus Layer client written in Rust.
+
+EOA Configuration
+-----------------
+
+Beacon config:     /etc/ethereum/grandine-beacon.conf
+Validator config:  /etc/ethereum/grandine-validator.conf
+Data directory:    /home/ethereum/.grandine
+JWT secret:        /etc/ethereum/jwtsecret
+
+Systemd Services
+----------------
+
+Beacon Chain only:  systemctl start grandine-beacon
+With Validator:     systemctl start grandine-validator
+
+View logs: journalctl -u grandine-beacon -f
+
+Network Ports
+-------------
+
+Default P2P port: 9000 (TCP/UDP)
+  - Forward this port in your router for better peer connectivity
+
+Single Process Mode
+-------------------
+
+NOTE: Grandine runs beacon and validator in a single process. If you want
+to stake, configure the validator config file and run the grandine-validator
+service, which starts both beacon and validator.
+
+Syncing
+-------
+
+Checkpoint Sync is enabled by default. The beacon chain syncs in minutes.
+
+IMPORTANT: Start the beacon chain first. Once synced, start your execution
+client (Geth, Nethermind, etc.).
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Upstream Docs:    https://grandine.io
+- Discord:          https://discord.gg/ve2Z8fxz5N

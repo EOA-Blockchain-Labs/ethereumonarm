@@ -1,0 +1,39 @@
+MEV-Boost for Ethereum on ARM
+=============================
+
+MEV-Boost is a middleware that connects validators to MEV relays for
+Maximal Extractable Value (MEV) block building.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/mev-boost.conf
+
+Systemd Services
+----------------
+
+Mainnet:   systemctl start mev-boost
+Holesky:   systemctl start mev-boost-holesky
+
+View logs: journalctl -u mev-boost -f
+
+What is MEV-Boost?
+------------------
+
+MEV-Boost allows validators to outsource block building to specialized
+builders who can extract MEV more efficiently. This can increase
+validator rewards.
+
+Requirements
+------------
+
+- A synced Beacon Chain client
+- Validator configured to use MEV-Boost
+- Relay endpoints configured in mev-boost.conf
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- MEV-Boost:        https://boost.flashbots.net
+- Discord:          https://discord.gg/ve2Z8fxz5N

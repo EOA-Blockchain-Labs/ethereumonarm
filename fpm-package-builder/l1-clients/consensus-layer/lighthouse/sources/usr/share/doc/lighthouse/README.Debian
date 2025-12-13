@@ -1,0 +1,49 @@
+Lighthouse for Ethereum on ARM
+==============================
+
+Lighthouse is a full Consensus Layer client written in Rust by Sigma Prime.
+
+EOA Configuration
+-----------------
+
+Beacon config:     /etc/ethereum/lighthouse-beacon.conf
+Validator config:  /etc/ethereum/lighthouse-validator.conf
+Data directory:    /home/ethereum/.lighthouse
+JWT secret:        /etc/ethereum/jwtsecret
+
+Systemd Services
+----------------
+
+Beacon Chain:  systemctl start lighthouse-beacon
+Validator:     systemctl start lighthouse-validator
+
+View logs: journalctl -u lighthouse-beacon -f
+
+Network Ports
+-------------
+
+Default P2P port: 9000 (TCP/UDP)
+  - Forward this port in your router for better peer connectivity
+
+Syncing
+-------
+
+Checkpoint Sync is enabled by default. The beacon chain syncs in minutes.
+
+IMPORTANT: Start the beacon chain first. Once synced, start your execution
+client (Geth, Nethermind, etc.).
+
+Staking
+-------
+
+To run a validator:
+1. Import keys: lighthouse account validator import --directory=/home/ethereum/validator_keys
+2. Set fee recipient in /etc/ethereum/lighthouse-validator.conf
+3. Start validator: systemctl start lighthouse-validator
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Upstream Docs:    https://lighthouse-book.sigmaprime.io
+- Discord:          https://discord.gg/ve2Z8fxz5N

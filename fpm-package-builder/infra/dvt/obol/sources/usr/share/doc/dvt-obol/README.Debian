@@ -1,0 +1,37 @@
+DVT-Obol (Charon) for Ethereum on ARM
+=====================================
+
+Charon is Obol Network's middleware for Distributed Validator Technology (DVT).
+
+EOA Configuration
+-----------------
+
+Configuration directory:  /etc/ethereum/charon/
+
+Systemd Services
+----------------
+
+Charon:  systemctl start dvt-obol
+
+View logs: journalctl -u dvt-obol -f
+
+Distributed Validator Technology
+--------------------------------
+
+DVT allows multiple operators to run a single validator together,
+improving fault tolerance and security. If one operator goes offline,
+the others can continue validating.
+
+Setup
+-----
+
+1. Generate or import your distributed validator cluster configuration
+2. Configure /etc/ethereum/charon/
+3. Start the service: systemctl start dvt-obol
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Obol Docs:        https://docs.obol.tech
+- Discord:          https://discord.gg/ve2Z8fxz5N

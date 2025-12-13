@@ -1,0 +1,31 @@
+Juno for Ethereum on ARM
+========================
+
+Juno is a Starknet full node client written in Go by Nethermind.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/juno.conf
+Data directory:      /home/ethereum/.juno
+
+Systemd Services
+----------------
+
+Starknet Mainnet:  systemctl start juno
+
+View logs: journalctl -u juno -f
+
+Starknet
+--------
+
+Starknet is a Layer 2 zero-knowledge rollup on Ethereum.
+Juno allows you to run your own Starknet node.
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Juno Docs:        https://juno.nethermind.io
+- Starknet:         https://starknet.io
+- Discord:          https://discord.gg/ve2Z8fxz5N

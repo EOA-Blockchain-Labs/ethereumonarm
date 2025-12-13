@@ -1,0 +1,31 @@
+ethereum-metrics-exporter for Ethereum on ARM
+==============================================
+
+A client-agnostic metrics exporter for monitoring Ethereum nodes.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/ethereum-metrics-exporter.conf
+
+Systemd Services
+----------------
+
+Exporter:  systemctl start ethereum-metrics-exporter
+
+View logs: journalctl -u ethereum-metrics-exporter -f
+
+Metrics
+-------
+
+The exporter provides Prometheus-compatible metrics about your
+Ethereum node, including sync status, peer count, and more.
+
+Default metrics endpoint: http://localhost:9090/metrics
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Project:          https://github.com/ethpandaops/ethereum-metrics-exporter
+- Discord:          https://discord.gg/ve2Z8fxz5N

@@ -1,0 +1,30 @@
+Kubo (IPFS) for Ethereum on ARM
+===============================
+
+Kubo is the reference implementation of IPFS (InterPlanetary File System).
+
+EOA Configuration
+-----------------
+
+Configuration:   ~/.ipfs/config
+Data directory:  ~/.ipfs/
+
+Systemd Services
+----------------
+
+IPFS Node:  systemctl start ipfs
+
+View logs: journalctl -u ipfs -f
+
+What is IPFS?
+-------------
+
+IPFS is a peer-to-peer distributed file system. Many Ethereum-related
+projects use IPFS for storing and distributing content.
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- IPFS Docs:        https://docs.ipfs.tech
+- Discord:          https://discord.gg/ve2Z8fxz5N

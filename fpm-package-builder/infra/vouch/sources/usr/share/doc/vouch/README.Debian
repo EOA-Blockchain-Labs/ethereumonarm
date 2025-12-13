@@ -1,0 +1,30 @@
+Vouch for Ethereum on ARM
+=========================
+
+Vouch is a multi-node Ethereum validator client by Attestant.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/vouch/vouch.yml
+
+Systemd Services
+----------------
+
+Vouch:  systemctl start vouch
+
+View logs: journalctl -u vouch -f
+
+What is Vouch?
+--------------
+
+Vouch is an advanced validator client that can connect to multiple
+beacon nodes simultaneously for improved redundancy. It supports
+sophisticated fee recipient and MEV strategies.
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Vouch Docs:       https://github.com/attestantio/vouch
+- Discord:          https://discord.gg/ve2Z8fxz5N

@@ -1,0 +1,29 @@
+Commit-Boost for Ethereum on ARM
+================================
+
+Commit-Boost is a sidecar for Ethereum validators for PBS and commitments.
+
+EOA Configuration
+-----------------
+
+Configuration file:  /etc/ethereum/commit-boost.toml
+
+Systemd Services
+----------------
+
+Commit-Boost:  systemctl start commit-boost
+
+View logs: journalctl -u commit-boost -f
+
+What is Commit-Boost?
+---------------------
+
+Commit-Boost enhances PBS (Proposer-Builder Separation) with additional
+commitment protocols for validators.
+
+Documentation
+-------------
+
+- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
+- Commit-Boost:     https://github.com/Commit-Boost/commit-boost-client
+- Discord:          https://discord.gg/ve2Z8fxz5N

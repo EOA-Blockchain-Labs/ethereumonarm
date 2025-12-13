@@ -179,16 +179,19 @@ All packages with binary downloads are verified cryptographically before packagi
 | **Starknet Juno** | L2 | SHA256 | GitHub API digest |
 | **Kubo (IPFS)** | Web3 | SHA256 | GitHub API digest |
 | **Swarm Bee** | Web3 | SHA256 | GitHub API digest |
+| **ethereum-metrics-exporter** | Utils | SHA256 | GitHub API digest |
+| **Starknet Pathfinder** | L2 | SHA256 | GitHub API digest |
 
 ### ⏳ Pending Verification
 
 | Package | Type | Notes |
 |---------|------|-------|
-| DVT-SSV | Infra | Needs research |
+| DVT-SSV | Infra | No release assets |
 | Vero | Infra | Source tarball (immutable releases, no checksum) |
 | Arbitrum Nitro | L2 | No release assets |
 | Optimism (op-geth, op-node) | L2 | No release assets |
 | Starknet Madara | L2 | No release assets |
+| ethereum-validator-metrics-exporter | Utils | Has checksums.txt (could parse) |
 
 ### ⚠️ Deprecated (moved to `infra/deprecated/`)
 

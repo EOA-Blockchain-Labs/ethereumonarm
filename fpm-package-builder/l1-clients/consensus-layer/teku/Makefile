@@ -35,6 +35,11 @@ TEKU_VERSION := $(shell curl -sL https://api.github.com/repos/ConsenSys/teku/rel
 TEKU_TARBALL := teku-$(TEKU_VERSION).tar.gz
 TEKU_URL     := https://artifacts.consensys.net/public/teku/raw/names/teku.tar.gz/versions/$(TEKU_VERSION)/$(TEKU_TARBALL)
 
+# SHA256 checksum extracted from GitHub release changelog (body field)
+# Format in release notes: "tar.gz ... (sha256: `HASH`)"
+TEKU_RELEASE_BODY := $(shell curl -sL https://api.github.com/repos/ConsenSys/teku/releases/latest | jq -r '.body')
+TEKU_SHA256 := $(shell echo '$(TEKU_RELEASE_BODY)' | grep -oP 'tar\.gz.*?sha256:\s*\`\K[a-f0-9]{64}' | head -1)
+
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(TEKU_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(TEKU_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 
@@ -99,6 +104,8 @@ prepare: ## Download latest Teku and stage into $(SOURCESDIR)
 	# Use a local .build dir instead of /tmp
 	mkdir -p .build $(SOURCESDIR)/usr/bin $(SOURCESDIR)/usr/share/teku/lib
 	wget -q -O ".build/$(TEKU_TARBALL)" "$(TEKU_URL)" || { echo "❌ Download failed: $(TEKU_URL)"; exit 1; };
+	@echo "🔐 Verifying SHA256..."
+	@echo "$(TEKU_SHA256)  .build/$(TEKU_TARBALL)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(TEKU_TARBALL)"; exit 1; };
 	
 	@echo "📦 Extracting files..."
 	tar -xzf ".build/$(TEKU_TARBALL)" -C .build --strip-components 1
@@ -110,7 +117,7 @@ prepare: ## Download latest Teku and stage into $(SOURCESDIR)
 	@echo "🔧 Patching binary paths..."
 	sed -i 's/"$${APP_HOME:-\.\/}\.\."/"$${APP_HOME:-\.\/}\.\.\/share\/teku"/g' "$(SOURCESDIR)/usr/bin/teku"
 	chmod 0755 "$(SOURCESDIR)/usr/bin/teku"
-	@echo "✅ Binary and libs ready in $(SOURCESDIR)"
+	@echo "✅ Binary and libs downloaded and verified in $(SOURCESDIR)"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package

@@ -37,12 +37,10 @@ LATEST_TAG_JSON := $(shell curl -sL "https://api.github.com/repos/eth-educators/
 DEPOSIT_TAG_V   := $(shell echo '$(LATEST_TAG_JSON)' | jq -r '.name')
 DEPOSIT_HASH    := $(shell echo '$(LATEST_TAG_JSON)' | jq -r '.commit.sha' | cut -c1-7)
 
-#
-# ----- THE FIX IS HERE -----
 # The asset filename uses an UNDERSCORE, not a hyphen like PKG_NAME.
-#
 DEPOSIT_TARBALL := ethstaker_deposit-cli-$(DEPOSIT_HASH)-linux-$(PKG_ARCH).tar.gz
 DEPOSIT_URL     := https://github.com/eth-educators/ethstaker-deposit-cli/releases/download/$(DEPOSIT_TAG_V)/$(DEPOSIT_TARBALL)
+DEPOSIT_SHA256_URL := $(DEPOSIT_URL).sha256
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(DEPOSIT_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(DEPOSIT_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
@@ -104,16 +102,17 @@ prepare: ## Download latest ethstaker-deposit-cli and stage into $(SOURCESDIR)/u
 	    echo "   (This may be a network issue or a GitHub API rate limit.)"; exit 1; \
 	fi
 	@echo "🔽 Downloading ethstaker-deposit-cli $(DEPOSIT_VERSION) (Tag: $(DEPOSIT_TAG_V), Hash: $(DEPOSIT_HASH))..."
-	@echo "   URL: $(DEPOSIT_URL)"
-	mkdir -p $(SOURCESDIR)/usr/bin
-	# Use curl -L to follow redirects and pipe directly to tar
-	# The --fail flag ensures curl exits with an error if the download fails (e.g., 404)
-	curl -sLf "$(DEPOSIT_URL)" | tar -xz -C $(SOURCESDIR)/usr/bin --wildcards --absolute-names --no-anchored --strip-components 2
+	mkdir -p .build $(SOURCESDIR)/usr/bin
+	wget -q -O ".build/$(DEPOSIT_TARBALL)" "$(DEPOSIT_URL)" || { echo "❌ Download failed: $(DEPOSIT_URL)"; exit 1; };
+	wget -q -O ".build/$(DEPOSIT_TARBALL).sha256" "$(DEPOSIT_SHA256_URL)" || { echo "❌ SHA256 file download failed"; exit 1; };
 	
-	@echo "📦 Setting permissions..."
-	# The binary extracted by --strip-components 2 is named 'deposit'
+	@echo "🔐 Verifying SHA256..."
+	@cd .build && sha256sum -c "$(DEPOSIT_TARBALL).sha256" || { echo "❌ SHA256 verification FAILED!"; rm -f "$(DEPOSIT_TARBALL)"; exit 1; };
+	
+	@echo "📦 Extracting binary..."
+	tar -xzf ".build/$(DEPOSIT_TARBALL)" -C $(SOURCESDIR)/usr/bin --wildcards --absolute-names --no-anchored --strip-components 2
 	chmod 0755 "$(SOURCESDIR)/usr/bin/deposit"
-	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/deposit"
+	@echo "✅ Binary downloaded and verified at $(SOURCESDIR)/usr/bin/deposit"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package

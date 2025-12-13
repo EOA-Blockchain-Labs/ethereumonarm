@@ -168,17 +168,19 @@ All packages with binary downloads are verified cryptographically before packagi
 | **Besu** | L1 Execution | SHA256 | Release changelog |
 | **Nethermind** | L1 Execution | SHA256 | GitHub API digest |
 | **Ethrex** | L1 Execution | SHA256 | GitHub API digest |
+| **Nimbus-EC** | L1 Execution | SHA256 | GitHub API digest (2 tarballs) |
 | **MEV-Boost** | Infra | SHA256 | GitHub API digest |
 | **Vouch** | Infra | SHA256 | GitHub API digest |
 | **DVT-Obol** | Infra | SHA256 | GitHub API digest |
+| **Commit-Boost** | Infra | SHA256 | GitHub API digest |
+| **ethstaker-deposit-cli** | Infra | SHA256 | Downloaded .sha256 file |
 
 ### ⏳ Pending Verification
 
 | Package | Type | Notes |
 |---------|------|-------|
-| Nimbus-EC | L1 Execution | Needs research |
+| staking-deposit-cli | Infra | No checksums from upstream |
 | DVT-SSV | Infra | Needs research |
-| L2 clients | Layer 2 | Various |
 
 ---
 

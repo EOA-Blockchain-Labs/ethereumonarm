@@ -34,7 +34,6 @@
         "ethpandaops/ethereum-validator-metrics-exporter": "ethereum-validator-metrics-exporter",
         "eth-educators/ethstaker-deposit-cli": "ethstaker-deposit-cli",
         "flashbots/mev-boost": "mev-boost",
-        "ethereum/staking-deposit-cli": "staking-deposit-cli",
         "attestantio/vouch": "vouch",
         "serenita-org/vero": "vero",
         "stakewise/v3-operator": "stakewise-operator"

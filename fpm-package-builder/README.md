@@ -179,8 +179,13 @@ All packages with binary downloads are verified cryptographically before packagi
 
 | Package | Type | Notes |
 |---------|------|-------|
-| staking-deposit-cli | Infra | No checksums from upstream |
 | DVT-SSV | Infra | Needs research |
+
+### ⚠️ Deprecated (moved to `infra/deprecated/`)
+
+| Package | Notes |
+|---------|-------|
+| staking-deposit-cli | Upstream deprecated, use ethstaker-deposit-cli instead |
 
 ---
 

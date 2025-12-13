@@ -546,7 +546,7 @@ In order to stake and run a validator you will need:
 Before making the 32 ETH deposit you need to create 2 key pairs and a Json file with the 
 necessary information to interact with the mainnet staking contract through a transaction.
 
-The Ethereum Foundation provides a tool (staking-deposit-cli) to create the keys and the 
+The community provides a tool (ethstaker-deposit-cli) to create the keys and the 
 deposit information (which among others contains your validator(s) public key(s)). This 
 tool is already installed in your Ethereum on ARM node. If you are running an older image 
 please, run:
@@ -554,7 +554,13 @@ please, run:
 .. prompt:: bash $
 
   sudo apt-get update
-  sudo apt-get install staking-deposit-cli
+  sudo apt-get install ethstaker-deposit-cli
+
+.. note::
+   The original ``staking-deposit-cli`` from the Ethereum Foundation has been **deprecated**. 
+   The official repository now recommends using ``ethstaker-deposit-cli``, which is an 
+   actively maintained fork by the ETHStaker community. See: 
+   `ethstaker-deposit-cli <https://github.com/eth-educators/ethstaker-deposit-cli>`_
 
 Additionally, the Ethereum Foundation developed a web Launchpad to walk you through the staking process. 
 Here you can upload the Deposit Json file and make the 32 ETH transaction 
@@ -589,7 +595,7 @@ The first step is to visit the EF Launchpad website to start the process:
 5. In the next screen, select the number of validators you want to run. Remember that you need 
    32 ETH for each one.
 
-6. Ethereum on ARM provides the Ethereum Foundation tool (staking-deposit-cli) to generate the keys and 
+6. Ethereum on ARM provides the ethstaker-deposit-cli tool to generate the keys and 
 set the withdrawal address (where the staked ETH will be deposited periodically). so, 
 **in your terminal** and under the ethereum account, run (assuming 1 validator):
 

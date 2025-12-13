@@ -198,7 +198,7 @@ These are the available packages:
 
 **Infra**
 
-* staking-deposit-cli
+* ethstaker-deposit-cli
 * mev-boost
 
 .. note::

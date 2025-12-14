@@ -157,7 +157,7 @@ All packages with binary downloads are verified cryptographically before packagi
 | Package | Type | Verification | Source |
 |---------|------|--------------|--------|
 | **Prysm** | L1 Consensus | SHA256 | GitHub API digest |
-| **Lighthouse** | L1 Consensus | SHA256 | GitHub API digest |
+| **Lighthouse** | L1 Consensus | PGP | Key `3F30674B0` from keyserver.ubuntu.com |
 | **Grandine** | L1 Consensus | SHA256 | GitHub API digest |
 | **Teku** | L1 Consensus | SHA256 | Release changelog |
 | **Lodestar** | L1 Consensus | SHA256 | GitHub API digest |

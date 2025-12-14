@@ -93,6 +93,119 @@ Client Specific URLs
    - **Releases**: `Hyperledger Besu Releases <https://github.com/hyperledger/besu/releases>`_
    - *Note*: Besu releases are typically ``.zip`` or ``.tar.gz``.
 
-**Geth**
    - **Check Version**: ``geth version``
    - **Releases**: `Go-Ethereum Releases <https://geth.ethereum.org/downloads>`_
+
+3. Verification Status Table
+----------------------------
+
+The below table lists the verification method used for each package in our build system.
+
+.. list-table:: Verified Packages
+   :widths: 20 15 15 50
+   :header-rows: 1
+
+   * - Package
+     - Type
+     - Verification
+     - Source
+   * - **Prysm**
+     - L1 Consensus
+     - PGP
+     - Key ``F1A5036E`` from keyserver.ubuntu.com
+   * - **Lighthouse**
+     - L1 Consensus
+     - PGP
+     - Key ``F30674B0`` from keyserver.ubuntu.com
+   * - **Grandine**
+     - L1 Consensus
+     - SHA256
+     - GitHub API digest
+   * - **Teku**
+     - L1 Consensus
+     - SHA256
+     - Release changelog
+   * - **Lodestar**
+     - L1 Consensus
+     - SHA256
+     - GitHub API digest
+   * - **Nimbus**
+     - L1 Consensus
+     - SHA256
+     - GitHub API digest
+   * - **Geth**
+     - L1 Execution
+     - PGP
+     - Key ``9BA28146`` from geth.ethereum.org
+   * - **Reth**
+     - L1 Execution
+     - PGP
+     - Key ``7FBF253E`` from keyserver.ubuntu.com
+   * - **Erigon**
+     - L1 Execution
+     - SHA256
+     - GitHub API digest
+   * - **Besu**
+     - L1 Execution
+     - SHA256
+     - Release changelog
+   * - **Nethermind**
+     - L1 Execution
+     - SHA256
+     - GitHub API digest
+   * - **Ethrex**
+     - L1 Execution
+     - SHA256
+     - GitHub API digest
+   * - **Nimbus-EC**
+     - L1 Execution
+     - SHA256
+     - GitHub API digest (2 tarballs)
+   * - **MEV-Boost**
+     - Infra
+     - SHA256
+     - GitHub API digest
+   * - **Vouch**
+     - Infra
+     - SHA256
+     - GitHub API digest
+   * - **DVT-Obol**
+     - Infra
+     - SHA256
+     - GitHub API digest
+   * - **Commit-Boost**
+     - Infra
+     - SHA256
+     - GitHub API digest
+   * - **ethstaker-deposit-cli**
+     - Infra
+     - SHA256
+     - Downloaded .sha256 file
+   * - **StakeWise Operator**
+     - Infra
+     - SHA256
+     - GitHub API digest
+   * - **Fuel Network**
+     - L2
+     - SHA256
+     - GitHub API digest
+   * - **Starknet Juno**
+     - L2
+     - SHA256
+     - GitHub API digest
+   * - **Kubo (IPFS)**
+     - Web3
+     - SHA256
+     - GitHub API digest
+   * - **Swarm Bee**
+     - Web3
+     - SHA256
+     - GitHub API digest
+   * - **ethereum-metrics-exporter**
+     - Utils
+     - SHA256
+     - GitHub API digest
+   * - **Starknet Pathfinder**
+     - L2
+     - SHA256
+     - GitHub API digest

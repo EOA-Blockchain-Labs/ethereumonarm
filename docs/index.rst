@@ -94,6 +94,7 @@ Explore our guides to set up, manage, and optimize your node.
    /advanced/testnets
    /advanced/using-node-rpc
    /advanced/lido
+   /advanced/manual-verification
 
 .. toctree::
    :maxdepth: 2

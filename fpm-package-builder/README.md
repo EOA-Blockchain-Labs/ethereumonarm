@@ -156,14 +156,14 @@ All packages with binary downloads are verified cryptographically before packagi
 
 | Package | Type | Verification | Source |
 |---------|------|--------------|--------|
-| **Prysm** | L1 Consensus | SHA256 | GitHub API digest |
-| **Lighthouse** | L1 Consensus | PGP | Key `3F30674B0` from keyserver.ubuntu.com |
+| **Prysm** | L1 Consensus | PGP | Key `F1A5036E` from keyserver.ubuntu.com |
+| **Lighthouse** | L1 Consensus | PGP | Key `F30674B0` from keyserver.ubuntu.com |
 | **Grandine** | L1 Consensus | SHA256 | GitHub API digest |
 | **Teku** | L1 Consensus | SHA256 | Release changelog |
 | **Lodestar** | L1 Consensus | SHA256 | GitHub API digest |
 | **Nimbus** | L1 Consensus | SHA256 | GitHub API digest |
 | **Geth** | L1 Execution | PGP | Key `9BA28146` from geth.ethereum.org |
-| **Reth** | L1 Execution | PGP | Key `50FB7CC5` from keyserver.ubuntu.com |
+| **Reth** | L1 Execution | PGP | Key `7FBF253E` from keyserver.ubuntu.com |
 | **Erigon** | L1 Execution | SHA256 | GitHub API digest |
 | **Besu** | L1 Execution | SHA256 | Release changelog |
 | **Nethermind** | L1 Execution | SHA256 | GitHub API digest |

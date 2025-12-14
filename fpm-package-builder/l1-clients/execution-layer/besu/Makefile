@@ -36,8 +36,7 @@ BESU_URL     := https://github.com/hyperledger/besu/releases/download/$(BESU_VER
 
 # SHA256 checksum extracted from GitHub release changelog (body field)
 # Format in release notes: "HASH  besu-X.X.X.zip"
-BESU_RELEASE_BODY := $(shell curl -sL https://api.github.com/repos/hyperledger/besu/releases/latest | jq -r '.body')
-BESU_SHA256 := $(shell echo '$(BESU_RELEASE_BODY)' | awk '/$(BESU_ZIP)$$/{print $$1}')
+# SHA256 checksum extracted from GitHub release changelog (body field) within the prepare target to ensure robustness
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(BESU_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(BESU_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
@@ -108,8 +107,12 @@ prepare: ## Download latest Besu and stage into $(SOURCESDIR)
 	# Use a local .build dir instead of /tmp
 	mkdir -p .build $(SOURCESDIR)/usr/bin $(SOURCESDIR)/usr/share/besu/lib
 	wget -q -O ".build/$(BESU_ZIP)" "$(BESU_URL)" || { echo "❌ Download failed: $(BESU_URL)"; exit 1; };
-	@echo "🔐 Verifying SHA256..."
-	@echo "$(BESU_SHA256)  .build/$(BESU_ZIP)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(BESU_ZIP)"; exit 1; };
+	
+	@echo "🔎 Extracting checksum from release notes..."
+	CHECKSUM=$$(curl -sL https://api.github.com/repos/hyperledger/besu/releases/latest | jq -r '.body' | grep "$(BESU_ZIP)" | awk '{print $$1}'); \
+	if [[ -z "$$CHECKSUM" ]]; then echo "❌ Failed to extract checksum from release notes"; exit 1; fi; \
+	echo "🔐 Verifying SHA256 (Hash: $$CHECKSUM)..."; \
+	echo "$$CHECKSUM  .build/$(BESU_ZIP)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(BESU_ZIP)"; exit 1; };
 	@echo "📦 Extracting files..."
 	unzip -o ".build/$(BESU_ZIP)" "besu-$(BESU_VERSION)/bin/besu" -d .build
 	unzip -o ".build/$(BESU_ZIP)" "besu-$(BESU_VERSION)/lib/*" -d .build

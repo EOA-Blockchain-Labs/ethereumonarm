@@ -42,8 +42,13 @@ RETH_TARBALL := reth-$(RETH_TAG)-$(PKG_ARCH_RPM)-unknown-linux-gnu.tar.gz
 RETH_URL     := https://github.com/paradigmxyz/reth/releases/download/$(RETH_TAG)/$(RETH_TARBALL)
 
 # SHA256 checksum extracted from GitHub API asset digest field
-RETH_RELEASE_JSON := $(shell curl -s "https://api.github.com/repos/paradigmxyz/reth/releases/latest")
-RETH_SHA256 := $(shell echo '$(RETH_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(RETH_TARBALL)") | .digest' | sed 's/sha256://')
+# RETH_RELEASE_JSON := $(shell curl -s "https://api.github.com/repos/paradigmxyz/reth/releases/latest")
+# RETH_SHA256 := $(shell echo '$(RETH_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(RETH_TARBALL)") | .digest' | sed 's/sha256://')
+
+# GPG Signature Verification
+RETH_GPG_KEY := 50FB7CC55B2E8AFA59FE03B7AA5ED56A7FBF253E
+RETH_ASC     := $(RETH_TARBALL).asc
+RETH_ASC_URL := https://github.com/paradigmxyz/reth/releases/download/$(RETH_TAG)/$(RETH_ASC)
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(RETH_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(RETH_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
@@ -105,8 +110,10 @@ prepare: ## Download latest Reth and stage into $(SOURCESDIR)/usr/bin
 	@echo "🔽 Downloading Reth $(RETH_VERSION) ($(RETH_TAG))..."
 	mkdir -p .build $(SOURCESDIR)/usr/bin
 	wget -q -O ".build/$(RETH_TARBALL)" "$(RETH_URL)" || { echo "❌ Download failed: $(RETH_URL)"; exit 1; };
-	@echo "🔐 Verifying SHA256..."
-	@echo "$(RETH_SHA256)  .build/$(RETH_TARBALL)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(RETH_TARBALL)"; exit 1; };
+	wget -q -O ".build/$(RETH_ASC)" "$(RETH_ASC_URL)" || { echo "❌ Signature download failed: $(RETH_ASC_URL)"; exit 1; };
+	@echo "🔐 Verifying GPG Signature..."
+	gpg --keyserver keyserver.ubuntu.com --recv-keys $(RETH_GPG_KEY) || { echo "❌ Failed to import GPG key"; exit 1; };
+	gpg --verify ".build/$(RETH_ASC)" ".build/$(RETH_TARBALL)" || { echo "❌ GPG signature verification FAILED!"; rm -f ".build/$(RETH_TARBALL)"; exit 1; };
 	@echo "📦 Extracting binary..."
 	tar -xzf ".build/$(RETH_TARBALL)" -C $(SOURCESDIR)/usr/bin/ reth
 	chmod 0755 "$(SOURCESDIR)/usr/bin/reth"

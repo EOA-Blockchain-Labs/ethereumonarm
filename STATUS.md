@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-12-13 03:51:08 UTC_
+_Last updated: 2025-12-14 04:02:09 UTC_
 
  **What this report compares**
 
@@ -17,9 +17,9 @@ _Last updated: 2025-12-13 03:51:08 UTC_
 
 ## Summary
 
-- Total packages checked: **34**
-- ✅ Up-to-date: **32** (94.1%)
-- ❌ Outdated: **2** (5.9%)
+- Total packages checked: **33**
+- ✅ Up-to-date: **32** (97.0%)
+- ❌ Outdated: **1** (3.0%)
 - ❓ N/A: **0** (0.0%)
 
 
@@ -35,7 +35,6 @@ _Last updated: 2025-12-13 03:51:08 UTC_
 | `ethstaker-deposit-cli` | `1.2.2` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.2.2` | ✅ Up-to-date |
 | `mev-boost` | `1.10.1` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.10.1` | ✅ Up-to-date |
 | `stakewise-operator` | `4.1.0` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.1.0` | ✅ Up-to-date |
-| `staking-deposit-cli` | `2.8.0` ([ethereum/staking-deposit-cli](https://github.com/ethereum/staking-deposit-cli)) | `2.8.0` | ✅ Up-to-date |
 | `vero` | `1.3.0` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.3.0` | ✅ Up-to-date |
 | `vouch` | `1.12.0` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.12.0` | ✅ Up-to-date |
 
@@ -59,10 +58,10 @@ _Last updated: 2025-12-13 03:51:08 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `besu` | `25.12.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `25.12.0` | ✅ Up-to-date |
-| `erigon` | `3.3.1` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.3.1` | ✅ Up-to-date |
+| `erigon` | `3.3.2` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.3.2` | ✅ Up-to-date |
 | `ethrex` | `7.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `7.0.0` | ✅ Up-to-date |
 | `geth` | `1.16.7` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.7` | ✅ Up-to-date |
-| `nethermind` | `1.35.7` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.35.4` | ❌ Outdated |
+| `nethermind` | `1.35.7` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.35.7` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.2.2` | ❌ Outdated |
 | `reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
 

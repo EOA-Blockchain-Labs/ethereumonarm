@@ -207,7 +207,7 @@ We need to run a command manually before the **Checkpoint Sync** gets started:
 
 .. prompt:: bash $
 
-  nimbus_beacon_node trustedNodeSync --network=mainnet --data-dir=/home/ethereum/.nimbus-beacon --trusted-node-url=https://beaconstate.ethstaker.cc --backfill=false
+  nimbus_beacon_node trustedNodeSync --network=mainnet --data-dir=/home/ethereum/.nimbus-beacon --trusted-node-url=https://sync-mainnet.beaconcha.in --backfill=false
 
 Wait for the command to finish.
 

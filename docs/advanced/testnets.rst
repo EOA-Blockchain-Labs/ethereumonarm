@@ -34,7 +34,7 @@ Execution Layer Clients
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 .. csv-table::
-   :header: Client, Sepolia Service, Holesky Service, Hoodi Service
+   :header: Client, Sepolia Service, Hoodi Service
    :widths: 20, 25, 25, 25
 
    `Geth`, `geth-sepolia`, `geth-hoodi`
@@ -48,7 +48,7 @@ Consensus Layer Clients
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 .. csv-table::
-   :header: Client, Sepolia Services, Holesky Services, Hoodi Services
+   :header: Client, Sepolia Services, Hoodi Services
 
    `Lighthouse`, `lighthouse-beacon-sepolia`, `lighthouse-beacon-hoodi`
    `Prysm`, `prysm-beacon-sepolia`, `prysm-beacon-hoodi`

@@ -16,15 +16,32 @@ This comprehensive guide will walk you through setting up an Optimism "Supernode
 
 **Glossary of Terms:**
 
-*   **L1 (Layer 1):**  In this context, refers to the Ethereum mainnet blockchain.
-*   **L2 (Layer 2):** Refers to the Optimism blockchain, a scaling solution built on top of Ethereum.
-*   **Supernode:** A node running both an L1 and L2 node simultaneously on the same hardware.
-*   **Execution Layer (EL):** The part of an Ethereum node that executes transactions and manages the state (e.g., Geth, Nethermind, Erigon, Besu).
-*   **Consensus Layer (CL):** The part of an Ethereum node that handles consensus and block validation (e.g., Lighthouse, Prysm, Nimbus, Teku, Lodestar, Grandine). Also known as the Beacon Chain.
-*   **Checkpoint Sync:** A fast synchronization method for the Consensus Layer, allowing quick initial sync by downloading a recent state checkpoint.
-*   **Snap Sync:** A synchronization method used by Optimism Geth (`op-geth`) for faster initial synchronization of the L2 chain.
-*   **op-node:** The core software component of an Optimism node, responsible for interacting with the L1 Ethereum node and managing the L2 chain state.
-*   **op-geth:** A modified version of Geth specifically for the Optimism network.
+L1 (Layer 1)
+    In this context, refers to the Ethereum mainnet blockchain.
+
+L2 (Layer 2)
+    Refers to the Optimism blockchain, a scaling solution built on top of Ethereum.
+
+Supernode
+    A node running both an L1 and L2 node simultaneously on the same hardware.
+
+Execution Layer (EL)
+    The part of an Ethereum node that executes transactions and manages the state (e.g., Geth, Nethermind, Erigon, Besu).
+
+Consensus Layer (CL)
+    The part of an Ethereum node that handles consensus and block validation (e.g., Lighthouse, Prysm, Nimbus, Teku, Lodestar, Grandine). Also known as the Beacon Chain.
+
+Checkpoint Sync
+    A fast synchronization method for the Consensus Layer, allowing quick initial sync by downloading a recent state checkpoint.
+
+Snap Sync
+    A synchronization method used by Optimism Geth (`op-geth`) for faster initial synchronization of the L2 chain.
+
+op-node
+    The core software component of an Optimism node, responsible for interacting with the L1 Ethereum node and managing the L2 chain state.
+
+op-geth
+    A modified version of Geth specifically for the Optimism network.
 
 
 Pre-Installation Checklist

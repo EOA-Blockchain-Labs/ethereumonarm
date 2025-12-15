@@ -40,8 +40,8 @@ GRANDINE_BINARY := grandine-$(GRANDINE_VERSION)-$(PKG_ARCH)
 GRANDINE_URL := https://github.com/grandinetech/grandine/releases/download/$(GRANDINE_TAG)/$(GRANDINE_BINARY)
 
 # SHA256 checksum extracted from GitHub API asset digest field
-GRANDINE_RELEASE_JSON := $(shell curl -sL "https://api.github.com/repos/grandinetech/grandine/releases/latest")
-GRANDINE_SHA256 := $(shell echo '$(GRANDINE_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(GRANDINE_BINARY)") | .digest' | sed 's/sha256://')
+# SHA256 checksum extracted from GitHub API asset digest field
+GRANDINE_SHA256 := $(shell curl -sL "https://api.github.com/repos/grandinetech/grandine/releases/latest" | jq -r '.assets[] | select(.name == "$(GRANDINE_BINARY)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(GRANDINE_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(GRANDINE_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm

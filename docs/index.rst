@@ -1,20 +1,24 @@
-.. Ethereum on ARM documentation documentation master file, created by
-   sphinx-quickstart on Wed Jan 13 19:04:18 2021.
-
 Ethereum on ARM
 ===============
+
+**Powering Decentralization with Low-Cost, Efficient Hardware**
 
 .. meta::
    :description lang=en: Ethereum on ARM provides custom Linux images to turn ARM boards like NanoPC T6, Rock 5B, and Raspberry Pi into full Ethereum nodes. Supports Geth, Nethermind, Lighthouse, Teku, and more.
 
-.. figure:: /_static/images/ethereum_node.jpg
-   :figwidth: 100%
+.. figure:: /_static/images/ethereum-node-light.png
+   :class: only-light
+   :figwidth: 90%
    :align: center
    :alt: Ethereum on ARM Devices
 
-   **Powering Decentralization with Low-Cost, Efficient Hardware**
+.. figure:: /_static/images/ethereum-node-dark.png
+   :class: only-dark
+   :figwidth: 90%
+   :align: center
+   :alt: Ethereum on ARM Devices
 
-Welcome to the official documentation for **Ethereum on ARM**. 
+Welcome to the official documentation for **Ethereum on ARM**.
 
 We provide custom, high-performance Linux images that turn affordable ARM Single Board Computers (SBCs) into full-featured Ethereum nodes. 
 

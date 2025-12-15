@@ -1,0 +1,18 @@
+[Unit]
+Description=Teku Beacon Node (Gnosis)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=ethereum
+EnvironmentFile=/etc/ethereum/teku-beacon-gnosis.conf
+ExecStart=/usr/bin/teku $ARGS
+Restart=on-failure
+RestartSec=5
+WorkingDirectory=/home/ethereum
+LimitNOFILE=1000000
+LimitNPROC=65536
+SyslogIdentifier=teku-beacon-gnosis
+
+[Install]
+WantedBy=multi-user.target

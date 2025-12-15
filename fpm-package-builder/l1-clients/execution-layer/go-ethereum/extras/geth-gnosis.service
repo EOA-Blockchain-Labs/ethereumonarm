@@ -1,0 +1,18 @@
+[Unit]
+Description=Geth Ethereum Daemon (Gnosis)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=ethereum
+EnvironmentFile=/etc/ethereum/geth-gnosis.conf
+ExecStart=/usr/bin/geth $ARGS
+Restart=on-failure
+RestartSec=5
+WorkingDirectory=/home/ethereum
+LimitNOFILE=1000000
+LimitNPROC=65536
+SyslogIdentifier=geth-gnosis
+
+[Install]
+WantedBy=multi-user.target

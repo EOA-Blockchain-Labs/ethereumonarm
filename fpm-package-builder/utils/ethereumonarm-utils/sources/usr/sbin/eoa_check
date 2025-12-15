@@ -280,7 +280,7 @@ VALIDATOR_SUFFIX="validator"
 
 # List of active testnets — update here as networks evolve
 # Example: TESTNETS=(sepolia hoodi gnosis devnet8)
-TESTNETS=(sepolia hoodi)
+TESTNETS=(sepolia hoodi gnosis)
 
 # Track detected clients
 execution_found=false

@@ -1,0 +1,20 @@
+[Unit]
+Description=Lighthouse Beacon chain daemon (Gnosis)
+# Waits for a full network connection
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/lighthouse-beacon-gnosis.conf
+ExecStart=/usr/bin/lighthouse $ARGS
+# Reliable restart policy
+Restart=on-failure
+RestartSec=5
+User=ethereum
+SyslogIdentifier=lighthouse-beacon-gnosis
+# Increased resource limits
+LimitNOFILE=65536
+LimitNPROC=65536
+
+[Install]
+WantedBy=multi-user.target

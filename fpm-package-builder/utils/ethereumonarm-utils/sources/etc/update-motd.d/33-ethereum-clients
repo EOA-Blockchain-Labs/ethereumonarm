@@ -18,7 +18,7 @@ RESET="\x1B[0m"
 # --- Base definitions (Defaults) ---
 EL_BASES=(geth nethermind besu erigon reth ethrex)
 CL_BASES=(lighthouse prysm nimbus teku lodestar grandine)
-NETWORKS=(mainnet sepolia hoodi)
+NETWORKS=(mainnet sepolia hoodi gnosis)
 
 # --- Load User Config (if it exists) ---
 CONFIG_FILE="/etc/ethereum-motd.conf"

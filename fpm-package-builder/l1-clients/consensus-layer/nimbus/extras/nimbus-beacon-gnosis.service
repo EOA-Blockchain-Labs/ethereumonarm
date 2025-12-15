@@ -1,0 +1,18 @@
+[Unit]
+Description=Nimbus Beacon Node (Gnosis)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=ethereum
+EnvironmentFile=/etc/ethereum/nimbus-beacon-gnosis.conf
+ExecStart=/usr/bin/nimbus_beacon_node $ARGS
+Restart=on-failure
+RestartSec=5
+WorkingDirectory=/home/ethereum
+LimitNOFILE=1000000
+LimitNPROC=65536
+SyslogIdentifier=nimbus-beacon-gnosis
+
+[Install]
+WantedBy=multi-user.target

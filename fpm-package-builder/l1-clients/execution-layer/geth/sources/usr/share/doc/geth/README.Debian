@@ -19,7 +19,7 @@ Systemd Services
 
 Mainnet:   systemctl start geth
 Sepolia:   systemctl start geth-sepolia
-Holesky:   systemctl start geth-holesky
+
 Hoodi:     systemctl start geth-hoodi
 
 View logs: journalctl -u geth -f

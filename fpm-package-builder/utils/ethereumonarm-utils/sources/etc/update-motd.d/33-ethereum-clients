@@ -1,7 +1,8 @@
+```bash
 #!/bin/bash
 #
 # Ethereum on ARM MOTD Client Status
-# Detects EL/CL clients with -mev, testnet variants (holesky, hoodi, sepolia)
+# Detects EL/CL clients with -mev, testnet variants (hoodi, sepolia)
 # and per-network mev-boost services. Handles Erigon integrated CL.
 #
 # Install: place in /etc/update-motd.d/90-ethereum-clients and chmod +x

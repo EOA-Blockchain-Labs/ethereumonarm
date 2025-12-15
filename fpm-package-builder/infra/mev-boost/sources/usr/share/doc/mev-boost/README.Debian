@@ -13,7 +13,7 @@ Systemd Services
 ----------------
 
 Mainnet:   systemctl start mev-boost
-Holesky:   systemctl start mev-boost-holesky
+
 
 View logs: journalctl -u mev-boost -f
 

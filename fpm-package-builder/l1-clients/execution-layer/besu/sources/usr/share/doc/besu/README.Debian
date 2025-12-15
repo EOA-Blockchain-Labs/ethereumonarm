@@ -19,7 +19,7 @@ Systemd Services
 
 Mainnet:   systemctl start besu
 Sepolia:   systemctl start besu-sepolia
-Holesky:   systemctl start besu-holesky
+
 
 View logs: journalctl -u besu -f
 

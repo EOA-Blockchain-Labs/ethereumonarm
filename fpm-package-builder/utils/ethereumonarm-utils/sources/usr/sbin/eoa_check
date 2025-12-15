@@ -279,8 +279,8 @@ CONSENSUS_CLIENTS=(lighthouse prysm teku nimbus lodestar grandine)
 VALIDATOR_SUFFIX="validator"
 
 # List of active testnets — update here as networks evolve
-# Example: TESTNETS=(holesky sepolia hoodi gnosis devnet8)
-TESTNETS=(holesky sepolia hoodi)
+# Example: TESTNETS=(sepolia hoodi gnosis devnet8)
+TESTNETS=(sepolia hoodi)
 
 # Track detected clients
 execution_found=false

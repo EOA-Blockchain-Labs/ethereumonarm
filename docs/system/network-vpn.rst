@@ -4,9 +4,7 @@
 PiVPN and WireGuard: "Intra-VPN"
 ################################
 
-.. contents::
-   :local:
-   :depth: 2
+
 
 This guide details the steps to install and configure PiVPN with WireGuard so that VPN clients on a private network (e.g., 10.1.25.0/24) can communicate with each other while each client uses its own local internet connection. This is **not** a full-tunnel VPN setup; internet traffic will continue to use each client's local gateway. This configuration is particularly useful for accessing resources on a private network (such as shared files or internal servers) from remote locations without routing all internet traffic through the VPN.
 

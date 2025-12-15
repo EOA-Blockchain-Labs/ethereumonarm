@@ -26,8 +26,6 @@ This comprehensive guide will walk you through setting up an Optimism "Supernode
 *   **op-node:** The core software component of an Optimism node, responsible for interacting with the L1 Ethereum node and managing the L2 chain state.
 *   **op-geth:** A modified version of Geth specifically for the Optimism network.
 
-.. contents:: :local:
-    :depth: 2
 
 Pre-Installation Checklist
 --------------------------

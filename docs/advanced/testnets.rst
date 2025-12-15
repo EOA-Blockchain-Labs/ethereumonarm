@@ -35,7 +35,7 @@ Execution Layer Clients
 
 .. csv-table::
    :header: Client, Sepolia Service, Hoodi Service
-   :widths: 20, 25, 25, 25
+   :widths: 20, 25, 25
 
    `Geth`, `geth-sepolia`, `geth-hoodi`
    `Nethermind`, `nethermind-sepolia`, `nethermind-hoodi`
@@ -49,6 +49,7 @@ Consensus Layer Clients
 
 .. csv-table::
    :header: Client, Sepolia Services, Hoodi Services
+   :widths: 20, 25, 25
 
    `Lighthouse`, `lighthouse-beacon-sepolia`, `lighthouse-beacon-hoodi`
    `Prysm`, `prysm-beacon-sepolia`, `prysm-beacon-hoodi`

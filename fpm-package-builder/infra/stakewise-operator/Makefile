@@ -44,8 +44,7 @@ STAKEWISE_TARBALL := operator-$(STAKEWISE_TAG)-ubuntu-22.04-arm64.tar.gz
 STAKEWISE_URL     := https://github.com/stakewise/v3-operator/releases/download/$(STAKEWISE_TAG)/$(STAKEWISE_TARBALL)
 
 # SHA256 checksum extracted from GitHub API asset digest field
-STAKEWISE_RELEASE_JSON := $(shell curl -sL "https://api.github.com/repos/stakewise/v3-operator/releases/latest")
-STAKEWISE_SHA256 := $(shell echo '$(STAKEWISE_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(STAKEWISE_TARBALL)") | .digest' | sed 's/sha256://')
+STAKEWISE_SHA256 := $(shell curl -sL "https://api.github.com/repos/stakewise/v3-operator/releases/latest" | jq -r '.assets[] | select(.name == "$(STAKEWISE_TARBALL)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(STAKEWISE_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(STAKEWISE_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm

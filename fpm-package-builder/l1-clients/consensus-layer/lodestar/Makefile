@@ -40,8 +40,8 @@ LODESTAR_TARBALL := lodestar-$(LODESTAR_TAG)-linux-$(PKG_ARCH).tar.gz
 LODESTAR_URL     := https://github.com/ChainSafe/lodestar/releases/download/$(LODESTAR_TAG)/$(LODESTAR_TARBALL)
 
 # SHA256 checksum extracted from GitHub API asset digest field
-LODESTAR_RELEASE_JSON := $(shell curl -s "https://api.github.com/repos/ChainSafe/lodestar/releases/latest")
-LODESTAR_SHA256 := $(shell echo '$(LODESTAR_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(LODESTAR_TARBALL)") | .digest' | sed 's/sha256://')
+# SHA256 checksum extracted from GitHub API asset digest field
+LODESTAR_SHA256 := $(shell curl -s "https://api.github.com/repos/ChainSafe/lodestar/releases/latest" | jq -r '.assets[] | select(.name == "$(LODESTAR_TARBALL)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(LODESTAR_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(LODESTAR_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm

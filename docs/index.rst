@@ -96,6 +96,7 @@ Explore our guides to set up, manage, and optimize your node.
    /advanced/mev-boost
    /advanced/commit-boost
    /advanced/testnets
+   /advanced/gnosis
    /advanced/using-node-rpc
    /advanced/lido
    /advanced/manual-verification

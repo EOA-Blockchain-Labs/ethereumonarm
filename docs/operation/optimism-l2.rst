@@ -32,13 +32,13 @@ Pre-Installation Checklist
 
 Before you begin, ensure you have gathered all the necessary hardware and completed the preliminary steps:
 
--   [ ] **Hardware Assembled:** Rock 5B or Orange Pi 5 Plus (32GB), NVMe SSD, MicroSD Card, Power Supply, Ethernet Cable, Case with Heatsink are physically assembled.
--   [ ] **Buy Links Ready:** Keep the buy links for your hardware handy in case you need to re-order or check specifications.
--   [ ] **Download Links Saved:** You have saved the download links for the Ethereum on ARM images for your chosen board.
--   [ ] **Checksum Verification Tools Installed:** You have tools installed on your computer to verify SHA256 checksums (e.g., ``sha256sum`` on Linux/macOS, or a checksum verification tool on Windows).
--   [ ] **Flashing Software Installed:** Balena Etcher is downloaded and installed on your computer.
--   [ ] **SSH Client Ready:** You have an SSH client installed (PuTTY for Windows, or Terminal on Linux/macOS).
--   [ ] **(Optional) Monitor, Keyboard, HDMI Cable:** Available for initial setup and troubleshooting if needed.
+-   **Hardware Assembled:** Rock 5B or Orange Pi 5 Plus (32GB), NVMe SSD, MicroSD Card, Power Supply, Ethernet Cable, Case with Heatsink are physically assembled.
+-   **Buy Links Ready:** Keep the buy links for your hardware handy in case you need to re-order or check specifications.
+-   **Download Links Saved:** You have saved the download links for the Ethereum on ARM images for your chosen board.
+-   **Checksum Verification Tools Installed:** You have tools installed on your computer to verify SHA256 checksums (e.g., ``sha256sum`` on Linux/macOS, or a checksum verification tool on Windows).
+-   **Flashing Software Installed:** Balena Etcher is downloaded and installed on your computer.
+-   **SSH Client Ready:** You have an SSH client installed (PuTTY for Windows, or Terminal on Linux/macOS).
+-   **(Optional) Monitor, Keyboard, HDMI Cable:** Available for initial setup and troubleshooting if needed.
 
 Hardware Requirements - **In Detail**
 -------------------------------------

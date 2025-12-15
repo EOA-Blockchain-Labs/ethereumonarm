@@ -11,9 +11,6 @@ It integrates `Restic <https://restic.net/>`_ (for encryption, deduplication, an
 
 The backup runs automatically through a ``systemd`` timer, minimizing I/O and user maintenance.
 
-.. contents:: Table of Contents
-   :local:
-
 Installation
 ============
 

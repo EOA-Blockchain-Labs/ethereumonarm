@@ -19,7 +19,7 @@ Systemd Services
 
 Mainnet:   systemctl start reth
 Sepolia:   systemctl start reth-sepolia
-Holesky:   systemctl start reth-holesky
+
 
 View logs: journalctl -u reth -f
 

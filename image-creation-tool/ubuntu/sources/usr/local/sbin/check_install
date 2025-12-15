@@ -235,7 +235,7 @@ echo -e "${BOLD}Clients Detected${NC}"
 
 EXECUTION=(geth erigon besu nethermind reth ethrex nimbus-execution)
 CONSENSUS=(lighthouse prysm teku nimbus lodestar grandine)
-TESTNETS=(holesky sepolia hoodi)
+TESTNETS=(sepolia hoodi)
 FOUND_EL=false; FOUND_CL=false
 
 check_service() {

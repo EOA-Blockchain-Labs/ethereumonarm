@@ -11,7 +11,7 @@ Supported Testnets
 The currently supported testnets across most clients are:
 
 *   **Sepolia**: The recommended default testnet for application development.
-*   **Hoodi**: The recommended testnet for staking and validator setups (replacing Holesky).
+*   **Hoodi**: The recommended testnet for staking and validator setups.
 
 Service Naming Convention
 -------------------------

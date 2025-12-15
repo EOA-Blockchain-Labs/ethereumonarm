@@ -18,7 +18,7 @@ Systemd Services
 
 Mainnet:   systemctl start nethermind
 Sepolia:   systemctl start nethermind-sepolia
-Holesky:   systemctl start nethermind-holesky
+
 
 View logs: journalctl -u nethermind -f
 

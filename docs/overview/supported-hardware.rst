@@ -34,7 +34,7 @@ If you don't know what an Ethereum node is, please visit the :doc:`Operation Int
     * **Power supply**
     * **Ethernet cable**
     * **Port forwarding** (see clients for further info)
-    * **A case with passive heatsinkn**
+    * **A case with passive heatsink**
     * USB keyboard, Monitor and HDMI cable (Optional)
 
     **Buy links**
@@ -51,7 +51,7 @@ If you don't know what an Ethereum node is, please visit the :doc:`Operation Int
     * **Power supply** (Radxa official)
     * **Ethernet cable**
     * **Port forwarding** (see clients for further info)
-    * **A case with passive heatsinkn**
+    * **A case with passive heatsink**
     * USB keyboard, Monitor and HDMI cable (Optional)
 
     **Buy Links**
@@ -76,7 +76,7 @@ If you don't know what an Ethereum node is, please visit the :doc:`Operation Int
     * **Power supply**
     * **Ethernet cable**
     * **Port forwarding** (see clients for further info)
-    * **A case with passive heatsinkn**
+    * **A case with passive heatsink**
     * USB keyboard, Monitor and HDMI cable (Optional)
 
     **Buy Links**
@@ -95,7 +95,7 @@ If you don't know what an Ethereum node is, please visit the :doc:`Operation Int
     * **Power supply**
     * **Ethernet cable**
     * **Port forwarding** (see clients for further info)
-    * **A case with passive heatsinkn**
+    * **A case with passive heatsink**
     * USB keyboard, Monitor and HDMI cable (Optional)
 
     **Buy Links**

@@ -80,6 +80,13 @@ case "$DEVICE_MODEL" in
     SWAPPINESS=1
     ;;
 
+"Radxa ROCK 5T")
+    TARGET_DISK="/dev/nvme0n1"
+    PARTITION1="p1"
+    HOSTNAME_SEED="rock5t"
+    SWAPPINESS=1
+    ;;
+
     # This handles two possible model names for the Orange Pi 5 Plus.
 "Orange Pi 5 Plus" | "Xunlong Orange Pi 5 Plus")
     TARGET_DISK="/dev/nvme0n1"

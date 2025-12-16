@@ -400,34 +400,9 @@ Gnosis Chain, formerly xDai, is an Ethereum-compatible sidechain that serves as 
 scaling solution and provides a more efficient environment for Gnosis applications and other 
 Ethereum-based projects.
 
-:guilabel:`Gnosis` is already implemented in some Layer 1 clients so we can use the same client binaries but 
-with different configurations.
+For detailed instructions on running a Gnosis Chain node, including client selection, configuration, and validator setup, please refer to our dedicated guide:
 
-Like the Layer 1 clients you need to run a Consensus Layer node and an Execution Layer client. Layer 1 
-clients :guilabel:`Nethermind`, :guilabel:`Erigon` and :guilabel:`Lighthouse` are already configured to run a Gnosis chain node so we just need to start 
-the Systemd services:
-
-.. prompt:: bash $
-
-  sudo systemctl start lighthouse-beacon-gnosis
-  sudo journalctl -u lighthouse-beacon-gnosis -f
-
-For the execution client one can either use :guilabel:`Nethermind` or :guilabel:`Erigon`. 
-To use :guilabel:`Nethermind`:
-
-.. prompt:: bash $
-
-  sudo systemctl start nethermind-gnosis
-  sudo journalctl -u nethermind-gnosis -f
-
-To use :guilabel:`Erigon` instead of :guilabel:`Nethermind`:
-
-.. prompt:: bash $
-
-  sudo systemctl start erigon-gnosis
-  sudo journalctl -u erigon-gnosis -f
-
-Remember to forward the default ports: `9000` and `30303`
+:doc:`Gnosis Chain Support </advanced/gnosis>`
 
 Optimism
 --------

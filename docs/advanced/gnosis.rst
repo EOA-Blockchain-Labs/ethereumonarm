@@ -4,8 +4,8 @@ The network is secured by over 100,000 validators on the **Gnosis Beacon Chain**
 
 Ethereum on ARM provides support for Gnosis Chain, allowing you to run your own node on ARM devices.
 
-Quick Start Guide
------------------
+Gnosis Chain Support
+--------------------
 
 Setting up a Gnosis Chain node on Ethereum on ARM is straightforward. Since our images come with pre-installed clients, you only need to select and enable the Gnosis-specific services.
 

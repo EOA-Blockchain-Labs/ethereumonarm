@@ -63,28 +63,27 @@ case "$DEVICE_MODEL" in
     TARGET_DISK="/dev/nvme0n1" # The primary storage device (likely an NVMe SSD) for Ethereum data.
     PARTITION1="p1"            # The first partition on that disk (e.g., /dev/nvme0n1p1).
     HOSTNAME_SEED="rpi5"       # A base string to help create a unique computer name.
-    SWAPPINESS=1               # A system setting (0-100) that controls how aggressively the system uses swap. 1 means "use swap only when absolutely necessary".
     ;;
 
 "FriendlyElec NanoPC-T6" | "FriendlyElec NanoPC-T6 LTS")
     TARGET_DISK="/dev/nvme0n1"
     PARTITION1="p1"
     HOSTNAME_SEED="nanopct6"
-    SWAPPINESS=1
+
     ;;
 
 "Radxa ROCK 5B")
     TARGET_DISK="/dev/nvme0n1"
     PARTITION1="p1"
     HOSTNAME_SEED="rock5b"
-    SWAPPINESS=1
+
     ;;
 
 "Radxa ROCK 5T")
     TARGET_DISK="/dev/nvme0n1"
     PARTITION1="p1"
     HOSTNAME_SEED="rock5t"
-    SWAPPINESS=1
+
     ;;
 
     # This handles two possible model names for the Orange Pi 5 Plus.
@@ -92,7 +91,7 @@ case "$DEVICE_MODEL" in
     TARGET_DISK="/dev/nvme0n1"
     PARTITION1="p1"
     HOSTNAME_SEED="opi5plus"
-    SWAPPINESS=1
+
     ;;
 
 # If the detected model doesn't match any of the known ones.
@@ -534,52 +533,6 @@ if [[ -f /etc/default/armbian-zram-config ]]; then # Check if Armbian zRAM confi
     sed -i "s/ENABLED=true/ENABLED=false/g" /etc/default/armbian-zram-config
 fi
 
-# Define the path for custom sysctl settings.
-# sysctl is used to configure kernel parameters at runtime.
-SYSCTL_CONFIG="/etc/sysctl.d/99-zzz-ethereum-node-tweaks.conf"
-
-# Remove any existing vm.swappiness setting from the main /etc/sysctl.conf to avoid conflicts.
-sed -i '/^vm\.swappiness/d' /etc/sysctl.conf
-
-echo "Creating custom sysctl configuration at $SYSCTL_CONFIG for Ethereum node performance..."
-# Write performance-oriented kernel parameter settings.
-cat <<EOF >"$SYSCTL_CONFIG"
-# Kernel tweaks for improved Ethereum node performance
-
-# Optimize swap usage: Lower value means kernel prefers to keep data in RAM longer.
-# ${SWAPPINESS} was defined earlier based on device model (typically 1 for this script).
-vm.swappiness=${SWAPPINESS}
-
-# Filesystem caching and disk I/O behavior:
-# vm.dirty_ratio: Max percentage of total system memory that can hold dirty (unsaved) pages. (e.g., 40%)
-# vm.dirty_background_ratio: Percentage of system memory at which background write-out of dirty pages starts. (e.g., 10%)
-# These can influence how aggressively data is written to disk.
-vm.dirty_ratio=40
-vm.dirty_background_ratio=10
-# vm.vfs_cache_pressure: Controls tendency of kernel to reclaim memory used for caching directory and inode objects.
-# Lower values (e.g., 50) make kernel favor keeping these caches.
-vm.vfs_cache_pressure=50
-
-# Network throughput optimizations:
-# Increase maximum socket receive buffer (rmem_max) and send buffer (wmem_max) sizes. (12MB here)
-net.core.rmem_max=12582912
-net.core.wmem_max=12582912
-# Configure TCP receive memory (min, default, max).
-net.ipv4.tcp_rmem=10240 87380 12582912
-# Configure TCP send memory (min, default, max).
-net.ipv4.tcp_wmem=10240 87380 12582912
-# Increase maximum number of packets queued on the INPUT side, when interface receives packets faster than kernel can process.
-net.core.netdev_max_backlog=2500
-# Set TCP congestion control algorithm to BBR (Bottleneck Bandwidth and Round-trip propagation time).
-# BBR often provides higher throughput and lower latency.
-net.ipv4.tcp_congestion_control=bbr
-EOF
-
-# Apply all sysctl settings from configuration files immediately.
-echo "Applying sysctl settings..."
-sysctl --system
-
-echo "Performance-related sysctl tweaks applied successfully."
 
 # --- Section: Install Ethereum-related Programs ---
 echo "Installing Ethereum client software and related tools..."

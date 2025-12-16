@@ -1,0 +1,4 @@
+#!/bin/bash
+if [ "$(cat /proc/sys/vm/swappiness)" != "1" ]; then
+    sysctl -p /etc/sysctl.d/99-zzz-ethereum-node-tweaks.conf
+fi

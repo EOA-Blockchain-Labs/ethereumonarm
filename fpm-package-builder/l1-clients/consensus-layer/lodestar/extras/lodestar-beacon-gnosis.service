@@ -1,0 +1,20 @@
+[Unit]
+Description=Lodestar Beacon chain daemon (Gnosis)
+# Waits for a full network connection
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/lodestar-beacon-gnosis.conf
+ExecStart=/usr/bin/lodestar $ARGS
+# Reliable restart policy
+Restart=on-failure
+RestartSec=5
+User=ethereum
+SyslogIdentifier=lodestar-beacon-gnosis
+# Increased resource limits
+LimitNOFILE=65536
+LimitNPROC=65536
+
+[Install]
+WantedBy=multi-user.target

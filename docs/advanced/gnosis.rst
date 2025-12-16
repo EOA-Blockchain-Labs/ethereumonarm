@@ -87,15 +87,18 @@ Ethereum on ARM also allows you to run a node on the **Chiado Testnet**, the off
 **General Steps:**
 
 1.  **Modify Network Flag**: Change the network flag in the configuration file from ``gnosis`` to ``chiado``.
+
     *    **Erigon / Reth**: Change ``--chain=gnosis`` to ``--chain=chiado``.
     *    **Nethermind**: Change to ``--config=chiado``.
     *    **Consensus Clients (Lighthouse, Lodestar, Teku, etc.)**: Change ``--network=gnosis`` to ``--network=chiado``.
 
 2.  **Update Data Directory**: **Crucial Step**. You *must* change the data directory path to avoid corrupting your mainnet database.
+
     *   Change: ``--datadir /home/ethereum/.erigon-gnosis``
     *   To: ``--datadir /home/ethereum/.erigon-chiado``
 
 3.  **Update Checkpoint Sync** (Consensus Layer): Change the checkpoint sync URL to a Chiado-compatible endpoint.
+
     *   Example: ``https://checkpoint.chiadochain.net``
 
 **Example: Modifying Erigon for Chiado**

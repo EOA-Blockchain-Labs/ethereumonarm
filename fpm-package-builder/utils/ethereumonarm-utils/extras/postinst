@@ -10,4 +10,8 @@ chown root:root /etc/ethereum/restic.passwd /etc/ethereum/restic_eoa.conf /usr/s
 echo "Reloading systemd"
 systemctl daemon-reload
 
+echo "Enabling and starting timers..."
+systemctl enable --now ethereum-swappiness-enforce.timer || true
+systemctl enable --now ethereum-backup.timer || true
+
 exit 0

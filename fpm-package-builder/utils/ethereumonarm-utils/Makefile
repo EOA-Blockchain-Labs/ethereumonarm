@@ -35,7 +35,7 @@ PKG_BEFPRE_REMOVE ?= extras/prerm
 # ----------------------------------------------------------------------
 # Upstream version and source info
 # ----------------------------------------------------------------------
-PKG_VERSION ?= 1.1.6
+PKG_VERSION ?= 1.1.7
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(PKG_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
@@ -66,7 +66,7 @@ FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
     --after-install $(PKG_AFTER_INSTALL) \
     --before-remove $(PKG_BEFPRE_REMOVE) \
     --deb-no-default-config-files \
-    $(shell test -d extras && find extras -name 'ethereum-.*' -printf "--deb-systemd %p ") \
+    $(shell test -d extras && find extras -name 'ethereum*' -exec echo --deb-systemd {} \;) \
     $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
     --depends rclone \
     --depends fuse \
@@ -85,7 +85,7 @@ FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
     --architecture $(PKG_ARCH_RPM) \
     --after-install $(PKG_AFTER_INSTALL) \
     --before-remove $(PKG_BEFPRE_REMOVE) \
-    $(shell test -d extras && find extras -name 'ethereum-backup.*' -printf "--rpm-systemd %p ") \
+    $(shell test -d extras && find extras -name 'ethereum*' -exec echo --rpm-systemd {} \;) \
     --depends rclone \
     --depends fuse \
     --depends restic \

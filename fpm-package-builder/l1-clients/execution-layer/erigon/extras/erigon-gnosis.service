@@ -1,0 +1,18 @@
+[Unit]
+Description=Ethereum Erigon client daemon (Gnosis)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Environment="GODEBUG=netdns=go"
+EnvironmentFile=/etc/ethereum/erigon-gnosis.conf
+ExecStart=/usr/bin/erigon $ARGS
+Restart=on-failure
+RestartSec=5
+User=ethereum
+SyslogIdentifier=erigon-gnosis
+LimitNOFILE=65536
+LimitNPROC=65536
+
+[Install]
+WantedBy=multi-user.target

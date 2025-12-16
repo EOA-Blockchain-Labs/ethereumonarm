@@ -15,14 +15,14 @@ We support the following clients for Gnosis Chain on ARM:
 Execution Layer
 ~~~~~~~~~~~~~~~
 
-*   **Besu**: ``besu-gnosis.service``
-*   **Geth**: ``geth-gnosis.service``
+*   **Erigon**: ``erigon-gnosis.service``
 *   **Nethermind**: ``nethermind-gnosis.service``
 
 Consensus Layer
 ~~~~~~~~~~~~~~~
 
 *   **Lighthouse**: ``lighthouse-beacon-gnosis.service`` / ``lighthouse-validator-gnosis.service``
+*   **Lodestar**: ``lodestar-beacon-gnosis.service`` / ``lodestar-validator-gnosis.service``
 *   **Nimbus**: ``nimbus-beacon-gnosis.service`` / ``nimbus-validator-gnosis.service``
 *   **Prysm**: ``prysm-beacon-gnosis.service`` / ``prysm-validator-gnosis.service``
 *   **Teku**: ``teku-beacon-gnosis.service`` / ``teku-validator-gnosis.service``
@@ -35,7 +35,7 @@ All our Gnosis packages come pre-configured for the Gnosis Chain. You generally 
 The configuration files are located in ``/etc/ethereum/`` and differ from the mainnet configurations. They include the necessary bootnodes, network IDs, and check-point sync URLs specific to Gnosis Chain.
 
 For example:
-*   **Geth**: ``/etc/ethereum/geth-gnosis.conf``
+*   **Erigon**: ``/etc/ethereum/erigon-gnosis.conf``
 *   **Lighthouse**: ``/etc/ethereum/lighthouse-beacon-gnosis.conf``
 
 You can check the specific configuration for your client by inspecting its corresponding file in that directory.

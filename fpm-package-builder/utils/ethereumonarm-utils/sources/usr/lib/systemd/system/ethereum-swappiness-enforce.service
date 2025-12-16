@@ -1,0 +1,7 @@
+[Unit]
+Description=Enforce Ethereum on ARM sysctl settings
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/ethereum-swappiness-enforce

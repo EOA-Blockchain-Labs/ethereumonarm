@@ -43,7 +43,7 @@ You can list the currently available UFW profiles with:
    sudo ufw app list
 
 By default, you’ll see ``Nginx`` and ``OpenSSH`` profiles.
-After installing the ``ethereumonarm-firewall`` package, you will also see
+After installing the ``ethereumonarm-monitoring-extras`` package, you will also see
 the full set of **Ethereum** profiles.
 
 Example output::

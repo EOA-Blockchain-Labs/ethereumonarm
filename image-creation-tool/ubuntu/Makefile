@@ -16,7 +16,7 @@ ETHONARM_IMAGE = ethonarm_$(1)_$(DATE).$(RELEASE).img
 
 # --- Device Definitions ---
 # List of all target devices. Add new device names here.
-DEVICES = rpi5 rock5b orangepi5-plus nanopct6
+DEVICES = rpi5 rock5b rock5t orangepi5-plus nanopct6
 
 # NOTE: Armbian uses the rpi4b image for Raspberry Pi 4 & 5
 rpi5_url := https://es.sbcmirror.org/dl/rpi4b/archive/Armbian_25.11.1_Rpi4b_noble_current_6.12.58_minimal.img.xz
@@ -26,6 +26,10 @@ rpi5_offset := 272629760 # Partition start offset in bytes
 rock5b_url := https://es.sbcmirror.org/dl/rock-5b/archive/Armbian_25.11.1_Rock-5b_noble_vendor_6.1.115_minimal.img.xz
 rock5b_iso := Armbian_25.11.1_Rock-5b_noble_vendor_6.1.115_minimal.img
 rock5b_offset := 16777216
+
+rock5t_url := https://es.sbcmirror.org/dl/rock-5t/archive/Armbian_25.11.1_Rock-5t_noble_vendor_6.1.115_minimal.img.xz
+rock5t_iso := Armbian_25.11.1_Rock-5t_noble_vendor_6.1.115_minimal.img
+rock5t_offset := 16777216
 
 orangepi5-plus_url := https://es.sbcmirror.org/dl/orangepi5-plus/archive/Armbian_25.11.1_Orangepi5-plus_noble_vendor_6.1.115_minimal.img.xz 
 orangepi5-plus_iso := Armbian_25.11.1_Orangepi5-plus_noble_vendor_6.1.115_minimal.img

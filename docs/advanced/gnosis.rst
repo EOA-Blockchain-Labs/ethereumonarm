@@ -25,6 +25,7 @@ Choose one Execution Client and one Consensus Client from the supported list bel
 Execution Layer
 ^^^^^^^^^^^^^^^
 
+* Besu: ``besu-gnosis.service``
 * Erigon: ``erigon-gnosis.service``
 * Geth: ``geth-gnosis.service``
 * Nethermind: ``nethermind-gnosis.service``
@@ -65,6 +66,7 @@ Configuration files are located in ``/etc/ethereum/`` and are separate from Ethe
 
 Examples:
 
+* Besu: ``/etc/ethereum/besu-gnosis.conf``
 * Erigon: ``/etc/ethereum/erigon-gnosis.conf``
 * Lighthouse: ``/etc/ethereum/lighthouse-beacon-gnosis.conf``
 
@@ -111,7 +113,7 @@ General Steps
 1. Modify Network Flag
 
    * Erigon / Reth: change ``--chain=gnosis`` to ``--chain=chiado``
-   * Nethermind: change ``--config=gnosis`` to ``--config=chiado``
+   * Nethermind: change ``--config gnosis`` to ``--config chiado`` and ensure datadir is set (use ``-dd`` flag)
    * Consensus clients: change ``--network=gnosis`` to ``--network=chiado``
 
 2. Update Data Directory (Crucial Step)

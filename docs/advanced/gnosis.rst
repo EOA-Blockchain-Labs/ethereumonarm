@@ -1,115 +1,144 @@
-**Gnosis Chain** is one of the first Ethereum sidechains and stays true to the values of decentralized web3 ecosystem. It is an EVM-compatible execution-layer blockchain designed for low-cost, high-speed transactions, using **xDAI** (a stablecoin pegged to USD) for gas fees.
+Gnosis Chain
+============
 
-The network is secured by over 100,000 validators on the **Gnosis Beacon Chain**, making it one of the most decentralized and resilient networks. It mirrors Ethereum's architecture to ensure credible neutrality and robust security, governed by GnosisDAO.
+Gnosis Chain is one of the earliest Ethereum sidechains and remains true to the values of the decentralized Web3 ecosystem. It is an EVM-compatible execution-layer blockchain designed for low-cost, fast-finality transactions, using xDAI (a USD-pegged stablecoin) to pay for gas fees.
 
-Ethereum on ARM provides support for Gnosis Chain, allowing you to run your own node on ARM devices.
+The network is secured by a large and highly decentralized validator set on the Gnosis Beacon Chain, making it one of the most resilient and decentralized Ethereum-aligned networks. Gnosis Chain mirrors Ethereum’s execution-layer and consensus-layer architecture to ensure credible neutrality and robust security, and it is governed by GnosisDAO.
+
+Ethereum on ARM provides support for Gnosis Chain, allowing you to run your own node on ARM-based devices.
 
 Gnosis Chain Support
 --------------------
 
-Setting up a Gnosis Chain node on Ethereum on ARM is straightforward. Since our images come with pre-installed clients, you only need to select and enable the Gnosis-specific services.
+Setting up a Gnosis Chain node on Ethereum on ARM is straightforward. Since our images ship with pre-installed clients, you only need to select and enable the Gnosis-specific systemd services.
 
 1. Install the OS
 ~~~~~~~~~~~~~~~~~
 
-Follow our :doc:`Installation Guide </getting-started/installation>` to flash the Ethereum on ARM image to your device and perform the initial boot.
+Follow the :doc:`Installation Guide </getting-started/installation>` to flash the Ethereum on ARM image to your device and complete the initial boot process.
 
 2. Select Your Clients
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Choose an Execution Client and a Consensus Client from the supported list below.
+Choose one Execution Client and one Consensus Client from the supported list below.
 
-**Execution Layer**
+Execution Layer
+^^^^^^^^^^^^^^^
 
-*   **Erigon**: ``erigon-gnosis.service``
-*   **Geth**: ``geth-gnosis.service``
-*   **Nethermind**: ``nethermind-gnosis.service``
-*   **Reth**: ``reth-gnosis.service``
+* Erigon: ``erigon-gnosis.service``
+* Geth: ``geth-gnosis.service``
+* Nethermind: ``nethermind-gnosis.service``
+* Reth: ``reth-gnosis.service``
 
-**Consensus Layer**
+Consensus Layer
+^^^^^^^^^^^^^^^
 
-*   **Lighthouse**: ``lighthouse-beacon-gnosis.service`` / ``lighthouse-validator-gnosis.service``
-*   **Lodestar**: ``lodestar-beacon-gnosis.service`` / ``lodestar-validator-gnosis.service``
-*   **Nimbus**: ``nimbus-beacon-gnosis.service`` / ``nimbus-validator-gnosis.service``
-*   **Prysm**: ``prysm-beacon-gnosis.service`` / ``prysm-validator-gnosis.service``
-*   **Teku**: ``teku-beacon-gnosis.service`` / ``teku-validator-gnosis.service``
+* Lighthouse: ``lighthouse-beacon-gnosis.service`` / ``lighthouse-validator-gnosis.service``
+* Lodestar: ``lodestar-beacon-gnosis.service`` / ``lodestar-validator-gnosis.service``
+* Nimbus: ``nimbus-beacon-gnosis.service`` / ``nimbus-validator-gnosis.service``
+* Prysm: ``prysm-beacon-gnosis.service`` / ``prysm-validator-gnosis.service``
+* Teku: ``teku-beacon-gnosis.service`` / ``teku-validator-gnosis.service``
 
 3. Enable Services
 ~~~~~~~~~~~~~~~~~~
 
 Enable and start the systemd services for your chosen client pair. This will automatically start the node and begin syncing the Gnosis Chain.
 
-For example, to run **Nethermind** and **Lighthouse**:
+Example: Running Nethermind and Lighthouse
 
 .. code-block:: bash
 
-    # Stop any default mainnet services if running (e.g., Geth)
-    sudo systemctl stop geth lighthouse-beacon
+    # Stop any mainnet or Gnosis services if running
+    sudo systemctl stop geth geth-gnosis lighthouse-beacon lighthouse-beacon-gnosis || true
 
-    # Enable and start Gnosis services
+    # Enable and start Gnosis Chain services
     sudo systemctl enable --now nethermind-gnosis
     sudo systemctl enable --now lighthouse-beacon-gnosis
 
-For more information on monitoring and managing these services, refer to the :doc:`Managing Clients </operation/managing-clients>` guide.
+For monitoring, logs, and lifecycle management, refer to the
+:doc:`Managing Clients </operation/managing-clients>` guide.
 
 Configuration
 -------------
 
-The configuration files are located in ``/etc/ethereum/`` and differ from the mainnet configurations. They include the necessary bootnodes, network IDs, and check-point sync URLs specific to Gnosis Chain.
+Configuration files are located in ``/etc/ethereum/`` and are separate from Ethereum mainnet configurations. They include Gnosis-specific network IDs, bootnodes, and checkpoint sync URLs.
 
-**Checkpoint Sync:**
-Our packages are pre-configured with a default checkpoint sync URL. However, if you need to use a different endpoint, please use one of the following official endpoints:
+Examples:
 
-*   **Gnosis Chain**: ``https://checkpoint.gnosischain.com``
-*   **Chiado Testnet**: ``https://checkpoint.chiadochain.net``
+* Erigon: ``/etc/ethereum/erigon-gnosis.conf``
+* Lighthouse: ``/etc/ethereum/lighthouse-beacon-gnosis.conf``
 
-For example:
-*   **Erigon**: ``/etc/ethereum/erigon-gnosis.conf``
-*   **Lighthouse**: ``/etc/ethereum/lighthouse-beacon-gnosis.conf``
+Checkpoint Sync
+~~~~~~~~~~~~~~~
+
+Ethereum on ARM packages include a default checkpoint sync configuration. If you need to override it, you may use the following official endpoints:
+
+* Gnosis Chain: ``https://checkpoint.gnosischain.com``
+* Chiado Testnet: ``https://checkpoint.chiadochain.net``
 
 4. Validator Setup (Optional)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you intend to run a validator, you must generate your validator keys and deposit GNO.
+Running a validator is optional. A beacon-only node can be run without staking.
 
-1.  **Generate Keys**: You can use the ``ethstaker-deposit-cli`` tool (available in our repositories) or follow the official Gnosis instructions.
-2.  **Import Keys**: Import your validator keys into your Consensus Client (Lighthouse, Lodestar, etc.).
-3.  **Deposit GNO**: Use the official Gnosis Deposit UI.
+If you intend to run a validator, you must generate validator keys and deposit GNO.
 
-For detailed instructions on generating keys and making the deposit, please refer to the official Gnosis documentation:
+1. Generate Keys  
+   Use the ``ethstaker-deposit-cli`` tool (available in Ethereum on ARM repositories) or follow the official Gnosis instructions.
+
+2. Import Keys  
+   Import your validator keys into your chosen consensus client.
+
+3. Deposit GNO  
+   Make the deposit using the official Gnosis Deposit UI.
+
+For complete instructions, refer to:
 `Gnosis Chain Validator Deposit <https://docs.gnosischain.com/node/manual/validator/deposit>`_
 
+Note:
+Running a validator requires both a beacon node and a validator client to be enabled.
+
 5. Chiado Testnet
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
-Ethereum on ARM also allows you to run a node on the **Chiado Testnet**, the official testnet for Gnosis Chain. To do this, you need to modify the configuration files of your chosen clients.
+Ethereum on ARM also supports Chiado, the official testnet for Gnosis Chain.
 
-**General Steps:**
+Chiado uses the same systemd services as Gnosis mainnet, but with modified configuration files and separate data directories.
 
-1.  **Modify Network Flag**: Change the network flag in the configuration file from ``gnosis`` to ``chiado``.
+General Steps
+^^^^^^^^^^^^^
 
-    *    **Erigon / Reth**: Change ``--chain=gnosis`` to ``--chain=chiado``.
-    *    **Nethermind**: Change to ``--config=chiado``.
-    *    **Consensus Clients (Lighthouse, Lodestar, Teku, etc.)**: Change ``--network=gnosis`` to ``--network=chiado``.
+1. Modify Network Flag
 
-2.  **Update Data Directory**: **Crucial Step**. You *must* change the data directory path to avoid corrupting your mainnet database.
+   * Erigon / Reth: change ``--chain=gnosis`` to ``--chain=chiado``
+   * Nethermind: change ``--config=gnosis`` to ``--config=chiado``
+   * Consensus clients: change ``--network=gnosis`` to ``--network=chiado``
 
-    *   Change: ``--datadir /home/ethereum/.erigon-gnosis``
-    *   To: ``--datadir /home/ethereum/.erigon-chiado``
+2. Update Data Directory (Crucial Step)
 
-3.  **Update Checkpoint Sync** (Consensus Layer): Change the checkpoint sync URL to a Chiado-compatible endpoint.
+   You must use a different data directory to avoid corrupting your mainnet database.
 
-    *   Example: ``https://checkpoint.chiadochain.net``
+   Example:
 
-**Example: Modifying Erigon for Chiado**
+   * From: ``--datadir /home/ethereum/.erigon-gnosis``
+   * To:   ``--datadir /home/ethereum/.erigon-chiado``
 
-Open ``/etc/ethereum/erigon-gnosis.conf`` and update the lines:
+3. Update Checkpoint Sync (Consensus Layer)
+
+   Use a Chiado-compatible endpoint:
+
+   * ``https://checkpoint.chiadochain.net``
+
+Example: Modifying Erigon for Chiado
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Edit ``/etc/ethereum/erigon-gnosis.conf``:
 
 .. code-block:: bash
 
     ARGS="--chain=chiado \
     --datadir=/home/ethereum/.erigon-chiado \
-    ...
+    ..."
 
 Then restart the service:
 
@@ -117,10 +146,15 @@ Then restart the service:
 
     sudo systemctl restart erigon-gnosis
 
-You can do the same for your consensus client (e.g., ``lighthouse-beacon-gnosis.conf``).
+Repeat the same process for your consensus client configuration.
+
+Important:
+Ethereum on ARM does not provide separate systemd units for Chiado. The same
+``*-gnosis`` services are reused with Chiado-specific configuration and data paths.
 
 Official Documentation
 ~~~~~~~~~~~~~~~~~~~~~~
 
-For more in-depth information, architectural details, and advanced configurations, please verify the official Gnosis Chain documentation:
+For advanced configuration and architectural details, refer to the official Gnosis Chain documentation:
+
 `Gnosis Chain Node Documentation <https://docs.gnosischain.com/node/>`_

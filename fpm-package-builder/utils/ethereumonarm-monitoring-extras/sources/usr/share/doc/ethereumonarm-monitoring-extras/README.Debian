@@ -1,33 +1,19 @@
-ethereumonarm-monitoring-extras for Ethereum on ARM
-====================================================
+Ethereum on ARM Monitoring Extras for Debian
+============================================
 
-Pre-configured monitoring stack for Ethereum nodes.
+This meta-package installs and configures the monitoring stack for Ethereum on ARM.
 
-Included Components
--------------------
+Features
+--------
 
-- Grafana dashboards for all Ethereum clients
-- Prometheus configuration
-- Node Exporter setup
+- **Dependencies**: Installs `prometheus`, `grafana`, `prometheus-node-exporter`, `ethereum-metrics-exporter`, and `ethereum-validator-metrics-exporter`.
+- **Configuration**:
+  - **Apt Preferences**: Configures package pinning in `/etc/apt/preferences.d/`.
+  - **Systemd**: Sets up systemd overrides or configurations in `/etc/systemd/system/`.
+  - **UFW**: Configures firewall application rules for monitoring services in `/etc/ufw/applications.d/`.
 
-Dashboards
-----------
+Package Details
+---------------
 
-Dashboards are installed to:
-  /usr/lib/ethereumonarm/Grafana dashboards/
-
-Categories:
-- Consensus/ - Beacon chain client dashboards
-- Execution/ - Execution client dashboards
-- System/    - System resource dashboards
-
-Accessing Grafana
------------------
-
-Default URL: http://your-node-ip:3000
-
-Documentation
--------------
-
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Discord:          https://discord.gg/ve2Z8fxz5N
+- **Maintainer**: Fernando Collado <fcollado@ethereumonarm.com>
+- **Upstream URL**: https://github.com/EOA-Blockchain-Labs/ethereumonarm

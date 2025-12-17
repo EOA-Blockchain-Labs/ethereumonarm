@@ -1,49 +1,80 @@
-Lighthouse for Ethereum on ARM
-==============================
+Lighthouse for Debian
+=====================
 
-Lighthouse is a full Consensus Layer client written in Rust by Sigma Prime.
+This package provides the Lighthouse Ethereum consensus client, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Beacon config:     /etc/ethereum/lighthouse-beacon.conf
-Validator config:  /etc/ethereum/lighthouse-validator.conf
-Data directory:    /home/ethereum/.lighthouse
-JWT secret:        /etc/ethereum/jwtsecret
+This package installs systemd services for various networks and configurations. The services are disabled by default.
 
-Systemd Services
+**Beacon Chain Services:**
+- `lighthouse-beacon.service` (Mainnet)
+- `lighthouse-beacon-mev.service` (Mainnet + MEV-Boost)
+- `lighthouse-beacon-gnosis.service` (Gnosis Chain)
+- `lighthouse-beacon-sepolia.service` (Sepolia Testnet)
+- `lighthouse-beacon-sepolia-mev.service` (Sepolia + MEV-Boost)
+- `lighthouse-beacon-hoodi.service` (Holesky Testnet)
+- `lighthouse-beacon-hoodi-mev.service` (Holesky + MEV-Boost)
+
+**Validator Services:**
+- `lighthouse-validator.service` (Mainnet)
+- `lighthouse-validator-mev.service` (Mainnet + MEV-Boost)
+- `lighthouse-validator-gnosis.service` (Gnosis Chain)
+- `lighthouse-validator-sepolia.service` (Sepolia Testnet)
+- `lighthouse-validator-sepolia-mev.service` (Sepolia + MEV-Boost)
+- `lighthouse-validator-hoodi.service` (Holesky Testnet)
+- `lighthouse-validator-hoodi-mev.service` (Holesky + MEV-Boost)
+
+To enable a service, run:
+    sudo systemctl enable --now <service_name>
+
+Configuration
+-------------
+
+Configuration arguments are defined in environment files located in `/etc/ethereum/`.
+
+- **Mainnet**:
+    - `/etc/ethereum/lighthouse-beacon.conf`
+    - `/etc/ethereum/lighthouse-beacon-mev.conf`
+    - `/etc/ethereum/lighthouse-validator.conf`
+    - `/etc/ethereum/lighthouse-validator-mev.conf`
+
+- **Gnosis**:
+    - `/etc/ethereum/lighthouse-beacon-gnosis.conf`
+    - `/etc/ethereum/lighthouse-validator-gnosis.conf`
+
+- **Sepolia**:
+    - `/etc/ethereum/lighthouse-beacon-sepolia.conf`
+    - `/etc/ethereum/lighthouse-beacon-sepolia-mev.conf`
+    - `/etc/ethereum/lighthouse-validator-sepolia.conf`
+    - `/etc/ethereum/lighthouse-validator-sepolia-mev.conf`
+
+- **Holesky**:
+    - `/etc/ethereum/lighthouse-beacon-hoodi.conf`
+    - `/etc/ethereum/lighthouse-beacon-hoodi-mev.conf`
+    - `/etc/ethereum/lighthouse-validator-hoodi.conf`
+    - `/etc/ethereum/lighthouse-validator-hoodi-mev.conf`
+
+You can edit these files to customize the generic arguments passed to the Lighthouse binary.
+
+Data Directories
 ----------------
 
-Beacon Chain:  systemctl start lighthouse-beacon
-Validator:     systemctl start lighthouse-validator
+By default, this package stores data in the `ethereum` user's home directory:
 
-View logs: journalctl -u lighthouse-beacon -f
+- **Beacon Node**: `/home/ethereum/.lighthouse` (Mainnet)
+- **Validator**: `/home/ethereum/.lighthouse` (Mainnet)
 
-Network Ports
--------------
+Note: For other networks, check the specific service file for the data directory argument.
 
-Default P2P port: 9000 (TCP/UDP)
-  - Forward this port in your router for better peer connectivity
+User and Group
+--------------
 
-Syncing
--------
+All services run as the `ethereum` user and group.
 
-Checkpoint Sync is enabled by default. The beacon chain syncs in minutes.
+Package Details
+---------------
 
-IMPORTANT: Start the beacon chain first. Once synced, start your execution
-client (Geth, Nethermind, etc.).
-
-Staking
--------
-
-To run a validator:
-1. Import keys: lighthouse account validator import --directory=/home/ethereum/validator_keys
-2. Set fee recipient in /etc/ethereum/lighthouse-validator.conf
-3. Start validator: systemctl start lighthouse-validator
-
-Documentation
--------------
-
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Upstream Docs:    https://lighthouse-book.sigmaprime.io
-- Discord:          https://discord.gg/ve2Z8fxz5N
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://github.com/sigp/lighthouse/

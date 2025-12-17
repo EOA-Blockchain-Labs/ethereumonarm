@@ -1,59 +1,47 @@
-Besu for Ethereum on ARM
-========================
+Besu for Debian
+===============
 
-Hyperledger Besu is an enterprise-grade Ethereum execution layer client
-written in Java.
+This package provides Hyperledger Besu, an enterprise-grade Ethereum client, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Configuration file:  /etc/ethereum/besu.conf
-Data directory:      /home/ethereum/.besu
-JWT secret:          /etc/ethereum/jwtsecret
+This package installs systemd services for various networks. The services are disabled by default.
 
-The configuration file contains ARGS that are passed to the besu binary.
-Edit this file to customize your node's behavior.
+- `besu.service` (Mainnet)
+- `besu-sepolia.service` (Sepolia Testnet)
+- `besu-hoodi.service` (Holesky Testnet)
 
-Systemd Services
+To enable a service, run:
+    sudo systemctl enable --now <service_name>
+
+Configuration
+-------------
+
+Configuration arguments are defined in environment files located in `/etc/ethereum/`.
+
+- **Mainnet**: `/etc/ethereum/besu.conf`
+- **Sepolia**: `/etc/ethereum/besu-sepolia.conf`
+- **Holesky**: `/etc/ethereum/besu-hoodi.conf`
+
+You can edit these files to customize the generic arguments passed to the Besu binary.
+
+Data Directories
 ----------------
 
-Mainnet:   systemctl start besu
-Sepolia:   systemctl start besu-sepolia
+By default, this package stores data in the `ethereum` user's home directory:
 
+- `/home/ethereum/.besu` (Mainnet)
+- `/home/ethereum/.besu-sepolia` (Sepolia Testnet)
+- `/home/ethereum/.besu-hoodi` (Holesky Testnet)
 
-View logs: journalctl -u besu -f
+User and Group
+--------------
 
-Network Ports
--------------
+All services run as the `ethereum` user and group.
 
-Default P2P port: 30303 (TCP/UDP)
-  - Forward this port in your router for better peer connectivity
+Package Details
+---------------
 
-Dependencies
-------------
-
-Besu requires Java 21 runtime, which is installed as a package dependency.
-
-Differences from Upstream
--------------------------
-
-- Runs as 'ethereum' user (not root)
-- Data stored in /home/ethereum/.besu
-- Java runtime managed via package dependency
-- Systemd service with automatic restart
-
-Syncing
--------
-
-Besu uses Fast/Snap Sync, which typically completes in 18-24 hours
-on ARM64 devices like Rock 5B or Raspberry Pi 5.
-
-IMPORTANT: You need a synced Consensus Layer client (beacon chain) running
-before Besu can start syncing.
-
-Documentation
--------------
-
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Upstream Docs:    https://besu.hyperledger.org
-- Discord:          https://discord.gg/ve2Z8fxz5N
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://www.hyperledger.org/use/besu

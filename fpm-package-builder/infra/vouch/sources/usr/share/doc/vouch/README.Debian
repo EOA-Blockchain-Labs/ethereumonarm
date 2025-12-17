@@ -1,30 +1,34 @@
-Vouch for Ethereum on ARM
-=========================
+Vouch for Debian
+================
 
-Vouch is a multi-node Ethereum validator client by Attestant.
+This package provides Vouch, a tool for managing validator keys and acting as a multi-node validator client, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Configuration file:  /etc/ethereum/vouch/vouch.yml
+This package installs a single systemd service. The service is disabled by default.
 
-Systemd Services
-----------------
+- `vouch.service`
 
-Vouch:  systemctl start vouch
+To enable the service, run:
+    sudo systemctl enable --now vouch.service
 
-View logs: journalctl -u vouch -f
-
-What is Vouch?
---------------
-
-Vouch is an advanced validator client that can connect to multiple
-beacon nodes simultaneously for improved redundancy. It supports
-sophisticated fee recipient and MEV strategies.
-
-Documentation
+Configuration
 -------------
 
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Vouch Docs:       https://github.com/attestantio/vouch
-- Discord:          https://discord.gg/ve2Z8fxz5N
+Configuration files are located in `/etc/ethereum/vouch/`.
+
+- `/etc/ethereum/vouch/vouch.yml` (Main configuration file)
+
+The service runs with `--base-dir /etc/ethereum/vouch`, so it looks for configuration and certificates in that directory.
+
+User and Group
+--------------
+
+The service runs as the `ethereum` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://github.com/attestantio/vouch

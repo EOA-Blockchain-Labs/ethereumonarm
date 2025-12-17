@@ -1,29 +1,24 @@
-ethstaker-deposit-cli for Ethereum on ARM
-=========================================
+EthStaker Deposit CLI for Debian
+================================
 
-ethstaker-deposit-cli is the official tool for generating Ethereum
-validator keys and deposit data.
+This package provides the EthStaker Deposit CLI, a tool for creating EIP-2335 format BLS12-381 keystores, packaged for Ethereum on ARM.
 
 Usage
 -----
 
-Run the deposit command to generate validator keys:
+This is a command-line tool. You can run it using the following command:
 
-  deposit new-mnemonic --num_validators 1 --execution_address YOUR_ETH_ADDRESS --chain mainnet
+    deposit [COMMAND] [OPTIONS]
 
-Key Files
----------
+Run `deposit --help` for more information on available commands and options.
 
-Generated files are placed in ~/validator_keys/:
-- deposit_data-*.json  - Upload to launchpad.ethereum.org
-- keystore-*.json      - Import into your validator client
+User and Group
+--------------
 
-IMPORTANT: Securely backup your mnemonic phrase!
+This tool is installed as a system-wide binary and can be run by any user.
 
-Documentation
--------------
+Package Details
+---------------
 
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- ETHStaker CLI:    https://github.com/eth-educators/ethstaker-deposit-cli
-- Staking Guide:    https://launchpad.ethereum.org
-- Discord:          https://discord.gg/ve2Z8fxz5N
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://github.com/eth-educators/ethstaker-deposit-cli/

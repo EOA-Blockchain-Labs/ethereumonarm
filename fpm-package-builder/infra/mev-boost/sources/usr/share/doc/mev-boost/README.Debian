@@ -1,39 +1,38 @@
-MEV-Boost for Ethereum on ARM
-=============================
+MEV-Boost for Debian
+====================
 
-MEV-Boost is a middleware that connects validators to MEV relays for
-Maximal Extractable Value (MEV) block building.
+This package provides MEV-Boost, open source middleware run by validators to access a competitive block-building market, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Configuration file:  /etc/ethereum/mev-boost.conf
+This package installs systemd services for various networks. The services are disabled by default.
 
-Systemd Services
-----------------
+- `mev-boost.service` (Mainnet)
+- `mev-boost-sepolia.service` (Sepolia Testnet)
+- `mev-boost-hoodi.service` (Holesky Testnet)
 
-Mainnet:   systemctl start mev-boost
+To enable a service, run:
+    sudo systemctl enable --now <service_name>
 
-
-View logs: journalctl -u mev-boost -f
-
-What is MEV-Boost?
-------------------
-
-MEV-Boost allows validators to outsource block building to specialized
-builders who can extract MEV more efficiently. This can increase
-validator rewards.
-
-Requirements
-------------
-
-- A synced Beacon Chain client
-- Validator configured to use MEV-Boost
-- Relay endpoints configured in mev-boost.conf
-
-Documentation
+Configuration
 -------------
 
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- MEV-Boost:        https://boost.flashbots.net
-- Discord:          https://discord.gg/ve2Z8fxz5N
+Configuration arguments are defined in environment files located in `/etc/ethereum/`.
+
+- `/etc/ethereum/mev-boost.conf`
+- `/etc/ethereum/mev-boost-sepolia.conf`
+- `/etc/ethereum/mev-boost-hoodi.conf`
+
+You can edit these files to customize the arguments passed to the MEV-Boost binary.
+
+User and Group
+--------------
+
+The service runs as the `ethereum` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://github.com/flashbots/mev-boost

@@ -1,36 +1,42 @@
-SSV Node for Ethereum on ARM
-============================
+SSV for Debian
+==============
 
-SSV Node is the client for SSV.Network Distributed Validator Technology.
+This package provides SSV (Secret Shared Validators) DVT client, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Configuration file:  /etc/ethereum/ssv.yaml
+This package installs a single systemd service. The service is disabled by default.
 
-Systemd Services
-----------------
+- `ssv.service`
 
-SSV Node:  systemctl start ssv-node
+To enable the service, run:
+    sudo systemctl enable --now ssv.service
 
-View logs: journalctl -u ssv-node -f
-
-SSV Network
------------
-
-SSV (Secret Shared Validators) allows validator keys to be split among
-multiple operators. This improves security and fault tolerance.
-
-Setup
------
-
-1. Register as an operator on SSV Network
-2. Configure /etc/ethereum/ssv.yaml with your operator keys
-3. Start the service: systemctl start ssv-node
-
-Documentation
+Configuration
 -------------
 
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- SSV Docs:         https://docs.ssv.network
-- Discord:          https://discord.gg/ve2Z8fxz5N
+Configuration arguments are defined in the environment file located in `/etc/ethereum/`.
+
+- `/etc/ethereum/ssv.conf` (Startup flags)
+- `/etc/ethereum/ssv-config.yaml` (Main configuration file)
+
+You can edit these files to customize the SSV node.
+
+Data Directories
+----------------
+
+By default, this package stores data in the `ethereum` user's home directory:
+
+- `/home/ethereum/.ssv`
+
+User and Group
+--------------
+
+The service runs as the `ethereum` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://github.com/ssvlabs/ssv

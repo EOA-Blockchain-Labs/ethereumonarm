@@ -1,31 +1,34 @@
-ethereum-metrics-exporter for Ethereum on ARM
-==============================================
+Ethereum Metrics Exporter for Debian
+====================================
 
-A client-agnostic metrics exporter for monitoring Ethereum nodes.
+This package provides the Ethereum Metrics Exporter, a client-agnostic tool for monitoring Ethereum nodes, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Configuration file:  /etc/ethereum/ethereum-metrics-exporter.conf
+This package installs a single systemd service. The service is disabled by default.
 
-Systemd Services
-----------------
+- `ethereum-metrics-exporter.service`
 
-Exporter:  systemctl start ethereum-metrics-exporter
+To enable the service, run:
+    sudo systemctl enable --now ethereum-metrics-exporter.service
 
-View logs: journalctl -u ethereum-metrics-exporter -f
-
-Metrics
--------
-
-The exporter provides Prometheus-compatible metrics about your
-Ethereum node, including sync status, peer count, and more.
-
-Default metrics endpoint: http://localhost:9090/metrics
-
-Documentation
+Configuration
 -------------
 
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Project:          https://github.com/ethpandaops/ethereum-metrics-exporter
-- Discord:          https://discord.gg/ve2Z8fxz5N
+Configuration arguments are defined in the YAML file located in `/etc/ethereum/`.
+
+- `/etc/ethereum/eth-metrics.yml`
+
+You can edit this file to configure the exporter, including endpoints and metrics settings.
+
+User and Group
+--------------
+
+The service runs as the `ethereum` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://github.com/ethpandaops/ethereum-metrics-exporter

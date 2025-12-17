@@ -1,36 +1,46 @@
-Vero for Ethereum on ARM
-========================
+Vero for Debian
+===============
 
-Vero is a validator effectiveness and reward optimization tool.
+This package provides Vero, a multi-node validator client software implementation, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Configuration file:  /etc/ethereum/vero/config.yaml
-Installation:        /opt/vero/
+This package installs a single systemd service. The service is disabled by default.
 
-Systemd Services
+- `vero.service`
+
+To enable the service, run:
+    sudo systemctl enable --now vero.service
+
+Configuration
+-------------
+
+Configuration arguments are defined in the environment file located in `/etc/ethereum/`.
+
+- `/etc/ethereum/vero.conf`
+
+You can edit this file to customize the arguments passed to the Vero binary.
+
+Data Directories
 ----------------
 
-Vero:  systemctl start vero
+By default, this package stores data in the `ethereum` user's home directory:
 
-View logs: journalctl -u vero -f
+- `/home/ethereum/.vero`
 
-What is Vero?
--------------
+Installation Details
+--------------------
 
-Vero helps monitor and optimize validator performance, tracking
-effectiveness, rewards, and identifying improvement opportunities.
+Vero is installed in a Python virtual environment located at `/opt/vero`. A wrapper script is provided at `/usr/bin/vero`.
 
-Python Environment
-------------------
+User and Group
+--------------
 
-Vero runs in an isolated Python virtual environment at /opt/vero/.
-The 'vero' command is available system-wide.
+The service runs as the `ethereum` user and group.
 
-Documentation
--------------
+Package Details
+---------------
 
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Vero:             https://github.com/serenita-org/vero
-- Discord:          https://discord.gg/ve2Z8fxz5N
+- **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
+- **Upstream URL**: https://github.com/serenita-org/vero

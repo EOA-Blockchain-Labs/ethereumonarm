@@ -1,57 +1,47 @@
-Ethrex for Ethereum on ARM
-==========================
+Ethrex for Debian
+=================
 
-Ethrex is a lightweight, performant, and modular Ethereum execution client
-written in Rust, powering next-gen L1 and L2 solutions.
+This package provides Ethrex, a minimalist and modular implementation of the Ethereum protocol, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Configuration file:  /etc/ethereum/ethrex.conf
-Data directory:      /home/ethereum/.ethrex
-JWT secret:          /etc/ethereum/jwtsecret
+This package installs systemd services for various networks. The services are disabled by default.
 
-The configuration file contains ARGS that are passed to the ethrex binary.
-Edit this file to customize your node's behavior.
+- `ethrex.service` (Mainnet)
+- `ethrex-sepolia.service` (Sepolia Testnet)
+- `ethrex-hoodi.service` (Holesky Testnet)
 
-Systemd Services
+To enable a service, run:
+    sudo systemctl enable --now <service_name>
+
+Configuration
+-------------
+
+Configuration arguments are defined in environment files located in `/etc/ethereum/`.
+
+- **Mainnet**: `/etc/ethereum/ethrex.conf`
+- **Sepolia**: `/etc/ethereum/ethrex-sepolia.conf`
+- **Holesky**: `/etc/ethereum/ethrex-hoodi.conf`
+
+You can edit these files to customize the generic arguments passed to the Ethrex binary.
+
+Data Directories
 ----------------
 
-Mainnet:   systemctl start ethrex
+By default, this package stores data in the `ethereum` user's home directory:
 
-View logs: journalctl -u ethrex -f
+- `/home/ethereum/.ethrex` (Mainnet)
+- `/home/ethereum/.ethrex-sepolia` (Sepolia Testnet)
+- `/home/ethereum/.ethrex-hoodi` (Holesky Testnet)
 
-Network Ports
--------------
+User and Group
+--------------
 
-Default P2P port: 30303 (TCP/UDP)
-  - Forward this port in your router for better peer connectivity
+All services run as the `ethereum` user and group.
 
-Differences from Upstream
--------------------------
+Package Details
+---------------
 
-- Runs as 'ethereum' user (not root)
-- Data stored in /home/ethereum/.ethrex
-- Systemd service with automatic restart
-
-Status
-------
-
-NOTE: Ethrex is new to the Ethereum on ARM ecosystem and is still under
-active testing. Use with caution in production environments.
-
-Syncing
--------
-
-Ethrex uses Snap Sync, which typically completes in 12-18 hours
-on ARM64 devices like Rock 5B or Raspberry Pi 5.
-
-IMPORTANT: You need a synced Consensus Layer client (beacon chain) running
-before Ethrex can start syncing.
-
-Documentation
--------------
-
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Upstream:         https://ethrex.xyz
-- Discord:          https://discord.gg/ve2Z8fxz5N
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://github.com/lambdaclass/ethrex

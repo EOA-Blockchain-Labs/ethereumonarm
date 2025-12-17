@@ -1,30 +1,33 @@
-Swarm Bee for Ethereum on ARM
-=============================
+Swarm (Bee) for Debian
+======================
 
-Bee is a Swarm node implementation for decentralized storage.
+This package provides Bee, a Swarm client implemented in Go, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Configuration file:  /etc/ethereum/bee.yaml
+This package installs a single systemd service. The service is disabled by default.
 
-Systemd Services
-----------------
+- `bee.service`
 
-Bee Node:  systemctl start bee
+To enable the service, run:
+    sudo systemctl enable --now bee.service
 
-View logs: journalctl -u bee -f
-
-What is Swarm?
---------------
-
-Swarm is a decentralized storage and communication system, designed
-to work seamlessly with Ethereum. Bee allows you to participate in
-the Swarm network.
-
-Documentation
+Configuration
 -------------
 
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Swarm Docs:       https://docs.ethswarm.org
-- Discord:          https://discord.gg/ve2Z8fxz5N
+Configuration arguments are defined in the environment file and YAML configuration located in `/etc/`.
+
+- `/etc/default/bee`: Environment variables for the service.
+- `/etc/bee/bee.yaml`: Main configuration file for the Bee node.
+
+User and Group
+--------------
+
+The service runs as the `ethereum` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://swarm.ethereum.org/

@@ -1,29 +1,34 @@
-StakeWise Operator for Ethereum on ARM
-======================================
+StakeWise V3 Operator for Debian
+==============================
 
-StakeWise Operator is the node software for StakeWise liquid staking.
+This package provides the StakeWise V3 Operator, a tool for managing StakeWise V3 validators, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Configuration file:  /etc/ethereum/stakewise-operator.yaml
+This package installs a single systemd service. The service is disabled by default.
 
-Systemd Services
-----------------
+- `stakewise-operator.service`
 
-Operator:  systemctl start stakewise-operator
+To enable the service, run:
+    sudo systemctl enable --now stakewise-operator.service
 
-View logs: journalctl -u stakewise-operator -f
-
-StakeWise
----------
-
-StakeWise is a liquid staking protocol. The operator software allows
-you to run a node for the StakeWise network.
-
-Documentation
+Configuration
 -------------
 
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- StakeWise:        https://docs.stakewise.io
-- Discord:          https://discord.gg/ve2Z8fxz5N
+Configuration arguments are defined in the environment file located in `/etc/ethereum/`.
+
+- `/etc/ethereum/stakewise-operator.conf`
+
+You can edit this file to customize the arguments passed to the StakeWise Operator binary.
+
+User and Group
+--------------
+
+The service runs as the `ethereum` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://github.com/stakewise/v3-operator

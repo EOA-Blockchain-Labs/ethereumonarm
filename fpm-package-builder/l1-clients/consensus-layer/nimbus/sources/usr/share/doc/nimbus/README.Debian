@@ -1,55 +1,80 @@
-Nimbus for Ethereum on ARM
-==========================
+Nimbus for Debian
+=================
 
-Nimbus is a lightweight Consensus Layer client written in Nim by Status.
+This package provides the Nimbus Ethereum consensus client, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Beacon config:     /etc/ethereum/nimbus-beacon.conf
-Validator config:  /etc/ethereum/nimbus-validator.conf
-Beacon data:       /home/ethereum/.nimbus-beacon
-Validator data:    /home/ethereum/.nimbus-validator
-JWT secret:        /etc/ethereum/jwtsecret
+This package installs systemd services for various networks and configurations. The services are disabled by default.
 
-Systemd Services
+**Beacon Chain Services:**
+- `nimbus-beacon.service` (Mainnet)
+- `nimbus-beacon-mev.service` (Mainnet + MEV-Boost)
+- `nimbus-beacon-gnosis.service` (Gnosis Chain)
+- `nimbus-beacon-sepolia.service` (Sepolia Testnet)
+- `nimbus-beacon-sepolia-mev.service` (Sepolia + MEV-Boost)
+- `nimbus-beacon-hoodi.service` (Hoodi Testnet)
+- `nimbus-beacon-hoodi-mev.service` (Hoodi + MEV-Boost)
+
+**Validator Services:**
+- `nimbus-validator.service` (Mainnet)
+- `nimbus-validator-mev.service` (Mainnet + MEV-Boost)
+- `nimbus-validator-gnosis.service` (Gnosis Chain)
+- `nimbus-validator-sepolia.service` (Sepolia Testnet)
+- `nimbus-validator-sepolia-mev.service` (Sepolia + MEV-Boost)
+- `nimbus-validator-hoodi.service` (Hoodi Testnet)
+- `nimbus-validator-hoodi-mev.service` (Hoodi + MEV-Boost)
+
+To enable a service, run:
+    sudo systemctl enable --now <service_name>
+
+Configuration
+-------------
+
+Configuration arguments are defined in environment files located in `/etc/ethereum/`.
+
+- **Mainnet**:
+    - `/etc/ethereum/nimbus-beacon.conf`
+    - `/etc/ethereum/nimbus-beacon-mev.conf`
+    - `/etc/ethereum/nimbus-validator.conf`
+    - `/etc/ethereum/nimbus-validator-mev.conf`
+
+- **Gnosis**:
+    - `/etc/ethereum/nimbus-beacon-gnosis.conf`
+    - `/etc/ethereum/nimbus-validator-gnosis.conf`
+
+- **Sepolia**:
+    - `/etc/ethereum/nimbus-beacon-sepolia.conf`
+    - `/etc/ethereum/nimbus-beacon-sepolia-mev.conf`
+    - `/etc/ethereum/nimbus-validator-sepolia.conf`
+    - `/etc/ethereum/nimbus-validator-sepolia-mev.conf`
+
+- **Hoodi**:
+    - `/etc/ethereum/nimbus-beacon-hoodi.conf`
+    - `/etc/ethereum/nimbus-beacon-hoodi-mev.conf`
+    - `/etc/ethereum/nimbus-validator-hoodi.conf`
+    - `/etc/ethereum/nimbus-validator-hoodi-mev.conf`
+
+You can edit these files to customize the generic arguments passed to the Nimbus binary.
+
+Data Directories
 ----------------
 
-Beacon Chain:  systemctl start nimbus-beacon
-Validator:     systemctl start nimbus-validator
+By default, this package stores data in the `ethereum` user's home directory:
 
-View logs: journalctl -u nimbus-beacon -f
+- **Beacon Node**: `/home/ethereum/.nimbus-beacon` (Mainnet)
+- **Validator**: `/home/ethereum/.nimbus-validator` (Mainnet)
 
-Network Ports
--------------
+Note: For other networks, check the specific service file for the data directory argument.
 
-Default P2P port: 9000 (TCP/UDP)
-  - Forward this port in your router for better peer connectivity
+User and Group
+--------------
 
-Checkpoint Sync
+All services run as the `ethereum` user and group.
+
+Package Details
 ---------------
 
-Nimbus requires running a manual command before starting:
-
-  nimbus_beacon_node trustedNodeSync --network=mainnet \
-    --data-dir=/home/ethereum/.nimbus-beacon \
-    --trusted-node-url=https://beaconstate.ethstaker.cc \
-    --backfill=false
-
-Then start: systemctl start nimbus-beacon
-
-Staking
--------
-
-To run a validator:
-1. Import keys: nimbus_beacon_node deposits import /home/ethereum/validator_keys \
-     --data-dir=/home/ethereum/.nimbus-validator
-2. Set fee recipient in /etc/ethereum/nimbus-validator.conf
-3. Start validator: systemctl start nimbus-validator
-
-Documentation
--------------
-
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Upstream Docs:    https://nimbus.team
-- Discord:          https://discord.gg/ve2Z8fxz5N
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://nimbus.team/

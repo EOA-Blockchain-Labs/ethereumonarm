@@ -100,6 +100,7 @@ Explore our guides to set up, manage, and optimize your node.
    /advanced/using-node-rpc
    /advanced/lido
    /advanced/manual-verification
+   /advanced/migrate-validator
 
 .. toctree::
    :maxdepth: 2

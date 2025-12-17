@@ -1,28 +1,23 @@
-ethereumonarm-utils for Ethereum on ARM
-=======================================
+Ethereum on ARM Utils for Debian
+================================
 
-A collection of utilities for managing Ethereum on ARM nodes.
+This package provides a collection of utility scripts and services for maintaining Ethereum on ARM nodes.
 
-Included Tools
---------------
+Services
+--------
 
-- Backup utilities (using rclone and restic)
-- Network diagnostics
-- Node management scripts
+This package installs systemd services and timers for maintenance tasks.
 
-Systemd Services
-----------------
+- `ethereum-backup.service` / `ethereum-backup.timer`: Automates backups of Ethereum data.
+- `ethereum-swappiness-enforce.service` / `ethereum-swappiness-enforce.timer`: Periodically ensures the system swappiness value is set to 1.
 
-Backup timer:  systemctl enable ethereum-backup.timer
+Utilities
+---------
 
-Configuration
--------------
+The package includes various utility scripts in `/usr/local/bin` or `/usr/bin` (e.g., for backup, updates, or diagnostics) and installs useful dependencies like `rclone`, `restic`, `jq`, and `speedtest-cli`.
 
-Scripts directory:  /usr/lib/ethereumonarm/
-Configuration:      /etc/ethereum/
+Package Details
+---------------
 
-Documentation
--------------
-
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Discord:          https://discord.gg/ve2Z8fxz5N
+- **Maintainer**: Fernando Collado <fcollado@ethereumonarm.com>
+- **Upstream URL**: https://github.com/EOA-Blockchain-Labs/ethereumonarm

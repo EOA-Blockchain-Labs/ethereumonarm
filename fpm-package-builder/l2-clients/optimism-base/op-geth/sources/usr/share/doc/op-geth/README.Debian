@@ -1,38 +1,43 @@
-OP-Geth for Ethereum on ARM
-===========================
+Op-Geth for Debian
+==================
 
-OP-Geth is the Optimism execution layer client, a modified version of
-Go-Ethereum optimized for OP Stack chains (Optimism, Base, etc.).
+This package provides op-geth, an execution client for the Optimism protocol, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Configuration file:  /etc/ethereum/op-geth.conf
-Data directory:      /home/ethereum/.op-geth
-JWT secret:          /etc/ethereum/jwtsecret
+This package installs systemd services for various networks. The services are disabled by default.
 
-Systemd Services
+- `op-geth.service` (Generic/Default)
+- `op-geth-base.service` (Base Mainnet)
+
+To enable a service, run:
+    sudo systemctl enable --now <service_name>
+
+Configuration
+-------------
+
+Configuration arguments are defined in environment files located in `/etc/ethereum/`.
+
+- `/etc/ethereum/op-geth.conf`
+- `/etc/ethereum/op-geth-base.conf`
+
+You can edit these files to customize the arguments passed to the op-geth binary.
+
+Data Directories
 ----------------
 
-Optimism Mainnet:  systemctl start op-geth
-Base Mainnet:      systemctl start op-geth-base
+By default, this package stores data in the `ethereum` user's home directory:
 
-View logs: journalctl -u op-geth -f
+- `/home/ethereum/.op-geth`
 
-Network Ports
--------------
+User and Group
+--------------
 
-Default P2P port: 30303 (TCP/UDP)
+All services run as the `ethereum` user and group.
 
-Requirements
-------------
+Package Details
+---------------
 
-OP-Geth requires an OP-Node (rollup node) running alongside it.
-Start both services together for a complete L2 node.
-
-Documentation
--------------
-
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Optimism Docs:    https://docs.optimism.io
-- Discord:          https://discord.gg/ve2Z8fxz5N
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://github.com/ethereum-optimism/op-geth

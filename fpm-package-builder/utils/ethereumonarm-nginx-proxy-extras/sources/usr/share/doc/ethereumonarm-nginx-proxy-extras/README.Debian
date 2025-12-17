@@ -1,22 +1,18 @@
-ethereumonarm-nginx-proxy-extras for Ethereum on ARM
-=====================================================
+Ethereum on ARM Nginx Proxy Extras for Debian
+=============================================
 
-Nginx reverse proxy configuration for Ethereum RPC endpoints.
-
-Configuration
--------------
-
-Nginx configs:  /etc/nginx/sites-available/
+This meta-package configures Nginx to act as a reverse proxy for Ethereum execution layer clients, allowing secure RPC access.
 
 Features
 --------
 
-- Secure RPC access via reverse proxy
-- SSL/TLS termination
-- Rate limiting
+- **Dependencies**: Installs `nginx`.
+- **Configuration**:
+  - **Sites Enabled**: Configures virtual hosts for RPC proxying in `/etc/nginx/sites-enabled/`.
+  - **Upstreams**: Defines upstream backends for Ethereum clients in `/etc/nginx/conf.d/`.
 
-Documentation
--------------
+Package Details
+---------------
 
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Discord:          https://discord.gg/ve2Z8fxz5N
+- **Maintainer**: Fernando Collado <fcollado@ethereumonarm.com>
+- **Upstream URL**: https://github.com/ethereumonarm

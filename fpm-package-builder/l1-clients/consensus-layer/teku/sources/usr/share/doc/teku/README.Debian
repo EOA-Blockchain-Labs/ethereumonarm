@@ -1,55 +1,80 @@
-Teku for Ethereum on ARM
-========================
+Teku for Debian
+===============
 
-Teku is a full Consensus Layer client written in Java by Consensys.
+This package provides the Teku Ethereum consensus client, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Beacon config:     /etc/ethereum/teku-beacon.conf
-Validator config:  /etc/ethereum/teku-validator.conf
-Beacon data:       /home/ethereum/.teku/beacon
-Validator data:    /home/ethereum/.teku/validator
-JWT secret:        /etc/ethereum/jwtsecret
+This package installs systemd services for various networks and configurations. The services are disabled by default.
 
-Systemd Services
+**Beacon Chain Services:**
+- `teku-beacon.service` (Mainnet)
+- `teku-beacon-mev.service` (Mainnet + MEV-Boost)
+- `teku-beacon-gnosis.service` (Gnosis Chain)
+- `teku-beacon-sepolia.service` (Sepolia Testnet)
+- `teku-beacon-sepolia-mev.service` (Sepolia + MEV-Boost)
+- `teku-beacon-hoodi.service` (Hoodi Testnet)
+- `teku-beacon-hoodi-mev.service` (Hoodi + MEV-Boost)
+
+**Validator Services:**
+- `teku-validator.service` (Mainnet)
+- `teku-validator-mev.service` (Mainnet + MEV-Boost)
+- `teku-validator-gnosis.service` (Gnosis Chain)
+- `teku-validator-sepolia.service` (Sepolia Testnet)
+- `teku-validator-sepolia-mev.service` (Sepolia + MEV-Boost)
+- `teku-validator-hoodi.service` (Hoodi Testnet)
+- `teku-validator-hoodi-mev.service` (Hoodi + MEV-Boost)
+
+To enable a service, run:
+    sudo systemctl enable --now <service_name>
+
+Configuration
+-------------
+
+Configuration arguments are defined in environment files located in `/etc/ethereum/`.
+
+- **Mainnet**:
+    - `/etc/ethereum/teku-beacon.conf`
+    - `/etc/ethereum/teku-beacon-mev.conf`
+    - `/etc/ethereum/teku-validator.conf`
+    - `/etc/ethereum/teku-validator-mev.conf`
+
+- **Gnosis**:
+    - `/etc/ethereum/teku-beacon-gnosis.conf`
+    - `/etc/ethereum/teku-validator-gnosis.conf`
+
+- **Sepolia**:
+    - `/etc/ethereum/teku-beacon-sepolia.conf`
+    - `/etc/ethereum/teku-beacon-sepolia-mev.conf`
+    - `/etc/ethereum/teku-validator-sepolia.conf`
+    - `/etc/ethereum/teku-validator-sepolia-mev.conf`
+
+- **Hoodi**:
+    - `/etc/ethereum/teku-beacon-hoodi.conf`
+    - `/etc/ethereum/teku-beacon-hoodi-mev.conf`
+    - `/etc/ethereum/teku-validator-hoodi.conf`
+    - `/etc/ethereum/teku-validator-hoodi-mev.conf`
+
+You can edit these files to customize the generic arguments passed to the Teku binary.
+
+Data Directories
 ----------------
 
-Beacon Chain:  systemctl start teku-beacon
-Validator:     systemctl start teku-validator
+By default, this package stores data in the `ethereum` user's home directory:
 
-View logs: journalctl -u teku-beacon -f
+- **Beacon Node**: `/home/ethereum/.teku-beacon` (Mainnet)
+- **Validator**: `/home/ethereum/.teku-validator` (Mainnet)
 
-Network Ports
--------------
+Note: For other networks, check the specific service file for the data directory argument.
 
-Default P2P port: 9000 (TCP/UDP)
-  - Forward this port in your router for better peer connectivity
+User and Group
+--------------
 
-Dependencies
-------------
+All services run as the `ethereum` user and group.
 
-Teku requires Java 21 runtime, which is installed as a package dependency.
+Package Details
+---------------
 
-Syncing
--------
-
-Checkpoint Sync is enabled by default. The beacon chain syncs in minutes.
-
-IMPORTANT: Start the beacon chain first. Once synced, start your execution
-client (Geth, Nethermind, etc.).
-
-Staking
--------
-
-To run a validator:
-1. Create password file: echo "PASSWORD" > validator_keys/KEYSTORE_NAME.txt
-2. Set fee recipient in /etc/ethereum/teku-validator.conf
-3. Start validator: systemctl start teku-validator
-
-Documentation
--------------
-
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Upstream Docs:    https://docs.teku.consensys.io
-- Discord:          https://discord.gg/ve2Z8fxz5N
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://consensys.net/knowledge-base/ethereum-2/teku/

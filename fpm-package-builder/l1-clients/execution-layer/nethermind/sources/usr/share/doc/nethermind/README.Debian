@@ -1,54 +1,53 @@
-Nethermind for Ethereum on ARM
-==============================
+Nethermind for Debian
+=====================
 
-Nethermind is a .NET enterprise-friendly Ethereum execution layer client.
+This package provides the Nethermind Ethereum execution client, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Configuration file:  /opt/nethermind/configs/mainnet.json
-Data directory:      /home/ethereum/.nethermind
-JWT secret:          /etc/ethereum/jwtsecret
+This package installs systemd services for various networks. The services are disabled by default.
 
-Nethermind uses JSON configuration files located in /opt/nethermind/configs/.
-The mainnet.json is the default configuration for Ethereum mainnet.
+- `nethermind.service` (Mainnet)
+- `nethermind-gnosis.service` (Gnosis Chain)
+- `nethermind-sepolia.service` (Sepolia Testnet)
+- `nethermind-hoodi.service` (Holesky Testnet)
+- `nethermind-op.service` (Optimism Mainnet)
 
-Systemd Services
+To enable a service, run:
+    sudo systemctl enable --now <service_name>
+
+Configuration
+-------------
+
+Configuration arguments are defined in environment files located in `/etc/ethereum/`.
+
+- **Mainnet**: `/etc/ethereum/nethermind.conf`
+- **Gnosis**: `/etc/ethereum/nethermind-gnosis.conf`
+- **Sepolia**: `/etc/ethereum/nethermind-sepolia.conf`
+- **Holesky**: `/etc/ethereum/nethermind-hoodi.conf`
+- **Optimism**: `/etc/ethereum/nethermind-op.conf`
+
+You can edit these files to customize the generic arguments passed to the Nethermind binary.
+
+Data Directories
 ----------------
 
-Mainnet:   systemctl start nethermind
-Sepolia:   systemctl start nethermind-sepolia
+By default, this package stores data in the `ethereum` user's home directory:
 
+- `/home/ethereum/.nethermind` (Mainnet)
+- `/home/ethereum/.nethermind-gnosis` (Gnosis Chain)
+- `/home/ethereum/.nethermind-sepolia` (Sepolia Testnet)
+- `/home/ethereum/.nethermind-hoodi` (Holesky Testnet)
+- `/home/ethereum/.nethermind-op` (Optimism)
 
-View logs: journalctl -u nethermind -f
+User and Group
+--------------
 
-Network Ports
--------------
+All services run as the `ethereum` user and group.
 
-Default P2P port: 30303 (TCP/UDP)
-  - Forward this port in your router for better peer connectivity
+Package Details
+---------------
 
-Differences from Upstream
--------------------------
-
-- Runs as 'ethereum' user (not root)
-- Data stored in /home/ethereum/.nethermind
-- .NET runtime is embedded in the package
-- Systemd service with automatic restart
-- Pre-configured for ARM64 optimization
-
-Syncing
--------
-
-Nethermind uses Snap Sync by default, which typically completes in 12-18 hours
-on ARM64 devices like Rock 5B or Raspberry Pi 5.
-
-IMPORTANT: You need a synced Consensus Layer client (beacon chain) running
-before Nethermind can start syncing.
-
-Documentation
--------------
-
-- Ethereum on ARM:    https://ethereum-on-arm-documentation.readthedocs.io
-- Upstream Docs:      https://docs.nethermind.io
-- Discord:            https://discord.gg/ve2Z8fxz5N
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://nethermind.io

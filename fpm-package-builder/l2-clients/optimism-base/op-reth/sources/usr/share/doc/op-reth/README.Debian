@@ -1,40 +1,43 @@
-OP-Reth for Ethereum on ARM
-===========================
+Op-Reth for Debian
+==================
 
-OP-Reth is the Optimism execution layer client based on Reth,
-optimized for OP Stack chains (Optimism, Base, etc.).
+This package provides op-reth, a Rust execution client for the Optimism protocol, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Configuration file:  /etc/ethereum/op-reth.conf
-Data directory:      /home/ethereum/.op-reth
+This package installs systemd services for various networks. The services are disabled by default.
 
-Systemd Services
+- `op-reth.service` (Generic/Default)
+- `op-reth-base.service` (Base Mainnet)
+
+To enable a service, run:
+    sudo systemctl enable --now <service_name>
+
+Configuration
+-------------
+
+Configuration arguments are defined in environment files located in `/etc/ethereum/`.
+
+- `/etc/ethereum/op-reth.conf`
+- `/etc/ethereum/op-reth-base.conf`
+
+You can edit these files to customize the arguments passed to the op-reth binary.
+
+Data Directories
 ----------------
 
-Optimism Mainnet:  systemctl start op-reth
-Base Mainnet:      systemctl start op-reth-base
+By default, this package stores data in the `ethereum` user's home directory:
 
-View logs: journalctl -u op-reth -f
+- `/home/ethereum/.op-reth`
 
-Network Ports
--------------
+User and Group
+--------------
 
-Default P2P port: 30303 (TCP/UDP)
+All services run as the `ethereum` user and group.
 
-Requirements
-------------
+Package Details
+---------------
 
-OP-Reth requires an OP-Node (rollup node) running alongside it.
-Start both services together for a complete L2 node.
-
-NOTE: OP-Reth conflicts with OP-Geth. Only install one.
-
-Documentation
--------------
-
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Optimism Docs:    https://docs.optimism.io
-- Reth Docs:        https://paradigmxyz.github.io/reth/
-- Discord:          https://discord.gg/ve2Z8fxz5N
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://github.com/paradigmxyz/reth

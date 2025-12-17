@@ -1,30 +1,34 @@
-Kubo (IPFS) for Ethereum on ARM
-===============================
+Kubo (IPFS) for Debian
+======================
 
-Kubo is the reference implementation of IPFS (InterPlanetary File System).
+This package provides Kubo, the Go implementation of IPFS, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Configuration:   ~/.ipfs/config
-Data directory:  ~/.ipfs/
+This package installs a single systemd service. The service is disabled by default.
 
-Systemd Services
-----------------
+- `ipfs.service` (IPFS Daemon)
 
-IPFS Node:  systemctl start ipfs
+To enable the service, run:
+    sudo systemctl enable --now ipfs.service
 
-View logs: journalctl -u ipfs -f
-
-What is IPFS?
+Configuration
 -------------
 
-IPFS is a peer-to-peer distributed file system. Many Ethereum-related
-projects use IPFS for storing and distributing content.
+Configuration arguments are defined in the environment file located in `/etc/ipfs/`.
 
-Documentation
--------------
+- `/etc/ipfs/ipfs.conf`
 
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- IPFS Docs:        https://docs.ipfs.tech
-- Discord:          https://discord.gg/ve2Z8fxz5N
+The service automatically initializes the IPFS repository in `/home/ethereum/.ipfs` if it does not exist.
+
+User and Group
+--------------
+
+The service runs as the `ethereum` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://ipfs.tech/

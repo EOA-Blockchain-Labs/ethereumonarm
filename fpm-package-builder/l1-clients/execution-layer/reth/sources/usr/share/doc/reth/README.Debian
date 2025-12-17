@@ -1,68 +1,50 @@
-Reth for Ethereum on ARM
-========================
+Reth for Debian
+===============
 
-Reth (Rust Ethereum) is an Ethereum execution client implementation that
-focuses on friendliness, modularity, and speed.
+This package provides Reth, the Rust implementation of the Ethereum protocol by Paradigm, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Configuration file:  /etc/ethereum/reth.conf
-Data directory:      /home/ethereum/.reth
-JWT secret:          /etc/ethereum/jwtsecret
+This package installs systemd services for various networks. The services are disabled by default.
 
-The configuration file contains ARGS that are passed to the reth binary.
-Edit this file to customize your node's behavior.
+- `reth.service` (Mainnet)
+- `reth-gnosis.service` (Gnosis Chain)
+- `reth-sepolia.service` (Sepolia Testnet)
+- `reth-hoodi.service` (Holesky Testnet)
 
-Systemd Services
+To enable a service, run:
+    sudo systemctl enable --now <service_name>
+
+Configuration
+-------------
+
+Configuration arguments are defined in environment files located in `/etc/ethereum/`.
+
+- **Mainnet**: `/etc/ethereum/reth.conf`
+- **Gnosis**: `/etc/ethereum/reth-gnosis.conf`
+- **Sepolia**: `/etc/ethereum/reth-sepolia.conf`
+- **Holesky**: `/etc/ethereum/reth-hoodi.conf`
+
+You can edit these files to customize the generic arguments passed to the Reth binary.
+
+Data Directories
 ----------------
 
-Mainnet:   systemctl start reth
-Sepolia:   systemctl start reth-sepolia
+By default, this package stores data in the `ethereum` user's home directory:
 
+- `/home/ethereum/.reth` (Mainnet)
+- `/home/ethereum/.reth-gnosis` (Gnosis Chain)
+- `/home/ethereum/.reth-sepolia` (Sepolia Testnet)
+- `/home/ethereum/.reth-hoodi` (Holesky Testnet)
 
-View logs: journalctl -u reth -f
+User and Group
+--------------
 
-Network Ports
--------------
+All services run as the `ethereum` user and group.
 
-Default P2P port: 30303 (TCP/UDP)
-  - Forward this port in your router for better peer connectivity
+Package Details
+---------------
 
-Archive vs Full Node
---------------------
-
-By default, Reth runs as an ARCHIVE NODE, storing all historical states.
-This requires significantly more disk space.
-
-To run as a Full Node (pruned state) and save disk space, edit the config
-file and add the --full flag:
-
-  ARGS="node ... --full"
-
-Then restart: systemctl restart reth
-
-Differences from Upstream
--------------------------
-
-- Runs as 'ethereum' user (not root)
-- Data stored in /home/ethereum/.reth
-- Archive mode by default (add --full for pruned)
-- Systemd service with automatic restart
-
-Syncing
--------
-
-Reth uses Execution Sync (pipeline sync), which re-executes all transactions
-from genesis. This takes 3-5 days on ARM64 devices but results in an
-optimized database ideal for RPC queries.
-
-IMPORTANT: You need a synced Consensus Layer client (beacon chain) running
-before Reth can start syncing.
-
-Documentation
--------------
-
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Upstream Docs:    https://paradigmxyz.github.io/reth/
-- Discord:          https://discord.gg/ve2Z8fxz5N
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://paradigmxyz.github.io/reth/

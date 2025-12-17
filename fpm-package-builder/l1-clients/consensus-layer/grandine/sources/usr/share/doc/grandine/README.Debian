@@ -1,48 +1,38 @@
-Grandine for Ethereum on ARM
-============================
+Grandine for Debian
+===================
 
-Grandine is a high-performance Consensus Layer client written in Rust.
+This package provides Grandine, a consensus client for the Ethereum Beacon Chain, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Beacon config:     /etc/ethereum/grandine-beacon.conf
-Validator config:  /etc/ethereum/grandine-validator.conf
-Data directory:    /home/ethereum/.grandine
-JWT secret:        /etc/ethereum/jwtsecret
+This package installs systemd services for running the beacon node and validator client. The services are disabled by default.
 
-Systemd Services
-----------------
+- `grandine-beacon.service`: The beacon node service.
+- `grandine-validator.service`: The validator client service.
 
-Beacon Chain only:  systemctl start grandine-beacon
-With Validator:     systemctl start grandine-validator
-
-View logs: journalctl -u grandine-beacon -f
-
-Network Ports
+Configuration
 -------------
 
-Default P2P port: 9000 (TCP/UDP)
-  - Forward this port in your router for better peer connectivity
+Configuration arguments are defined in the environment files located in `/etc/ethereum/`.
 
-Single Process Mode
--------------------
+- `/etc/ethereum/grandine-beacon.conf`: Configuration for the beacon node.
+- `/etc/ethereum/grandine-validator.conf`: Configuration for the validator client.
 
-NOTE: Grandine runs beacon and validator in a single process. If you want
-to stake, configure the validator config file and run the grandine-validator
-service, which starts both beacon and validator.
+You can edit these files to customize the arguments passed to the binary.
 
-Syncing
--------
+Data Directory
+--------------
 
-Checkpoint Sync is enabled by default. The beacon chain syncs in minutes.
+The default data directory for Grandine is `/home/ethereum/.grandine`.
 
-IMPORTANT: Start the beacon chain first. Once synced, start your execution
-client (Geth, Nethermind, etc.).
+User and Group
+--------------
 
-Documentation
--------------
+The services run as the `ethereum` user and group.
 
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Upstream Docs:    https://grandine.io
-- Discord:          https://discord.gg/ve2Z8fxz5N
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
+- **Upstream URL**: https://github.com/grandinetech/grandine

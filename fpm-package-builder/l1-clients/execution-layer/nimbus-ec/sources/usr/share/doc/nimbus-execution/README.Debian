@@ -1,55 +1,49 @@
-Nimbus Execution for Ethereum on ARM
-====================================
+Nimbus Execution for Debian
+===========================
 
-Nimbus Execution (nimbus-eth1) is a lightweight Ethereum execution layer
-client written in Nim by the Status team.
+This package provides the Nimbus Ethereum execution client (Nimbus-eth1), packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Configuration file:  /etc/ethereum/nimbus-execution.conf
-Data directory:      /home/ethereum/.nimbus-eth1
-JWT secret:          /etc/ethereum/jwtsecret
+This package installs systemd services for various networks and a proxy service. The services are disabled by default.
 
-The configuration file contains ARGS that are passed to the nimbus binary.
-Edit this file to customize your node's behavior.
+- `nimbus-execution.service` (Mainnet)
+- `nimbus-execution-sepolia.service` (Sepolia Testnet)
+- `nimbus-execution-hoodi.service` (Holesky Testnet)
+- `nimbus-proxy.service` (JSON-RPC Proxy)
 
-Systemd Services
+To enable a service, run:
+    sudo systemctl enable --now <service_name>
+
+Configuration
+-------------
+
+Configuration arguments are defined in environment files located in `/etc/ethereum/`.
+
+- **Mainnet**: `/etc/ethereum/nimbus-execution.conf`
+- **Sepolia**: `/etc/ethereum/nimbus-execution-sepolia.conf`
+- **Holesky**: `/etc/ethereum/nimbus-execution-hoodi.conf`
+- **Proxy**: `/etc/ethereum/nimbus-proxy.conf`
+
+You can edit these files to customize the generic arguments passed to the Nimbus binary.
+
+Data Directories
 ----------------
 
-Mainnet:   systemctl start nimbus-execution
+By default, this package stores data in the `ethereum` user's home directory:
 
-View logs: journalctl -u nimbus-execution -f
+- `/home/ethereum/.nimbus-execution` (Mainnet)
+- `/home/ethereum/.nimbus-execution-sepolia` (Sepolia Testnet)
+- `/home/ethereum/.nimbus-execution-hoodi` (Holesky Testnet)
 
-Network Ports
--------------
+User and Group
+--------------
 
-Default P2P port: 30303 (TCP/UDP)
-  - Forward this port in your router for better peer connectivity
+All services run as the `ethereum` user and group.
 
-Era Files Support
------------------
+Package Details
+---------------
 
-Nimbus supports Era files for faster historical data access. The package
-includes an era_downloader.sh helper script to download Era files.
-
-Differences from Upstream
--------------------------
-
-- Runs as 'ethereum' user (not root)
-- Data stored in /home/ethereum/.nimbus-eth1
-- Era downloader script included
-- Systemd service with automatic restart
-
-Syncing
--------
-
-IMPORTANT: You need a synced Consensus Layer client (beacon chain) running
-before Nimbus Execution can start syncing.
-
-Documentation
--------------
-
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Upstream:         https://nimbus.team
-- Discord:          https://discord.gg/ve2Z8fxz5N
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://nimbus.team/

@@ -1,37 +1,57 @@
-DVT-Obol (Charon) for Ethereum on ARM
-=====================================
+Obol Charon for Debian
+======================
 
-Charon is Obol Network's middleware for Distributed Validator Technology (DVT).
+This package provides Charon, the Obol Distributed Validator Technology (DVT) client, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Configuration directory:  /etc/ethereum/charon/
+This package installs the main Charon service and several validator service overrides to work with DVT. The services are disabled by default.
 
-Systemd Services
-----------------
+- `charon.service` (Main DVT middleware)
 
-Charon:  systemctl start dvt-obol
+Validator Services:
+- `lighthouse-validator-obol.service`
+- `lighthouse-validator-obol-lido.service`
+- `lighthouse-validator-hoodi-obol.service`
+- `lodestar-validator-obol.service`
+- `lodestar-validator-hoodi-obol.service`
+- `nimbus-validator-obol.service`
+- `nimbus-validator-obol-lido.service`
+- `nimbus-validator-hoodi-obol.service`
+- `prysm-validator-obol.service`
+- `prysm-validator-obol-lido.service`
+- `prysm-validator-hoodi-obol.service`
+- `teku-validator-obol.service`
+- `teku-validator-hoodi-obol.service`
 
-View logs: journalctl -u dvt-obol -f
+To enable a service, run:
+    sudo systemctl enable --now <service_name>
 
-Distributed Validator Technology
---------------------------------
-
-DVT allows multiple operators to run a single validator together,
-improving fault tolerance and security. If one operator goes offline,
-the others can continue validating.
-
-Setup
------
-
-1. Generate or import your distributed validator cluster configuration
-2. Configure /etc/ethereum/charon/
-3. Start the service: systemctl start dvt-obol
-
-Documentation
+Configuration
 -------------
 
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Obol Docs:        https://docs.obol.tech
-- Discord:          https://discord.gg/ve2Z8fxz5N
+Configuration arguments are defined in environment files located in `/etc/ethereum/dvt/`.
+
+- `/etc/ethereum/dvt/charon.conf`
+- Validators use corresponding files in `/etc/ethereum/dvt/` (e.g., `/etc/ethereum/dvt/lighthouse-validator-obol.conf`)
+
+You can edit these files to customize the arguments passed to Charon and the validator clients.
+
+Data Directories
+----------------
+
+By default, this package stores data in the `ethereum` user's home directory:
+
+- `/home/ethereum/.charon`
+
+User and Group
+--------------
+
+All services run as the `ethereum` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://github.com/ObolNetwork/charon

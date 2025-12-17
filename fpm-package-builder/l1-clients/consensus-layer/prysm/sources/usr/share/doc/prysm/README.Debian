@@ -1,50 +1,80 @@
-Prysm for Ethereum on ARM
-=========================
+Prysm for Debian
+================
 
-Prysm is a full Consensus Layer client written in Go by Prysmatic Labs.
+This package provides the Prysm Ethereum consensus client, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
+Services
+--------
 
-Beacon config:     /etc/ethereum/prysm-beacon.conf
-Validator config:  /etc/ethereum/prysm-validator.conf
-Data directory:    /home/ethereum/.eth2
-JWT secret:        /etc/ethereum/jwtsecret
+This package installs systemd services for various networks and configurations. The services are disabled by default.
 
-Systemd Services
+**Beacon Chain Services:**
+- `prysm-beacon.service` (Mainnet)
+- `prysm-beacon-mev.service` (Mainnet + MEV-Boost)
+- `prysm-beacon-gnosis.service` (Gnosis Chain)
+- `prysm-beacon-sepolia.service` (Sepolia Testnet)
+- `prysm-beacon-sepolia-mev.service` (Sepolia + MEV-Boost)
+- `prysm-beacon-hoodi.service` (Hoodi Testnet)
+- `prysm-beacon-hoodi-mev.service` (Hoodi + MEV-Boost)
+
+**Validator Services:**
+- `prysm-validator.service` (Mainnet)
+- `prysm-validator-mev.service` (Mainnet + MEV-Boost)
+- `prysm-validator-gnosis.service` (Gnosis Chain)
+- `prysm-validator-sepolia.service` (Sepolia Testnet)
+- `prysm-validator-sepolia-mev.service` (Sepolia + MEV-Boost)
+- `prysm-validator-hoodi.service` (Hoodi Testnet)
+- `prysm-validator-hoodi-mev.service` (Hoodi + MEV-Boost)
+
+To enable a service, run:
+    sudo systemctl enable --now <service_name>
+
+Configuration
+-------------
+
+Configuration arguments are defined in environment files located in `/etc/ethereum/`.
+
+- **Mainnet**:
+    - `/etc/ethereum/prysm-beacon.conf`
+    - `/etc/ethereum/prysm-beacon-mev.conf`
+    - `/etc/ethereum/prysm-validator.conf`
+    - `/etc/ethereum/prysm-validator-mev.conf`
+
+- **Gnosis**:
+    - `/etc/ethereum/prysm-beacon-gnosis.conf`
+    - `/etc/ethereum/prysm-validator-gnosis.conf`
+
+- **Sepolia**:
+    - `/etc/ethereum/prysm-beacon-sepolia.conf`
+    - `/etc/ethereum/prysm-beacon-sepolia-mev.conf`
+    - `/etc/ethereum/prysm-validator-sepolia.conf`
+    - `/etc/ethereum/prysm-validator-sepolia-mev.conf`
+
+- **Hoodi**:
+    - `/etc/ethereum/prysm-beacon-hoodi.conf`
+    - `/etc/ethereum/prysm-beacon-hoodi-mev.conf`
+    - `/etc/ethereum/prysm-validator-hoodi.conf`
+    - `/etc/ethereum/prysm-validator-hoodi-mev.conf`
+
+You can edit these files to customize the generic arguments passed to the Prysm binary.
+
+Data Directories
 ----------------
 
-Beacon Chain:  systemctl start prysm-beacon
-Validator:     systemctl start prysm-validator
+By default, this package stores data in the `ethereum` user's home directory:
 
-View logs: journalctl -u prysm-beacon -f
+- **Beacon Node**: `/home/ethereum/.prysm-beacon` (Mainnet)
+- **Validator**: `/home/ethereum/.prysm-validator` (Mainnet)
 
-Network Ports
--------------
+Note: For other networks, check the specific service file for the data directory argument.
 
-Default P2P ports: 13000 (TCP), 12000 (UDP)
-  - Forward both ports in your router for better peer connectivity
+User and Group
+--------------
 
-Syncing
--------
+All services run as the `ethereum` user and group.
 
-Checkpoint Sync is enabled by default. The beacon chain syncs in minutes.
+Package Details
+---------------
 
-IMPORTANT: Start the beacon chain first. Once synced, start your execution
-client (Geth, Nethermind, etc.).
-
-Staking
--------
-
-To run a validator:
-1. Import keys: validator accounts import --keys-dir=/home/ethereum/validator_keys
-2. Set fee recipient in /etc/ethereum/prysm-validator.conf
-3. Create password file: echo "PASSWORD" > /home/ethereum/validator_keys/prysm-password.txt
-4. Start validator: systemctl start prysm-validator
-
-Documentation
--------------
-
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Upstream Docs:    https://docs.prylabs.network
-- Discord:          https://discord.gg/ve2Z8fxz5N
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://github.com/prysmaticlabs/prysm

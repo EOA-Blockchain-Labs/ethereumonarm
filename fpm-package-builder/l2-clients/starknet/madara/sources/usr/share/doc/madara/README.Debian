@@ -1,31 +1,41 @@
-Madara for Ethereum on ARM
-==========================
+Madara for Debian
+=================
 
-Madara is a Starknet sequencer/full node built on Substrate.
+This package provides Madara, a hybrid Starknet client written in Rust, packaged for Ethereum on ARM.
 
-EOA Configuration
------------------
-
-Configuration file:  /etc/ethereum/madara.conf
-Data directory:      /home/ethereum/.madara
-
-Systemd Services
-----------------
-
-Starknet:  systemctl start madara
-
-View logs: journalctl -u madara -f
-
-Starknet
+Services
 --------
 
-Starknet is a Layer 2 zero-knowledge rollup on Ethereum.
-Madara can be used as a sequencer or full node.
+This package installs a single systemd service. The service is disabled by default.
 
-Documentation
+- `madara.service`
+
+To enable the service, run:
+    sudo systemctl enable --now madara.service
+
+Configuration
 -------------
 
-- Ethereum on ARM:  https://ethereum-on-arm-documentation.readthedocs.io
-- Madara:           https://github.com/keep-starknet-strange/madara
-- Starknet:         https://starknet.io
-- Discord:          https://discord.gg/ve2Z8fxz5N
+Configuration arguments are defined in the environment file located in `/etc/ethereum/madara/`.
+
+- `/etc/ethereum/madara/madara.conf`
+
+Presets are located in `/etc/ethereum/madara/presets/`.
+
+Data Directories
+----------------
+
+By default, this package stores data in the `ethereum` user's home directory:
+
+- `/home/ethereum/.madara`
+
+User and Group
+--------------
+
+The service runs as the `ethereum` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://github.com/madara-alliance/madara

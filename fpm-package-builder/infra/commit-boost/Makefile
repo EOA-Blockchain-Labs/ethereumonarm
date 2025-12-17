@@ -40,8 +40,7 @@ CB_TARBALL := commit-boost-pbs-$(CB_TAG_V)-linux_$(PKG_ARCH).tar.gz
 CB_URL     := https://github.com/Commit-Boost/commit-boost-client/releases/download/$(CB_TAG_V)/$(CB_TARBALL)
 
 # SHA256 checksum extracted from GitHub API asset digest field
-CB_RELEASE_JSON := $(shell curl -s https://api.github.com/repos/Commit-Boost/commit-boost-client/releases/latest)
-CB_SHA256 := $(shell echo '$(CB_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(CB_TARBALL)") | .digest' | sed 's/sha256://')
+CB_SHA256 := $(shell curl -s https://api.github.com/repos/Commit-Boost/commit-boost-client/releases/latest | jq -r '.assets[] | select(.name == "$(CB_TARBALL)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(CB_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(CB_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm

@@ -107,10 +107,11 @@ prepare: ## Download latest ethstaker-deposit-cli and stage into $(SOURCESDIR)/u
 	wget -q -O ".build/$(DEPOSIT_TARBALL).sha256" "$(DEPOSIT_SHA256_URL)" || { echo "❌ SHA256 file download failed"; exit 1; };
 	
 	@echo "🔐 Verifying SHA256..."
-	@cd .build && sha256sum -c "$(DEPOSIT_TARBALL).sha256" || { echo "❌ SHA256 verification FAILED!"; rm -f "$(DEPOSIT_TARBALL)"; exit 1; };
+	@cd .build && echo "$$(cat $(DEPOSIT_TARBALL).sha256)  $(DEPOSIT_TARBALL)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f "$(DEPOSIT_TARBALL)"; exit 1; };
 	
 	@echo "📦 Extracting binary..."
-	tar -xzf ".build/$(DEPOSIT_TARBALL)" -C $(SOURCESDIR)/usr/bin --wildcards --absolute-names --no-anchored --strip-components 2
+	tar -xzf ".build/$(DEPOSIT_TARBALL)" -C .build
+	find .build -name deposit -type f -exec mv {} $(SOURCESDIR)/usr/bin/deposit \;
 	chmod 0755 "$(SOURCESDIR)/usr/bin/deposit"
 	@echo "✅ Binary downloaded and verified at $(SOURCESDIR)/usr/bin/deposit"
 

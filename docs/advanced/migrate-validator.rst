@@ -68,7 +68,8 @@ This is the most important step to avoid slashing.
 
     .. code-block:: bash
 
-        # Example for systemd
+        # Replace 'validator.service' with your actual service name
+        # (e.g., prysm-validator.service, lighthouse-validator.service, etc.)
         sudo systemctl stop validator.service
         sudo systemctl disable validator.service
 
@@ -132,12 +133,12 @@ On your Ethereum on ARM board, use the client binary to import the data.
 .. code-block:: bash
 
     # 1. Import Keys
-    beacon-chain validator accounts import \
+    validator accounts import \
       --keys-dir=/path/to/keystores \
       --wallet-dir=/var/lib/prysm/validator
 
     # 2. Import Slashing Protection
-  validator validator slashing-protection-history import \
+    validator slashing-protection-history import \
       --datadir=/var/lib/prysm/validator \
       --slashing-protection-json-file=slashing_protection.json
 
@@ -160,7 +161,10 @@ Step 6: Start the Validator Service
 
 Once the keys and slashing protection data are imported:
 
-1.  Enable and start the "validator" service via systemd:
+1.  Enable and start your specific validator service via systemd.
+
+    .. note::
+        Replace ``validator.service`` with the actual name of your service (e.g., ``prysm-validator.service``, ``teku-validator.service``).
 
     .. code-block:: bash
 
@@ -174,3 +178,8 @@ Once the keys and slashing protection data are imported:
         sudo journalctl -fu validator.service
 
 You should see logs indicating "Published attestation" or similar success messages.
+
+3.  **Verify on a Block Explorer:**
+    Go to a block explorer like `beaconcha.in <https://beaconcha.in>`_ (or `gnosisscan.io <https://gnosisscan.io>`_ for Gnosis) and search for your validator's public key (index). Verify that:
+    *   The validator status is **"Active"**.
+    *   New attestations are appearing and are marked as **"Attested"** (green).

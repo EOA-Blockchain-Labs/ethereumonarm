@@ -1,222 +1,272 @@
-.. _migrating_validator:
-
 Migrating a Validator
 =====================
 
-Moving a validator from one machine to another (e.g., migrating from a cloud VPS or an old desktop to an ARM board) is a critical operation.
-
 .. danger::
-    **SLASHING RISK: DOUBLE SIGNING**
 
-    Never run the same validator keys on two different machines at the same time. This will result in a **slashing event**, causing you to be ejected from the network and lose a significant portion of your stake.
+   **SLASHING RISK: DOUBLE SIGNING**
 
-    **Always ensure the old validator is completely stopped and disabled before starting the new one.**
+   Never run the same validator keys on two different machines at the same time. This can result in a slashing event, causing you to be ejected from the network and lose a significant portion of your stake.  
+   Always ensure the old validator is completely stopped and disabled before starting the new one.
+
+Overview
+--------
+
+This document explains how to safely move an Ethereum validator from one machine to another (for example, from a cloud VPS or an old desktop to an Ethereum on ARM board), while minimizing the risk of slashing.  
+The procedure applies to common consensus clients (Grandine, Lighthouse, Nimbus, Prysm, Teku, Lodestar) and assumes you already have working execution and consensus clients on both machines.
 
 Prerequisites
 -------------
 
-* **New Node:** Your Ethereum on ARM board (Rock 5B, Orange Pi, etc.) should be installed, powered on, and fully synced (both Execution and Consensus clients).
-* **Old Node:** Access to the terminal of your current validator.
-* **Key Files:** Your original ``keystore-m_....json`` files and their password.
+* **New node**: Your Ethereum on ARM board (Rock 5B, Orange Pi, etc.) must be installed, powered on, and fully synced (both execution and consensus clients).
+* **Old node**: You must have terminal access to your current validator host.
+* **Key material**: Your original ``keystore-m_....json`` files and their password must be safely backed up and available.
 
-Step 1: Sync the New Node (Without Keys)
+Step 1: Sync the new node (without keys)
 ----------------------------------------
 
-Before migrating your keys, ensure your Ethereum on ARM node is fully synced.
+1. Start your execution client on the new node (for example, Geth, Nethermind, Erigon, Reth) and let it fully sync.
+2. Start your consensus client (for example, Lighthouse, Nimbus, Prysm, Teku, Lodestar, Grandine) and let the beacon node sync to the head of the chain.
+3. Do **not** import validator keys yet; the new node must be fully synced before it is allowed to sign duties.
 
-1.  Start the Execution Client (Geth, Nethermind, Erigon, Reth).
-2.  Start the Consensus Client (Lighthouse, Nimbus, Prysm, Teku, Lodestar).
-3.  **Do not import keys yet.** Let the Beacon Node sync to the head of the chain.
+Step 2: Stop the old validator and export slashing protection
+-------------------------------------------------------------
 
-Step 2: Export Slashing Protection (Old Node)
----------------------------------------------
+1. **Stop the validator on the old machine** before exporting slashing protection, to ensure no new duties are signed during export.
 
-To prevent the new node from signing a block that contradicts history, you must export the slashing protection database from your old client.
+   .. code-block:: bash
 
-Run the appropriate command on your **OLD** machine depending on the client you are using:
+      sudo systemctl stop validator.service
+      # Replace with your actual service name, for example:
+      # sudo systemctl stop prysm-validator.service
+      # sudo systemctl stop lighthouse-validator.service
+      # sudo systemctl stop lodestar-validator.service
 
-**Grandine**
+2. Export the slashing protection history from your **old** validator client using its native command (EIP-3076 where supported).
+
+   Grandine
+     .. code-block:: bash
+
+        grandine --network <NETWORK> interchange export slashing_protection.json
+
+   Lighthouse
+     .. code-block:: bash
+
+        lighthouse account validator slashing-protection export slashing_protection.json
+
+   Prysm
+     .. code-block:: bash
+
+        validator slashing-protection-history export \
+          --datadir=/path/to/your/validator/db \
+          --slashing-protection-export-dir=/path/to/export
+
+   Nimbus
+     .. code-block:: bash
+
+        nimbus_beacon_node slashingdb export \
+          --data-dir=/path/to/nimbus-data \
+          slashing_protection.json
+
+   Teku
+     .. code-block:: bash
+
+        teku slashing-protection export --to=slashing_protection.json
+
+   Lodestar
+     .. code-block:: bash
+
+        lodestar validator slashing-protection export \
+          --network <NETWORK> \
+          --file slashing_protection.json \
+          --dataDir /path/to/data
+
+3. Verify that the export file (for example, ``slashing_protection.json`` or ``interchange.json``) is present and back it up securely.
+
+Step 3: Disable and clean up the old validator
+----------------------------------------------
+
+1. Disable the validator service so it cannot auto-start after a reboot.
+
+   .. code-block:: bash
+
+      sudo systemctl disable validator.service
+
+2. Confirm that no validator processes are running (for example, using ``ps``, ``systemctl status``, or your process supervisor tools).
+3. Once you have confirmed your backups (keystores and slashing protection JSON) are safe, **delete or move** the validator keys from the old machine to prevent accidental restart.
+4. Best practice is to wait at least **2–3 epochs** (≈15–20 minutes) and confirm on a block explorer that your validator is missing attestations before starting the new validator.
+
+   * On Ethereum mainnet: use ``https://beaconcha.in``.
+   * On Gnosis: use ``https://gnosisscan.io`` or ``https://gnosischa.in``.
+
+Step 4: Transfer keystores and slashing protection to the new node
+-------------------------------------------------------------------
+
+Copy the following from the old machine (or your backups) to the new Ethereum on ARM node using ``scp``, ``rsync``, or a removable drive:
+
+* All ``keystore-m_....json`` files for your validators.
+* The slashing protection JSON you exported in Step 2 (for example, ``slashing_protection.json``).
+
+Example using ``scp``:
 
 .. code-block:: bash
 
-    grandine --network <NETWORK> interchange export slashing_protection.json
+   scp /path/on/old-node/keystore-m_*.json user@new-node:/path/to/keystores/
+   scp /path/on/old-node/slashing_protection.json user@new-node:/path/to/slashing/
 
-**Lighthouse**
+Ensure file permissions and ownership match the user that will run your validator service (for example, ``ethereum``).
 
-.. code-block:: bash
-
-    lighthouse account validator slashing-protection export slashing_protection.json
-
-**Prysm**
-
-.. code-block:: bash
-
-    prysm.sh validator slashing-protection-history export --datadir=/path/to/wallet --slashing-protection-export-dir=/path/to/export
-
-**Nimbus**
-
-.. code-block:: bash
-
-    nimbus_beacon_node slashingdb export slashing_protection.json
-
-**Teku**
-
-.. code-block:: bash
-
-    teku slashing-protection export --to=slashing_protection.json
-
-**Lodestar**
-
-.. code-block:: bash
-
-    lodestar validator slashing-protection export --network mainnet --file slashing_protection.json --dataDir /path/to/data
-
-Step 3: Stop and Delete the Old Validator
------------------------------------------
-
-This is the most important step to avoid slashing.
-
-1.  **Stop the service:**
-
-    .. code-block:: bash
-
-        # Replace 'validator.service' with your actual service name
-        # (e.g., prysm-validator.service, lighthouse-validator.service, lodestar-validator.service, etc.)
-        sudo systemctl stop validator.service
-        sudo systemctl disable validator.service
-2.  **Verify it is stopped:** Check that no validator processes are running.
-3.  **Delete the keys:** Once you have your backups safe (Keystores and Slashing Protection JSON), **delete the keys from the old machine** to prevent an accidental restart.
-
-.. tip::
-    **The Waiting Period**: It is highly recommended to wait **2 to 3 epochs** (approx. 15-20 minutes) after stopping the old node before starting the new one. Check a block explorer (like beaconcha.in or gnosisscan.io) to verify your validator is missing attestations. This confirms the old node is definitely offline.
-
-Step 4: Transfer Files to Ethereum on ARM
------------------------------------------
-
-Copy the following files to your ARM board (using ``scp``, ``rsync``, or a USB drive):
-
-1.  The ``keystore-m_....json`` files.
-2.  The ``slashing_protection.json`` file you exported in Step 2.
-
-Step 5: Import Keys and Protection (New Node)
----------------------------------------------
-
-On your Ethereum on ARM board, use the client binary to import the data.
+Step 5: Import keys and slashing protection on the new node
+-----------------------------------------------------------
 
 .. note::
-    Replace ``<NETWORK>`` with ``mainnet``, ``gnosis``, or ``holesky`` depending on your chain.
-    Ensure you run these commands with the correct user permissions (usually root or the specific service user).
 
-**Grandine**
+   Replace ``<NETWORK>`` with ``mainnet``, ``gnosis``, or ``holesky`` as appropriate.  
+   When possible, import **slashing protection first**, then import keys, following client documentation.
 
-.. code-block:: bash
+Grandine
+~~~~~~~~
 
-    # 1. Import Keys
-    grandine --network <NETWORK> validator import \
-      --data-dir /home/ethereum/.grandine-validator \
-      --keystore-dir /path/to/keystores \
-      --keystore-password-file /path/to/password.txt
+1. Import keys:
 
-    # 2. Import Slashing Protection
-    grandine --network <NETWORK> interchange import slashing_protection.json
+   .. code-block:: bash
 
-**Lighthouse**
+      grandine --network <NETWORK> validator import \
+        --data-dir /home/ethereum/.grandine-validator \
+        --keystore-dir /path/to/keystores \
+        --keystore-password-file /path/to/password.txt
 
-.. code-block:: bash
+2. Import slashing protection:
 
-    # 1. Import Keys
-    lighthouse account validator import \
-      --network <NETWORK> \
-      --directory /path/to/keystores \
-      --datadir /home/ethereum/.lighthouse
+   .. code-block:: bash
 
-    # 2. Import Slashing Protection
-    lighthouse account validator slashing-protection import \
-      slashing_protection.json \
-      --datadir /home/ethereum/.lighthouse
+      grandine --network <NETWORK> interchange import slashing_protection.json
 
-**Lodestar**
+Lighthouse
+~~~~~~~~~~
 
-.. code-block:: bash
+1. Import keys:
 
-    # 1. Import Keys
-    lodestar validator import \
-      --network <NETWORK> \
-      --importKeystores /path/to/keystores \
-      --dataDir /home/ethereum/.lodestar-validator
+   .. code-block:: bash
 
-    # 2. Import Slashing Protection
-    lodestar validator slashing-protection import \
-      --network <NETWORK> \
-      --import slashing_protection.json \
-      --dataDir /home/ethereum/.lodestar-validator
+      lighthouse account validator import \
+        --network <NETWORK> \
+        --directory /path/to/keystores \
+        --datadir /home/ethereum/.lighthouse
 
-**Nimbus**
+2. Import slashing protection:
 
-.. code-block:: bash
+   .. code-block:: bash
 
-    # 1. Import Keys
-    nimbus_beacon_node deposits import \
-      --data-dir=/home/ethereum/.nimbus-validator \
-      /path/to/keystores
+      lighthouse account validator slashing-protection import \
+        slashing_protection.json \
+        --datadir /home/ethereum/.lighthouse
 
-    # 2. Import Slashing Protection
-    nimbus_beacon_node slashingdb import \
-      --data-dir=/home/ethereum/.nimbus-validator \
-      slashing_protection.json
+Lodestar
+~~~~~~~~
 
-**Prysm**
+1. Import keys:
 
-.. code-block:: bash
+   .. code-block:: bash
 
-    # 1. Import Keys
-    validator accounts import \
-      --keys-dir=/path/to/keystores \
-      --wallet-dir=/home/ethereum/.prysm-validator
+      lodestar validator import \
+        --network <NETWORK> \
+        --importKeystores /path/to/keystores \
+        --dataDir /home/ethereum/.lodestar-validator
 
-    # 2. Import Slashing Protection
-    validator slashing-protection-history import \
-      --datadir=/home/ethereum/.prysm-validator \
-      --slashing-protection-json-file=slashing_protection.json
+2. Import slashing protection:
 
-**Teku**
+   .. code-block:: bash
 
-.. code-block:: bash
+      lodestar validator slashing-protection import \
+        --network <NETWORK> \
+        --import slashing_protection.json \
+        --dataDir /home/ethereum/.lodestar-validator
 
-    # 1. Import Keys
-    teku validator import \
-      --data-path=/home/ethereum/.teku \
-      --from=/path/to/keystores
+Nimbus
+~~~~~~
 
-    # 2. Import Slashing Protection
-    teku slashing-protection import \
-      --data-path=/home/ethereum/.teku \
-      --from=slashing_protection.json
+1. Import keys:
 
-Step 6: Start the Validator Service
------------------------------------
+   .. code-block:: bash
 
-Once the keys and slashing protection data are imported:
+      nimbus_beacon_node deposits import \
+        --data-dir=/home/ethereum/.nimbus-validator \
+        /path/to/keystores
 
-1.  Enable and start your specific validator service via systemd.
+2. Import slashing protection:
 
-    .. note::
-        Replace ``validator.service`` with the actual name of your service (e.g., ``prysm-validator.service``, ``teku-validator.service``, ``lodestar-validator.service``).
+   .. code-block:: bash
 
-    .. code-block:: bash
+      nimbus_beacon_node slashingdb import \
+        --data-dir=/home/ethereum/.nimbus-validator \
+        slashing_protection.json
 
-        sudo systemctl enable validator.service
-        sudo systemctl start validator.service
+Prysm
+~~~~~
 
-2.  Check the logs to ensure it is running correctly and attempting to attest:
+1. Import keys into a Prysm wallet (nondeterministic wallet example):
 
-    .. code-block:: bash
+   .. code-block:: bash
 
-        sudo journalctl -fu validator.service
+      validator accounts import \
+        --keys-dir=/path/to/keystores \
+        --wallet-dir=/home/ethereum/.prysm-wallet
 
-You should see logs indicating "Published attestation" or similar success messages.
+   Adjust ``--wallet-dir`` to match your actual Prysm wallet directory.
 
-3.  **Verify on a Block Explorer:**
-    Go to a block explorer like `beaconcha.in <https://beaconcha.in>`_ (or `gnosisscan.io <https://gnosisscan.io>`_ for Gnosis) and search for your validator's public key (index). Verify that:
-    *   The validator status is **"Active"**.
-    *   New attestations are appearing and are marked as **"Attested"** (green).
+2. Import slashing protection history on the new node:
+
+   .. code-block:: bash
+
+      validator slashing-protection-history import \
+        --datadir=/home/ethereum/.prysm-validator \
+        --slashing-protection-json-file=/path/to/slashing_protection.json
+
+Teku
+~~~~
+
+1. Import keys:
+
+   .. code-block:: bash
+
+      teku validator import \
+        --data-path=/home/ethereum/.teku \
+        --from=/path/to/keystores
+
+2. Import slashing protection:
+
+   .. code-block:: bash
+
+      teku slashing-protection import \
+        --data-path=/home/ethereum/.teku \
+        --from=slashing_protection.json
+
+Step 6: Start the validator service on the new node
+---------------------------------------------------
+
+1. Enable and start your validator service via ``systemd`` (adjust the unit name for your client):
+
+   .. code-block:: bash
+
+      sudo systemctl enable validator.service
+      sudo systemctl start validator.service
+
+2. Tail the logs to confirm the validator is running and performing duties (look for messages like “Published attestation” or equivalent):
+
+   .. code-block:: bash
+
+      sudo journalctl -fu validator.service
+
+3. Verify on a block explorer that:
+
+   * The validator status is ``Active``.
+   * New attestations are appearing and marked as successful (green).
+
+   Use ``beaconcha.in`` for Ethereum mainnet or ``gnosisscan.io`` / ``gnosischa.in`` for Gnosis.
+
+Additional safety recommendations
+---------------------------------
+
+* Always keep independent backups of your keystore files and slashing protection JSON before making changes.
+* Consider enabling doppelganger protection where supported (Lighthouse, Prysm, Teku, Nimbus) during the first start on the new machine, to further reduce the risk if something went wrong in the timing.
+* Never rely solely on the waiting period; slashing protection history (EIP-3076) is your primary defense against double signing.

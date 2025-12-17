@@ -105,10 +105,6 @@ prepare: ## Download latest ethereum-validator-metrics-exporter and stage
 	tar -xzf ".build/$(EVME_TARBALL)" -C $(SOURCESDIR)/usr/bin/
 	mv "$(SOURCESDIR)/usr/bin/ethereum-validator-metrics-exporter-$(EVME_VERSION)" "$(SOURCESDIR)/usr/bin/ethereum-validator-metrics-exporter"
 	
-	@echo "📦 Staging config..."
-	mkdir -p $(SOURCESDIR)/etc/ethereum
-	cp extras/validator-metrics-exporter.yaml $(SOURCESDIR)/etc/ethereum/validator-metrics-exporter.yaml
-	
 	chmod 0755 "$(SOURCESDIR)/usr/bin/ethereum-validator-metrics-exporter"
 	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/ethereum-validator-metrics-exporter"
 

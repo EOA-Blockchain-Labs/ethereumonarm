@@ -46,8 +46,7 @@ EME_TARBALL := ethereum-metrics-exporter_$(EME_VERSION)_linux_$(PKG_ARCH).tar.gz
 EME_URL     := https://github.com/ethpandaops/ethereum-metrics-exporter/releases/download/$(EME_TAG_V)/$(EME_TARBALL)
 
 # SHA256 checksum extracted from GitHub API asset digest field
-EME_RELEASE_JSON := $(shell curl -s https://api.github.com/repos/ethpandaops/ethereum-metrics-exporter/releases/latest)
-EME_SHA256 := $(shell echo '$(EME_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(EME_TARBALL)") | .digest' | sed 's/sha256://')
+EME_SHA256 := $(shell curl -s https://api.github.com/repos/ethpandaops/ethereum-metrics-exporter/releases/latest | jq -r '.assets[] | select(.name == "$(EME_TARBALL)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(EME_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(EME_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
@@ -121,9 +120,8 @@ prepare: ## Download latest ethereum-metrics-exporter and stage
 	
 	@echo "📦 Extracting binary..."
 	# Find the versioned binary and rename it to the unversioned name on extraction
-	tar -xzf ".build/$(EME_TARBALL)" -C $(SOURCESDIR)/usr/bin/ \
-	    --transform='s/ethereum-metrics-exporter-$(EME_VERSION)/ethereum-metrics-exporter/' \
-	    "ethereum-metrics-exporter-$(EME_VERSION)"
+	tar -xzf ".build/$(EME_TARBALL)" -C .build "ethereum-metrics-exporter-$(EME_VERSION)"
+	mv ".build/ethereum-metrics-exporter-$(EME_VERSION)" "$(SOURCESDIR)/usr/bin/ethereum-metrics-exporter"
 	
 	chmod 0755 "$(SOURCESDIR)/usr/bin/ethereum-metrics-exporter"
 	@echo "✅ Binary downloaded and verified at $(SOURCESDIR)/usr/bin/ethereum-metrics-exporter"

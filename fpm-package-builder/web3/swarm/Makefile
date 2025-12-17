@@ -39,8 +39,7 @@ BEE_BINARY := bee-linux-$(PKG_ARCH)
 BEE_URL     := https://github.com/ethersphere/bee/releases/download/$(BEE_TAG_V)/$(BEE_BINARY)
 
 # SHA256 checksum extracted from GitHub API asset digest field
-BEE_RELEASE_JSON := $(shell curl -s "https://api.github.com/repos/ethersphere/bee/releases/latest")
-BEE_SHA256 := $(shell echo '$(BEE_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(BEE_BINARY)") | .digest' | sed 's/sha256://')
+BEE_SHA256 := $(shell curl -s "https://api.github.com/repos/ethersphere/bee/releases/latest" | jq -r '.assets[] | select(.name == "$(BEE_BINARY)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(BEE_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(BEE_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm

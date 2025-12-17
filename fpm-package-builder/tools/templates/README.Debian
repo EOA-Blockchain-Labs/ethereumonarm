@@ -1,0 +1,34 @@
+{{PKG_NAME}} for Debian
+=======================
+
+This package provides {{PKG_DESCRIPTION}}, packaged for Ethereum on ARM.
+
+Services
+--------
+
+This package installs systemd services. The services are disabled by default.
+
+- `{{SERVICE_NAME}}.service`
+
+To enable a service, run:
+    sudo systemctl enable --now {{SERVICE_NAME}}.service
+
+Configuration
+-------------
+
+Configuration arguments are defined in the environment file located in `/etc/ethereum/`.
+
+- `/etc/ethereum/{{CONFIG_FILE}}`
+
+You can edit this file to customize the arguments passed to the binary.
+
+User and Group
+--------------
+
+The service runs as the `ethereum` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
+- **Upstream URL**: {{UPSTREAM_URL}}

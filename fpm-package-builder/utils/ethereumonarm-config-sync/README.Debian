@@ -1,0 +1,24 @@
+Ethereum on ARM Config Sync for Debian
+======================================
+
+This package provides a synchronization script and service for Ethereum on ARM configuration files.
+
+Services
+--------
+
+This package installs a oneshot systemd service.
+
+- `ethereumonarm-config-sync.service`
+
+This service executes the `/usr/local/sbin/ethereumonarm-config-sync.sh` script to synchronize configuration directories.
+
+Scripts
+-------
+
+- `/usr/local/sbin/ethereumonarm-config-sync.sh`: The main synchronization script.
+
+Package Details
+---------------
+
+- **Maintainer**: Fernando Collado <fernando@ethereumonarm.com>
+- **Upstream URL**: https://github.com/EOA-Blockchain-Labs/ethereumonarm

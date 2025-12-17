@@ -1,0 +1,38 @@
+MEV-Boost for Debian
+====================
+
+This package provides MEV-Boost, open source middleware run by validators to access a competitive block-building market, packaged for Ethereum on ARM.
+
+Services
+--------
+
+This package installs systemd services for various networks. The services are disabled by default.
+
+- `mev-boost.service` (Mainnet)
+- `mev-boost-sepolia.service` (Sepolia Testnet)
+- `mev-boost-hoodi.service` (Holesky Testnet)
+
+To enable a service, run:
+    sudo systemctl enable --now <service_name>
+
+Configuration
+-------------
+
+Configuration arguments are defined in environment files located in `/etc/ethereum/`.
+
+- `/etc/ethereum/mev-boost.conf`
+- `/etc/ethereum/mev-boost-sepolia.conf`
+- `/etc/ethereum/mev-boost-hoodi.conf`
+
+You can edit these files to customize the arguments passed to the MEV-Boost binary.
+
+User and Group
+--------------
+
+The service runs as the `ethereum` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://github.com/flashbots/mev-boost

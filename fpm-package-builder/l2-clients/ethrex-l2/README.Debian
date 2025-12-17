@@ -1,0 +1,43 @@
+Ethrex L2 for Debian
+====================
+
+This package provides Ethrex L2, a minimalist and modular rollup implementation, packaged for Ethereum on ARM.
+
+Services
+--------
+
+This package installs systemd services for the L2 node and the prover. The services are disabled by default.
+
+- `ethrex-l2.service` (Ethrex L2 Node)
+- `ethrex-l2-prover.service` (Ethrex L2 Prover)
+
+To enable a service, run:
+    sudo systemctl enable --now <service_name>
+
+Configuration
+-------------
+
+Configuration arguments are defined in environment files located in `/etc/ethereum/`.
+
+- `/etc/ethereum/ethrex-l2.conf`
+- `/etc/ethereum/ethrex-l2-prover.conf`
+
+You can edit these files to customize the arguments passed to the binaries.
+
+Data Directories
+----------------
+
+By default, this package stores data in the `ethereum` user's home directory:
+
+- `/home/ethereum/.ethrex-l2`
+
+User and Group
+--------------
+
+All services run as the `ethereum` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://github.com/lambdaclass/ethrex

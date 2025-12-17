@@ -1,0 +1,46 @@
+Vero for Debian
+===============
+
+This package provides Vero, a multi-node validator client software implementation, packaged for Ethereum on ARM.
+
+Services
+--------
+
+This package installs a single systemd service. The service is disabled by default.
+
+- `vero.service`
+
+To enable the service, run:
+    sudo systemctl enable --now vero.service
+
+Configuration
+-------------
+
+Configuration arguments are defined in the environment file located in `/etc/ethereum/`.
+
+- `/etc/ethereum/vero.conf`
+
+You can edit this file to customize the arguments passed to the Vero binary.
+
+Data Directories
+----------------
+
+By default, this package stores data in the `ethereum` user's home directory:
+
+- `/home/ethereum/.vero`
+
+Installation Details
+--------------------
+
+Vero is installed in a Python virtual environment located at `/opt/vero`. A wrapper script is provided at `/usr/bin/vero`.
+
+User and Group
+--------------
+
+The service runs as the `ethereum` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
+- **Upstream URL**: https://github.com/serenita-org/vero

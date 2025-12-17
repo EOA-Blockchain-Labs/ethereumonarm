@@ -40,8 +40,7 @@ CHARON_TARBALL := charon-$(CHARON_TAG_V)-linux-$(PKG_ARCH).tar.gz
 CHARON_URL     := https://github.com/ObolNetwork/charon/releases/download/$(CHARON_TAG_V)/$(CHARON_TARBALL)
 
 # SHA256 checksum extracted from GitHub API asset digest field
-CHARON_RELEASE_JSON := $(shell curl -s "https://api.github.com/repos/ObolNetwork/charon/releases/latest")
-CHARON_SHA256 := $(shell echo '$(CHARON_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(CHARON_TARBALL)") | .digest' | sed 's/sha256://')
+CHARON_SHA256 := $(shell curl -s "https://api.github.com/repos/ObolNetwork/charon/releases/latest" | jq -r '.assets[] | select(.name == "$(CHARON_TARBALL)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(CHARON_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(CHARON_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
@@ -109,7 +108,8 @@ prepare: ## Download latest Charon binary and verify
 	@echo "🔐 Verifying SHA256..."
 	@echo "$(CHARON_SHA256)  .build/$(CHARON_TARBALL)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(CHARON_TARBALL)"; exit 1; };
 	@echo "📦 Extracting binary..."
-	tar -xzf ".build/$(CHARON_TARBALL)" -C $(SOURCESDIR)/usr/bin/ charon
+	tar -xzf ".build/$(CHARON_TARBALL)" -C $(SOURCESDIR)/usr/bin/
+	mv "$(SOURCESDIR)/usr/bin/charon-$(CHARON_TAG_V)-linux-$(PKG_ARCH)" "$(SOURCESDIR)/usr/bin/charon"
 	chmod 0755 $(SOURCESDIR)/usr/bin/charon
 	@echo "✅ Binary downloaded and verified at $(SOURCESDIR)/usr/bin/charon"
 

@@ -70,7 +70,9 @@ Step 2: Stop the old validator and export slashing protection
    Teku
      .. code-block:: bash
 
-        teku slashing-protection export --to=slashing_protection.json
+        teku slashing-protection export \
+          --data-path=/home/ethereum/.teku \
+          --to=slashing_protection.json
 
    Lodestar
      .. code-block:: bash
@@ -96,7 +98,7 @@ Step 3: Disable and clean up the old validator
 4. Best practice is to wait at least **2–3 epochs** (≈15–20 minutes) and confirm on a block explorer that your validator is missing attestations before starting the new validator.
 
    * On Ethereum mainnet: use ``https://beaconcha.in``.
-   * On Gnosis: use ``https://gnosisscan.io`` or ``https://gnosischa.in``.
+   * On Gnosis: use ``https://gnosischa.in``.
 
 Step 4: Transfer keystores and slashing protection to the new node
 -------------------------------------------------------------------
@@ -120,7 +122,7 @@ Step 5: Import keys and slashing protection on the new node
 
 .. note::
 
-   Replace ``<NETWORK>`` with ``mainnet``, ``gnosis``, or ``holesky`` as appropriate.  
+   Replace ``<NETWORK>`` with ``mainnet``, ``gnosis``, ``holesky``, or ``hoodi`` (testnet) as appropriate.  
    When possible, import **slashing protection first**, then import keys, following client documentation.
 
 Grandine
@@ -158,6 +160,7 @@ Lighthouse
    .. code-block:: bash
 
       lighthouse account validator slashing-protection import \
+        --network <NETWORK> \
         slashing_protection.json \
         --datadir /home/ethereum/.lighthouse
 
@@ -179,7 +182,7 @@ Lodestar
 
       lodestar validator slashing-protection import \
         --network <NETWORK> \
-        --import slashing_protection.json \
+        --file slashing_protection.json \
         --dataDir /home/ethereum/.lodestar-validator
 
 Nimbus
@@ -248,14 +251,19 @@ Step 6: Start the validator service on the new node
 
    .. code-block:: bash
 
-      sudo systemctl enable validator.service
-      sudo systemctl start validator.service
+      # Examples for different clients:
+      sudo systemctl enable --now lighthouse-validator
+      sudo systemctl enable --now prysm-validator
+      sudo systemctl enable --now nimbus-validator
+      sudo systemctl enable --now teku-validator
+      sudo systemctl enable --now lodestar-validator
 
 2. Tail the logs to confirm the validator is running and performing duties (look for messages like “Published attestation” or equivalent):
 
    .. code-block:: bash
 
-      sudo journalctl -fu validator.service
+      # Replace with your validator service name:
+      sudo journalctl -fu lighthouse-validator
 
 3. Verify on a block explorer that:
 
@@ -264,9 +272,41 @@ Step 6: Start the validator service on the new node
 
    Use ``beaconcha.in`` for Ethereum mainnet or ``gnosisscan.io`` / ``gnosischa.in`` for Gnosis.
 
+Reinstalling the OS (Re-flashing SD Card)
+-----------------------------------------
+
+If you need to re-flash your SD card (for example, due to an OS failure or upgrade) but your execution and consensus data is safely stored on the NVMe drive, you can proceed without a full resync.
+
+1. **Flash the SD card**: Flash the new Ethereum on ARM image onto your SD card and insert it into the device.
+2. **First Boot**: Power on the device. The ``first-boot`` script will automatically detect the existing ``/home/ethereum`` partition on your NVMe drive and **will not** format it. It will preserve your data.
+3. **Restore Configs**: If you previously used ``ethereumonarm-config-sync``, your configuration files will be automatically restored from the NVMe backup.
+4. **Re-enable Services**: The new OS image comes with services disabled by default. You must manually enable and start the clients you were running.
+
+   For example, if you were running Geth and Lighthouse:
+
+   .. code-block:: bash
+
+      sudo systemctl enable --now geth
+      sudo systemctl enable --now lighthouse-beacon
+      sudo systemctl enable --now lighthouse-validator
+
+   If you were using **MEV-Boost** or **Commit-Boost**, remember to enable them as well:
+
+   .. code-block:: bash
+
+      sudo systemctl enable --now mev-boost
+      sudo systemctl enable --now commit-boost
+
+   If you are a **Lido** operator, ensure you enable the specific Lido validator service (refer to the :doc:`Lido documentation <../advanced/lido>` for details on your specific client):
+
+   .. code-block:: bash
+
+      # Example for Lighthouse with Lido
+      sudo systemctl enable --now lighthouse-validator-lido
+
 Additional safety recommendations
 ---------------------------------
 
 * Always keep independent backups of your keystore files and slashing protection JSON before making changes.
-* Consider enabling doppelganger protection where supported (Lighthouse, Prysm, Teku, Nimbus) during the first start on the new machine, to further reduce the risk if something went wrong in the timing.
+* Consider enabling doppelganger protection where supported (Lighthouse, Lodestar, Nimbus, Prysm, Teku) during the first start on the new machine, to further reduce the risk if something went wrong in the timing.
 * Never rely solely on the waiting period; slashing protection history (EIP-3076) is your primary defense against double signing.

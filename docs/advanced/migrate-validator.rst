@@ -35,6 +35,12 @@ To prevent the new node from signing a block that contradicts history, you must 
 
 Run the appropriate command on your **OLD** machine depending on the client you are using:
 
+**Grandine**
+
+.. code-block:: bash
+
+    grandine --network <NETWORK> interchange export slashing_protection.json
+
 **Lighthouse**
 
 .. code-block:: bash
@@ -59,6 +65,12 @@ Run the appropriate command on your **OLD** machine depending on the client you 
 
     teku slashing-protection export --to=slashing_protection.json
 
+**Lodestar**
+
+.. code-block:: bash
+
+    lodestar validator slashing-protection export --network mainnet --file slashing_protection.json --dataDir /path/to/data
+
 Step 3: Stop and Delete the Old Validator
 -----------------------------------------
 
@@ -69,7 +81,7 @@ This is the most important step to avoid slashing.
     .. code-block:: bash
 
         # Replace 'validator.service' with your actual service name
-        # (e.g., prysm-validator.service, lighthouse-validator.service, etc.)
+        # (e.g., prysm-validator.service, lighthouse-validator.service, lodestar-validator.service, etc.)
         sudo systemctl stop validator.service
         sudo systemctl disable validator.service
 
@@ -99,6 +111,19 @@ On your Ethereum on ARM board, use the client binary to import the data.
     Replace ``<NETWORK>`` with ``mainnet``, ``gnosis``, or ``holesky`` depending on your chain.
     Ensure you run these commands with the correct user permissions (usually root or the specific service user).
 
+**Grandine**
+
+.. code-block:: bash
+
+    # 1. Import Keys
+    grandine --network <NETWORK> validator import \
+      --data-dir /home/ethereum/.grandine-validator \
+      --keystore-dir /path/to/keystores \
+      --keystore-password-file /path/to/password.txt
+
+    # 2. Import Slashing Protection
+    grandine --network <NETWORK> interchange import slashing_protection.json
+
 **Lighthouse**
 
 .. code-block:: bash
@@ -107,12 +132,28 @@ On your Ethereum on ARM board, use the client binary to import the data.
     lighthouse account validator import \
       --network <NETWORK> \
       --directory /path/to/keystores \
-      --datadir /var/lib/lighthouse
+      --datadir /home/ethereum/.lighthouse
 
     # 2. Import Slashing Protection
     lighthouse account validator slashing-protection import \
       slashing_protection.json \
-      --datadir /var/lib/lighthouse
+      --datadir /home/ethereum/.lighthouse
+
+**Lodestar**
+
+.. code-block:: bash
+
+    # 1. Import Keys
+    lodestar validator import \
+      --network <NETWORK> \
+      --importKeystores /path/to/keystores \
+      --dataDir /home/ethereum/.lodestar-validator
+
+    # 2. Import Slashing Protection
+    lodestar validator slashing-protection import \
+      --network <NETWORK> \
+      --import slashing_protection.json \
+      --dataDir /home/ethereum/.lodestar-validator
 
 **Nimbus**
 
@@ -120,12 +161,12 @@ On your Ethereum on ARM board, use the client binary to import the data.
 
     # 1. Import Keys
     nimbus_beacon_node deposits import \
-      --data-dir=/var/lib/nimbus \
+      --data-dir=/home/ethereum/.nimbus-validator \
       /path/to/keystores
 
     # 2. Import Slashing Protection
-    sudo /usr/bin/nimbus_beacon_node slashingdb import \
-      --data-dir=/var/lib/nimbus \
+    nimbus_beacon_node slashingdb import \
+      --data-dir=/home/ethereum/.nimbus-validator \
       slashing_protection.json
 
 **Prysm**
@@ -135,11 +176,11 @@ On your Ethereum on ARM board, use the client binary to import the data.
     # 1. Import Keys
     validator accounts import \
       --keys-dir=/path/to/keystores \
-      --wallet-dir=/var/lib/prysm/validator
+      --wallet-dir=/home/ethereum/.prysm-validator
 
     # 2. Import Slashing Protection
     validator slashing-protection-history import \
-      --datadir=/var/lib/prysm/validator \
+      --datadir=/home/ethereum/.prysm-validator \
       --slashing-protection-json-file=slashing_protection.json
 
 **Teku**
@@ -148,12 +189,12 @@ On your Ethereum on ARM board, use the client binary to import the data.
 
     # 1. Import Keys
     teku validator import \
-      --data-path=/var/lib/teku \
+      --data-path=/home/ethereum/.teku \
       --from=/path/to/keystores
 
     # 2. Import Slashing Protection
     teku slashing-protection import \
-      --data-path=/var/lib/teku \
+      --data-path=/home/ethereum/.teku \
       --from=slashing_protection.json
 
 Step 6: Start the Validator Service
@@ -164,7 +205,7 @@ Once the keys and slashing protection data are imported:
 1.  Enable and start your specific validator service via systemd.
 
     .. note::
-        Replace ``validator.service`` with the actual name of your service (e.g., ``prysm-validator.service``, ``teku-validator.service``).
+        Replace ``validator.service`` with the actual name of your service (e.g., ``prysm-validator.service``, ``teku-validator.service``, ``lodestar-validator.service``).
 
     .. code-block:: bash
 

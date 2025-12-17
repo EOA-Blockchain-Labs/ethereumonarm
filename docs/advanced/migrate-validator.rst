@@ -306,6 +306,14 @@ Enable and start **only the validator you use**:
    sudo systemctl enable --now lodestar-validator
    sudo systemctl enable --now grandine-validator
 
+.. note::
+
+   If you are using MEV-Boost or Commit-Boost, you should use the ``-mev``
+   systemd service variants instead. For example:
+
+   * ``lighthouse-beacon-mev`` instead of ``lighthouse-beacon``
+   * ``lighthouse-validator-mev`` instead of ``lighthouse-validator``
+
 Follow logs:
 
 .. code-block:: bash

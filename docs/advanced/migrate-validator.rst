@@ -84,10 +84,6 @@ This is the most important step to avoid slashing.
         # (e.g., prysm-validator.service, lighthouse-validator.service, lodestar-validator.service, etc.)
         sudo systemctl stop validator.service
         sudo systemctl disable validator.service
-
-        # Example for Docker
-        docker-compose down
-
 2.  **Verify it is stopped:** Check that no validator processes are running.
 3.  **Delete the keys:** Once you have your backups safe (Keystores and Slashing Protection JSON), **delete the keys from the old machine** to prevent an accidental restart.
 

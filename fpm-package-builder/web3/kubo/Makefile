@@ -39,8 +39,7 @@ IPFS_TARBALL := kubo_$(IPFS_TAG_V)_linux-$(PKG_ARCH).tar.gz
 IPFS_URL     := https://github.com/ipfs/kubo/releases/download/$(IPFS_TAG_V)/$(IPFS_TARBALL)
 
 # SHA256 checksum extracted from GitHub API asset digest field
-IPFS_RELEASE_JSON := $(shell curl -s "https://api.github.com/repos/ipfs/kubo/releases/latest")
-IPFS_SHA256 := $(shell echo '$(IPFS_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(IPFS_TARBALL)") | .digest' | sed 's/sha256://')
+IPFS_SHA256 := $(shell curl -s "https://api.github.com/repos/ipfs/kubo/releases/latest" | jq -r '.assets[] | select(.name == "$(IPFS_TARBALL)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(IPFS_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(IPFS_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
@@ -109,7 +108,8 @@ prepare: ## Download latest Kubo and stage into $(SOURCESDIR)/usr/bin
 	@echo "$(IPFS_SHA256)  .build/$(IPFS_TARBALL)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(IPFS_TARBALL)"; exit 1; };
 	
 	@echo "📦 Extracting binary..."
-	tar -xzf ".build/$(IPFS_TARBALL)" -C $(SOURCESDIR)/usr/bin/ --strip-components 1 --wildcards "*/ipfs"
+	tar -xzf ".build/$(IPFS_TARBALL)" -C .build
+	find .build -type f -name "ipfs" -exec mv {} "$(SOURCESDIR)/usr/bin/ipfs" \;
 	chmod 0755 "$(SOURCESDIR)/usr/bin/ipfs"
 	@echo "✅ Binary downloaded and verified at $(SOURCESDIR)/usr/bin/ipfs"
 

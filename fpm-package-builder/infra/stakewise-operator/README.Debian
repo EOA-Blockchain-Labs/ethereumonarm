@@ -1,0 +1,34 @@
+StakeWise V3 Operator for Debian
+==============================
+
+This package provides the StakeWise V3 Operator, a tool for managing StakeWise V3 validators, packaged for Ethereum on ARM.
+
+Services
+--------
+
+This package installs a single systemd service. The service is disabled by default.
+
+- `stakewise-operator.service`
+
+To enable the service, run:
+    sudo systemctl enable --now stakewise-operator.service
+
+Configuration
+-------------
+
+Configuration arguments are defined in the environment file located in `/etc/ethereum/`.
+
+- `/etc/ethereum/stakewise-operator.conf`
+
+You can edit this file to customize the arguments passed to the StakeWise Operator binary.
+
+User and Group
+--------------
+
+The service runs as the `ethereum` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://github.com/stakewise/v3-operator

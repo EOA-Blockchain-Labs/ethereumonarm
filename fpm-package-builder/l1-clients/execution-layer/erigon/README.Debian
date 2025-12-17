@@ -1,0 +1,54 @@
+Erigon for Debian
+=================
+
+This package provides Erigon, an implementation of Ethereum (execution client), packaged for Ethereum on ARM.
+
+Services
+--------
+
+This package installs systemd services for various networks and configurations. The services are disabled by default.
+
+- `erigon.service` (Mainnet)
+- `erigon-gnosis.service` (Gnosis Chain)
+- `erigon-sepolia.service` (Sepolia Testnet)
+- `erigon-hoodi.service` (Holesky Testnet)
+- `erigon-archive.service` (Mainnet Archive Node)
+- `erigon-externalcl.service` (Mainnet with External Consensus Layer)
+
+To enable a service, run:
+    sudo systemctl enable --now <service_name>
+
+Configuration
+-------------
+
+Configuration arguments are defined in environment files located in `/etc/ethereum/`.
+
+- **Mainnet**: `/etc/ethereum/erigon.conf`
+- **Gnosis**: `/etc/ethereum/erigon-gnosis.conf`
+- **Sepolia**: `/etc/ethereum/erigon-sepolia.conf`
+- **Holesky**: `/etc/ethereum/erigon-hoodi.conf`
+- **Archive**: `/etc/ethereum/erigon-archive.conf`
+- **External CL**: `/etc/ethereum/erigon-externalcl.conf`
+
+You can edit these files to customize the generic arguments passed to the Erigon binary.
+
+Data Directories
+----------------
+
+By default, this package stores data in the `ethereum` user's home directory:
+
+- `/home/ethereum/.erigon` (Mainnet)
+- `/home/ethereum/.erigon-gnosis` (Gnosis Chain)
+- `/home/ethereum/.erigon-sepolia` (Sepolia Testnet)
+- `/home/ethereum/.erigon-hoodi` (Holesky Testnet)
+
+User and Group
+--------------
+
+All services run as the `ethereum` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://github.com/erigontech/erigon

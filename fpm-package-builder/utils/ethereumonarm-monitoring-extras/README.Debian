@@ -1,0 +1,19 @@
+Ethereum on ARM Monitoring Extras for Debian
+============================================
+
+This meta-package installs and configures the monitoring stack for Ethereum on ARM.
+
+Features
+--------
+
+- **Dependencies**: Installs `prometheus`, `grafana`, `prometheus-node-exporter`, `ethereum-metrics-exporter`, and `ethereum-validator-metrics-exporter`.
+- **Configuration**:
+  - **Apt Preferences**: Configures package pinning in `/etc/apt/preferences.d/`.
+  - **Systemd**: Sets up systemd overrides or configurations in `/etc/systemd/system/`.
+  - **UFW**: Configures firewall application rules for monitoring services in `/etc/ufw/applications.d/`.
+
+Package Details
+---------------
+
+- **Maintainer**: Fernando Collado <fcollado@ethereumonarm.com>
+- **Upstream URL**: https://github.com/EOA-Blockchain-Labs/ethereumonarm

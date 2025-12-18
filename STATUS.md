@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-12-17 03:56:44 UTC_
+_Last updated: 2025-12-18 03:57:29 UTC_
 
  **What this report compares**
 
@@ -18,8 +18,8 @@ _Last updated: 2025-12-17 03:56:44 UTC_
 ## Summary
 
 - Total packages checked: **33**
-- ✅ Up-to-date: **31** (93.9%)
-- ❌ Outdated: **2** (6.1%)
+- ✅ Up-to-date: **32** (97.0%)
+- ❌ Outdated: **1** (3.0%)
 - ❓ N/A: **0** (0.0%)
 
 
@@ -28,7 +28,7 @@ _Last updated: 2025-12-17 03:56:44 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `commit-boost` | `0.9.2` ([Commit-Boost/commit-boost-client](https://github.com/Commit-Boost/commit-boost-client)) | `0.9.2` | ✅ Up-to-date |
-| `dvt-obol` | `1.7.3` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.7.2` | ❌ Outdated |
+| `dvt-obol` | `1.7.3` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.7.3` | ✅ Up-to-date |
 | `dvt-ssv` | `2.3.9` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.3.9` | ✅ Up-to-date |
 | `ethereum-metrics-exporter` | `0.28.3` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.28.3` | ✅ Up-to-date |
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |
@@ -59,7 +59,7 @@ _Last updated: 2025-12-17 03:56:44 UTC_
 |:--------|:-------------------|:------------------------|:------:|
 | `besu` | `25.12.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `25.12.0` | ✅ Up-to-date |
 | `erigon` | `3.3.2` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.3.2` | ✅ Up-to-date |
-| `ethrex` | `7.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `7.0.0` | ✅ Up-to-date |
+| `ethrex` | `8.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `8.0.0` | ✅ Up-to-date |
 | `geth` | `1.16.7` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.7` | ✅ Up-to-date |
 | `nethermind` | `1.35.7` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.35.7` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.2.2` | ❌ Outdated |

@@ -149,57 +149,77 @@ Available Packages
 
 These are the available packages:
 
-**L1 clients**
+**L1 Clients**
 
-*Execution Layer clients*
+*Execution Layer*
 
+* besu
+* erigon
+* ethrex
 * geth
 * nethermind
-* erigon
-* besu
+* nimbus-ec
 * reth
 
-*Consensus Layer clients*
+*Consensus Layer*
 
+* grandine
 * lighthouse
+* lodestar
+* nimbus
 * prysm
 * teku
-* nimbus
-* lodestar
-* grandine
 
-**L2 clients**
-
-*Polygon*
-
-* polygon-heimdall
-* polygon-bor
-
-*Optimism*
-
-* optimism-l2geth
-* optimism-op-geth
-* optimism-op-node
+**L2 Clients**
 
 *Arbitrum*
 
 * arbitrum-nitro
 
+*Fuel Network*
+
+* fuel-network
+
+*Optimism*
+
+* optimism-op-geth
+* optimism-op-node
+* optimism-op-reth
+
 *Starknet*
 
-* papyrus
-* juno
-
-**Web 3**
-
-* bee
-* kubo
-* status
+* starknet-juno
+* starknet-madara
+* starknet-pathfinder
 
 **Infra**
 
-* ethstaker-deposit-cli
+*DVT (Distributed Validator Technology)*
+
+* dvt-obol
+* dvt-ssv
+
+*MEV & Block Building*
+
+* commit-boost
 * mev-boost
+
+*Staking Tools*
+
+* ethstaker-deposit-cli
+* stakewise-operator
+* vero
+* vouch
+
+*Monitoring*
+
+* ethereum-metrics-exporter
+* ethereum-validator-metrics-exporter
+
+**Web3**
+
+* bee
+* kubo
 
 .. note::
   The `APT` command will install the last version available in the repository. Most clients 

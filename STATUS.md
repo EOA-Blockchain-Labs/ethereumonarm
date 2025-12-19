@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-12-18 03:57:29 UTC_
+_Last updated: 2025-12-19 03:59:20 UTC_
 
  **What this report compares**
 
@@ -18,8 +18,8 @@ _Last updated: 2025-12-18 03:57:29 UTC_
 ## Summary
 
 - Total packages checked: **33**
-- ✅ Up-to-date: **32** (97.0%)
-- ❌ Outdated: **1** (3.0%)
+- ✅ Up-to-date: **31** (93.9%)
+- ❌ Outdated: **2** (6.1%)
 - ❓ N/A: **0** (0.0%)
 
 
@@ -28,7 +28,7 @@ _Last updated: 2025-12-18 03:57:29 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `commit-boost` | `0.9.2` ([Commit-Boost/commit-boost-client](https://github.com/Commit-Boost/commit-boost-client)) | `0.9.2` | ✅ Up-to-date |
-| `dvt-obol` | `1.7.3` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.7.3` | ✅ Up-to-date |
+| `dvt-obol` | `1.8.0` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.8.0` | ✅ Up-to-date |
 | `dvt-ssv` | `2.3.9` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.3.9` | ✅ Up-to-date |
 | `ethereum-metrics-exporter` | `0.28.3` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.28.3` | ✅ Up-to-date |
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |
@@ -47,8 +47,8 @@ _Last updated: 2025-12-18 03:57:29 UTC_
 | `grandine` | `2.0.1` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.1` | ✅ Up-to-date |
 | `lighthouse` | `8.0.1` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.0.1` | ✅ Up-to-date |
 | `lodestar` | `1.38.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.38.0` | ✅ Up-to-date |
-| `nimbus` | `25.11.1` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.11.1` | ✅ Up-to-date |
-| `prysm` | `7.1.0` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.0` | ✅ Up-to-date |
+| `nimbus` | `25.12.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.11.1` | ❌ Outdated |
+| `prysm` | `7.1.1` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.1` | ✅ Up-to-date |
 | `teku` | `25.12.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.12.0` | ✅ Up-to-date |
 
 

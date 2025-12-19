@@ -1,0 +1,33 @@
+[Unit]
+Description=zkSync Era Node
+Documentation=https://docs.zksync.io
+After=network.target postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=simple
+User=ethereum
+Group=ethereum
+
+# Environment configuration
+EnvironmentFile=/etc/ethereum/zksync.conf
+
+# Main process
+ExecStart=/usr/bin/zksync_server
+
+# Process management
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=300
+KillMode=mixed
+KillSignal=SIGINT
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/ethereum
+
+[Install]
+WantedBy=multi-user.target

@@ -30,17 +30,14 @@ OUTPUTDIR       ?= ../../../packages
 # ----------------------------------------------------------------------
 # Upstream version and source info
 # ----------------------------------------------------------------------
-# We get the version just for the package metadata
-NETHERMIND_VERSION := $(shell curl -sL "https://api.github.com/repos/NethermindEth/nethermind/releases/latest" | jq -r '.name' | tr -d "v")
-NETHERMIND_ASSET_JSON := $(shell curl -sL "https://api.github.com/repos/NethermindEth/nethermind/releases/latest" \
-                            | jq -r ".assets[] | select(.name | contains(\"linux-$(PKG_ARCH)\"))")
+# Query each value directly from the API to avoid JSON corruption in Make variables
+NETHERMIND_API_URL := https://api.github.com/repos/NethermindEth/nethermind/releases/latest
+NETHERMIND_JQ_FILTER := .assets[] | select(.name | endswith("linux-$(PKG_ARCH).zip"))
 
-# Extract the ZIP name and download URL from that JSON
-NETHERMIND_ZIP     := $(shell echo '$(NETHERMIND_ASSET_JSON)' | jq -r '.name')
-NETHERMIND_URL     := $(shell echo '$(NETHERMIND_ASSET_JSON)' | jq -r '.browser_download_url')
-
-# SHA256 checksum extracted from GitHub API asset digest field
-NETHERMIND_SHA256  := $(shell echo '$(NETHERMIND_ASSET_JSON)' | jq -r '.digest' | sed 's/sha256://')
+NETHERMIND_VERSION := $(shell curl -sL "$(NETHERMIND_API_URL)" | jq -r '.name' | tr -d "v")
+NETHERMIND_ZIP     := $(shell curl -sL "$(NETHERMIND_API_URL)" | jq -r '$(NETHERMIND_JQ_FILTER) | .name')
+NETHERMIND_URL     := $(shell curl -sL "$(NETHERMIND_API_URL)" | jq -r '$(NETHERMIND_JQ_FILTER) | .browser_download_url')
+NETHERMIND_SHA256  := $(shell curl -sL "$(NETHERMIND_API_URL)" | jq -r '$(NETHERMIND_JQ_FILTER) | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(NETHERMIND_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(NETHERMIND_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm

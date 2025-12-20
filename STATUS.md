@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-12-19 03:59:20 UTC_
+_Last updated: 2025-12-20 03:50:51 UTC_
 
  **What this report compares**
 
@@ -18,8 +18,8 @@ _Last updated: 2025-12-19 03:59:20 UTC_
 ## Summary
 
 - Total packages checked: **33**
-- ✅ Up-to-date: **31** (93.9%)
-- ❌ Outdated: **2** (6.1%)
+- ✅ Up-to-date: **30** (90.9%)
+- ❌ Outdated: **3** (9.1%)
 - ❓ N/A: **0** (0.0%)
 
 
@@ -47,7 +47,7 @@ _Last updated: 2025-12-19 03:59:20 UTC_
 | `grandine` | `2.0.1` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.1` | ✅ Up-to-date |
 | `lighthouse` | `8.0.1` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.0.1` | ✅ Up-to-date |
 | `lodestar` | `1.38.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.38.0` | ✅ Up-to-date |
-| `nimbus` | `25.12.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.11.1` | ❌ Outdated |
+| `nimbus` | `25.12.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.12.0` | ✅ Up-to-date |
 | `prysm` | `7.1.1` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.1` | ✅ Up-to-date |
 | `teku` | `25.12.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.12.0` | ✅ Up-to-date |
 
@@ -61,7 +61,7 @@ _Last updated: 2025-12-19 03:59:20 UTC_
 | `erigon` | `3.3.2` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.3.2` | ✅ Up-to-date |
 | `ethrex` | `8.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `8.0.0` | ✅ Up-to-date |
 | `geth` | `1.16.7` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.7` | ✅ Up-to-date |
-| `nethermind` | `1.35.7` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.35.7` | ✅ Up-to-date |
+| `nethermind` | `1.35.8` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.35.8` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.2.2` | ❌ Outdated |
 | `reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
 
@@ -73,8 +73,8 @@ _Last updated: 2025-12-19 03:59:20 UTC_
 |:--------|:-------------------|:------------------------|:------:|
 | `arbitrum-nitro` | `3.9.4` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.9.4` | ✅ Up-to-date |
 | `fuel-network` | `0.47.1` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.47.1` | ✅ Up-to-date |
-| `optimism-op-geth` | `1.101603.5` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101603.5` | ✅ Up-to-date |
-| `optimism-op-node` | `1.16.3` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.16.3` | ✅ Up-to-date |
+| `optimism-op-geth` | `1.101604.0` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101603.5` | ❌ Outdated |
+| `optimism-op-node` | `1.16.4` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.16.3` | ❌ Outdated |
 | `optimism-op-reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
 | `starknet-juno` | `0.15.16` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.16` | ✅ Up-to-date |
 | `starknet-madara` | `0.9.0` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.9.0` | ✅ Up-to-date |

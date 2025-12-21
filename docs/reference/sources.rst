@@ -30,10 +30,10 @@ The repository contains the following main components:
 Contributing
 ------------
 
-We welcome contributions! Please see the :doc:`/development/contributing` section 
+We welcome contributions! Please see the :doc:`/contributing/guidelines` section 
 for guidelines on how to get involved.
 
 .. seealso::
    
    For detailed technical information about the project architecture and development 
-   workflow, refer to the :doc:`/development/developer-guide` section.
+   workflow, refer to the :doc:`/contributing/building-images` section.

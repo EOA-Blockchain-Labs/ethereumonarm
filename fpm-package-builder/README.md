@@ -33,6 +33,7 @@ The VM comes with:
 - All dependencies and cross-compilers installed  
 - Docker configured for the `vagrant` user  
 - Rust, Go, and Node environments ready to use  
+- LLVM 19 and MLIR for Starknet client builds
 
 Once inside the VM, you can immediately build packages (see section 3).
 
@@ -77,9 +78,17 @@ Once inside the VM, you can immediately build packages (see section 3).
     sudo apt-get install -y \
       libssl-dev:arm64 pkg-config software-properties-common docker.io docker-compose \
       clang file make cmake gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
-      ruby ruby-dev rubygems build-essential rpm vim git jq curl wget python3-pip
+      ruby ruby-dev rubygems build-essential rpm vim git jq curl wget python3-pip \
+      ca-certificates gnupg
 
     sudo gem install --no-document fpm
+
+#### Install LLVM 19 (Required for Starknet Madara)
+
+    wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- 19
+    sudo apt-get install -y libmlir-19-dev mlir-19-tools clang-19 llvm-19-dev \
+      libpolly-19-dev libzstd-dev libxml2-dev protobuf-compiler libudev-dev \
+      python3-full python3-pip python3-venv
 
 #### Install Go
 
@@ -155,7 +164,7 @@ All packages with binary downloads are verified cryptographically before packagi
 ### ✅ Verified Packages
 
 | Package | Type | Verification | Source |
-|---------|------|--------------|--------|
+| --------- | ------ | -------------- | -------- |
 | **Prysm** | L1 Consensus | PGP | Key `F1A5036E` from keyserver.ubuntu.com |
 | **Lighthouse** | L1 Consensus | PGP | Key `F30674B0` from keyserver.ubuntu.com |
 | **Grandine** | L1 Consensus | SHA256 | GitHub API digest |
@@ -185,7 +194,7 @@ All packages with binary downloads are verified cryptographically before packagi
 ### ⏳ Pending Verification
 
 | Package | Type | Notes |
-|---------|------|-------|
+| --------- | ------ | ------- |
 | DVT-SSV | Infra | No release assets |
 | Vero | Infra | Source tarball (immutable releases, no checksum) |
 | Arbitrum Nitro | L2 | No release assets |
@@ -196,7 +205,7 @@ All packages with binary downloads are verified cryptographically before packagi
 ### ⚠️ Deprecated (moved to `infra/deprecated/`)
 
 | Package | Notes |
-|---------|-------|
+| ------- | ----- |
 | staking-deposit-cli | Upstream deprecated, use ethstaker-deposit-cli instead |
 
 ---
@@ -228,13 +237,14 @@ All packages with binary downloads are verified cryptographically before packagi
 
 ## 7. Troubleshooting
 
-| Problem                            | Cause                     | Solution                                                      |
-|------------------------------------|---------------------------|---------------------------------------------------------------|
-| `apt-get update` fails for ARM64   | Wrong codename or URI     | Verify `UBUNTU_CODENAME` and repo URLs                       |
-| Rust linker errors                 | Missing cross-compiler    | Ensure `aarch64-linux-gnu-gcc` is installed                  |
-| `nvm` not found                    | Path not sourced          | `export NVM_DIR="$HOME/.nvm" && [ -s ... ] && . "$NVM_DIR/nvm.sh"` |
-| Docker permission denied           | User not in group         | `sudo usermod -aG docker $USER && newgrp docker`             |
-| `fpm` not found                    | Ruby PATH issue           | `sudo gem install fpm` or export Ruby bin path               |
+| Problem | Cause | Solution |
+| ------- | ----- | -------- |
+| `apt-get update` fails for ARM64 | Wrong codename or URI | Verify `UBUNTU_CODENAME` and repo URLs |
+| Rust linker errors | Missing cross-compiler | Ensure `aarch64-linux-gnu-gcc` is installed |
+| `nvm` not found | Path not sourced | `export NVM_DIR="$HOME/.nvm" && [ -s ... ] && . "$NVM_DIR/nvm.sh"` |
+| Docker permission denied | User not in group | `sudo usermod -aG docker $USER && newgrp docker` |
+| `fpm` not found | Ruby PATH issue | `sudo gem install fpm` or export Ruby bin path |
+| LLVM/Madara compilation errors | Missing LLVM 19 | Install LLVM 19: `wget -qO- https://apt.llvm.org/llvm.sh \| sudo bash -s -- 19` |
 
 ---
 

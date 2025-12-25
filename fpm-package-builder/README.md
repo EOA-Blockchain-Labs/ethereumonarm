@@ -8,12 +8,44 @@ The builder creates reproducible `.deb` packages for:
 - Utilities and monitoring tools (Grafana, Prometheus, Node Exporter, etc.)
 - EOA-specific utilities (EOA-GUI, systemd templates, helper scripts)
 
+> [!NOTE]
+> This project is correctly maintained and currently active.
+
+---
+
+## 📁 Project Structure
+
+| Directory | Description |
+| --------- | ----------- |
+| `l1-clients` | Execution and Consensus layer clients (Geth, Nethermind, Prysm, Lighthouse, etc.) |
+| `l2-clients` | Layer 2 solutions (Optimism, Arbitrum, Starknet, zkSync) |
+| `infra` | Infrastructure and staking tools (MEV-Boost, SSV, Obol) |
+| `web3` | IPFS, Swarm, and other Web3 protocols |
+| `utils` | Monitoring and management utilities |
+| `tools` | Helper scripts and standard Makefile templates |
+| `extras` | Systemd service files and other platform-specific configs |
+
+---
+
+## 🛠️ Builder Features
+
+This project isn't just a collection of scripts; it's a standardized build system using **FPM** (Effing Package Management).
+
+- **Reproducible Builds**: Consistent package creation using Docker or controlled environments.
+- **Cross-Compilation**: Build ARM64 packages on Intel/AMD64 hosts transparently.
+- **Systemd Integration**: Packages automatically install unit files and enable services.
+- **Config Management**: "Merge-config" logic ensures user configurations are preserved during updates.
+
 ---
 
 ## 1. Recommended: Use the Provided Vagrantfile
 
-The easiest and most reliable way to create a fully configured build environment is to use the included Vagrantfile.  
-It automatically sets up an Ubuntu 24.04 virtual machine with all required dependencies, compilers, and toolchains.
+The **only supported way** to create a fully configured build environment is to use the included Vagrantfile.
+It automatically sets up an Ubuntu 24.04 virtual machine with all required dependencies, cross-compilers for ARM64, and toolchains correctly configured.
+
+> [!IMPORTANT]
+> The Makefiles in this project are optimized for this Vagrant environment (Linux/Ubuntu 24.04).
+> Building directly on macOS or other systems is **not supported** and will likely fail due to missing cross-compilation tools or incorrect LLVM paths.
 
 ### Requirements
 
@@ -41,8 +73,10 @@ Once inside the VM, you can immediately build packages (see section 3).
 
 ## 2. Manual Setup (Ubuntu 24.04 LTS)
 
-> Only use this method if you need to build directly on your host
-> system or in a CI pipeline. Otherwise, prefer the Vagrant option above.
+> [!WARNING]
+> **Advanced Linux Users Only**: Use this method only if you cannot use Vagrant (e.g., inside a CI pipeline).
+> These steps replicate the `provision.sh` environment on a fresh Ubuntu 24.04 machine.
+> **Building explicitly on macOS is NOT supported.**
 
 ### 2.1 Prepare apt repositories
 
@@ -119,7 +153,7 @@ Once inside the VM, you can immediately build packages (see section 3).
     export NVM_DIR="$HOME/.nvm"
     . "$NVM_DIR/nvm.sh"
 
-    nvm install 20
+    nvm install 24
     npm install -g yarn
     curl -fsSL https://get.pnpm.io/install.sh | sh -
 

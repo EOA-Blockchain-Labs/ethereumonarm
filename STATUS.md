@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2025-12-24 03:59:39 UTC_
+_Last updated: 2025-12-25 04:02:07 UTC_
 
  **What this report compares**
 
@@ -18,8 +18,8 @@ _Last updated: 2025-12-24 03:59:39 UTC_
 ## Summary
 
 - Total packages checked: **33**
-- ✅ Up-to-date: **32** (97.0%)
-- ❌ Outdated: **1** (3.0%)
+- ✅ Up-to-date: **31** (93.9%)
+- ❌ Outdated: **2** (6.1%)
 - ❓ N/A: **0** (0.0%)
 
 
@@ -77,7 +77,7 @@ _Last updated: 2025-12-24 03:59:39 UTC_
 | `optimism-op-node` | `1.16.4` ([ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)) | `1.16.4` | ✅ Up-to-date |
 | `optimism-op-reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
 | `starknet-juno` | `0.15.16` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.16` | ✅ Up-to-date |
-| `starknet-madara` | `0.9.0` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.9.0` | ✅ Up-to-date |
+| `starknet-madara` | `0.9.1` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.9.0` | ❌ Outdated |
 | `starknet-pathfinder` | `0.21.3` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.3` | ✅ Up-to-date |
 
 

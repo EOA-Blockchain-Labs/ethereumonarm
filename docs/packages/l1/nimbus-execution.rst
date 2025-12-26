@@ -10,7 +10,7 @@ This package installs systemd services for various networks and a proxy service.
 
 - ``nimbus-execution.service`` (Mainnet)
 - ``nimbus-execution-sepolia.service`` (Sepolia Testnet)
-- ``nimbus-execution-hoodi.service`` (Holesky Testnet)
+- ``nimbus-execution-hoodi.service`` (Hoodi Testnet)
 - ``nimbus-proxy.service`` (JSON-RPC Proxy)
 
 To enable a service, run:
@@ -23,7 +23,7 @@ Configuration arguments are defined in environment files located in ``/etc/ether
 
 - **Mainnet**: ``/etc/ethereum/nimbus-execution.conf``
 - **Sepolia**: ``/etc/ethereum/nimbus-execution-sepolia.conf``
-- **Holesky**: ``/etc/ethereum/nimbus-execution-hoodi.conf``
+- **Hoodi**: ``/etc/ethereum/nimbus-execution-hoodi.conf``
 - **Proxy**: ``/etc/ethereum/nimbus-proxy.conf``
 
 You can edit these files to customize the generic arguments passed to the Nimbus binary.
@@ -35,7 +35,7 @@ By default, this package stores data in the ``ethereum`` user's home directory:
 
 - ``/home/ethereum/.nimbus-execution`` (Mainnet)
 - ``/home/ethereum/.nimbus-execution-sepolia`` (Sepolia Testnet)
-- ``/home/ethereum/.nimbus-execution-hoodi`` (Holesky Testnet)
+- ``/home/ethereum/.nimbus-execution-hoodi`` (Hoodi Testnet)
 
 User and Group
 --------------

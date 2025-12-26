@@ -109,3 +109,9 @@ Explore our guides to set up, manage, and optimize your node.
    /contributing/guidelines
    /contributing/building-images
    /reference/sources
+
+.. toctree::
+   :maxdepth: 2
+   :caption: 📦 Packages
+
+   packages/index

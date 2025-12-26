@@ -1,0 +1,38 @@
+Grandine
+===================
+
+This package provides Grandine, a consensus client for the Ethereum Beacon Chain, packaged for Ethereum on ARM.
+
+Services
+--------
+
+This package installs systemd services for running the beacon node and validator client. The services are disabled by default.
+
+- ``grandine-beacon.service``: The beacon node service.
+- ``grandine-validator.service``: The validator client service.
+
+Configuration
+-------------
+
+Configuration arguments are defined in the environment files located in ``/etc/ethereum/``.
+
+- ``/etc/ethereum/grandine-beacon.conf``: Configuration for the beacon node.
+- ``/etc/ethereum/grandine-validator.conf``: Configuration for the validator client.
+
+You can edit these files to customize the arguments passed to the binary.
+
+Data Directory
+--------------
+
+The default data directory for Grandine is ``/home/ethereum/.grandine``.
+
+User and Group
+--------------
+
+The services run as the ``ethereum`` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
+- **Upstream URL**: https://github.com/grandinetech/grandine

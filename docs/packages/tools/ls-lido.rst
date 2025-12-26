@@ -1,0 +1,40 @@
+Lido Liquid Staking Infra
+====================================
+
+This package provides configuration files and systemd service overrides to run Ethereum validators with the Lido Liquid Staking protocol on Ethereum on ARM.
+
+Services
+--------
+
+This package installs systemd service overrides for various consensus clients. These services are disabled by default.
+
+- ``lighthouse-validator-lido.service``
+- ``lighthouse-validator-hoodi-lido.service``
+- ``nimbus-validator-lido.service``
+- ``nimbus-validator-hoodi-lido.service``
+- ``prysm-validator-lido.service``
+- ``prysm-validator-hoodi-lido.service``
+- ``teku-validator-lido.service``
+- ``teku-validator-hoodi-lido.service``
+
+To enable a service, run:
+    sudo systemctl enable --now <service_name>
+
+Configuration
+-------------
+
+Configuration arguments are defined in environment files located in ``/etc/ethereum/ls/``.
+
+- ``/etc/ethereum/ls/lighthouse-validator-lido.conf``
+- ``/etc/ethereum/ls/nimbus-validator-lido.conf``
+- ``/etc/ethereum/ls/prysm-validator-lido.conf``
+- ``/etc/ethereum/ls/teku-validator-lido.conf``
+- (And corresponding files for Hoodi testnet)
+
+You can edit these files to customize the arguments passed to the validator clients.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://lido.fi

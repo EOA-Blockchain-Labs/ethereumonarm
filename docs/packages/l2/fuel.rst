@@ -1,0 +1,41 @@
+Fuel Network
+=======================
+
+This package provides the Fuel Network node (fuel-core), packaged for Ethereum on ARM.
+
+Services
+--------
+
+This package installs a single systemd service. The service is disabled by default.
+
+- ``fuel.service``
+
+To enable the service, run:
+    sudo systemctl enable --now fuel.service
+
+Configuration
+-------------
+
+Configuration arguments are defined in the environment file located in ``/etc/ethereum/fuel/``.
+
+- ``/etc/ethereum/fuel/fuel.conf``
+
+You can edit this file to customize the arguments passed to the Fuel binary.
+
+Data Directories
+----------------
+
+By default, this package stores data in the ``ethereum`` user's home directory:
+
+- ``/home/ethereum/.fuel``
+
+User and Group
+--------------
+
+The service runs as the ``ethereum`` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://fuel.network

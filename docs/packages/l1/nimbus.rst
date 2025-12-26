@@ -1,0 +1,82 @@
+Nimbus
+=================
+
+This package provides the Nimbus Ethereum consensus client, packaged for Ethereum on ARM.
+
+Services
+--------
+
+This package installs systemd services for various networks and configurations. The services are disabled by default.
+
+**Beacon Chain Services:**
+
+- ``nimbus-beacon.service`` (Mainnet)
+- ``nimbus-beacon-mev.service`` (Mainnet + MEV-Boost)
+- ``nimbus-beacon-gnosis.service`` (Gnosis Chain)
+- ``nimbus-beacon-sepolia.service`` (Sepolia Testnet)
+- ``nimbus-beacon-sepolia-mev.service`` (Sepolia + MEV-Boost)
+- ``nimbus-beacon-hoodi.service`` (Hoodi Testnet)
+- ``nimbus-beacon-hoodi-mev.service`` (Hoodi + MEV-Boost)
+
+**Validator Services:**
+
+- ``nimbus-validator.service`` (Mainnet)
+- ``nimbus-validator-mev.service`` (Mainnet + MEV-Boost)
+- ``nimbus-validator-gnosis.service`` (Gnosis Chain)
+- ``nimbus-validator-sepolia.service`` (Sepolia Testnet)
+- ``nimbus-validator-sepolia-mev.service`` (Sepolia + MEV-Boost)
+- ``nimbus-validator-hoodi.service`` (Hoodi Testnet)
+- ``nimbus-validator-hoodi-mev.service`` (Hoodi + MEV-Boost)
+
+To enable a service, run:
+    sudo systemctl enable --now <service_name>
+
+Configuration
+-------------
+
+Configuration arguments are defined in environment files located in ``/etc/ethereum/``.
+
+- **Mainnet**:
+    - ``/etc/ethereum/nimbus-beacon.conf``
+    - ``/etc/ethereum/nimbus-beacon-mev.conf``
+    - ``/etc/ethereum/nimbus-validator.conf``
+    - ``/etc/ethereum/nimbus-validator-mev.conf``
+
+- **Gnosis**:
+    - ``/etc/ethereum/nimbus-beacon-gnosis.conf``
+    - ``/etc/ethereum/nimbus-validator-gnosis.conf``
+
+- **Sepolia**:
+    - ``/etc/ethereum/nimbus-beacon-sepolia.conf``
+    - ``/etc/ethereum/nimbus-beacon-sepolia-mev.conf``
+    - ``/etc/ethereum/nimbus-validator-sepolia.conf``
+    - ``/etc/ethereum/nimbus-validator-sepolia-mev.conf``
+
+- **Hoodi**:
+    - ``/etc/ethereum/nimbus-beacon-hoodi.conf``
+    - ``/etc/ethereum/nimbus-beacon-hoodi-mev.conf``
+    - ``/etc/ethereum/nimbus-validator-hoodi.conf``
+    - ``/etc/ethereum/nimbus-validator-hoodi-mev.conf``
+
+You can edit these files to customize the generic arguments passed to the Nimbus binary.
+
+Data Directories
+----------------
+
+By default, this package stores data in the ``ethereum`` user's home directory:
+
+- **Beacon Node**: ``/home/ethereum/.nimbus-beacon`` (Mainnet)
+- **Validator**: ``/home/ethereum/.nimbus-validator`` (Mainnet)
+
+Note: For other networks, check the specific service file for the data directory argument.
+
+User and Group
+--------------
+
+All services run as the ``ethereum`` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://nimbus.team/

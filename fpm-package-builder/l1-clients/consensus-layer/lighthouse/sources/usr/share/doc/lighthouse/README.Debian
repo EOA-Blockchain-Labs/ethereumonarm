@@ -1,5 +1,5 @@
-Lighthouse for Debian
-=====================
+Lighthouse
+==========
 
 This package provides the Lighthouse Ethereum consensus client, packaged for Ethereum on ARM.
 
@@ -14,8 +14,8 @@ This package installs systemd services for various networks and configurations. 
 - `lighthouse-beacon-gnosis.service` (Gnosis Chain)
 - `lighthouse-beacon-sepolia.service` (Sepolia Testnet)
 - `lighthouse-beacon-sepolia-mev.service` (Sepolia + MEV-Boost)
-- `lighthouse-beacon-hoodi.service` (Holesky Testnet)
-- `lighthouse-beacon-hoodi-mev.service` (Holesky + MEV-Boost)
+- `lighthouse-beacon-hoodi.service` (Hoodi Testnet)
+- `lighthouse-beacon-hoodi-mev.service` (Hoodi + MEV-Boost)
 
 **Validator Services:**
 - `lighthouse-validator.service` (Mainnet)
@@ -23,8 +23,8 @@ This package installs systemd services for various networks and configurations. 
 - `lighthouse-validator-gnosis.service` (Gnosis Chain)
 - `lighthouse-validator-sepolia.service` (Sepolia Testnet)
 - `lighthouse-validator-sepolia-mev.service` (Sepolia + MEV-Boost)
-- `lighthouse-validator-hoodi.service` (Holesky Testnet)
-- `lighthouse-validator-hoodi-mev.service` (Holesky + MEV-Boost)
+- `lighthouse-validator-hoodi.service` (Hoodi Testnet)
+- `lighthouse-validator-hoodi-mev.service` (Hoodi + MEV-Boost)
 
 To enable a service, run:
     sudo systemctl enable --now <service_name>
@@ -50,7 +50,7 @@ Configuration arguments are defined in environment files located in `/etc/ethere
     - `/etc/ethereum/lighthouse-validator-sepolia.conf`
     - `/etc/ethereum/lighthouse-validator-sepolia-mev.conf`
 
-- **Holesky**:
+- **Hoodi**:
     - `/etc/ethereum/lighthouse-beacon-hoodi.conf`
     - `/etc/ethereum/lighthouse-beacon-hoodi-mev.conf`
     - `/etc/ethereum/lighthouse-validator-hoodi.conf`

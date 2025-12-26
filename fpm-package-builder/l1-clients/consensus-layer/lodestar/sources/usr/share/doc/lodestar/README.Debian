@@ -1,5 +1,5 @@
-Lodestar for Debian
-===================
+Lodestar
+========
 
 This package provides the Lodestar Ethereum consensus client, packaged for Ethereum on ARM.
 
@@ -14,8 +14,8 @@ This package installs systemd services for various networks and configurations. 
 - `lodestar-beacon-gnosis.service` (Gnosis Chain)
 - `lodestar-beacon-sepolia.service` (Sepolia Testnet)
 - `lodestar-beacon-sepolia-mev.service` (Sepolia + MEV-Boost)
-- `lodestar-beacon-hoodi.service` (Holesky Testnet)
-- `lodestar-beacon-hoodi-mev.service` (Holesky + MEV-Boost)
+- `lodestar-beacon-hoodi.service` (Hoodi Testnet)
+- `lodestar-beacon-hoodi-mev.service` (Hoodi + MEV-Boost)
 
 **Validator Services:**
 - `lodestar-validator.service` (Mainnet)
@@ -23,8 +23,8 @@ This package installs systemd services for various networks and configurations. 
 - `lodestar-validator-gnosis.service` (Gnosis Chain)
 - `lodestar-validator-sepolia.service` (Sepolia Testnet)
 - `lodestar-validator-sepolia-mev.service` (Sepolia + MEV-Boost)
-- `lodestar-validator-hoodi.service` (Holesky Testnet)
-- `lodestar-validator-hoodi-mev.service` (Holesky + MEV-Boost)
+- `lodestar-validator-hoodi.service` (Hoodi Testnet)
+- `lodestar-validator-hoodi-mev.service` (Hoodi + MEV-Boost)
 
 To enable a service, run:
     sudo systemctl enable --now <service_name>
@@ -50,7 +50,7 @@ Configuration arguments are defined in environment files located in `/etc/ethere
     - `/etc/ethereum/lodestar-validator-sepolia.conf`
     - `/etc/ethereum/lodestar-validator-sepolia-mev.conf`
 
-- **Holesky**:
+- **Hoodi**:
     - `/etc/ethereum/lodestar-beacon-hoodi.conf`
     - `/etc/ethereum/lodestar-beacon-hoodi-mev.conf`
     - `/etc/ethereum/lodestar-validator-hoodi.conf`

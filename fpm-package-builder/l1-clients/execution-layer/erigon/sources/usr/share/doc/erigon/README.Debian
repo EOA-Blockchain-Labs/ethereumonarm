@@ -1,5 +1,5 @@
-Erigon for Debian
-=================
+Erigon
+======
 
 This package provides Erigon, an implementation of Ethereum (execution client), packaged for Ethereum on ARM.
 
@@ -11,7 +11,7 @@ This package installs systemd services for various networks and configurations. 
 - `erigon.service` (Mainnet)
 - `erigon-gnosis.service` (Gnosis Chain)
 - `erigon-sepolia.service` (Sepolia Testnet)
-- `erigon-hoodi.service` (Holesky Testnet)
+- `erigon-hoodi.service` (Hoodi Testnet)
 - `erigon-archive.service` (Mainnet Archive Node)
 - `erigon-externalcl.service` (Mainnet with External Consensus Layer)
 
@@ -26,7 +26,7 @@ Configuration arguments are defined in environment files located in `/etc/ethere
 - **Mainnet**: `/etc/ethereum/erigon.conf`
 - **Gnosis**: `/etc/ethereum/erigon-gnosis.conf`
 - **Sepolia**: `/etc/ethereum/erigon-sepolia.conf`
-- **Holesky**: `/etc/ethereum/erigon-hoodi.conf`
+- **Hoodi**: `/etc/ethereum/erigon-hoodi.conf`
 - **Archive**: `/etc/ethereum/erigon-archive.conf`
 - **External CL**: `/etc/ethereum/erigon-externalcl.conf`
 
@@ -40,7 +40,7 @@ By default, this package stores data in the `ethereum` user's home directory:
 - `/home/ethereum/.erigon` (Mainnet)
 - `/home/ethereum/.erigon-gnosis` (Gnosis Chain)
 - `/home/ethereum/.erigon-sepolia` (Sepolia Testnet)
-- `/home/ethereum/.erigon-hoodi` (Holesky Testnet)
+- `/home/ethereum/.erigon-hoodi` (Hoodi Testnet)
 
 User and Group
 --------------

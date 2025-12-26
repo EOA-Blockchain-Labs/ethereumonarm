@@ -10,7 +10,7 @@ This package installs systemd services for various networks. The services are di
 
 - ``ethrex.service`` (Mainnet)
 - ``ethrex-sepolia.service`` (Sepolia Testnet)
-- ``ethrex-hoodi.service`` (Holesky Testnet)
+- ``ethrex-hoodi.service`` (Hoodi Testnet)
 
 To enable a service, run:
     sudo systemctl enable --now <service_name>
@@ -22,7 +22,7 @@ Configuration arguments are defined in environment files located in ``/etc/ether
 
 - **Mainnet**: ``/etc/ethereum/ethrex.conf``
 - **Sepolia**: ``/etc/ethereum/ethrex-sepolia.conf``
-- **Holesky**: ``/etc/ethereum/ethrex-hoodi.conf``
+- **Hoodi**: ``/etc/ethereum/ethrex-hoodi.conf``
 
 You can edit these files to customize the generic arguments passed to the Ethrex binary.
 
@@ -33,7 +33,7 @@ By default, this package stores data in the ``ethereum`` user's home directory:
 
 - ``/home/ethereum/.ethrex`` (Mainnet)
 - ``/home/ethereum/.ethrex-sepolia`` (Sepolia Testnet)
-- ``/home/ethereum/.ethrex-hoodi`` (Holesky Testnet)
+- ``/home/ethereum/.ethrex-hoodi`` (Hoodi Testnet)
 
 User and Group
 --------------

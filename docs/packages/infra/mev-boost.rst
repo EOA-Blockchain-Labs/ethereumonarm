@@ -10,7 +10,7 @@ This package installs systemd services for various networks. The services are di
 
 - ``mev-boost.service`` (Mainnet)
 - ``mev-boost-sepolia.service`` (Sepolia Testnet)
-- ``mev-boost-hoodi.service`` (Holesky Testnet)
+- ``mev-boost-hoodi.service`` (Hoodi Testnet)
 
 To enable a service, run:
     sudo systemctl enable --now <service_name>

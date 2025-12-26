@@ -172,7 +172,7 @@ Step 5: Import keys and slashing protection (new node)
 
 .. note::
 
-   Replace ``<NETWORK>`` with ``mainnet``, ``gnosis``, ``holesky`` or ``hoodi``.
+   Replace ``<NETWORK>`` with ``mainnet``, ``gnosis`` or ``hoodi``.
    Import slashing protection **before starting the validator**.
 
 Grandine

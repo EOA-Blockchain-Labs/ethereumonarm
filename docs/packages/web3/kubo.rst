@@ -1,0 +1,34 @@
+Kubo (IPFS)
+======================
+
+This package provides Kubo, the Go implementation of IPFS, packaged for Ethereum on ARM.
+
+Services
+--------
+
+This package installs a single systemd service. The service is disabled by default.
+
+- ``ipfs.service`` (IPFS Daemon)
+
+To enable the service, run:
+    sudo systemctl enable --now ipfs.service
+
+Configuration
+-------------
+
+Configuration arguments are defined in the environment file located in ``/etc/ipfs/``.
+
+- ``/etc/ipfs/ipfs.conf``
+
+The service automatically initializes the IPFS repository in ``/home/ethereum/.ipfs`` if it does not exist.
+
+User and Group
+--------------
+
+The service runs as the ``ethereum`` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://ipfs.tech/

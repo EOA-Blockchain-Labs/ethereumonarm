@@ -1,0 +1,41 @@
+Commit-Boost
+=======================
+
+This package provides Commit-Boost, a sidecar for Ethereum validators to manage commitments, packaged for Ethereum on ARM.
+
+Services
+--------
+
+This package installs a single systemd service. The service is disabled by default.
+
+- ``commit-boost.service``
+
+To enable the service, run:
+    sudo systemctl enable --now commit-boost.service
+
+Configuration
+-------------
+
+Configuration arguments are defined in the environment file located in ``/etc/ethereum/``.
+
+- ``/etc/ethereum/commit-boost.conf``
+
+You can edit this file to customize the arguments passed to the Commit-Boost binary.
+
+Data Directories
+----------------
+
+By default, this package stores data in the ``ethereum`` user's home directory:
+
+- ``/home/ethereum/.commit-boost``
+
+User and Group
+--------------
+
+The service runs as the ``ethereum`` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Upstream URL**: https://github.com/Commit-Boost/commit-boost-client

@@ -11,6 +11,16 @@ Features
   - **Sites Enabled**: Configures virtual hosts for RPC proxying in `/etc/nginx/sites-enabled/`.
   - **Upstreams**: Defines upstream backends for Ethereum clients in `/etc/nginx/conf.d/`.
 
+Data Directories
+----------------
+
+This package does not store persistent data.
+
+User and Group
+--------------
+
+This package does not create any new users or groups.
+
 Package Details
 ---------------
 

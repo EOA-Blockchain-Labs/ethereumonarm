@@ -20,6 +20,15 @@ Configuration arguments are defined in the environment file located in `/etc/ipf
 
 - `/etc/ipfs/ipfs.conf`
 
+You can edit this file to customize the arguments passed to the binary.
+
+Data Directories
+----------------
+
+By default, this package stores data in the `ethereum` user's home directory:
+
+- `/home/ethereum/.ipfs`
+
 The service automatically initializes the IPFS repository in `/home/ethereum/.ipfs` if it does not exist.
 
 User and Group

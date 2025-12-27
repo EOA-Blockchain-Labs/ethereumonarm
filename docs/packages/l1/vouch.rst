@@ -20,7 +20,14 @@ Configuration files are located in ``/etc/ethereum/vouch/``.
 
 - ``/etc/ethereum/vouch/vouch.yml`` (Main configuration file)
 
-The service runs with ``--base-dir /etc/ethereum/vouch``, so it looks for configuration and certificates in that directory.
+The service runs with ``--base-dir /etc/ethereum/vouch``, so it looks for configuration. You can edit this file to customize the Vouch configuration.
+
+Data Directories
+----------------
+
+By default, this package stores data in the ``ethereum`` user's home directory:
+
+- ``/etc/ethereum/vouch``
 
 User and Group
 --------------

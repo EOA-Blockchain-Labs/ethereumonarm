@@ -21,6 +21,15 @@ Configuration arguments are defined in the environment file and JSON configurati
 - ``/etc/ethereum/statusd.conf``: Environment variables for the service.
 - ``/etc/ethereum/statusd.json``: Main JSON configuration file for the node.
 
+You can edit this file to customize the generic arguments passed to the statusd binary.
+
+Data Directories
+----------------
+
+By default, this package stores data in the ``ethereum`` user's home directory:
+
+- ``/home/ethereum/.status/status-go-mail``
+
 User and Group
 --------------
 

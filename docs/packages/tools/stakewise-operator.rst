@@ -20,7 +20,14 @@ Configuration arguments are defined in the environment file located in ``/etc/et
 
 - ``/etc/ethereum/stakewise-operator.conf``
 
-You can edit this file to customize the arguments passed to the StakeWise Operator binary.
+You can edit this file to customize the generic arguments passed to the binary.
+
+Data Directories
+----------------
+
+By default, this package stores data in the ``ethereum`` user's home directory:
+
+- ``/home/ethereum/.stakewise``
 
 User and Group
 --------------

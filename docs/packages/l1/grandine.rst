@@ -19,12 +19,14 @@ Configuration arguments are defined in the environment files located in ``/etc/e
 - ``/etc/ethereum/grandine-beacon.conf``: Configuration for the beacon node.
 - ``/etc/ethereum/grandine-validator.conf``: Configuration for the validator client.
 
-You can edit these files to customize the arguments passed to the binary.
+You can edit these files to customize the arguments passed to the Grandine binary.
 
-Data Directory
---------------
+Data Directories
+----------------
 
-The default data directory for Grandine is ``/home/ethereum/.grandine``.
+By default, this package stores data in the ``ethereum`` user's home directory:
+
+- ``/home/ethereum/.grandine-beacon``
 
 User and Group
 --------------

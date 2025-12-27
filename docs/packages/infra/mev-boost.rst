@@ -26,6 +26,11 @@ Configuration arguments are defined in environment files located in ``/etc/ether
 
 You can edit these files to customize the arguments passed to the MEV-Boost binary.
 
+Data Directories
+----------------
+
+This package does not store persistent data.
+
 User and Group
 --------------
 

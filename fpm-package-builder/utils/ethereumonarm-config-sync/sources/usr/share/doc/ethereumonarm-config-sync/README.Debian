@@ -17,6 +17,16 @@ Scripts
 
 - `/usr/local/sbin/ethereumonarm-config-sync.sh`: The main synchronization script.
 
+Data Directories
+----------------
+
+This package does not store persistent data.
+
+User and Group
+--------------
+
+The service runs as root (oneshot).
+
 Package Details
 ---------------
 

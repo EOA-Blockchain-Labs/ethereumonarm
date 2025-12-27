@@ -11,6 +11,7 @@ This package installs the main Charon service and several validator service over
 - ``charon.service`` (Main DVT middleware)
 
 Validator Services:
+
 - ``lighthouse-validator-obol.service``
 - ``lighthouse-validator-obol-lido.service``
 - ``lighthouse-validator-hoodi-obol.service``

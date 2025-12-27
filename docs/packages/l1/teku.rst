@@ -9,6 +9,7 @@ Services
 This package installs systemd services for various networks and configurations. The services are disabled by default.
 
 **Beacon Chain Services:**
+
 - ``teku-beacon.service`` (Mainnet)
 - ``teku-beacon-mev.service`` (Mainnet + MEV-Boost)
 - ``teku-beacon-gnosis.service`` (Gnosis Chain)
@@ -18,6 +19,7 @@ This package installs systemd services for various networks and configurations. 
 - ``teku-beacon-hoodi-mev.service`` (Hoodi + MEV-Boost)
 
 **Validator Services:**
+
 - ``teku-validator.service`` (Mainnet)
 - ``teku-validator-mev.service`` (Mainnet + MEV-Boost)
 - ``teku-validator-gnosis.service`` (Gnosis Chain)

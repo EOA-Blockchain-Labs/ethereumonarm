@@ -12,6 +12,11 @@ This is a command-line tool. You can run it using the following command:
 
 Run ``deposit --help`` for more information on available commands and options.
 
+Data Directories
+----------------
+
+This package does not store persistent data. Key generation output is user-specified.
+
 User and Group
 --------------
 

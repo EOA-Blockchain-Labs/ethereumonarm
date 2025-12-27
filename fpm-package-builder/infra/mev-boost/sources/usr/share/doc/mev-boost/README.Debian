@@ -24,7 +24,12 @@ Configuration arguments are defined in environment files located in `/etc/ethere
 - `/etc/ethereum/mev-boost-sepolia.conf`
 - `/etc/ethereum/mev-boost-hoodi.conf`
 
-You can edit these files to customize the arguments passed to the MEV-Boost binary.
+You can edit this file to customize the arguments passed to the binary.
+
+Data Directories
+----------------
+
+This package does not store persistent data.
 
 User and Group
 --------------

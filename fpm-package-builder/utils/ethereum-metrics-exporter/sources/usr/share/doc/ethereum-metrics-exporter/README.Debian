@@ -22,6 +22,11 @@ Configuration arguments are defined in the YAML file located in `/etc/ethereum/`
 
 You can edit this file to configure the exporter, including endpoints and metrics settings.
 
+Data Directories
+----------------
+
+This package does not store persistent data.
+
 User and Group
 --------------
 

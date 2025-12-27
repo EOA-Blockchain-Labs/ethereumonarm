@@ -33,6 +33,11 @@ Configuration arguments are defined in environment files located in ``/etc/ether
 
 You can edit these files to customize the arguments passed to the validator clients.
 
+Data Directories
+----------------
+
+This package configures existing validators. See their documentation for data directory locations.
+
 Package Details
 ---------------
 

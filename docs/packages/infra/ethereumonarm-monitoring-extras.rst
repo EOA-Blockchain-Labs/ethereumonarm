@@ -12,6 +12,11 @@ Features
   - **Systemd**: Sets up systemd overrides or configurations in ``/etc/systemd/system/``.
   - **UFW**: Configures firewall application rules for monitoring services in ``/etc/ufw/applications.d/``.
 
+Data Directories
+----------------
+
+This package does not store persistent data.
+
 Package Details
 ---------------
 

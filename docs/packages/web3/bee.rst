@@ -21,6 +21,15 @@ Configuration arguments are defined in the environment file and YAML configurati
 - ``/etc/default/bee``: Environment variables for the service.
 - ``/etc/bee/bee.yaml``: Main configuration file for the Bee node.
 
+You can edit this file to customize the generic arguments passed to the Bee binary.
+
+Data Directories
+----------------
+
+By default, this package stores data in the ``ethereum`` user's home directory:
+
+- ``/home/ethereum/.bee``
+
 User and Group
 --------------
 

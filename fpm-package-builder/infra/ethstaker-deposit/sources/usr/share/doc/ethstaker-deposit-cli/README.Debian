@@ -17,6 +17,18 @@ User and Group
 
 This tool is installed as a system-wide binary and can be run by any user.
 
+You can edit this file to customize the arguments passed to the binary.
+
+Data Directories
+----------------
+
+This package does not store persistent data. Key generation output is user-specified.
+
+User and Group
+--------------
+
+This CLI tool runs as the invoking user.
+
 Package Details
 ---------------
 

@@ -16,6 +16,16 @@ Utilities
 
 The package includes various utility scripts in `/usr/local/bin` or `/usr/bin` (e.g., for backup, updates, or diagnostics) and installs useful dependencies like `rclone`, `restic`, `jq`, and `speedtest-cli`.
 
+Data Directories
+----------------
+
+This package does not store persistent data.
+
+User and Group
+--------------
+
+Services included in this package (e.g., backups) usually run as the `ethereum` user or `root` depending on configuration.
+
 Package Details
 ---------------
 

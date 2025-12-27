@@ -33,6 +33,16 @@ Configuration arguments are defined in environment files located in `/etc/ethere
 
 You can edit these files to customize the arguments passed to the validator clients.
 
+Data Directories
+----------------
+
+This package configures existing validators. See their documentation for data directory locations.
+
+User and Group
+--------------
+
+The service overrides run as the `ethereum` user and group.
+
 Package Details
 ---------------
 

@@ -16,6 +16,11 @@ Utilities
 
 The package includes various utility scripts in ``/usr/local/bin`` or ``/usr/bin`` (e.g., for backup, updates, or diagnostics) and installs useful dependencies like ``rclone``, ``restic``, ``jq``, and ``speedtest-cli``.
 
+Data Directories
+----------------
+
+This package does not store persistent data.
+
 Package Details
 ---------------
 

@@ -9,6 +9,7 @@ Services
 This package installs systemd services for various networks and configurations. The services are disabled by default.
 
 **Beacon Chain Services:**
+
 - ``prysm-beacon.service`` (Mainnet)
 - ``prysm-beacon-mev.service`` (Mainnet + MEV-Boost)
 - ``prysm-beacon-gnosis.service`` (Gnosis Chain)
@@ -18,6 +19,7 @@ This package installs systemd services for various networks and configurations. 
 - ``prysm-beacon-hoodi-mev.service`` (Hoodi + MEV-Boost)
 
 **Validator Services:**
+
 - ``prysm-validator.service`` (Mainnet)
 - ``prysm-validator-mev.service`` (Mainnet + MEV-Boost)
 - ``prysm-validator-gnosis.service`` (Gnosis Chain)

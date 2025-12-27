@@ -9,6 +9,7 @@ Services
 This package installs systemd services for various networks and configurations. The services are disabled by default.
 
 **Beacon Chain Services:**
+
 - ``lodestar-beacon.service`` (Mainnet)
 - ``lodestar-beacon-mev.service`` (Mainnet + MEV-Boost)
 - ``lodestar-beacon-gnosis.service`` (Gnosis Chain)
@@ -18,6 +19,7 @@ This package installs systemd services for various networks and configurations. 
 - ``lodestar-beacon-hoodi-mev.service`` (Hoodi + MEV-Boost)
 
 **Validator Services:**
+
 - ``lodestar-validator.service`` (Mainnet)
 - ``lodestar-validator-mev.service`` (Mainnet + MEV-Boost)
 - ``lodestar-validator-gnosis.service`` (Gnosis Chain)

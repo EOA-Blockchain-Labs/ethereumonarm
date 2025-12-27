@@ -9,6 +9,7 @@ Services
 This package installs systemd services for various networks and configurations. The services are disabled by default.
 
 **Beacon Chain Services:**
+
 - ``lighthouse-beacon.service`` (Mainnet)
 - ``lighthouse-beacon-mev.service`` (Mainnet + MEV-Boost)
 - ``lighthouse-beacon-gnosis.service`` (Gnosis Chain)
@@ -18,6 +19,7 @@ This package installs systemd services for various networks and configurations. 
 - ``lighthouse-beacon-hoodi-mev.service`` (Hoodi + MEV-Boost)
 
 **Validator Services:**
+
 - ``lighthouse-validator.service`` (Mainnet)
 - ``lighthouse-validator-mev.service`` (Mainnet + MEV-Boost)
 - ``lighthouse-validator-gnosis.service`` (Gnosis Chain)

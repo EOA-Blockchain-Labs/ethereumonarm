@@ -19,5 +19,5 @@ This package does not store persistent data.
 Package Details
 ---------------
 
-- **Maintainer**: Fernando Collado <fcollado@ethereumonarm.com>
+- **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
 - **Upstream URL**: https://github.com/ethereumonarm

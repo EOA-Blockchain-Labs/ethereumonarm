@@ -29,5 +29,5 @@ Services included in this package (e.g., backups) usually run as the `ethereum` 
 Package Details
 ---------------
 
-- **Maintainer**: Fernando Collado <fcollado@ethereumonarm.com>
+- **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
 - **Upstream URL**: https://github.com/EOA-Blockchain-Labs/ethereumonarm

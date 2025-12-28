@@ -25,5 +25,5 @@ This tool is installed as a system-wide binary and can be run by any user.
 Package Details
 ---------------
 
-- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
 - **Upstream URL**: https://github.com/eth-educators/ethstaker-deposit-cli/

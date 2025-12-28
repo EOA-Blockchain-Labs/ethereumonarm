@@ -60,6 +60,8 @@ Configuration arguments are defined in environment files located in ``/etc/ether
 
 You can edit these files to customize the generic arguments passed to the Lighthouse binary.
 
+Note: The default configuration includes ``--prune-payloads false``. This ensures that the Execution Layer can sync correctly using the payload history. Changing this to ``true`` may cause issues with historical syncing.
+
 Data Directories
 ----------------
 
@@ -78,5 +80,5 @@ All services run as the ``ethereum`` user and group.
 Package Details
 ---------------
 
-- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
 - **Upstream URL**: https://github.com/sigp/lighthouse/

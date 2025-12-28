@@ -28,6 +28,12 @@ Configuration arguments are defined in environment files located in ``/etc/ether
 
 You can edit these files to customize the generic arguments passed to the Geth binary.
 
+JWT Secret
+----------
+
+The systemd services automatically generate a JWT secret if one does not exist.
+The default location is ``/etc/ethereum/jwtsecret``. This secret is required for the Consensus Layer client to authenticate with Geth.
+
 Data Directories
 ----------------
 
@@ -46,5 +52,5 @@ All services run as the ``ethereum`` user and group.
 Package Details
 ---------------
 
-- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
 - **Upstream URL**: https://geth.ethereum.org

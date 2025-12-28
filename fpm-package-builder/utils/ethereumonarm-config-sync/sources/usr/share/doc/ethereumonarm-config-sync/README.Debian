@@ -30,5 +30,5 @@ The service runs as root (oneshot).
 Package Details
 ---------------
 
-- **Maintainer**: Fernando Collado <fernando@ethereumonarm.com>
+- **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
 - **Upstream URL**: https://github.com/EOA-Blockchain-Labs/ethereumonarm

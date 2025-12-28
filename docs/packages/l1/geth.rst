@@ -33,7 +33,7 @@ Data Directories
 
 By default, this package stores data in the ``ethereum`` user's home directory:
 
-- ``/home/ethereum/.geth`` (Mainnet)
+- ``/home/ethereum/.ethereum`` (Mainnet)
 - ``/home/ethereum/.geth-gnosis`` (Gnosis Chain)
 - ``/home/ethereum/.geth-sepolia`` (Sepolia Testnet)
 - ``/home/ethereum/.geth-hoodi`` (Hoodi Testnet)

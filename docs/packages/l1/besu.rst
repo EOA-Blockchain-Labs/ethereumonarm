@@ -43,5 +43,5 @@ All services run as the ``ethereum`` user and group.
 Package Details
 ---------------
 
-- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
 - **Upstream URL**: https://www.hyperledger.org/use/besu

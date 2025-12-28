@@ -19,8 +19,8 @@
 # -- Project information -----------------------------------------------------
 
 project = 'Ethereum on ARM documentation'
-copyright = '2025, Diego Losada, Fernando Collado'
-author = 'Diego Losada, Fernando Collado'
+copyright = '2025, Ethereum on ARM, Ethereum on ARM'
+author = 'Ethereum on ARM, Ethereum on ARM'
 
 release = '25.11.00'
 

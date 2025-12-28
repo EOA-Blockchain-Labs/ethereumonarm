@@ -21,5 +21,5 @@ The generated ``jwtsecret`` file should be readable by the ``ethereum`` user.
 Package Details
 ---------------
 
-- **Maintainer**: Ethereum on ARM <dlosada@ethereumonarm.com>
+- **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
 - **Upstream URL**: https://github.com/eth-clients/merge-testnets

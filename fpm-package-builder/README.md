@@ -259,10 +259,10 @@ All packages with binary downloads are verified cryptographically before packagi
    - `WEB_URL`
    - The entire “Upstream version and source info” section (this is the most critical part).
    - `OUTPUTDIR` (adjust the path depth, e.g., `../../packages` or `../../../packages`).
-4. (Optional) If you need a systemd service or config file, copy them from `tools/templates/`:
+4. (Optional) If you need a systemd service or config file, copy them from `build-scripts/templates/`:
 
-       cp ../../tools/templates/service.service extras/package-name.service
-       cp ../../tools/templates/config.toml sources/etc/package-name/config.toml
+       cp ../../build-scripts/templates/service.service extras/package-name.service
+       cp ../../build-scripts/templates/config.toml sources/etc/package-name/config.toml
 
 5. Run `make` inside the directory to build and test.
 6. Test on an ARM board (e.g., Rock 5B, Orange Pi 5 Plus).

@@ -1,24 +1,41 @@
-.. Ethereum on ARM documentation documentation master file, created by
-   sphinx-quickstart on Wed Jan 13 19:04:18 2021.
-
-.. Ethereum on ARM documentation documentation master file, created by
-   sphinx-quickstart on Wed Jan 13 19:04:18 2021.
-
 Running Layer 1 nodes
 =====================
 
 In order to run an Ethereum node you will need to run 2 different clients at the same time: 
 **one Consensus Layer Client (Beacon Chain) and one Execution Layer Client**.
 
-Very briefly, you have to:
+.. important::
+   Unless otherwise specified, all commands should be run under the ``ethereum`` user account.
+
+Quick Navigation
+----------------
+
+- 🔗 **Consensus Layer** - Learn about Beacon Chain clients and checkpoint sync → `Consensus Layer Nodes`_
+- ⚙️ **Execution Layer** - Explore execution clients and sync strategies → `Execution Layer nodes`_
+- 💰 **Staking** - Set up validators and start staking → `Staking`_
+- 📊 **Client Comparison** - Compare sync times and client features → `Syncing Strategies and Times`_
+
+Hardware Requirements
+~~~~~~~~~~~~~~~~~~~~~
+
+.. csv-table::
+   :header: Component, Minimum, Recommended
+
+   RAM, 8 GB, 16 GB
+   Storage, 2 TB SSD, 4 TB NVMe SSD
+   Network, 10 Mbps, 25+ Mbps
+   CPU, 4 cores ARM64, 8 cores ARM64
+
+Getting Started
+---------------
 
 1. **Run and sync a Consensus Client (Beacon chain)** using Checkpoint sync (it syncs in a few minutes).
 2. **Wait** for the Beacon Chain to get in sync.
 3. **Run and sync an Execution Client**.
 
-.. note::
-  :guilabel:`Erigon` is the only Execution Layer client that includes a Light Consensus Layer Client. You can 
-  run a full Ethereum node just by starting the Erigon service.
+.. important::
+   :guilabel:`Erigon` is the only Execution Layer client that includes a Light Consensus Layer Client (Caplin). You can 
+   run a full Ethereum node just by starting the Erigon service.
 
 See below for further details.
 
@@ -64,16 +81,38 @@ Supported Clients
 
 Ethereum on ARM supports the main Consensus Layer clients available.
 
-.. csv-table::
-   :header: Client, Official Binary, Language, Home
+.. tab-set::
 
-   `Lighthouse`, `Yes`, `Rust`, lighthouse-book.sigmaprime.io_
-   `Prysm`, `Yes`, `Go`, docs.prylabs.network_
-   `Nimbus`,`Yes`, `Nim`, nimbus.team_
-   `Teku`, `Yes`, `Java`, consensys.net_
-   `Lodestar`, `Yes`, `Typescript`, lodestar.chainsafe.io_
-   `Grandine`, `Yes`, `Rust`, grandine.io_
-   `Vouch`, `Yes`, `Go`, vouch.io_
+   .. tab-item:: All Clients
+
+      .. csv-table::
+         :header: Client, Official Binary, Language, Home
+
+         `Lighthouse`, `Yes`, `Rust`, lighthouse-book.sigmaprime.io_
+         `Prysm`, `Yes`, `Go`, docs.prylabs.network_
+         `Nimbus`,`Yes`, `Nim`, nimbus.team_
+         `Teku`, `Yes`, `Java`, consensys.net_
+         `Lodestar`, `Yes`, `Typescript`, lodestar.chainsafe.io_
+         `Grandine`, `Yes`, `Rust`, grandine.io_
+         `Vouch`, `Yes`, `Go`, vouch.io_
+
+   .. tab-item:: By Language
+
+      **Rust-based:**
+      
+      - Lighthouse :bdg-success:`Production Ready`
+      - Grandine :bdg-success:`Production Ready`
+      
+      **Go-based:**
+      
+      - Prysm :bdg-success:`Production Ready`
+      - Vouch :bdg-success:`Production Ready` :bdg-info:`Multi-node`
+      
+      **Other Languages:**
+      
+      - Nimbus (Nim) :bdg-success:`Production Ready`
+      - Teku (Java) :bdg-success:`Production Ready`
+      - Lodestar (TypeScript) :bdg-success:`Production Ready`
 
 .. _lighthouse-book.sigmaprime.io: https://lighthouse-book.sigmaprime.io
 .. _docs.prylabs.network: https://docs.prylabs.network/docs/getting-started/
@@ -84,15 +123,17 @@ Ethereum on ARM supports the main Consensus Layer clients available.
 .. _vouch.io: https://vouch.io/
 
 
-Lighthouse
+.. _lighthouse-beacon-setup:
+
+Lighthouse :bdg-success:`Production Ready` :bdg-info:`Rust`
 ~~~~~~~~~~
 
 :guilabel:`Lighthouse` is a full CL client written in Rust.
 
 .. csv-table::
-  :header: Systemd Services, Home Directory, Config Files, Default TCP/UDP Port
+  :header: Systemd Services, Home Directory, Config Files, Ports
 
-  `lighthouse-beacon lighthouse-validator`, `/home/ethereum/.lighthouse`, `/etc/ethereum/lighthouse-beacon.conf /etc/ethereum/lighthouse-validator.conf`, `9000`
+  `lighthouse-beacon lighthouse-validator`, `/home/ethereum/.lighthouse`, `/etc/ethereum/lighthouse-beacon.conf /etc/ethereum/lighthouse-validator.conf`, `TCP/UDP: 9000`
 
 
 1.- Port forwarding
@@ -112,15 +153,17 @@ is enabled by default.**
 
 The Lighthouse beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 
-Prysm
+.. _prysm-beacon-setup:
+
+Prysm :bdg-success:`Production Ready` :bdg-info:`Go`
 ~~~~~
 
 :guilabel:`Prysm` is a full Consensus Layer client written in Go.
 
 .. csv-table::
-  :header: Systemd Services, Home Directory, Config Files, Default TCP/UDP Port
+  :header: Systemd Services, Home Directory, Config Files, Ports
 
-  `prysm-beacon prysm-validator`, `/home/ethereum/.eth2`, `/etc/ethereum/prysm-beacon.conf /etc/ethereum/prysm-validator.conf`, `13000 12000`
+  `prysm-beacon prysm-validator`, `/home/ethereum/.eth2`, `/etc/ethereum/prysm-beacon.conf /etc/ethereum/prysm-validator.conf`, `TCP: 13000, UDP: 12000`
 
 1.- Port forwarding
 
@@ -140,15 +183,17 @@ is enabled by default.**
 
 The Prysm beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 
-Teku
+.. _teku-beacon-setup:
+
+Teku :bdg-success:`Production Ready` :bdg-info:`Java`
 ~~~~
 
 :guilabel:`Teku` is a full Consensus Layer client written in Java.
 
 .. csv-table::
-  :header: Systemd Services , Home Directory, Config File, Default TCP/UDP Port
+  :header: Systemd Services, Home Directory, Config File, Ports
 
-  `teku-beacon teku-validator`, `/home/ethereum/.teku/beacon /home/ethereum/.teku/validator`, `/etc/ethereum/teku-beacon.conf /etc/ethereum/teku-validator.conf`, `9000`
+  `teku-beacon teku-validator`, `/home/ethereum/.teku/beacon /home/ethereum/.teku/validator`, `/etc/ethereum/teku-beacon.conf /etc/ethereum/teku-validator.conf`, `TCP/UDP: 9000`
 
 1.- Port forwarding
 
@@ -164,7 +209,9 @@ Under the ethereum account, run:
 
 The Teku beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 
-Nimbus
+.. _nimbus-beacon-setup:
+
+Nimbus :bdg-success:`Production Ready` :bdg-info:`Nim`
 ~~~~~~
 
 .. warning::
@@ -180,9 +227,9 @@ Nimbus
 :guilabel:`Nimbus` is a full Consensus Layer client written in Nim.
 
 .. csv-table::
-  :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
+  :header: Systemd Service, Home Directory, Config File, Ports
 
-  `nimbus`, `/home/ethereum/.nimbus-beacon /home/ethereum/.nimbus-validator`, `/etc/ethereum/nimbus-beacon.conf /etc/ethereum/nimbus-validator.conf`, `9000`
+  `nimbus`, `/home/ethereum/.nimbus-beacon /home/ethereum/.nimbus-validator`, `/etc/ethereum/nimbus-beacon.conf /etc/ethereum/nimbus-validator.conf`, `TCP/UDP: 9000`
 
 1.- Port forwarding
 
@@ -193,13 +240,9 @@ receiving tips and set the fee recipient flag:
 
 .. prompt:: bash $
 
-  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/nimbus-validator.conf
+  sudo sed -i 's/changeme/0x1234567890abcdef1234567890abcdef12345678/' /etc/ethereum/nimbus-validator.conf
 
-  For instance:
-
-.. prompt:: bash $
-
-  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS/' /etc/ethereum/nimbus-validator.conf
+Replace ``0x1234567890abcdef1234567890abcdef12345678`` with your actual Ethereum address.
 
 3. Enable Checkpoint Sync. 
 
@@ -219,15 +262,17 @@ Wait for the command to finish.
 
 The Nimbus Beacon Chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 
-Lodestar
+.. _lodestar-beacon-setup:
+
+Lodestar :bdg-success:`Production Ready` :bdg-info:`TypeScript`
 ~~~~~~~~
 
 :guilabel:`Lodestar` is a full Consensus Layer client written in Type Script.
 
 .. csv-table::
-  :header: Systemd Services , Home Directory, Config File, Default TCP/UDP Port
+  :header: Systemd Services, Home Directory, Config File, Ports
 
-  `lodestar-beacon lodestar-validator`, `/home/ethereum/.lodestar`, `/etc/ethereum/lodestar-beacon.conf /etc/ethereum/lodestar-validator.conf`, `9000`
+  `lodestar-beacon lodestar-validator`, `/home/ethereum/.lodestar`, `/etc/ethereum/lodestar-beacon.conf /etc/ethereum/lodestar-validator.conf`, `TCP/UDP: 9000`
 
 1.- Port forwarding
 
@@ -243,15 +288,17 @@ Under the ethereum account, run:
 
 The Lodestar beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 
-Grandine
+.. _grandine-beacon-setup:
+
+Grandine :bdg-success:`Production Ready` :bdg-info:`Rust`
 ~~~~~~~~
 
 :guilabel:`Grandine` is a full Consensus Layer client written in Rust.
 
 .. csv-table::
-  :header: Systemd Services, Home Directory, Config Files, Default TCP/UDP Port
+  :header: Systemd Services, Home Directory, Config Files, Ports
 
-  `grandine-beacon grandine-validator`, `/home/ethereum/.grandine`, `/etc/ethereum/grandine-beacon.conf /etc/ethereum/grandine-validator.conf`, `9000`
+  `grandine-beacon grandine-validator`, `/home/ethereum/.grandine`, `/etc/ethereum/grandine-beacon.conf /etc/ethereum/grandine-validator.conf`, `TCP/UDP: 9000`
 
 1.- Port forwarding
 
@@ -288,15 +335,33 @@ Supported clients
 
 Ethereum on ARM supports all available Execution Layer clients.
 
-.. csv-table:: Execution Layer Supported Clients
-   :header: Client, Official Binary, Language, Home
+.. tab-set::
 
-   `Geth`, `Yes`, `Go`, geth.ethereum.org_
-   `Nethermind`, `Yes`, `.NET`, nethermind.io_
-   `Erigon`, `Yes`, `Go`, `github.com/ledgerwatch/erigon`_
-   `Hyperledger Besu`, `Yes`, `Java`, hyperledger.org_
-   `EthRex`, `Yes`, `Rust`, ethrex.io_
-   `Reth`, `Yes`, `Rust`, paradigmxyz.github.io_
+   .. tab-item:: All Clients
+
+      .. csv-table:: Execution Layer Supported Clients
+         :header: Client, Official Binary, Language, Home
+
+         `Geth`, `Yes`, `Go`, geth.ethereum.org_
+         `Nethermind`, `Yes`, `.NET`, nethermind.io_
+         `Erigon`, `Yes`, `Go`, `github.com/ledgerwatch/erigon`_
+         `Hyperledger Besu`, `Yes`, `Java`, hyperledger.org_
+         `EthRex`, `Yes`, `Rust`, ethrex.io_
+         `Reth`, `Yes`, `Rust`, paradigmxyz.github.io_
+
+   .. tab-item:: By Sync Type
+
+      **Snap Sync (Fast):**
+      
+      - Geth :bdg-success:`Production Ready` :bdg-info:`12-18h sync`
+      - Nethermind :bdg-success:`Production Ready` :bdg-info:`12-18h sync`
+      - Hyperledger Besu :bdg-success:`Production Ready` :bdg-info:`18-24h sync`
+      - EthRex :bdg-warning:`Testing` :bdg-info:`12-18h sync`
+      
+      **Execution Sync (Slower, Archive-capable):**
+      
+      - Reth :bdg-success:`Production Ready` :bdg-info:`3-5 days sync`
+      - Erigon :bdg-success:`Production Ready` :bdg-info:`4-6 days sync` :bdg-primary:`Built-in CL`
 
 
 .. _geth.ethereum.org: https://geth.ethereum.org
@@ -341,7 +406,9 @@ It comes down to **Snap Sync** vs **Execution Sync**:
   Remember that you need to run a synced Consensus Layer client before starting the Execution Layer client (unless you 
   use :guilabel:`Erigon` and you are not going to stake)
 
-Geth
+.. _geth-setup:
+
+Geth :bdg-success:`Production Ready` :bdg-info:`Go`
 ~~~~
 
 :guilabel:`Geth` is the most used EL client. It is developed by the Ethereum Foundation team
@@ -350,9 +417,9 @@ in less than 1 day on a **Raspberry Pi 5 with 16 GB RAM** and in less that 1 day
 **Radxa Rock 5B**.
 
 .. csv-table::
-  :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
+  :header: Systemd Service, Home Directory, Config File, Ports
 
-  `geth`, `/home/ethereum/.geth`, `/etc/ethereum/geth.conf`, `30303`
+  `geth`, `/home/ethereum/.geth`, `/etc/ethereum/geth.conf`, `TCP/UDP: 30303`
 
 You can start the client by running:
 
@@ -366,15 +433,17 @@ For further info of how the node is doing you can use Systemd journal:
 
   sudo journalctl -u geth -f
 
-Nethermind
+.. _nethermind-setup:
+
+Nethermind :bdg-success:`Production Ready` :bdg-info:`.NET`
 ~~~~~~~~~~
 
 :guilabel:`Nethermind` is a .NET enterprise-friendly full Execution Layer client.
 
 .. csv-table::
-  :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
+  :header: Systemd Service, Home Directory, Config File, Ports
 
-  `nethermind`, `/home/ethereum/.nethermind`, `/opt/nethermind/configs/mainnet.json`, `30303`
+  `nethermind`, `/home/ethereum/.nethermind`, `/opt/nethermind/configs/mainnet.json`, `TCP/UDP: 30303`
 
 In order to start the client run:
 
@@ -382,13 +451,15 @@ In order to start the client run:
 
   sudo systemctl start nethermind  
 
-Hyperledger Besu
+.. _besu-setup:
+
+Hyperledger Besu :bdg-success:`Production Ready` :bdg-info:`Java`
 ~~~~~~~~~~~~~~~~
 
 .. csv-table::
-  :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
+  :header: Systemd Service, Home Directory, Config File, Ports
 
-  `besu`, `/home/ethereum/.besu`, `/etc/ethereum/besu.conf`, `30303`
+  `besu`, `/home/ethereum/.besu`, `/etc/ethereum/besu.conf`, `TCP/UDP: 30303`
 
 In order to start the client run:
 
@@ -396,15 +467,17 @@ In order to start the client run:
 
   sudo systemctl start besu
 
-EthRex
+.. _ethrex-setup:
+
+EthRex :bdg-warning:`Testing` :bdg-info:`Rust`
 ~~~~~~
 
 :guilabel:`EthRex` is a lightweight, performant, and modular Ethereum execution client powering next-gen L1 and L2 solutions.
 
 .. csv-table::
-  :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
+  :header: Systemd Service, Home Directory, Config File, Ports
 
-  `ethrex`, `/home/ethereum/.ethrex`, `/etc/ethereum/ethrex.conf`, `30303`
+  `ethrex`, `/home/ethereum/.ethrex`, `/etc/ethereum/ethrex.conf`, `TCP/UDP: 30303`
 
 In order to start the client run:
 
@@ -415,15 +488,17 @@ In order to start the client run:
 .. note::
    :guilabel:`EthRex` is new in Ethereum on ARM ecosystem, and still under testing 
 
-Reth
+.. _reth-setup:
+
+Reth :bdg-success:`Production Ready` :bdg-info:`Rust`
 ~~~~
 
 :guilabel:`Reth` (Rust Ethereum) is an Ethereum execution client implementation that focuses on friendliness, modularity, and speed.
 
 .. csv-table::
-  :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
+  :header: Systemd Service, Home Directory, Config File, Ports
 
-  `reth`, `/home/ethereum/.reth`, `/etc/ethereum/reth.conf`, `30303`
+  `reth`, `/home/ethereum/.reth`, `/etc/ethereum/reth.conf`, `TCP/UDP: 30303`
 
 In order to start the client run:
 
@@ -431,33 +506,55 @@ In order to start the client run:
 
   sudo systemctl start reth
 
-**Full vs Archive Node**
+.. dropdown:: Advanced: Full vs Archive Node Configuration
+   :icon: gear
 
-By default, :guilabel:`Reth` runs as an **Archive Node**, storing all historical states. This requires significantly more disk space.
+   By default, :guilabel:`Reth` runs as an **Archive Node**, storing all historical states. This requires significantly more disk space.
 
-If you wish to run a **Full Node** (pruned state) to save disk space, you must enable the full node mode.
+   If you wish to run a **Full Node** (pruned state) to save disk space, you must enable the full node mode.
 
-To do this, edit the configuration file for your network (e.g., ``/etc/ethereum/reth.conf`` for Mainnet) and add the ``--full`` flag to the ``ARGS`` variable.
+   To do this, edit the configuration file for your network (e.g., ``/etc/ethereum/reth.conf`` for Mainnet) and add the ``--full`` flag to the ``ARGS`` variable.
 
-Example:
+   Example:
 
-.. code-block:: bash
+   .. code-block:: bash
 
-   ARGS="node ... --full"
+      ARGS="node ... --full"
 
-After saving the file, restart the service:
+   After saving the file, restart the service:
 
-.. prompt:: bash $
+   .. prompt:: bash $
 
-  sudo systemctl restart reth
+     sudo systemctl restart reth
 
-Erigon
+.. _erigon-setup:
+
+Erigon :bdg-success:`Production Ready` :bdg-info:`Go` :bdg-primary:`Built-in CL`
 ~~~~~~
 
 .. csv-table::
-  :header: Systemd Service, Home Directory, Config File, Default TCP/UDP Port
+  :header: Systemd Service, Home Directory, Config File, Ports
 
-  `erigon`, `/home/ethereum/.erigon`, `/etc/ethereum/erigon.conf`, `30303`
+  `erigon`, `/home/ethereum/.erigon`, `/etc/ethereum/erigon.conf`, `TCP/UDP: 30303`
+
+.. note::
+   **Erigon Setup Options**
+   
+   Erigon 3 includes **Caplin**, its own consensus layer. Choose your setup:
+   
+   **🎯 Simple Setup (Recommended)**
+   
+   - Use built-in Caplin consensus layer
+   - **Service:** ``erigon``
+   - **Use when:** Running a full node without external CL client
+   - **Advantages:** Single service, simpler configuration
+   
+   **🔧 Advanced Setup**
+   
+   - Use external consensus layer client
+   - **Service:** ``erigon-externalcl``
+   - **Use when:** You need compatibility with external CL clients
+   - **Advantages:** More flexibility, can use any CL client
 
 In order to start the client run:
 
@@ -518,6 +615,16 @@ of the Ethereum network by locking up 32 ETH in the validator deposit contract. 
 a way to secure the network, validate transactions, and create new blocks on the Ethereum blockchain, 
 while also rewarding participants for their contributions.
 
+Staking Workflow
+~~~~~~~~~~~~~~~~
+
+The staking process follows these steps:
+
+1. **🔑 Generate Keys** - Use ethstaker-deposit-cli to create validator keys
+2. **💰 Deposit 32 ETH** - Submit deposit via Ethereum Launchpad
+3. **📥 Import Keys** - Import keys to your validator client
+4. **▶️ Start Validator** - Enable and monitor validator service
+
 In order to stake you need to set up a Validator Client that will propose blocks and do attestations 
 according to the Consensus Layer specification (proposing a block would be the equivalent to "mine" a block 
 in the former Proof of Work Ethereum chain).
@@ -556,11 +663,14 @@ please, run:
   sudo apt-get update
   sudo apt-get install ethstaker-deposit-cli
 
-.. note::
+.. warning::
+   **Important: Tool Update**
+   
    The original ``staking-deposit-cli`` from the Ethereum Foundation has been **deprecated**. 
    The official repository now recommends using ``ethstaker-deposit-cli``, which is an 
-   actively maintained fork by the ETHStaker community. See: 
-   `ethstaker-deposit-cli <https://github.com/eth-educators/ethstaker-deposit-cli>`_
+   actively maintained fork by the ETHStaker community. 
+   
+   See: `ethstaker-deposit-cli <https://github.com/eth-educators/ethstaker-deposit-cli>`_
 
 Additionally, the Ethereum Foundation developed a web Launchpad to walk you through the staking process. 
 Here you can upload the Deposit Json file and make the 32 ETH transaction 
@@ -679,240 +789,280 @@ Congrats!, you just started your validator activation process.
 Running Validator Client
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Once the Beacon Chain is synchronized and we have our keys and deposit created, we need to start the Validator Client. These 
-are the instructions for each client, pick the one that are already running the Beacon Chain.
+Once the Beacon Chain is synchronized and we have our keys and deposit created, we need to start the Validator Client. 
+Choose the tab for the client you are using:
 
-**LIGHTHOUSE**
+.. tab-set::
 
-First, we need to import the previously generated validator keys and set the set Fee Recipient flag. Run under the ethereum account:
+   .. tab-item:: Lighthouse
 
-.. prompt:: bash $
+      Import the previously generated validator keys:
 
-  lighthouse account validator import --directory=/home/ethereum/validator_keys
+      .. prompt:: bash $
 
-Then, type your previously defined password and copy and paste your Ethereum Address for receiving tips and set the set the fee recipient flag:
+        lighthouse account validator import --directory=/home/ethereum/validator_keys
 
-.. prompt:: bash $
+      Enter your password when prompted. Then set the fee recipient address:
 
-  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/lighthouse-validator.conf
+      .. prompt:: bash $
 
-  For instance:
+        sudo sed -i 's/changeme/0x1234567890abcdef1234567890abcdef12345678/' /etc/ethereum/lighthouse-validator.conf
 
-.. prompt:: bash $
+      Replace ``0x1234567890abcdef1234567890abcdef12345678`` with your actual Ethereum address.
 
-  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS/' /etc/ethereum/lighthouse-validator.conf
+      Start the validator service:
 
-.. prompt:: bash $
+      .. prompt:: bash $
 
-  sudo systemctl start lighthouse-validator
+        sudo systemctl start lighthouse-validator
 
-The Lighthouse Validator is now started.
+      The Lighthouse Validator is now started.
 
-**PRYSM**
+   .. tab-item:: Prysm
 
-Import the validator keys. Run under the ethereum account:
+      Import the validator keys:
 
-.. prompt:: bash $
+      .. prompt:: bash $
 
-  validator accounts import --keys-dir=/home/ethereum/validator_keys
+        validator accounts import --keys-dir=/home/ethereum/validator_keys
 
-Accept the default wallet path and enter a password for your wallet. Now enter 
-the password previously defined.
+      Accept the default wallet path and enter a password for your wallet, then enter the password you defined earlier.
 
-Now, copy and paste your Ethereum Address for receiving tips and set the fee recipient flag:
+      Set the fee recipient address:
 
-.. prompt:: bash $
+      .. prompt:: bash $
 
-  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/prysm-validator.conf
+        sudo sed -i 's/changeme/0x1234567890abcdef1234567890abcdef12345678/' /etc/ethereum/prysm-validator.conf
 
-  For instance, your command should look like this::
+      Replace ``0x1234567890abcdef1234567890abcdef12345678`` with your actual Ethereum address.
 
-.. prompt:: bash $
+      Set up your password file and start the validator:
 
-  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS/' /etc/ethereum/prysm-validator.conf
+      .. prompt:: bash $
 
-Lastly, set up your password and start the client:
+        echo "$YOUR_PASSWORD" > /home/ethereum/validator_keys/prysm-password.txt
+        sudo systemctl start prysm-validator
 
-.. prompt:: bash $
+      The Prysm validator is now enabled.
 
-  echo "$YOUR_PASSWORD" > /home/ethereum/validator_keys/prysm-password.txt
-  sudo systemctl start prysm-validator
+   .. tab-item:: Nimbus
 
-The Prysm  validator is now enabled.
+      Import your validator keys:
 
-**NIMBUS**
+      .. prompt:: bash $
 
-We need to import your validator keys. Run under the ethereum account:
+        nimbus_beacon_node deposits import /home/ethereum/validator_keys --data-dir=/home/ethereum/.nimbus-validator --log-file=/home/ethereum/.nimbus-validator/nimbus.log
 
-.. prompt:: bash $
+      Enter the password you defined earlier.
 
-  nimbus_beacon_node deposits import /home/ethereum/validator_keys --data-dir=/home/ethereum/.nimbus-validator --log-file=/home/ethereum/.nimbus-validator/nimbus.log
+      Set the fee recipient address:
 
-Enter the password previously defined.
+      .. prompt:: bash $
 
-Now, copy and paste your Ethereum Address for receiving tips and set the set the fee recipient flag:
+        sudo sed -i 's/changeme/0x1234567890abcdef1234567890abcdef12345678/' /etc/ethereum/nimbus-validator.conf
 
-.. prompt:: bash $
+      Replace ``0x1234567890abcdef1234567890abcdef12345678`` with your actual Ethereum address.
 
-  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/nimbus-validator.conf
+      Start the Nimbus Validator:
 
-  For instance, your command should look like this::
+      .. prompt:: bash $
 
-.. prompt:: bash $
+        sudo systemctl start nimbus-validator
 
-  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS/' /etc/ethereum/nimbus-validator.conf
+   .. tab-item:: Teku
 
-Start the Nimbus Validator:
+      Create a password file for each validator keystore. The file must have the same name as the keystore with a ``.txt`` extension.
 
-.. prompt:: bash $
+      View your keystore files:
 
-  sudo systemctl start nimbus-validator
+      .. prompt:: bash $
 
-**TEKU**
+        ls /home/ethereum/validator_keys
 
-You need to create a file for each validator. The file will have the same name as the keystore but with 
-the .txt extension. Remember that the keystore json files are located in the ``/home/ethereum/validator_keys`` 
-directory.
+      Create password file (replace ``$KEYSTORE_NAME`` with your actual keystore filename):
 
-You can see your current keystore name(s) by running:
+      .. prompt:: bash $
 
-.. prompt:: bash $
+        echo "$YOUR_PASSWORD" > validator_keys/$KEYSTORE_NAME.txt
 
-  ls /home/ethereum/validator_keys
+      You should now have matching files like:
 
-Create a txt file with the same name of the json one and write the filestore password (replace 
-$KEYSTORE_NAME for your file name. $PASSWORD is the one set in the previous section) "Validator setup and 32 ETH deposit":
+      .. code-block:: text
 
-.. prompt:: bash $
+        keystore-m_12381_3600_0_0_0-1661710189.json
+        keystore-m_12381_3600_0_0_0-1661710189.txt
 
-  echo "$YOUR_PASSWORD" > validator_keys/$KEYSTORE_NAME.txt
+      Set the fee recipient address:
 
-now, you should see something like this in your validator_keys directory (for each keystore):
+      .. prompt:: bash $
 
-.. prompt:: bash $
+        sudo sed -i 's/changeme/0x1234567890abcdef1234567890abcdef12345678/' /etc/ethereum/teku-validator.conf
 
-  keystore-m_12381_3600_0_0_0-1661710189.json
-  keystore-m_12381_3600_0_0_0-1661710189.txt
+      Replace ``0x1234567890abcdef1234567890abcdef12345678`` with your actual Ethereum address.
 
-Copy and paste your Ethereum Address for receiving tips and set the set the fee recipient flag:
+      Start the Teku Validator:
 
-.. prompt:: bash $
+      .. prompt:: bash $
 
-  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/teku-validator.conf
+        sudo systemctl start teku-validator
 
-  For instance, your command should look like this::
+      The Teku Validator is now enabled.
 
-.. prompt:: bash $
+   .. tab-item:: Lodestar
 
-  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS/' /etc/ethereum/teku-validator.conf
+      Import the validator keys:
 
-Start the Teku Validator:
+      .. prompt:: bash $
 
-.. prompt:: bash $
+        lodestar validator import --importKeystores /home/ethereum/validator_keys --dataDir /home/ethereum/.lodestar
 
-  sudo systemctl start teku-validator
+      Enter the password you defined earlier.
 
-The Teku Validator is now enabled.
+      Set the fee recipient address:
 
-**LODESTAR**
+      .. prompt:: bash $
 
-We need to import the validator keys. Run under the ethereum account:
+        sudo sed -i 's/changeme/0x1234567890abcdef1234567890abcdef12345678/' /etc/ethereum/lodestar-validator.conf
 
-.. prompt:: bash $
+      Replace ``0x1234567890abcdef1234567890abcdef12345678`` with your actual Ethereum address.
 
-  lodestar validator import --importKeystores /home/ethereum/validator_keys --dataDir /home/ethereum/.lodestar
+      Start the Lodestar Validator service:
 
-Enter the password previously defined.
+      .. prompt:: bash $
 
-Now, copy and paste your Ethereum Address for receiving tips and set the set the fee recipient flag:
+        sudo systemctl start lodestar-validator
 
-.. prompt:: bash $
+   .. tab-item:: Grandine
 
-  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/lodestar-validator.conf
+      .. warning::
 
-  For instance, your command should look like this::
+        Make sure you are NOT running the **grandine-beacon** service before starting **grandine-validator**
 
-.. prompt:: bash $
+      Set the fee recipient address:
 
-  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS/' /etc/ethereum/lodestar-validator.conf
+      .. prompt:: bash $
 
-Start the Lodestar Validator service:
+        sudo sed -i 's/changeme/0x1234567890abcdef1234567890abcdef12345678/' /etc/ethereum/grandine-validator.conf
 
-.. prompt:: bash $
+      Replace ``0x1234567890abcdef1234567890abcdef12345678`` with your actual Ethereum address.
 
-  sudo systemctl start lodestar-validator
+      Set up your password file and start the validator:
 
+      .. prompt:: bash $
 
-**GRANDINE**
+        echo "$YOUR_PASSWORD" > /home/ethereum/validator_keys/grandine-password.txt
+        sudo systemctl start grandine-validator
 
-.. warning::
+      The Grandine validator is now enabled. Wait for the Beacon Chain to sync and check the logs for further info.
 
-  Make sure you are NOT running the **grandine-beacon** service before starting **grandine-validator** 
+   .. tab-item:: Vouch
 
-First, copy and paste your Ethereum Address for receiving tips and set the fee recipient flag:
+      :guilabel:`Vouch` is a multi-node validator client written in Go.
 
-.. prompt:: bash $
+      .. csv-table::
+        :header: Systemd Services, Home Directory, Config Files, Ports
 
-  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS' /etc/ethereum/grandine-validator.conf
+        `vouch`, `/home/ethereum/.vouch`, `/etc/ethereum/vouch.yml`, `None`
 
-  For instance, your command should look like this::
+      Edit the configuration file to add your Beacon Node endpoint(s):
 
-.. prompt:: bash $
+      .. prompt:: bash $
 
-  sudo sed -i 's/changeme/$YOUR_ETH_ADDRESS/' /etc/ethereum/grandine-validator.conf
+        sudo nano /etc/ethereum/vouch.yml
 
-Lastly, set up your password and start the client:
+      Add your beacon node endpoints in the ``beacon-node-address`` list.
 
-.. prompt:: bash $
+      Import the validator keys:
 
-  echo "$YOUR_PASSWORD" > /home/ethereum/validator_keys/grandine-password.txt
-  sudo systemctl start grandine-validator
+      .. prompt:: bash $
 
-The **Grandine validator** is now enabled. Wait for the **Beacon Chain** to sync and check the logs for further info.
+        /usr/local/bin/vouch account import --base-dir=/home/ethereum/.vouch --keys-dir=/home/ethereum/validator_keys
 
-**VOUCH**
+      Enter the password you defined earlier.
 
-:guilabel:`Vouch` is a multi-node validator client written in Go.
+      Set the fee recipient in the config file:
 
-.. csv-table::
-  :header: Systemd Services, Home Directory, Config Files, Default TCP/UDP Port
+      .. prompt:: bash $
 
-  `vouch`, `/home/ethereum/.vouch`, `/etc/ethereum/vouch.yml`, `None`
+        sudo nano /etc/ethereum/vouch.yml
 
-First, you need to edit the configuration file to add your Beacon Node(s) endpoint(s).
+      Set the ``fee-recipient`` field:
 
-.. prompt:: bash $
+      .. code-block:: yaml
 
-  sudo nano /etc/ethereum/vouch.yml
+        fee-recipient: "0x1234567890abcdef1234567890abcdef12345678"
 
-Add your beacon node endpoints in the `beacon-node-address` list.
+      Replace with your actual Ethereum address.
 
-We need to import the validator keys. Run under the ethereum account:
+      Start the Vouch service:
 
-.. prompt:: bash $
+      .. prompt:: bash $
 
-  /usr/local/bin/vouch account import --base-dir=/home/ethereum/.vouch --keys-dir=/home/ethereum/validator_keys
+        sudo systemctl start vouch
 
-Enter the password previously defined.
+      The Vouch validator is now enabled. Check the logs for further info.
 
-Now, copy and paste your Ethereum Address for receiving tips and set the fee recipient flag.
-Edit the config file:
+Troubleshooting
+---------------
 
-.. prompt:: bash $
+.. dropdown:: My beacon chain won't sync
+   :icon: question
 
-  sudo nano /etc/ethereum/vouch.yml
+   **Possible causes:**
+   
+   - Checkpoint sync endpoint is down
+   - Firewall blocking ports
+   - Insufficient peers
+   
+   **Solutions:**
+   
+   - Check logs: ``sudo journalctl -u [service-name] -f``
+   - Verify port forwarding is configured correctly
+   - Try alternative checkpoint sync endpoint
+   - Ensure system time is synchronized
 
-And set the `fee-recipient` field:
+.. dropdown:: Execution client stuck at "Waiting for beacon node"
+   :icon: question
 
-.. code-block:: yaml
+   **Cause:** Beacon chain is not synced yet
+   
+   **Solution:** Wait for beacon chain to complete checkpoint sync (usually 5-10 minutes). Check beacon chain logs to verify it's syncing.
 
-  fee-recipient: "0xYOUR_ETH_ADDRESS"
+.. dropdown:: Validator not attesting
+   :icon: question
 
-Start the Vouch service:
+   **Possible causes:**
+   
+   - Validator keys not imported correctly
+   - Fee recipient not set
+   - Beacon chain not connected to execution client
+   
+   **Solutions:**
+   
+   - Verify keys are imported: check validator client logs
+   - Confirm fee recipient is set in config file
+   - Ensure both beacon chain and execution client are running and synced
+   - Check JWT token is correctly configured
 
-.. prompt:: bash $
+.. dropdown:: High memory usage
+   :icon: question
 
-  sudo systemctl start vouch
+   **Cause:** Some clients require significant RAM, especially during initial sync
+   
+   **Solutions:**
+   
+   - Ensure you meet minimum hardware requirements (16GB RAM recommended)
+   - Consider using a lighter client combination
+   - Monitor with: ``htop`` or ``free -h``
+   - Restart services if memory leak suspected
 
-The **Vouch validator** is now enabled. Check the logs for further info.
+.. dropdown:: Disk space running out
+   :icon: question
+
+   **Solutions:**
+   
+   - Check current usage: ``df -h``
+   - For Reth: enable full node mode (pruned) instead of archive
+   - Ensure you have at least 2TB SSD (4TB recommended)
+   - Monitor growth rate and plan upgrades accordingly
 

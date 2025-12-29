@@ -210,7 +210,7 @@ The system will boot up quickly, but the **initial setup script** will run in th
 
 1.  **Internet Check**: Verifies connectivity (mandatory).
 2.  **Disk Preparation**: Automatically formats the NVMe drive to ext4 (unless a previous installation is detected).
-3.  **System Configuration**: 
+3.  **System Configuration**:
     *   Creates the ``ethereum`` user.
     *   Generates a unique hostname (e.g., ``ethereumonarm-rpi5-a1b2c3d4``).
     *   Optimizes kernel parameters (sysctl) for Ethereum performance.

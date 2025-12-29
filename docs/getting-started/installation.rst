@@ -211,12 +211,15 @@ The system will boot up quickly, but the **initial setup script** will run in th
 1.  **Internet Check**: Verifies connectivity (mandatory).
 2.  **Disk Preparation**: Automatically formats the NVMe drive to ext4 (unless a previous installation is detected).
 3.  **System Configuration**:
+
     *   Creates the ``ethereum`` user.
     *   Generates a unique hostname (e.g., ``ethereumonarm-rpi5-a1b2c3d4``).
     *   Optimizes kernel parameters (sysctl) for Ethereum performance.
     *   Configures swap space (2x RAM, max 64GB).
+
 4.  **Software Installation**: Installs Execution and Consensus clients, monitoring tools, and utilities.
 5.  **Security Hardening**: Locks the root account and removes default users.
+
 
 .. warning::
    **Data Loss Warning**: If the script does not detect an existing Ethereum installation on the NVMe drive, **it will format the disk**. Ensure you have backed up any data on the NVMe drive before the first boot.

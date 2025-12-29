@@ -1,6 +1,6 @@
 # Ethereum on ARM
 
-[![Repository](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/diglos/ethereumonarm)
+[![Repository](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/EOA-Blockchain-Labs/ethereumonarm)
 [![Release](https://img.shields.io/github/v/release/EOA-Blockchain-Labs/ethereumonarm)](https://github.com/EOA-Blockchain-Labs/ethereumonarm/releases)
 [![Docs](https://img.shields.io/badge/Docs-Read%20the%20Docs-3a7bd5?logo=readthedocs)](https://ethereum-on-arm-documentation.readthedocs.io)
 [![Discord](https://img.shields.io/badge/Discord-Join%20Server-7289DA?logo=discord&logoColor=white)](https://discord.gg/ve2Z8fxz5N)
@@ -25,10 +25,11 @@ the Ethereum network, either by running a full node or by staking from home.
 - **Multiple client support**:
   - **Execution layer**: Geth, Erigon, Besu, Nethermind, Reth and EthRex.
   - **Consensus layer**: Prysm, Nimbus, Teku, Lodestar, Lighthouse and Grandine.
-- **L2 support**: Compatible with Optimism, Arbitrum, Starknet and Fuel.
+- **L2 support**: Compatible with Optimism, Arbitrum, Starknet, Fuel and EthRex L2.
 - **Distributed Validator Technology (DVT)**: We support research and
   implementation for better decentralization like SSV and Obol.
 - **Client diversity**: We actively promote the use of minority clients.
+- **Testnet ready**: Full support for Sepolia, Hoodi, and Ephemery testnets.
 - **Advanced monitoring**: Ready-to-use dashboards with Prometheus and Grafana
   for detailed tracking of your node's performance.
 - **Optimized operating system**: Custom configurations on top of Armbian to

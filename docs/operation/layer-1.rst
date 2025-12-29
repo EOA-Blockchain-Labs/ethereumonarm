@@ -19,6 +19,7 @@ Hardware Requirements
 ~~~~~~~~~~~~~~~~~~~~~
 
 .. csv-table::
+   :align: left
    :header: Component, Minimum, Recommended
 
    RAM, 8 GB, 16 GB
@@ -131,6 +132,7 @@ Lighthouse :bdg-success:`Production Ready` :bdg-info:`Rust`
 :guilabel:`Lighthouse` is a full CL client written in Rust.
 
 .. csv-table::
+   :align: left
   :header: Systemd Services, Home Directory, Config Files, Ports
 
   `lighthouse-beacon lighthouse-validator`, `/home/ethereum/.lighthouse`, `/etc/ethereum/lighthouse-beacon.conf /etc/ethereum/lighthouse-validator.conf`, `TCP/UDP: 9000`
@@ -161,6 +163,7 @@ Prysm :bdg-success:`Production Ready` :bdg-info:`Go`
 :guilabel:`Prysm` is a full Consensus Layer client written in Go.
 
 .. csv-table::
+   :align: left
   :header: Systemd Services, Home Directory, Config Files, Ports
 
   `prysm-beacon prysm-validator`, `/home/ethereum/.eth2`, `/etc/ethereum/prysm-beacon.conf /etc/ethereum/prysm-validator.conf`, `TCP: 13000, UDP: 12000`
@@ -191,6 +194,7 @@ Teku :bdg-success:`Production Ready` :bdg-info:`Java`
 :guilabel:`Teku` is a full Consensus Layer client written in Java.
 
 .. csv-table::
+   :align: left
   :header: Systemd Services, Home Directory, Config File, Ports
 
   `teku-beacon teku-validator`, `/home/ethereum/.teku/beacon /home/ethereum/.teku/validator`, `/etc/ethereum/teku-beacon.conf /etc/ethereum/teku-validator.conf`, `TCP/UDP: 9000`
@@ -227,6 +231,7 @@ Nimbus :bdg-success:`Production Ready` :bdg-info:`Nim`
 :guilabel:`Nimbus` is a full Consensus Layer client written in Nim.
 
 .. csv-table::
+   :align: left
   :header: Systemd Service, Home Directory, Config File, Ports
 
   `nimbus`, `/home/ethereum/.nimbus-beacon /home/ethereum/.nimbus-validator`, `/etc/ethereum/nimbus-beacon.conf /etc/ethereum/nimbus-validator.conf`, `TCP/UDP: 9000`
@@ -270,6 +275,7 @@ Lodestar :bdg-success:`Production Ready` :bdg-info:`TypeScript`
 :guilabel:`Lodestar` is a full Consensus Layer client written in Type Script.
 
 .. csv-table::
+   :align: left
   :header: Systemd Services, Home Directory, Config File, Ports
 
   `lodestar-beacon lodestar-validator`, `/home/ethereum/.lodestar`, `/etc/ethereum/lodestar-beacon.conf /etc/ethereum/lodestar-validator.conf`, `TCP/UDP: 9000`
@@ -296,6 +302,7 @@ Grandine :bdg-success:`Production Ready` :bdg-info:`Rust`
 :guilabel:`Grandine` is a full Consensus Layer client written in Rust.
 
 .. csv-table::
+   :align: left
   :header: Systemd Services, Home Directory, Config Files, Ports
 
   `grandine-beacon grandine-validator`, `/home/ethereum/.grandine`, `/etc/ethereum/grandine-beacon.conf /etc/ethereum/grandine-validator.conf`, `TCP/UDP: 9000`
@@ -377,6 +384,7 @@ Syncing Strategies and Times
 One of the most frequently asked questions is: **"How long does it take to sync?"**. The answer depends heavily on the client you choose, specifically because different clients use different syncing technologies.
 
 .. csv-table:: Execution Layer (L1) Clients — Sync Types & Times (approx. on Rock 5B / RPi5)
+   :align: left
    :header: Client, Sync Type, Approx. Sync Time, Archive Node?
    :widths: 18, 20, 20, 15
 
@@ -417,6 +425,7 @@ in less than 1 day on a **Raspberry Pi 5 with 16 GB RAM** and in less that 1 day
 **Radxa Rock 5B**.
 
 .. csv-table::
+   :align: left
   :header: Systemd Service, Home Directory, Config File, Ports
 
   `geth`, `/home/ethereum/.geth`, `/etc/ethereum/geth.conf`, `TCP/UDP: 30303`
@@ -441,6 +450,7 @@ Nethermind :bdg-success:`Production Ready` :bdg-info:`.NET`
 :guilabel:`Nethermind` is a .NET enterprise-friendly full Execution Layer client.
 
 .. csv-table::
+   :align: left
   :header: Systemd Service, Home Directory, Config File, Ports
 
   `nethermind`, `/home/ethereum/.nethermind`, `/opt/nethermind/configs/mainnet.json`, `TCP/UDP: 30303`
@@ -457,6 +467,7 @@ Hyperledger Besu :bdg-success:`Production Ready` :bdg-info:`Java`
 ~~~~~~~~~~~~~~~~
 
 .. csv-table::
+   :align: left
   :header: Systemd Service, Home Directory, Config File, Ports
 
   `besu`, `/home/ethereum/.besu`, `/etc/ethereum/besu.conf`, `TCP/UDP: 30303`
@@ -475,6 +486,7 @@ EthRex :bdg-warning:`Testing` :bdg-info:`Rust`
 :guilabel:`EthRex` is a lightweight, performant, and modular Ethereum execution client powering next-gen L1 and L2 solutions.
 
 .. csv-table::
+   :align: left
   :header: Systemd Service, Home Directory, Config File, Ports
 
   `ethrex`, `/home/ethereum/.ethrex`, `/etc/ethereum/ethrex.conf`, `TCP/UDP: 30303`
@@ -496,6 +508,7 @@ Reth :bdg-success:`Production Ready` :bdg-info:`Rust`
 :guilabel:`Reth` (Rust Ethereum) is an Ethereum execution client implementation that focuses on friendliness, modularity, and speed.
 
 .. csv-table::
+   :align: left
   :header: Systemd Service, Home Directory, Config File, Ports
 
   `reth`, `/home/ethereum/.reth`, `/etc/ethereum/reth.conf`, `TCP/UDP: 30303`
@@ -533,6 +546,7 @@ Erigon :bdg-success:`Production Ready` :bdg-info:`Go` :bdg-primary:`Built-in CL`
 ~~~~~~
 
 .. csv-table::
+   :align: left
   :header: Systemd Service, Home Directory, Config File, Ports
 
   `erigon`, `/home/ethereum/.erigon`, `/etc/ethereum/erigon.conf`, `TCP/UDP: 30303`

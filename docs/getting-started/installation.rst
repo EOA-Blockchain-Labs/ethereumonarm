@@ -10,7 +10,7 @@ Ethereum on ARM provides official support for the following Single Board Compute
    * - Board
      - Minimum RAM
      - Notes
-   * - **Naopi NanoPC T6**
+   * - **NanoPC T6**
      - 16 GB
      - Compact and powerful
    * - **Rock 5B**

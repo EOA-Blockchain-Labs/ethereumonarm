@@ -4,3 +4,4 @@ sphinx-prompt>=1.5.0
 sphinx-sitemap
 sphinx==7.4.7
 docutils<0.21
+sphinx-autobuild

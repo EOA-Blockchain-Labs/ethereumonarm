@@ -13,11 +13,11 @@ means run nodes.
 Quick Navigation
 ----------------
 
-- 🚀 **Fuel Network** - Modular execution layer with optimistic rollups (see fuel-network_)
-- 🔵 **Arbitrum** - Optimistic rollup with high throughput (see arbitrum_)
-- 🔴 **Optimism** - Optimistic rollup scaling solution (see optimism_)
-- ⭐ **Starknet** - ZK-rollup with validity proofs (see starknet_)
-- 🦀 **EthRex L2** - Minimalist Rust-based L2 (see ethrex-l2_)
+- **Fuel Network** - Modular execution layer with optimistic rollups (see fuel-network_)
+- **Arbitrum** - Optimistic rollup with high throughput (see arbitrum_)
+- **Optimism** - Optimistic rollup scaling solution (see optimism_)
+- **Starknet** - ZK-rollup with validity proofs (see starknet_)
+- **EthRex L2** - Minimalist Rust-based L2 (see ethrex-l2_)
 
 Hardware Requirements
 ~~~~~~~~~~~~~~~~~~~~~

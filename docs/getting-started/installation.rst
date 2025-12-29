@@ -1,6 +1,39 @@
 Download and Install
 ====================
 
+.. grid:: 1 2 2 3
+   :gutter: 2
+
+   .. grid-item-card:: 1️⃣ Download
+      :link: #image-downloads
+      :link-type: ref
+      :text-align: center
+      :class-card: sd-border-primary
+      
+      📥
+      
+      Get the latest image for your board
+
+   .. grid-item-card:: 2️⃣ Flash
+      :link: #flashing-the-image
+      :link-type: ref
+      :text-align: center
+      :class-card: sd-border-primary
+      
+      💾
+      
+      Write image to microSD card
+
+   .. grid-item-card:: 3️⃣ Boot
+      :link: #first-boot
+      :link-type: ref
+      :text-align: center
+      :class-card: sd-border-primary
+      
+      🚀
+      
+      Power on and wait 10-15 min
+
 Ethereum on ARM provides official support for the following Single Board Computers (SBCs):
 
 .. list-table:: Supported Hardware
@@ -73,27 +106,42 @@ Raspberry Pi 5
 Image Downloads
 ---------------
 
-Download the image for your board. You can verify the integrity of the file using the SHA256 checksum.
+Download the image for your board. Each card includes the download link and SHA256 checksum for verification.
 
-**NanoPC T6**
+.. grid:: 2
+   :gutter: 3
 
-* **Download**: |nanopct6_file|_
-* **SHA256**: |nanopct6_sha256|
+   .. grid-item-card:: 🖥️ NanoPC T6
+      :class-header: sd-bg-primary sd-text-white
+      
+      :bdg-success:`16GB RAM` :bdg-info:`Compact`
+      
+      **Download**: |nanopct6_file|_  
+      **SHA256**: |nanopct6_sha256|
 
-**Rock 5B**
+   .. grid-item-card:: 🖥️ Rock 5B
+      :class-header: sd-bg-primary sd-text-white
+      
+      :bdg-success:`16GB RAM` :bdg-info:`Excellent Performance`
+      
+      **Download**: |rock5b_file|_  
+      **SHA256**: |rock5b_sha256|
 
-* **Download**: |rock5b_file|_
-* **SHA256**: |rock5b_sha256|
+   .. grid-item-card:: 🖥️ Orange Pi 5 Plus
+      :class-header: sd-bg-primary sd-text-white
+      
+      :bdg-success:`16GB` :bdg-warning:`32GB for Supernode`
+      
+      **Download**: |orangepi5-plus_file|_  
+      **SHA256**: |orangepi5-plus_sha256|
 
-**Orange Pi 5 Plus**
-
-* **Download**: |orangepi5-plus_file|_
-* **SHA256**: |orangepi5-plus_sha256|
-
-**Raspberry Pi 5**
-
-* **Download**: |rpi5_file|_
-* **SHA256**: |rpi5_sha256|
+   .. grid-item-card:: 🖥️ Raspberry Pi 5
+      :class-header: sd-bg-primary sd-text-white
+      
+      :bdg-success:`16GB RAM` :bdg-info:`Widely Available`
+      
+      **Download**: |rpi5_file|_  
+      **SHA256**: |rpi5_sha256|
 
 To verify the checksum in your terminal:
 
@@ -101,37 +149,55 @@ To verify the checksum in your terminal:
 
    sha256sum <image_file_name.zip>
 
+
 Installation Guide
 ==================
 
 Flashing the Image
 ------------------
 
-1. **Insert the microSD card** into your computer.
-2. **Flash the image**. We recommend using **Balena Etcher** (Windows/Mac/Linux) for an easy GUI experience.
-   
-   * `Download Balena Etcher <https://www.balena.io/etcher/>`_
+.. tab-set::
 
-   Alternatively, if you prefer the command line (Linux/Mac):
+   .. tab-item:: 🖱️ GUI Method (Recommended)
+      
+      **Using Balena Etcher** (Windows/Mac/Linux)
+      
+      1. **Insert the microSD card** into your computer
+      2. **Download** `Balena Etcher <https://www.balena.io/etcher/>`_
+      3. **Open Balena Etcher** and select:
+         
+         * Your downloaded image file
+         * Your microSD card
+         * Click "Flash!"
 
-   identify your microSD device name (e.g., ``/dev/mmcblk0`` or ``/dev/sdX``).
+      .. tip::
+         Balena Etcher automatically verifies the flash, so you don't need to manually check.
 
-   .. code-block:: bash
+   .. tab-item:: 💻 Command Line
+      
+      **For Linux/Mac Users**
+      
+      1. **Insert the microSD card** into your computer
+      
+      2. **Identify your microSD device** (e.g., ``/dev/mmcblk0`` or ``/dev/sdX``):
+      
+         .. code-block:: bash
+         
+            # Linux
+            sudo fdisk -l
+            # Mac
+            diskutil list
+      
+      3. **Unzip and flash** (example for NanoPC T6):
+      
+         .. code-block:: bash
+         
+            unzip ethonarm_nanopct6_|release|.img.zip
+            sudo dd bs=1M if=ethonarm_nanopct6_|release|.img of=/dev/mmcblk0 conv=fdatasync status=progress
+      
+      .. warning::
+         The ``dd`` command is destructive. Double-check your device name to avoid data loss.
 
-      # Linux
-      sudo fdisk -l
-      # Mac
-      diskutil list
-
-   .. warning::
-      The ``dd`` command is destructive. Double-check your device name to avoid data loss.
-
-   Unzip and flash (example for NanoPC T6):
-
-   .. code-block:: bash
-
-      unzip ethonarm_nanopct6_|release|.img.zip
-      sudo dd bs=1M if=ethonarm_nanopct6_|release|.img of=/dev/mmcblk0 conv=fdatasync status=progress
 
 First Boot
 ----------

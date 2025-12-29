@@ -10,8 +10,63 @@ Supported Testnets
 
 The currently supported testnets across most clients are:
 
-*   **Sepolia**: The recommended default testnet for application development.
-*   **Hoodi**: The recommended testnet for staking and validator setups.
+Sepolia
+~~~~~~~
+
+Sepolia is the recommended default testnet for application development. The Sepolia network uses a permissioned validator set controlled by client & testing teams.
+
+**Why use Sepolia?**
+*   Stable environment for contract and application developers.
+*   Permissioned validator set ensures finality and reliability.
+
+**Resources**
+*   `Website <https://sepolia.otterscan.io/>`_
+*   `GitHub <https://github.com/eth-clients/sepolia>`_
+*   `Otterscan <https://sepolia.otterscan.io/>`_
+*   `Etherscan <https://sepolia.etherscan.io/>`_
+*   `Blockscout <https://eth-sepolia.blockscout.com/>`_
+
+**Faucets**
+*   `Alchemy Sepolia Faucet <https://sepoliafaucet.com/>`_
+*   `Infura Sepolia Faucet <https://www.infura.io/faucet/sepolia>`_
+*   `QuickNode Sepolia Faucet <https://faucet.quicknode.com/ethereum/sepolia>`_
+*   `Google Cloud Web3 Sepolia Faucet <https://cloud.google.com/application/web3/faucet/ethereum/sepolia>`_
+*   `PoW Faucet <https://sepolia-faucet.pk910.de/>`_
+
+Hoodi
+~~~~~
+
+Hoodi is a testnet for testing validating and staking. The Hoodi network is open for users wanting to run a testnet validator. Stakers wanting to test protocol upgrades before they are deployed to mainnet should therefore use Hoodi.
+
+**Why use Hoodi?**
+*   **Open validator set**: Stakers can test running validators and network upgrades.
+*   **Large state**: Useful for testing complex smart contract interactions.
+*   **Realistic environment**: Mimics mainnet conditions, taking longer to sync and requiring more storage.
+
+**Resources**
+*   `Website <https://hoodi.ethpandaops.io/>`_
+*   `GitHub <https://github.com/eth-clients/hoodi>`_
+*   `Explorer <https://hoodi.beaconcha.in/>`_
+*   `Checkpoint Sync <https://checkpoint-sync.hoodi.ethpandaops.io/>`_
+*   `Otterscan <https://hoodi.otterscan.io/>`_
+*   `Etherscan <https://hoodi.etherscan.io/>`_
+
+**Faucets**
+*   `Hoodi Faucet <https://faucet.hoodi.ethpandaops.io/>`_
+*   `PoW Faucet <https://hoodi-faucet.pk910.de/>`_
+
+Ephemery
+~~~~~~~~
+
+Ephemery is a unique kind of testnet that fully resets every month. The execution and consensus state reverts back to genesis every 28 days, which means anything that happens on the testnet is ephemeral.
+
+**Why use Ephemery?**
+*   **Always fresh state**: Ideal for short term testing, fast node bootstrap.
+*   **Low resource requirements**: <5GB storage on average, quickest sync.
+*   **Training ground**: Perfect for 'hello world' applications and practicing validator setups without long-term commitment.
+
+.. note::
+   Ethereum on ARM currenty does not provide pre-packaged services for Ephemery, but you can configure it manually using the generic client binaries.
 
 Service Naming Convention
 -------------------------

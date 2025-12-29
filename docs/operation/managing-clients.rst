@@ -274,79 +274,167 @@ The APT repository is browsable so you can download a package manually:
 Available Packages
 ~~~~~~~~~~~~~~~~~~
 
-These are the available packages. Click on any package name to view its detailed documentation.
+Browse all available packages organized by category. Click any package to view its detailed documentation.
 
-**L1 Clients**
+.. tab-set::
 
-*Execution Layer*
+   .. tab-item:: 🔗 L1 Clients
+      
+      .. grid:: 2
+         :gutter: 3
+      
+         .. grid-item-card:: ⚡ Execution Layer
+            :class-header: sd-bg-primary sd-text-white
+            
+            .. grid:: 2
+               :gutter: 1
+            
+               .. grid-item::
+                  :columns: 6
+                  
+                  :doc:`geth </packages/l1/geth>`
+               
+               .. grid-item::
+                  :columns: 6
+                  
+                  :doc:`nethermind </packages/l1/nethermind>`
+               
+               .. grid-item::
+                  :columns: 6
+                  
+                  :doc:`besu </packages/l1/besu>`
+               
+               .. grid-item::
+                  :columns: 6
+                  
+                  :doc:`reth </packages/l1/reth>`
+               
+               .. grid-item::
+                  :columns: 6
+                  
+                  :doc:`erigon </packages/l1/erigon>`
+               
+               .. grid-item::
+                  :columns: 6
+                  
+                  :doc:`ethrex </packages/l1/ethrex>`
+               
+               .. grid-item::
+                  :columns: 6
+                  
+                  :doc:`nimbus-ec </packages/l1/nimbus-execution>`
+         
+         .. grid-item-card:: 🔮 Consensus Layer
+            :class-header: sd-bg-success sd-text-white
+            
+            .. grid:: 2
+               :gutter: 1
+            
+               .. grid-item::
+                  :columns: 6
+                  
+                  :doc:`lighthouse </packages/l1/lighthouse>`
+               
+               .. grid-item::
+                  :columns: 6
+                  
+                  :doc:`prysm </packages/l1/prysm>`
+               
+               .. grid-item::
+                  :columns: 6
+                  
+                  :doc:`nimbus </packages/l1/nimbus>`
+               
+               .. grid-item::
+                  :columns: 6
+                  
+                  :doc:`teku </packages/l1/teku>`
+               
+               .. grid-item::
+                  :columns: 6
+                  
+                  :doc:`lodestar </packages/l1/lodestar>`
+               
+               .. grid-item::
+                  :columns: 6
+                  
+                  :doc:`grandine </packages/l1/grandine>`
 
-* :doc:`besu </packages/l1/besu>`
-* :doc:`erigon </packages/l1/erigon>`
-* :doc:`ethrex </packages/l1/ethrex>`
-* :doc:`geth </packages/l1/geth>`
-* :doc:`nethermind </packages/l1/nethermind>`
-* :doc:`nimbus-ec </packages/l1/nimbus-execution>`
-* :doc:`reth </packages/l1/reth>`
+   .. tab-item:: 🌐 L2 Clients
+      
+      .. grid:: 2 2 3 4
+         :gutter: 2
+      
+         .. grid-item-card:: Optimism
+            :class-header: sd-bg-danger sd-text-white
+            
+            * :doc:`op-geth </packages/l2/op-geth>`
+            * :doc:`op-node </packages/l2/op-node>`
+            * :doc:`op-reth </packages/l2/op-reth>`
+         
+         .. grid-item-card:: Arbitrum
+            :class-header: sd-bg-info sd-text-white
+            
+            * :doc:`nitro </packages/l2/nitro>`
+         
+         .. grid-item-card:: Starknet
+            :class-header: sd-bg-warning sd-text-white
+            
+            * :doc:`juno </packages/l2/juno>`
+            * :doc:`madara </packages/l2/madara>`
+            * :doc:`pathfinder </packages/l2/pathfinder>`
+         
+         .. grid-item-card:: Fuel
+            :class-header: sd-bg-secondary sd-text-white
+            
+            * :doc:`fuel-network </packages/l2/fuel>`
 
-*Consensus Layer*
+   .. tab-item:: 🛠️ Infrastructure
+      
+      .. grid:: 2 2 2 3
+         :gutter: 2
+      
+         .. grid-item-card:: 🎯 DVT
+            :class-header: sd-bg-primary sd-text-white
+            
+            * :doc:`dvt-obol </packages/dvt/dvt-obol>`
+            * :doc:`dvt-ssv </packages/dvt/ssv-node>`
+         
+         .. grid-item-card:: ⚡ MEV & Boost
+            :class-header: sd-bg-success sd-text-white
+            
+            * :doc:`commit-boost </packages/infra/commit-boost>`
+            * :doc:`mev-boost </packages/infra/mev-boost>`
+         
+         .. grid-item-card:: 🔐 Staking
+            :class-header: sd-bg-warning sd-text-white
+            
+            * :doc:`ethstaker-deposit-cli </packages/tools/ethstaker-deposit-cli>`
+            * :doc:`stakewise-operator </packages/tools/stakewise-operator>`
+            * :doc:`vero </packages/l1/vero>`
+            * :doc:`vouch </packages/l1/vouch>`
+         
+         .. grid-item-card:: 📊 Monitoring
+            :class-header: sd-bg-info sd-text-white
+            
+            * :doc:`ethereum-metrics-exporter </packages/infra/ethereum-metrics-exporter>`
+            * :doc:`ethereum-validator-metrics-exporter </packages/infra/ethereum-validator-metrics-exporter>`
 
-* :doc:`grandine </packages/l1/grandine>`
-* :doc:`lighthouse </packages/l1/lighthouse>`
-* :doc:`lodestar </packages/l1/lodestar>`
-* :doc:`nimbus </packages/l1/nimbus>`
-* :doc:`prysm </packages/l1/prysm>`
-* :doc:`teku </packages/l1/teku>`
+   .. tab-item:: 🌍 Web3
+      
+      .. grid:: 2
+         :gutter: 2
+      
+         .. grid-item-card:: IPFS
+            :class-header: sd-bg-primary sd-text-white
+            
+            * :doc:`kubo </packages/web3/kubo>`
+         
+         .. grid-item-card:: Swarm
+            :class-header: sd-bg-success sd-text-white
+            
+            * :doc:`bee </packages/web3/bee>`
 
-**L2 Clients**
-
-*Arbitrum*
-
-* :doc:`arbitrum-nitro </packages/l2/nitro>`
-
-*Fuel Network*
-
-* :doc:`fuel-network </packages/l2/fuel>`
-
-*Optimism*
-
-* :doc:`optimism-op-geth </packages/l2/op-geth>`
-* :doc:`optimism-op-node </packages/l2/op-node>`
-* :doc:`optimism-op-reth </packages/l2/op-reth>`
-
-*Starknet*
-
-* :doc:`starknet-juno </packages/l2/juno>`
-* :doc:`starknet-madara </packages/l2/madara>`
-* :doc:`starknet-pathfinder </packages/l2/pathfinder>`
-
-**Infra**
-
-*DVT (Distributed Validator Technology)*
-
-* :doc:`dvt-obol </packages/dvt/dvt-obol>`
-* :doc:`dvt-ssv </packages/dvt/ssv-node>`
-
-*MEV & Block Building*
-
-* :doc:`commit-boost </packages/infra/commit-boost>`
-* :doc:`mev-boost </packages/infra/mev-boost>`
-
-*Staking Tools*
-
-* :doc:`ethstaker-deposit-cli </packages/tools/ethstaker-deposit-cli>`
-* :doc:`stakewise-operator </packages/tools/stakewise-operator>`
-* :doc:`vero </packages/l1/vero>`
-* :doc:`vouch </packages/l1/vouch>`
-
-*Monitoring*
-
-* :doc:`ethereum-metrics-exporter </packages/infra/ethereum-metrics-exporter>`
-* :doc:`ethereum-validator-metrics-exporter </packages/infra/ethereum-validator-metrics-exporter>`
-
-**Web3**
-
-* :doc:`bee </packages/web3/bee>`
-* :doc:`kubo </packages/web3/kubo>`
 
 .. note::
   The `APT` command will install the last version available in the repository. Most clients 

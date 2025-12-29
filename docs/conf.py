@@ -62,7 +62,9 @@ extensions = [
 
     "sphinx_tabs.tabs",
     "sphinx-prompt",
-    "sphinx_sitemap"
+    "sphinx_sitemap",
+    "sphinx_copybutton",
+    "sphinx_design",
 ]
 
 # Sitemap configuration

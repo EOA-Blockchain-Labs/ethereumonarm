@@ -25,6 +25,34 @@ scale the Ethereum blockchain and lower the transaction fees.
 It is important to keep both L1 and L2 nodes as decentralized as possible and that basically 
 means run nodes.
 
+.. important::
+   Unless otherwise specified, all commands should be run under the ``ethereum`` user account.
+
+Quick Navigation
+----------------
+
+- 🚀 **Fuel Network** - Modular execution layer with optimistic rollups → `Fuel Network`_
+- 🔷 **Polygon** - PoS sidechain with fast, low-cost transactions → `Polygon`_
+- 🔵 **Arbitrum** - Optimistic rollup with high throughput → `Arbitrum`_
+- 🔴 **Optimism** - Optimistic rollup scaling solution → `Optimism`_
+- ⭐ **Starknet** - ZK-rollup with validity proofs → `Starknet`_
+- 🟢 **Gnosis Chain** - EVM-compatible sidechain → `Gnosis`_
+- 🦀 **EthRex L2** - Minimalist Rust-based L2 → `Ethrex`_
+
+Hardware Requirements
+~~~~~~~~~~~~~~~~~~~~~
+
+.. csv-table::
+   :header: L2 Solution, Minimum Storage, Recommended Storage, Special Notes
+
+   Fuel Network, 500 GB, 1 TB, Requires synced L1 node
+   Polygon, 4 TB, 6 TB, Large snapshot downloads
+   Arbitrum, 1 TB, 2 TB, Requires L1 node access
+   Optimism/Base, 1 TB, 2 TB, Requires L1 node access
+   Starknet, 500 GB, 1 TB, Standalone operation
+   Gnosis Chain, 2 TB, 4 TB, See dedicated guide
+   EthRex L2, 500 GB, 1 TB, Requires L1 node access
+
 .. note::
   If you have an Ethereum on ARM image installed prior to June 2023 you need to install the clients manually. Otherwise 
   you can skip this step
@@ -36,7 +64,9 @@ means run nodes.
   optimism-op-geth optimism-op-node fuel-network
 
 
-Fuel Network
+.. _fuel-network:
+
+Fuel Network :bdg-success:`Production Ready` :bdg-info:`Rust`
 ------------
 
 **Fuel Network** is a modular execution layer designed to provide high-performance, scalable smart 
@@ -79,7 +109,9 @@ You can check out the logs by running:
   sudo journalctl -u fuel -f
 
 
-Ethrex
+.. _ethrex-l2:
+
+Ethrex L2 :bdg-warning:`Testing` :bdg-info:`Rust`
 ------
 
 Ethrex is a minimalist, modular, and high-performance implementation of the Ethereum protocol developed by LambdaClass. 
@@ -228,7 +260,9 @@ Quick start
 
 Congrats, your Ethrex L2 Sequencer and Prover are now running on your Ethereum on ARM device.
 
-Polygon
+.. _polygon:
+
+Polygon :bdg-success:`Production Ready` :bdg-info:`Go`
 -------
 
 Polygon is a L2 scaling solution for the Ethereum blockchain that provides faster and more cost-effective 
@@ -307,7 +341,9 @@ Once synced start the :guilabel:`Bor` service and, again, check the logs
 
 Congrats, you are running a Polygon node.
 
-Arbitrum
+.. _arbitrum:
+
+Arbitrum :bdg-success:`Production Ready` :bdg-info:`Go`
 --------
 
 **Arbitrum** uses a technology called Optimistic Rollups to bundle multiple transactions into a single proof 
@@ -324,13 +360,9 @@ First step is to set the IP for your L1 Ethereum node:
 
 .. prompt:: bash $
 
-  sudo sed -i "s/setip/YOUR_IP/" /etc/ethereum/nitro.conf
-
-For example:
-
-.. prompt:: bash $
-
   sudo sed -i "s/setip/192.168.0.10/" /etc/ethereum/nitro.conf
+
+Replace ``192.168.0.10`` with your actual L1 node IP address.
 
 We need to download and decompress the initial snapshot in order to initialize the database. Run:
 
@@ -347,7 +379,9 @@ Once finished, start the :guilabel:`Nitro` client service and wait for the clien
 
 The Arbitrum node is up and running.
 
-Starknet
+.. _starknet:
+
+Starknet :bdg-success:`Production Ready` :bdg-info:`Rust`
 --------
 
 StarkNet is a Layer 2 scaling solution for the Ethereum blockchain, designed to improve scalability, 
@@ -393,7 +427,9 @@ After changing the configuration, remember to restart the service:
 
   sudo systemctl restart madara
 
-Gnosis
+.. _gnosis:
+
+Gnosis :bdg-success:`Production Ready` :bdg-info:`Go`
 ------
 
 Gnosis Chain, formerly xDai, is an Ethereum-compatible sidechain that serves as a Layer 2 
@@ -404,7 +440,9 @@ For detailed instructions on running a Gnosis Chain node, including client selec
 
 :doc:`Gnosis Chain Support </advanced/gnosis>`
 
-Optimism
+.. _optimism:
+
+Optimism :bdg-success:`Production Ready` :bdg-info:`Go`
 --------
 
 Optimism is a Layer 2 scaling solution for Ethereum that increases the network's scalability by leveraging a 
@@ -426,13 +464,9 @@ Set the synced IP L1 ethereum node (localhost if this is a super Node):
 
 .. prompt:: bash $
 
-  sudo sed -i "s/l1ip/$YOUR_IP/" /etc/ethereum/op-node.conf
-
-For example:
-
-.. prompt:: bash $
-
   sudo sed -i "s/l1ip/192.168.0.10/" /etc/ethereum/op-node.conf
+
+Replace ``192.168.0.10`` with your actual L1 node IP address (use ``localhost`` or ``127.0.0.1`` if running on the same machine).
 
 Now, set the L1 Beacon API (again, localhost if this is a Super Node)
 
@@ -502,3 +536,111 @@ and the **config files** as follows:
 Currently (August 2025), we recommend **Nethermind Base** implementation as execution engine instead of **Optimism**
 so you can sync in snap sync mode (much easier and faster). So, follow the **Nethermind** section instructions and 
 replace ``nethermind-op`` for ``nethermind-base``.
+Troubleshooting
+---------------
+
+.. dropdown:: L2 node won't sync
+   :icon: question
+
+   **Possible causes:**
+   
+   - L1 node not synced or not accessible
+   - Incorrect L1 RPC endpoint configuration
+   - Network connectivity issues
+   - Insufficient disk space
+   
+   **Solutions:**
+   
+   - Verify L1 node is fully synced: ``curl http://localhost:8545 -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":1}'``
+   - Check L2 client logs: ``sudo journalctl -u [service-name] -f``
+   - Verify L1 endpoint in config files
+   - Check disk space: ``df -h``
+   - Ensure firewall allows connections to L1 node
+
+.. dropdown:: Snapshot download is very slow or fails
+   :icon: question
+
+   **Applies to:** Polygon, Arbitrum
+   
+   **Possible causes:**
+   
+   - Large snapshot size (Polygon Bor can be 2+ TB)
+   - Network bandwidth limitations
+   - Snapshot server issues
+   
+   **Solutions:**
+   
+   - Use ``screen`` or ``tmux`` to prevent disconnection
+   - Check available disk space before starting
+   - Consider using a faster internet connection
+   - Try alternative snapshot providers if available
+   - Monitor download progress: check logs in screen session
+
+.. dropdown:: L2 client shows "waiting for L1" or similar message
+   :icon: question
+
+   **Cause:** L1 node is not fully synced or not accessible
+   
+   **Solutions:**
+   
+   - Wait for L1 node to complete sync (check L1 client logs)
+   - Verify L1 RPC endpoint is correct in L2 config
+   - Test L1 connection: ``curl http://YOUR_L1_IP:8545``
+   - Check JWT secret is correctly configured (if required)
+
+.. dropdown:: High memory or CPU usage
+   :icon: question
+
+   **Cause:** Some L2 clients require significant resources, especially during initial sync
+   
+   **Solutions:**
+   
+   - Ensure you meet minimum hardware requirements
+   - For Polygon: 16GB RAM minimum, 32GB recommended
+   - Monitor resources: ``htop`` or ``free -h``
+   - Consider using lighter L2 solutions if hardware is limited
+   - Restart services if memory leak suspected
+
+.. dropdown:: Optimism/Base: "missing trie node" or database errors
+   :icon: question
+
+   **Possible causes:**
+   
+   - Corrupted database
+   - Incomplete snapshot
+   - Disk issues
+   
+   **Solutions:**
+   
+   - Stop the service: ``sudo systemctl stop op-geth`` or ``sudo systemctl stop nethermind-op``
+   - Remove database and resync from snapshot
+   - Check disk health: ``sudo smartctl -a /dev/sdX``
+   - Ensure sufficient disk space for growth
+
+.. dropdown:: Starknet: Juno or Madara won't start
+   :icon: question
+
+   **Solutions:**
+   
+   - Check service status: ``sudo systemctl status juno`` or ``sudo systemctl status madara``
+   - Review logs: ``sudo journalctl -u juno -n 100`` or ``sudo journalctl -u madara -n 100``
+   - Verify configuration file syntax
+   - Ensure data directory permissions are correct: ``ls -la /home/ethereum/.juno`` or ``ls -la /var/lib/madara``
+   - Check if ports are already in use: ``sudo netstat -tulpn | grep 9944``
+
+.. dropdown:: EthRex L2: Prover not generating proofs
+   :icon: question
+
+   **Possible causes:**
+   
+   - Sequencer not running or not producing blocks
+   - Proof coordinator connection issues
+   - Backend configuration issues
+   
+   **Solutions:**
+   
+   - Verify sequencer is running: ``sudo systemctl status ethrex-l2``
+   - Check prover logs: ``sudo journalctl -u ethrex-l2-prover -f``
+   - Verify proof coordinator endpoint in ``/etc/ethereum/ethrex-l2-prover.conf``
+   - Ensure backend (exec/SP1/RISC0) is properly configured
+   - Check network connectivity between prover and coordinator

@@ -1,68 +1,119 @@
-# Sphinx Docker Environment Setup
+# 🐳 Docker Setup for Documentation
 
-This directory contains a Dockerized environment to easily build and test the Sphinx documentation without installing dependencies on your local machine.
+[![Docker](https://img.shields.io/badge/Docker-Required-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+[![Sphinx](https://img.shields.io/badge/Sphinx-Documentation-000000?logo=sphinx&logoColor=white)](https://www.sphinx-doc.org/)
 
-## Prerequisites
+This directory contains a Docker-based development environment for building and previewing the Ethereum on ARM documentation locally.
 
-- [Docker](https://www.docker.com/get-started)
-- [Docker Compose](https://docs.docker.com/compose/install/) (usually included with Docker Desktop/OrbStack)
+---
 
-## Getting Started
+## 📋 Prerequisites
 
-The setup uses `docker-compose` to manage the container and `sphinx-autobuild` to serve the documentation with live reloading.
+- **Docker** and **Docker Compose** installed on your system
+- Basic familiarity with terminal/command line
+
+> **💡 Tip**: If you don't have Docker installed, visit [docs.docker.com/get-docker](https://docs.docker.com/get-docker/)
+
+---
+
+## 🚀 Quick Start
 
 ### 1. Build the Docker Image
-
-Build the image using the provided `Dockerfile` and `requirements.txt`:
 
 ```bash
 docker compose build
 ```
 
-### 2. Run the Documentation Server
+This creates a container with all necessary dependencies (Sphinx, themes, extensions).
 
-Start the container in detached mode:
+### 2. Start the Documentation Server
 
 ```bash
-docker compose up -d
+docker compose up
 ```
 
-This command will:
+The documentation will be built and served at:
 
-- Mount your local `docs` directory to `/docs` inside the container.
-- Start `sphinx-autobuild`.
-- Expose the server on port **8000**.
+**🌐 <http://localhost:8000>**
 
-### 3. Access the Documentation
+> **📝 Note**: The server watches for file changes and automatically rebuilds the documentation.
 
-Open your browser and navigate to:
+### 3. Stop the Server
 
-[http://localhost:8000](http://localhost:8000)
-
-### 4. Live Editing
-
-The environment is configured for live reloading. When you edit any `.rst` file in your local directory, the documentation will automatically rebuild, and the browser page will refresh to show your changes.
-
-## Troubleshooting
-
-- **Port Conflicts**: If port 8000 is already in use, you can change the port mapping in `docker-compose.yml`:
-
-  ```yaml
-  ports:
-    - "8080:8000"  # Changes host port to 8080
-  ```
-
-- **Rebuilding Dependencies**: If you modify `requirements.txt`, you need to rebuild the Docker image:
-
-  ```bash
-  docker compose build --no-cache
-  docker compose up -d
-  ```
-
-## Stopping the Environment
-
-To stop the container:
+Press `Ctrl+C` in the terminal, or run:
 
 ```bash
 docker compose down
+```
+
+---
+
+## 🛠️ Advanced Usage
+
+### Rebuild Without Cache
+
+If you've updated dependencies in `requirements.txt`:
+
+```bash
+docker compose build --no-cache
+```
+
+### View Build Logs
+
+```bash
+docker compose logs -f
+```
+
+### Run a One-Time Build
+
+To build HTML without starting the server:
+
+```bash
+docker compose run --rm sphinx make html
+```
+
+Output will be in `_build/html/`.
+
+---
+
+## 📁 Project Structure
+
+```
+docs/
+├── conf.py              # Sphinx configuration
+├── requirements.txt     # Python dependencies
+├── Dockerfile          # Container definition
+├── docker-compose.yml  # Service orchestration
+└── _build/             # Generated HTML (gitignored)
+```
+
+---
+
+## 🐛 Troubleshooting
+
+### Port Already in Use
+
+If port 8000 is occupied, edit `docker-compose.yml`:
+
+```yaml
+ports:
+  - "8001:8000"  # Change 8001 to any available port
+```
+
+### Permission Issues
+
+On Linux, if you encounter permission errors:
+
+```bash
+sudo chown -R $USER:$USER _build/
+```
+
+### Container Won't Start
+
+Remove existing containers and rebuild:
+
+```bash
+docker compose down
+docker compose build --no-cache
+docker compose up
 ```

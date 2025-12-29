@@ -4,6 +4,50 @@
 Managing Clients
 ================
 
+.. grid:: 1 2 2 4
+   :gutter: 2
+
+   .. grid-item-card:: 🔧 Systemd
+      :link: #systemd-services
+      :link-type: ref
+      :text-align: center
+      :class-card: sd-border-info
+      
+      ⚙️
+      
+      Start/Stop/Enable services
+
+   .. grid-item-card:: 📝 Configure
+      :link: #changing-parameters
+      :link-type: ref
+      :text-align: center
+      :class-card: sd-border-info
+      
+      ✏️
+      
+      Edit client parameters
+
+   .. grid-item-card:: 🔄 Update
+      :link: #updating-clients
+      :link-type: ref
+      :text-align: center
+      :class-card: sd-border-info
+      
+      📦
+      
+      Upgrade via APT
+
+   .. grid-item-card:: 📊 Monitor
+      :link: #monitoring-dashboards
+      :link-type: ref
+      :text-align: center
+      :class-card: sd-border-info
+      
+      📈
+      
+      Grafana dashboards
+
+
 Systemd Services
 ----------------
 
@@ -42,24 +86,107 @@ on next boot.
 
 These are the list of services available for all clients:
 
-.. csv-table:: Execution layer Systemd Services
-   :header: Client, Systemd Service
+.. tab-set::
 
-   `Geth`, `geth`
-   `Nethermind`, `nethermind`
-   `Erigon`,`erigon`
-   `Reth`, `reth`
-   `Hyperledger Besu`, `besu`
+   .. tab-item:: ⚡ Execution Layer
+      
+      .. grid:: 2
+         :gutter: 2
+      
+         .. grid-item-card:: Geth
+            :class-card: sd-border-primary
+            
+            .. code-block:: bash
+               
+               sudo systemctl start geth
+         
+         .. grid-item-card:: Nethermind
+            :class-card: sd-border-primary
+            
+            .. code-block:: bash
+               
+               sudo systemctl start nethermind
+         
+         .. grid-item-card:: Erigon
+            :class-card: sd-border-primary
+            
+            .. code-block:: bash
+               
+               sudo systemctl start erigon
+         
+         .. grid-item-card:: Reth
+            :class-card: sd-border-primary
+            
+            .. code-block:: bash
+               
+               sudo systemctl start reth
+         
+         .. grid-item-card:: Besu
+            :class-card: sd-border-primary
+            
+            .. code-block:: bash
+               
+               sudo systemctl start besu
+         
+         .. grid-item-card:: EthRex
+            :class-card: sd-border-primary
+            
+            .. code-block:: bash
+               
+               sudo systemctl start ethrex
 
-.. csv-table:: Consensus Layer Systemd Services
-   :header: Client, Systemd Services
+   .. tab-item:: 🔮 Consensus Layer
+      
+      .. grid:: 2
+         :gutter: 2
+      
+         .. grid-item-card:: Lighthouse
+            :class-card: sd-border-success
+            
+            .. code-block:: bash
+               
+               sudo systemctl start lighthouse-beacon
+               sudo systemctl start lighthouse-validator
+         
+         .. grid-item-card:: Prysm
+            :class-card: sd-border-success
+            
+            .. code-block:: bash
+               
+               sudo systemctl start prysm-beacon
+               sudo systemctl start prysm-validator
+         
+         .. grid-item-card:: Nimbus
+            :class-card: sd-border-success
+            
+            .. code-block:: bash
+               
+               sudo systemctl start nimbus-beacon
+               sudo systemctl start nimbus-validator
+         
+         .. grid-item-card:: Teku
+            :class-card: sd-border-success
+            
+            .. code-block:: bash
+               
+               sudo systemctl start teku-beacon
+               sudo systemctl start teku-validator
+         
+         .. grid-item-card:: Lodestar
+            :class-card: sd-border-success
+            
+            .. code-block:: bash
+               
+               sudo systemctl start lodestar-beacon
+               sudo systemctl start lodestar-validator
+         
+         .. grid-item-card:: Grandine
+            :class-card: sd-border-success
+            
+            .. code-block:: bash
+               
+               sudo systemctl start grandine-beacon
 
-   `Lighthouse`, `lighthouse-beacon` `lighthouse-validator` 
-   `prysm`, `prysm-beacon` `prysm-validator`
-   `Nimbus`, `nimbus-beacon` `nimbus-validator`
-   `Teku`, `teku-beacon` `teku-validator`
-   `Lodestar`, `lodestar-beacon` `lodestar-validator`
-   `Grandine`, `grandine-beacon`
 
 
 Changing Parameters

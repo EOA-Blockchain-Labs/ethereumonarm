@@ -274,79 +274,79 @@ The APT repository is browsable so you can download a package manually:
 Available Packages
 ~~~~~~~~~~~~~~~~~~
 
-These are the available packages:
+These are the available packages. Click on any package name to view its detailed documentation.
 
 **L1 Clients**
 
 *Execution Layer*
 
-* besu
-* erigon
-* ethrex
-* geth
-* nethermind
-* nimbus-ec
-* reth
+* :doc:`besu </packages/l1/besu>`
+* :doc:`erigon </packages/l1/erigon>`
+* :doc:`ethrex </packages/l1/ethrex>`
+* :doc:`geth </packages/l1/geth>`
+* :doc:`nethermind </packages/l1/nethermind>`
+* :doc:`nimbus-ec </packages/l1/nimbus-execution>`
+* :doc:`reth </packages/l1/reth>`
 
 *Consensus Layer*
 
-* grandine
-* lighthouse
-* lodestar
-* nimbus
-* prysm
-* teku
+* :doc:`grandine </packages/l1/grandine>`
+* :doc:`lighthouse </packages/l1/lighthouse>`
+* :doc:`lodestar </packages/l1/lodestar>`
+* :doc:`nimbus </packages/l1/nimbus>`
+* :doc:`prysm </packages/l1/prysm>`
+* :doc:`teku </packages/l1/teku>`
 
 **L2 Clients**
 
 *Arbitrum*
 
-* arbitrum-nitro
+* :doc:`arbitrum-nitro </packages/l2/nitro>`
 
 *Fuel Network*
 
-* fuel-network
+* :doc:`fuel-network </packages/l2/fuel>`
 
 *Optimism*
 
-* optimism-op-geth
-* optimism-op-node
-* optimism-op-reth
+* :doc:`optimism-op-geth </packages/l2/op-geth>`
+* :doc:`optimism-op-node </packages/l2/op-node>`
+* :doc:`optimism-op-reth </packages/l2/op-reth>`
 
 *Starknet*
 
-* starknet-juno
-* starknet-madara
-* starknet-pathfinder
+* :doc:`starknet-juno </packages/l2/juno>`
+* :doc:`starknet-madara </packages/l2/madara>`
+* :doc:`starknet-pathfinder </packages/l2/pathfinder>`
 
 **Infra**
 
 *DVT (Distributed Validator Technology)*
 
-* dvt-obol
-* dvt-ssv
+* :doc:`dvt-obol </packages/dvt/dvt-obol>`
+* :doc:`dvt-ssv </packages/dvt/ssv-node>`
 
 *MEV & Block Building*
 
-* commit-boost
-* mev-boost
+* :doc:`commit-boost </packages/infra/commit-boost>`
+* :doc:`mev-boost </packages/infra/mev-boost>`
 
 *Staking Tools*
 
-* ethstaker-deposit-cli
-* stakewise-operator
-* vero
-* vouch
+* :doc:`ethstaker-deposit-cli </packages/tools/ethstaker-deposit-cli>`
+* :doc:`stakewise-operator </packages/tools/stakewise-operator>`
+* :doc:`vero </packages/l1/vero>`
+* :doc:`vouch </packages/l1/vouch>`
 
 *Monitoring*
 
-* ethereum-metrics-exporter
-* ethereum-validator-metrics-exporter
+* :doc:`ethereum-metrics-exporter </packages/infra/ethereum-metrics-exporter>`
+* :doc:`ethereum-validator-metrics-exporter </packages/infra/ethereum-validator-metrics-exporter>`
 
 **Web3**
 
-* bee
-* kubo
+* :doc:`bee </packages/web3/bee>`
+* :doc:`kubo </packages/web3/kubo>`
 
 .. note::
   The `APT` command will install the last version available in the repository. Most clients 

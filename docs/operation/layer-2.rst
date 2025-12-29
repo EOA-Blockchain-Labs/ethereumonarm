@@ -1,24 +1,6 @@
 Running Layer 2 nodes
 =====================
 
-You can choose several Layer 2 solutions to run an Ethereum L2 node:
-
-* Fuel_
-* Polygon_
-* Arbitrum_
-* Optimism_
-* Starknet_
-* Gnosis_
-* Ethrex_
-
-.. _Fuel: https://fuel.network/
-.. _Polygon: https://polygon.technology/
-.. _Arbitrum: https://arbitrum.io/
-.. _Optimism: https://www.optimism.io/
-.. _Starknet: https://www.starknet.io/
-.. _Gnosis: https://www.gnosis.io/
-.. _EthRex: https://ethrex.xyz
-
 As explained in the Node Types section there are various L2 technologies to 
 scale the Ethereum blockchain and lower the transaction fees.
 
@@ -31,26 +13,23 @@ means run nodes.
 Quick Navigation
 ----------------
 
-- 🚀 **Fuel Network** - Modular execution layer with optimistic rollups → `Fuel Network`_
-- 🔷 **Polygon** - PoS sidechain with fast, low-cost transactions → `Polygon`_
-- 🔵 **Arbitrum** - Optimistic rollup with high throughput → `Arbitrum`_
-- 🔴 **Optimism** - Optimistic rollup scaling solution → `Optimism`_
-- ⭐ **Starknet** - ZK-rollup with validity proofs → `Starknet`_
-- 🟢 **Gnosis Chain** - EVM-compatible sidechain → `Gnosis`_
-- 🦀 **EthRex L2** - Minimalist Rust-based L2 → `Ethrex`_
+- 🚀 **Fuel Network** - Modular execution layer with optimistic rollups (see fuel-network_)
+- 🔵 **Arbitrum** - Optimistic rollup with high throughput (see arbitrum_)
+- 🔴 **Optimism** - Optimistic rollup scaling solution (see optimism_)
+- ⭐ **Starknet** - ZK-rollup with validity proofs (see starknet_)
+- 🦀 **EthRex L2** - Minimalist Rust-based L2 (see ethrex-l2_)
 
 Hardware Requirements
 ~~~~~~~~~~~~~~~~~~~~~
 
 .. csv-table::
+   :align: left
    :header: L2 Solution, Minimum Storage, Recommended Storage, Special Notes
 
    Fuel Network, 500 GB, 1 TB, Requires synced L1 node
-   Polygon, 4 TB, 6 TB, Large snapshot downloads
    Arbitrum, 1 TB, 2 TB, Requires L1 node access
    Optimism/Base, 1 TB, 2 TB, Requires L1 node access
    Starknet, 500 GB, 1 TB, Standalone operation
-   Gnosis Chain, 2 TB, 4 TB, See dedicated guide
    EthRex L2, 500 GB, 1 TB, Requires L1 node access
 
 .. note::
@@ -60,14 +39,15 @@ Hardware Requirements
 .. prompt:: bash $
 
   sudo apt-get update
-  sudo apt-get install polygon-bor polygon-heimdall arbitrum-nitro starknet-juno
-  optimism-op-geth optimism-op-node fuel-network
+  sudo apt-get install arbitrum-nitro starknet-juno optimism-op-geth optimism-op-node fuel-network
 
 
 .. _fuel-network:
 
 Fuel Network :bdg-success:`Production Ready` :bdg-info:`Rust`
 ------------
+
+**Official Site:** https://fuel.network/
 
 **Fuel Network** is a modular execution layer designed to provide high-performance, scalable smart 
 contract execution for blockchain applications. It leverages advanced technologies like optimistic rollups 
@@ -113,6 +93,8 @@ You can check out the logs by running:
 
 Ethrex L2 :bdg-warning:`Testing` :bdg-info:`Rust`
 ------
+
+**Official Site:** https://ethrex.xyz
 
 Ethrex is a minimalist, modular, and high-performance implementation of the Ethereum protocol developed by LambdaClass. 
 It supports both Layer 1 and Layer 2 operation modes, enabling developers and node operators to deploy their own rollups, 
@@ -260,91 +242,13 @@ Quick start
 
 Congrats, your Ethrex L2 Sequencer and Prover are now running on your Ethereum on ARM device.
 
-.. _polygon:
-
-Polygon :bdg-success:`Production Ready` :bdg-info:`Go`
--------
-
-Polygon is a L2 scaling solution for the Ethereum blockchain that provides faster and more cost-effective 
-transactions by using a combination of sidechains and a proof-of-stake consensus mechanism.
-
-.. note::
-  Polygon requires a 4 TB disk to work properly.
-
-  We will sync Polygon using Snapshots for both clients. Take into account that the :guilabel:`Bor` snapshot is huge 
-  so it will take more than 10 hours to download and 5 hours to decompress (:guilabel:`Heimdall` is smaller but it will
-  take a significant amount of time as well)
-
-In order to run a Polygon node you need to:
-
-1. Download :guilabel:`Bor` Snapshot
-2. Decompress and remove the snapshot
-3. Download :guilabel:`Heimdall` Snapshot
-4. Decompress and remove the snapshot
-5. Start and sync the :guilabel:`Heimdall` client
-6. Start and sync the :guilabel:`Bor` client
-
-Snapshots
-~~~~~~~~~
-
-We included 2 scripts that download and decompress the Polygon Snapshots automatically (for both :guilabel:`Heimdall` and 
-:guilabel:`Bor` clients). The recommended steps are as follows:
-
-Run the ``screen`` utility in order to make sure the process continues to run even if you are 
-disconnected from the console (this is particularly useful if you are accessing through SSH):
-
-.. prompt:: bash $
-
-  screen
-
-.. note::
-  Press ``CONTROL+A  D`` to deattach the console and run the command ``screen -r`` to attach the console again
-
-Once inside screen, run the download script as the ``ethereum`` user:
-
-.. prompt:: bash $
-
-  bor-snapshot
-
-This will download the :guilabel:`Bor` snapshot. Once downloaded, it will be decompressed into the 
-correct directory and removed from disk.
-
-Run the :guilabel:`Heimdall` snapshot script:
-
-.. prompt:: bash $
-
-  heimdall-snapshot
-
-This will download the :guilabel:`Heimdall` snapshot. Once downloaded it will be decompressed into the 
-correct directory and removed from disk.
-
-Clients
-~~~~~~~
-
-Start the :guilabel:`Heimdall` service and check the logs:
-
-.. prompt:: bash $
-
-  systemctl start bor
-  journalctl -u bor -f
-
-.. note::
-  The order is importante. Please run :guilabel:`Heimdall` first, wait for it to get 
-  in sync and start :guilabel:`Bor` afterwards.
-
-Once synced start the :guilabel:`Bor` service and, again, check the logs
-
-.. prompt:: bash $
-
-  systemctl start heimdalld
-  journalctl -u heimdalld -f
-
-Congrats, you are running a Polygon node.
 
 .. _arbitrum:
 
 Arbitrum :bdg-success:`Production Ready` :bdg-info:`Go`
 --------
+
+**Official Site:** https://arbitrum.io/
 
 **Arbitrum** uses a technology called Optimistic Rollups to bundle multiple transactions into a single proof 
 that is submitted to the Ethereum mainnet (Layer 1). By moving much of the transaction processing and 
@@ -384,27 +288,62 @@ The Arbitrum node is up and running.
 Starknet :bdg-success:`Production Ready` :bdg-info:`Rust`
 --------
 
+**Official Site:** https://www.starknet.io/
+
 StarkNet is a Layer 2 scaling solution for the Ethereum blockchain, designed to improve scalability, 
 transaction throughput, and efficiency using a technology called Zero-Knowledge (ZK) Rollups.  
 This approach allows StarkNet to bundle multiple transactions together, process them off-chain, and 
-then submit a proof of their validity to the Ethereum mainnet (Layer 1). https://github.com/madara-alliance/madara  
+then submit a proof of their validity to the Ethereum mainnet (Layer 1).
 
-There are 2 available clients for the Starknet Network: :guilabel:`Juno` and :guilabel:`Papyrus`. 
-:guilabel:`Papyrus` is currently on Alpha so we will run :guilabel:`Juno`
+Available Clients
+~~~~~~~~~~~~~~~~~
 
-You can start the client just by running the systemd service:
+There are 2 production-ready clients available for running a Starknet node:
+
+**Juno** - Golang implementation
+  A full Starknet node implementation written in Go by Nethermind. Juno is known for its stability, 
+  performance, and lower resource requirements. It's the recommended choice for most users.
+
+**Madara** - Substrate-based sequencer
+  A high-performance Starknet sequencer built on Substrate framework by the Madara Alliance. 
+  Madara is designed for advanced use cases and can be configured as both a full node and a sequencer.
+
+Juno
+~~~~
+
+:guilabel:`Juno` is a Golang Starknet full-node implementation by Nethermind.
+
+**Features:**
+- Full node synchronization
+- Lower resource requirements
+- Stable and well-tested
+- Active development and support
+
+**Installation and Setup:**
+
+Start the Juno client:
 
 .. prompt:: bash $
 
   sudo systemctl start juno
   sudo journalctl -u juno -f
 
+Juno will sync with the Starknet network and provide RPC access once synchronized.
+
 Madara
 ~~~~~~
 
-Madara is a high-performance Starknet sequencer, built on Substrate. It is designed to be fast, secure, and scalable.
+:guilabel:`Madara` is a high-performance Starknet sequencer built on Substrate.
 
-You can start the client just by running the systemd service:
+**Features:**
+- Substrate-based architecture
+- Can run as full node or sequencer
+- High performance and scalability
+- Modular design for customization
+
+**Installation and Setup:**
+
+Start the Madara client:
 
 .. prompt:: bash $
 
@@ -421,121 +360,246 @@ The default configuration file is located at ``/etc/ethereum/madara.conf``. You 
   # /etc/ethereum/madara.conf
   MADARA_OPTS="--base-path /var/lib/madara --rpc-port 9944"
 
-After changing the configuration, remember to restart the service:
+After changing the configuration, restart the service:
 
 .. prompt:: bash $
 
   sudo systemctl restart madara
 
-.. _gnosis:
+Client Comparison
+~~~~~~~~~~~~~~~~~
 
-Gnosis :bdg-success:`Production Ready` :bdg-info:`Go`
-------
+.. csv-table::
+   :align: left
+   :header: Feature, Juno, Madara
 
-Gnosis Chain, formerly xDai, is an Ethereum-compatible sidechain that serves as a Layer 2 
-scaling solution and provides a more efficient environment for Gnosis applications and other 
-Ethereum-based projects.
-
-For detailed instructions on running a Gnosis Chain node, including client selection, configuration, and validator setup, please refer to our dedicated guide:
-
-:doc:`Gnosis Chain Support </advanced/gnosis>`
+   Language, Go, Rust (Substrate)
+   Resource Usage, Lower, Moderate
+   Use Case, Full node, Full node / Sequencer
+   Maturity, Stable, Production Ready
+   Recommended For, Most users, Advanced setups
 
 .. _optimism:
 
 Optimism :bdg-success:`Production Ready` :bdg-info:`Go`
 --------
 
-Optimism is a Layer 2 scaling solution for Ethereum that increases the network's scalability by leveraging a 
-technology called Optimistic Rollups.
+**Official Site:** https://www.optimism.io/
 
-Optimism aims to address Ethereum's high gas costs and slow transaction speeds by moving most transactions off 
-the Ethereum mainnet while still maintaining a high level of security.
+Optimism is a Layer 2 scaling solution for Ethereum that uses Optimistic Rollups to increase scalability. 
+It processes transactions off-chain and submits them to Ethereum L1, significantly reducing gas costs while 
+maintaining Ethereum's security guarantees.
 
-Official Clients
-~~~~~~~~~~~~~~~~
+**Base** (developed by Coinbase) is built on the Optimism stack and shares the same architecture, making it 
+part of the Optimism "Superchain" ecosystem.
 
-.. note::
+Architecture
+~~~~~~~~~~~~
 
-  You need access to a synced Ethereum L1 node.
+An Optimism/Base node consists of two components:
 
-Let's set the Execution and Consensus APIs:
+1. **Execution Client** - Processes transactions (op-geth or op-reth)
+2. **Consensus Client** - Op-Node (rollup node that derives L2 chain from L1)
 
-Set the synced IP L1 ethereum node (localhost if this is a super Node):
+Prerequisites
+~~~~~~~~~~~~~
 
-.. prompt:: bash $
+.. important::
+   You need access to a **synced Ethereum L1 node** (both Execution and Consensus layers).
 
-  sudo sed -i "s/l1ip/192.168.0.10/" /etc/ethereum/op-node.conf
-
-Replace ``192.168.0.10`` with your actual L1 node IP address (use ``localhost`` or ``127.0.0.1`` if running on the same machine).
-
-Now, set the L1 Beacon API (again, localhost if this is a Super Node)
-
-.. prompt:: bash $
-
-  sudo sed -i "s/l1beaconip/$YOUR_IP/" /etc/ethereum/op-node.conf
-
-Start the :guilabel:`Op-Geth` service and check the logs:
-
-.. prompt:: bash $
-
-  systemctl start op-geth
-  sudo journalctl -u op-geth -f
-
-.. note::
-  The order is important. Please run :guilabel:`Op-Geth` first.
-
-Now, start the :guilabel:`Op-Node` client:
-
-.. prompt:: bash $
-
-  systemctl start op-node
-  sudo journalctl -u op-node -f
-
-Congrats, you are now running an Optimism node.
-
-Nethermind Execution Client 
+Available Execution Clients
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can use the :guilabel:`Nethermind` Execution Layer implementation along with :guilabel:`Op-Node` client.
+.. tab-set::
 
-Same process than above but we switch the :guilabel:`Op-Geth` service for :guilabel:`Nethermind Optimism`
+   .. tab-item:: Op-Geth (Recommended)
 
-Start the :guilabel:`Nethermind Optimism` service and check the logs:
+      **Op-Geth** is the official Geth fork optimized for Optimism.
+
+      **Features:**
+      - Snap sync support (faster initial sync)
+      - Battle-tested and widely used
+      - Official Optimism implementation
+
+      **Services:**
+      - Optimism: ``op-geth.service``
+      - Base: ``op-geth-base.service``
+
+      **Config Files:**
+      - Optimism: ``/etc/ethereum/op-geth.conf``
+      - Base: ``/etc/ethereum/op-geth-base.conf``
+
+      **Data Directories:**
+      - Optimism: ``/home/ethereum/.op-geth``
+      - Base: ``/home/ethereum/.op-geth-base``
+
+   .. tab-item:: Op-Reth
+
+      **Op-Reth** is the Reth implementation for Optimism (Rust-based).
+
+      **Features:**
+      - High performance Rust implementation
+      - Lower resource usage
+      - Newer, actively developed
+
+      **Services:**
+      - Optimism: ``op-reth.service``
+      - Base: ``op-reth-base.service``
+
+      **Config Files:**
+      - Optimism: ``/etc/ethereum/op-reth.conf``
+      - Base: ``/etc/ethereum/op-reth-base.conf``
+
+      **Data Directories:**
+      - Optimism: ``/home/ethereum/.op-reth``
+      - Base: ``/home/ethereum/.op-reth-base``
+
+Setup Instructions
+~~~~~~~~~~~~~~~~~~
+
+Choose either **Optimism** or **Base** (not both simultaneously).
+
+1. Configure L1 Connection
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Edit the Op-Node configuration file to point to your L1 node:
+
+**For Optimism:**
 
 .. prompt:: bash $
 
-  systemctl start nethermind-op
+  sudo nano /etc/ethereum/op-node.conf
 
-Check the logs:
-
-.. prompt:: bash $
-
-  sudo journalctl -u nethermind-op -f
-
-And start the :guilabel:`Op-Node` service:
+**For Base:**
 
 .. prompt:: bash $
 
-  systemctl start op-node
+  sudo nano /etc/ethereum/op-node-base.conf
+
+Update the L1 endpoints:
+
+.. code-block:: bash
+
+  ARGS="--l1=http://192.168.0.10:8545 \
+      --l1.beacon=http://192.168.0.10:5052 \
+      ...
+
+Replace ``192.168.0.10`` with your L1 node IP (use ``localhost`` or ``127.0.0.1`` if running on the same machine).
+
+2. Start Execution Client
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Choose your execution client and network:
+
+.. tab-set::
+
+   .. tab-item:: Optimism + Op-Geth
+
+      .. prompt:: bash $
+
+        sudo systemctl start op-geth
+        sudo journalctl -u op-geth -f
+
+   .. tab-item:: Optimism + Op-Reth
+
+      .. prompt:: bash $
+
+        sudo systemctl start op-reth
+        sudo journalctl -u op-reth -f
+
+   .. tab-item:: Base + Op-Geth
+
+      .. prompt:: bash $
+
+        sudo systemctl start op-geth-base
+        sudo journalctl -u op-geth-base -f
+
+   .. tab-item:: Base + Op-Reth
+
+      .. prompt:: bash $
+
+        sudo systemctl start op-reth-base
+        sudo journalctl -u op-reth-base -f
+
+.. important::
+   Wait for the execution client to start before proceeding to the next step.
+
+3. Start Op-Node
+^^^^^^^^^^^^^^^^
+
+Start the corresponding Op-Node service:
+
+**For Optimism:**
+
+.. prompt:: bash $
+
+  sudo systemctl start op-node
   sudo journalctl -u op-node -f
 
-Base
-----
+**For Base:**
 
-Base, developed by Coinbase, is a new Layer-Two (L2) blockchain built on Optimism, aimed at scaling Ethereum.
- 
-While initially centralized in block production, plans to leverage Optimism's "superchain" concept, 
-enhancing interoperability and reducing transaction fees.
+.. prompt:: bash $
 
-For running a Base node, follow the above instructions for **Optimism** and replace both, the **Systemd** services 
-and the **config files** as follows:
+  sudo systemctl start op-node-base
+  sudo journalctl -u op-node-base -f
 
-- Systemd services: ``nethermind-base`` and ``op-node-base``
-- Config files: ``/etc/ethereum/nethermind-base.conf`` and ``/etc/ethereum/op-node-base.conf``
+The node will begin syncing. Initial sync can take several hours depending on your hardware and network.
 
-Currently (August 2025), we recommend **Nethermind Base** implementation as execution engine instead of **Optimism**
-so you can sync in snap sync mode (much easier and faster). So, follow the **Nethermind** section instructions and 
-replace ``nethermind-op`` for ``nethermind-base``.
+Verification
+~~~~~~~~~~~~
+
+Check that both services are running:
+
+.. prompt:: bash $
+
+  sudo systemctl status op-geth op-node
+
+Or for Base:
+
+.. prompt:: bash $
+
+  sudo systemctl status op-geth-base op-node-base
+
+Test RPC connection:
+
+.. prompt:: bash $
+
+  curl -X POST http://localhost:31303 \
+    -H "Content-Type: application/json" \
+    -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+Configuration Details
+~~~~~~~~~~~~~~~~~~~~~
+
+**Ports:**
+
+.. csv-table::
+   :align: left
+   :header: Service, HTTP RPC, Auth RPC, Metrics, P2P
+
+   Op-Geth, 31303, 8555, 7301, 30303
+   Op-Reth, 8545, 9551, -, 30303
+   Op-Node, 9545, -, 7300, -
+
+**Key Configuration Options:**
+
+- ``--syncmode=snap`` - Fast sync mode (op-geth)
+- ``--rollup.sequencerhttp`` - Sequencer endpoint
+- ``--l1`` - L1 Execution RPC endpoint
+- ``--l1.beacon`` - L1 Beacon API endpoint
+- ``--l2.jwt-secret`` - JWT secret path
+
+Base vs Optimism
+~~~~~~~~~~~~~~~~~
+
+**Base** is built on the Optimism stack with these differences:
+
+- Different network ID (8453 for Base)
+- Different sequencer endpoint (``mainnet-sequencer.base.org``)
+- Separate data directories and services
+- Part of Optimism Superchain ecosystem
+
+Both use the same client software with different configurations.
 Troubleshooting
 ---------------
 
@@ -560,11 +624,11 @@ Troubleshooting
 .. dropdown:: Snapshot download is very slow or fails
    :icon: question
 
-   **Applies to:** Polygon, Arbitrum
+   **Applies to:** Arbitrum
    
    **Possible causes:**
    
-   - Large snapshot size (Polygon Bor can be 2+ TB)
+   - Large snapshot size (can be 2+ TB)
    - Network bandwidth limitations
    - Snapshot server issues
    
@@ -596,7 +660,7 @@ Troubleshooting
    **Solutions:**
    
    - Ensure you meet minimum hardware requirements
-   - For Polygon: 16GB RAM minimum, 32GB recommended
+   - Ensure you meet minimum hardware requirements (16GB RAM recommended)
    - Monitor resources: ``htop`` or ``free -h``
    - Consider using lighter L2 solutions if hardware is limited
    - Restart services if memory leak suspected

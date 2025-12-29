@@ -26,7 +26,7 @@ jobs:
       # 3. (MOVED DOWN) Run the script to generate the status file
       - name: Run version check script
         run: |
-          bash ./fpm-package-builder/tools/get_versions.sh -m STATUS.md -t ${{ secrets.REPO_GITHUB_TOKEN }}
+          bash ./fpm-package-builder/build-scripts/get_versions.sh -m STATUS.md -t ${{ secrets.REPO_GITHUB_TOKEN }}
       
       # 4. Commits the changes to the repository if the file has been modified
       - name: Commit and push if changed

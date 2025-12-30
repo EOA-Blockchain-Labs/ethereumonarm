@@ -1,26 +1,74 @@
 .. Ethereum on ARM documentation documentation master file, created by
    sphinx-quickstart on Wed Jan 13 19:04:18 2021.
 
-About Quick Start Guide
-=======================
+Introduction
+============
 
-This Guide walks you through all steps to get an Ethereum node up and running
-in an ARM board in a few minutes.
+Welcome to the **Ethereum on ARM** Quick Start Guide. This guide will walk you through the steps to turn your ARM board into a powerful Ethereum node.
 
-The process is pretty straightforward but you will need some basic Linux/Networking skills 
-to complete the installation.
+The process is straightforward, but basic Linux and networking skills are helpful.
 
-If you are looking for a more "user friendly" hardware node (with a fancy gui) you may want to take a look
-into `Dappnode`_ or `Avado`_.
+.. tip::
+   If you prefer a plug-and-play hardware solution with a graphical interface, consider `Dappnode <https://dappnode.io/>`_ or `Avado <https://ava.do/>`_.
 
-This is the installation process in a nutshell:
+Start Your Journey
+------------------
 
-* Get your **ARM Board**
-* **Download and flash** the Image into a MicroSD card
-* **Connect the SSD** and the Ethernet Cable
-* Power on the device
-* Wait till the installation script finishes all tasks
-* Boot up, enable and run the Ethereum software
+Choose the path that best fits your goals:
 
-.. _Dappnode: https://dappnode.io/
-.. _Avado: https://ava.do/
+.. grid:: 1 1 3 3
+   :gutter: 3
+
+   .. grid-item-card:: 🚀 Standard Node
+      :link: installation
+      :link-type: doc
+      :text-align: center
+      :class-card: sd-border-primary
+
+      **Best for beginners**
+      
+      Run a full Ethereum L1 node.
+      
+      +++
+      Start Here
+
+   .. grid-item-card:: ⚡ Supernode
+      :link: ../operation/optimism-l2
+      :link-type: doc
+      :text-align: center
+      :class-card: sd-border-warning
+
+      **For power users**
+      
+      Run L1 + Optimism L2 on the same board (Requires 32GB RAM).
+      
+      +++
+      Go to Guide
+
+   .. grid-item-card:: 🌐 Layer 2 Only
+      :link: ../operation/layer-2
+      :link-type: doc
+      :text-align: center
+      :class-card: sd-border-info
+
+      **Scaling solutions**
+      
+      Run Arbitrum, Starknet, or other L2s.
+      
+      +++
+      Explore L2s
+
+Installation Steps
+------------------
+
+The general process for all paths is:
+
+1.  **Get Hardware**: Acquire a supported ARM Board (Rock 5B, Orange Pi 5 Plus, etc.).
+2.  **Flash Image**: Download and write our custom Linux image to a MicroSD card.
+3.  **Assemble**: Connect NVMe SSD, Ethernet, and Power.
+4.  **Auto-Install**: Power on and let the automated script configure your system (10-15 mins).
+5.  **Run Clients**: Enable and start your chosen Ethereum software.
+
+Ready to begin?
+
+:doc:`Proceed to Installation > <installation>`

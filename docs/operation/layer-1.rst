@@ -10,10 +10,10 @@ In order to run an Ethereum node you will need to run 2 different clients at the
 Quick Navigation
 ----------------
 
-- 🔗 **Consensus Layer** - Learn about Beacon Chain clients and checkpoint sync → `Consensus Layer Nodes`_
-- ⚙️ **Execution Layer** - Explore execution clients and sync strategies → `Execution Layer nodes`_
-- 💰 **Staking** - Set up validators and start staking → `Staking`_
-- 📊 **Client Comparison** - Compare sync times and client features → `Syncing Strategies and Times`_
+- **Consensus Layer** - Learn about Beacon Chain clients and checkpoint sync → `Consensus Layer Nodes`_
+- **Execution Layer** - Explore execution clients and sync strategies → `Execution Layer nodes`_
+- **Staking** - Set up validators and start staking → `Staking`_
+- **Client Comparison** - Compare sync times and client features → `Syncing Strategies and Times`_
 
 Hardware Requirements
 ~~~~~~~~~~~~~~~~~~~~~

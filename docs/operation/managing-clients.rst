@@ -8,7 +8,7 @@ Managing Clients
    :gutter: 2
 
    .. grid-item-card:: 🔧 Systemd
-      :link: #systemd-services
+      :link: systemd-services
       :link-type: ref
       :text-align: center
       :class-card: sd-border-info
@@ -18,7 +18,7 @@ Managing Clients
       Start/Stop/Enable services
 
    .. grid-item-card:: 📝 Configure
-      :link: #changing-parameters
+      :link: changing-parameters
       :link-type: ref
       :text-align: center
       :class-card: sd-border-info
@@ -28,7 +28,7 @@ Managing Clients
       Edit client parameters
 
    .. grid-item-card:: 🔄 Update
-      :link: #updating-clients
+      :link: updating-clients
       :link-type: ref
       :text-align: center
       :class-card: sd-border-info
@@ -38,7 +38,7 @@ Managing Clients
       Upgrade via APT
 
    .. grid-item-card:: 📊 Monitor
-      :link: #monitoring-dashboards
+      :link: monitoring-dashboards
       :link-type: ref
       :text-align: center
       :class-card: sd-border-info
@@ -47,6 +47,8 @@ Managing Clients
       
       Grafana dashboards
 
+
+.. _systemd-services:
 
 Systemd Services
 ----------------
@@ -189,6 +191,8 @@ These are the list of services available for all clients:
 
 
 
+.. _changing-parameters:
+
 Changing Parameters
 -------------------
 
@@ -223,6 +227,8 @@ For changes to take effect, you need to restart the client:
   Read the clients official documentation in order to learn the specific parameters
   of each client.
 
+
+.. _updating-clients:
 
 Updating Clients
 ----------------
@@ -457,6 +463,8 @@ You can of course take a look at ``/var/log/syslog``:
 .. prompt:: bash $
 
   sudo tail -f /var/log/syslog
+
+.. _monitoring-dashboards:
 
 Monitoring Dashboards
 ---------------------

@@ -5,7 +5,7 @@ Download and Install
    :gutter: 2
 
    .. grid-item-card:: 1️⃣ Download
-      :link: #image-downloads
+      :link: image-downloads
       :link-type: ref
       :text-align: center
       :class-card: sd-border-primary
@@ -15,7 +15,7 @@ Download and Install
       Get the latest image for your board
 
    .. grid-item-card:: 2️⃣ Flash
-      :link: #flashing-the-image
+      :link: flashing-the-image
       :link-type: ref
       :text-align: center
       :class-card: sd-border-primary
@@ -25,7 +25,7 @@ Download and Install
       Write image to microSD card
 
    .. grid-item-card:: 3️⃣ Boot
-      :link: #first-boot
+      :link: first-boot
       :link-type: ref
       :text-align: center
       :class-card: sd-border-primary
@@ -33,6 +33,7 @@ Download and Install
       🚀
       
       Power on and wait 10-15 min
+
 
 Ethereum on ARM provides official support for the following Single Board Computers (SBCs):
 
@@ -103,6 +104,8 @@ Raspberry Pi 5
 .. _Orange Pi 5 Plus Case with heatsink: https://aliexpress.com/item/1005005728553439.html
 .. _Raspberry Pi 5 (16 GB RAM): https://www.raspberrypi.com/products/raspberry-pi-5/
 
+.. _image-downloads:
+
 Image Downloads
 ---------------
 
@@ -153,6 +156,8 @@ To verify the checksum in your terminal:
 Installation Guide
 ==================
 
+.. _flashing-the-image:
+
 Flashing the Image
 ------------------
 
@@ -198,6 +203,8 @@ Flashing the Image
       .. warning::
          The ``dd`` command is destructive. Double-check your device name to avoid data loss.
 
+
+.. _first-boot:
 
 First Boot
 ----------

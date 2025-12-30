@@ -44,6 +44,18 @@ op-geth
     A modified version of Geth specifically for the Optimism network.
 
 
+Quick Navigation
+----------------
+
+- `Pre-Installation Checklist`_
+- `Hardware Requirements`_
+- `Software Prerequisites`_
+- `Step 1: Setting up the Layer 1 (Ethereum) Node`_
+- `Step 2: Setting up the Layer 2 (Optimism) Node`_
+- `Step 3: Firewall Configuration`_
+- `Step 4: Verification and Monitoring`_
+- `Step 5: Advanced Topics and Next Steps`_
+
 Pre-Installation Checklist
 --------------------------
 
@@ -57,8 +69,8 @@ Before you begin, ensure you have gathered all the necessary hardware and comple
 -   **SSH Client Ready:** You have an SSH client installed (PuTTY for Windows, or Terminal on Linux/macOS).
 -   **(Optional) Monitor, Keyboard, HDMI Cable:** Available for initial setup and troubleshooting if needed.
 
-Hardware Requirements - **In Detail**
--------------------------------------
+Hardware Requirements
+---------------------
 
 Choosing the right hardware is crucial for a stable and performant Supernode.  Let's examine each component in detail:
 
@@ -119,8 +131,8 @@ Choosing the right hardware is crucial for a stable and performant Supernode.  L
 
     *   **Purpose:**  These are helpful for the initial operating system installation, network configuration, and troubleshooting if you encounter issues. Once the node is set up and running, you can operate it "headless" (without a monitor, keyboard, or mouse) via SSH.
 
-Software Prerequisites - **Step-by-Step Guide**
------------------------------------------------
+Software Prerequisites
+----------------------
 
 1.  **Flash the Ethereum on ARM Image - Detailed Steps:**
 
@@ -503,21 +515,23 @@ Once your Layer 1 (L1) Ethereum node (Geth and Prysm) is fully synchronized, you
 
     The ``op-node`` needs to be configured to communicate with your fully synchronized L1 Ethereum node. Since both the L1 and L2 nodes are running on the *same* machine (your Rock 5B or Orange Pi 5 Plus), we can use ``localhost`` to refer to the L1 node's network interfaces.  We will modify the ``op-node.conf`` configuration file to ensure ``op-node`` knows where to find both the Execution Layer (Geth) and Consensus Layer (Prysm) of your L1 node.
 
+    The configuration file uses placeholders that need to be replaced with the actual L1 node address. If running on the same machine, use ``localhost``:
+
     .. prompt:: bash $
 
-        sudo sed -i 's/l1ip/localhost/' /etc/ethereum/op-node.conf
-        sudo sed -i 's/l1beaconip/localhost/' /etc/ethereum/op-node.conf
+        sudo sed -i 's|http://l1ip|http://localhost:8545|' /etc/ethereum/op-node.conf
+        sudo sed -i 's|http://l1beaconip:5052|http://localhost:5052|' /etc/ethereum/op-node.conf
 
     *   ``sudo``: Runs the command with administrator privileges (needed to modify system configuration files).
     *   ``sed``:  A stream editor command used for text manipulation. Here, we use it to replace text within a file.
     *   ``-i``:  "In-place" edit - modifies the file directly. **Be careful when using ``-i`` with ``sed``, as changes are permanent.**
-    *   ``'s/l1ip/localhost/'``:  This is the ``sed`` substitution command.
+    *   ``'s|http://l1ip|http://localhost:8545|'``:  This is the ``sed`` substitution command.
 
-        *   ``s/``:  Indicates a substitution operation.
-        *   ``l1ip``: The text to be replaced (in this case, a placeholder ``l1ip`` likely present in the default ``op-node.conf`` file).
-        *   ``localhost``: The text to replace it with (which resolves to the loopback address, referring to the same machine).
+        *   ``s|``:  Indicates a substitution operation (using ``|`` as delimiter instead of ``/`` to avoid escaping slashes in URLs).
+        *   ``http://l1ip``: The placeholder text to be replaced in the default ``op-node.conf`` file.
+        *   ``http://localhost:8545``: The replacement text (L1 Execution Layer RPC endpoint on the same machine).
         *   ``/etc/ethereum/op-node.conf``:  Specifies the file to be modified - the configuration file for ``op-node``.
-    *   The second ``sed`` command ``'s/l1beaconip/localhost/'`` similarly replaces the placeholder ``l1beaconip`` with ``localhost``, ensuring ``op-node`` knows where to find the L1 Beacon Chain.
+    *   The second ``sed`` command similarly replaces the placeholder ``http://l1beaconip:5052`` with ``http://localhost:5052``, ensuring ``op-node`` knows where to find the L1 Beacon Chain.
 
     These commands essentially tell ``op-node``: "My L1 Ethereum node (both EL and CL components) is running on *this same machine*."
 
@@ -644,8 +658,8 @@ Once your Layer 1 (L1) Ethereum node (Geth and Prysm) is fully synchronized, you
 
     Once both ``op-geth`` and ``op-node`` are synchronized and running smoothly, you have successfully set up your Optimism L2 node on top of your L1 Ethereum node, creating a functional Optimism Supernode!  Proceed to Step 3 for optional but recommended firewall configuration.
 
-Step 3: Firewall Configuration - **Securing Your Supernode (Recommended)**
---------------------------------------------------------------------------
+Step 3: Firewall Configuration
+-------------------------------
 
 Configuring a firewall is a **strongly recommended** security measure to protect your Supernode and home network. A firewall acts as a gatekeeper, controlling network traffic and preventing unauthorized access to your system.  We will use **UFW (Uncomplicated Firewall)**, a user-friendly and powerful firewall management tool that is readily available on the Ethereum on ARM image.
 
@@ -810,8 +824,8 @@ By default, UFW might be inactive. We'll enable it and set up basic rules to sec
 
 By completing these steps, you've implemented a fundamental firewall on your Optimism Supernode using UFW, significantly enhancing its security.
 
-Step 4: Verification and Monitoring - Ensuring Your Supernode is Running Correctly
-----------------------------------------------------------------------------------
+Step 4: Verification and Monitoring
+------------------------------------
 
 After completing the installation and firewall configuration, it is crucial to **verify** that your Optimism Supernode is running correctly and that all components are synchronized and operating as expected.  Regular monitoring is also important to ensure continued healthy operation.
 
@@ -947,17 +961,17 @@ After completing the installation and firewall configuration, it is crucial to *
 
         Look for `"syncing":false` in the JSON response. If it returns `"syncing":true`, Prysm is still synchronizing.  Errors or no response indicate a problem with the Prysm Beacon API or Prysm itself.
 
-    *   **`op-geth` (L2 EL) - Check `eth_syncing` RPC Method (same as Geth):**
+    *   **`op-geth` (L2 EL) - Check `eth_syncing` RPC Method:**
 
-        `op-geth` uses the same JSON-RPC API as Geth.  We can use the same `eth_syncing` method check:
+        `op-geth` uses the same JSON-RPC API as Geth, but listens on a different HTTP RPC port (`31303`).  We can use the same `eth_syncing` method check:
 
         .. prompt:: bash $
 
-            curl -s -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":1}' http://localhost:8551
+            curl -s -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":1}' http://localhost:31303
 
-        **(Note:  `op-geth` and Geth, in the default configuration, both use the same RPC port `8551`.  This might seem confusing.  However, the `op-node` and other L2 components are configured to communicate with `op-geth` specifically, even if they share the same port number. In a more complex setup, you might configure them to use different ports if needed, but the default is port 8551 for both EL clients.)**
+        *   `http://localhost:31303`: The HTTP RPC endpoint for `op-geth`. Note that this is different from the L1 Geth port (8551) and the auth RPC port (8555).
 
-        **Expected Output (same as Geth):**
+        **Expected Output:**
 
         If `op-geth` is synced, `eth_syncing` should return `false`:
 

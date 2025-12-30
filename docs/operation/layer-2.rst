@@ -89,64 +89,6 @@ You can check out the logs by running:
   sudo journalctl -u fuel -f
 
 
-.. _ethrex-l2:
-
-Ethrex L2 :bdg-warning:`Testing` :bdg-info:`Rust`
-------
-
-**Official Site:** https://ethrex.xyz
-
-Ethrex is a minimalist, modular, and high-performance implementation of the Ethereum protocol developed by LambdaClass. 
-It supports both Layer 1 and Layer 2 operation modes, enabling developers and node operators to deploy their own rollups, 
-sequencers, and provers on affordable ARM hardware.
-
-Ethrex L2 focuses on simplicity and speed while maintaining full compatibility with the Ethereum stack, offering native 
-support for snap-sync, metrics, auth-RPC, and proof coordination.
-
-In order to run an Ethrex L2 node you need to:
-
-1. Run and sync an Ethereum mainnet or testnet node
-2. Install the ethrex-l2 package
-3. Start the Ethrex L2 Sequencer and Prover systemd services
-
-
-1. Sync an Ethereum L1 node.
-
-
-As with all rollups, an Ethrex L2 node requires access to a synced Ethereum Layer 1 node (Execution + Consensus). 
-You can run any L1 combination available in the Running L1 Clients section — for example Geth + Nimbus or Ethrex + Prysm.
-
-.. note::
-   The Ethrex L2 client is configured by default to connect to a local L1 node through the HTTP RPC and Beacon API.
-   If your L1 node runs on a different machine, update its IP and ports in /etc/ethereum/ethrex-l2.conf.
-
-
-2. Installation
-
-
-Install the ethrex-l2 package from the Ethereum on ARM repositories:
-
-.. prompt:: bash $
-
-   sudo apt-get update && sudo apt-get install ethrex-l2
-
-This package installs:
-
-- The Ethrex L2 binary (/usr/bin/ethrex-l2)
-- Two systemd services:
-  - ethrex-l2.service → Sequencer
-  - ethrex-l2-prover.service → Prover
-- Default configuration files under /etc/ethereum/:
-  - /etc/ethereum/ethrex-l2.conf
-  - /etc/ethereum/ethrex-l2-prover.conf
-
-
-3. Configure
-
-
-Edit /etc/ethereum/ethrex-l2.conf and make sure the following parameters are correctly set:
-
-.. code-block:: bash
 
    --eth.rpc-url https://sepolia.infura.io/v3/<YOUR_INFURA_KEY>
    --l1.on-chain-proposer-address 0x1111111111111111111111111111111111111111
@@ -600,6 +542,14 @@ Base vs Optimism
 - Part of Optimism Superchain ecosystem
 
 Both use the same client software with different configurations.
+
+.. seealso::
+   
+   **Advanced Setup: Running an Optimism Supernode**
+   
+   For a comprehensive guide on running both L1 and L2 nodes on the same hardware (32GB RAM required),
+   see :doc:`optimism-l2`.
+
 Troubleshooting
 ---------------
 

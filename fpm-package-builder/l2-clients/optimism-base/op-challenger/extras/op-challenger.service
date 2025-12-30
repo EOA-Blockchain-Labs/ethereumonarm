@@ -1,0 +1,16 @@
+[Unit]
+Description=Optimism Fault Proof Challenger Client
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=ethereum
+Group=ethereum
+Restart=always
+RestartSec=5
+EnvironmentFile=/etc/ethereum/op-challenger.conf
+ExecStart=/usr/bin/op-challenger $ARGS
+
+[Install]
+WantedBy=multi-user.target

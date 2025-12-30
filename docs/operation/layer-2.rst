@@ -371,6 +371,13 @@ An Optimism/Base node consists of two components:
 1. **Execution Client** - Processes transactions (op-geth or op-reth)
 2. **Consensus Client** - Op-Node (rollup node that derives L2 chain from L1)
 
+Security & Decentralization
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can actively contribute to the security of the Optimism Superchain by running a **Fault Proof Challenger** (Guardian Node). This service monitors the network for invalid state transitions and challenges them.
+
+:doc:`How to run a Guardian Node (Challenger) <optimism-challenger>`
+
 Prerequisites
 ~~~~~~~~~~~~~
 

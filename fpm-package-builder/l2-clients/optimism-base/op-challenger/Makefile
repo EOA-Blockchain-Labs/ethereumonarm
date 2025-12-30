@@ -53,6 +53,8 @@ FPM_COMMON_OPTS = \
 	--maintainer "$(PKG_MAINTAINER)" \
 	--category "$(CATEGORY)" \
 	--url "$(WEB_URL)" \
+	-d "optimism-cannon = $(OP_CHALLENGER_VERSION)-$(PKG_RELEASE)" \
+	-d "optimism-op-program = $(OP_CHALLENGER_VERSION)-$(PKG_RELEASE)" \
 	-C $(SOURCESDIR) \
 	-x '*/.gitkeep'
 

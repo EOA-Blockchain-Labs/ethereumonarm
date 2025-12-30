@@ -437,10 +437,10 @@ The Bottom Line
 
 ARM Single Board Computers are the **most practical, economical, and efficient** way to run your own Ethereum node:
 
-✅ **Save $800-1,400** over 5 years compared to a PC  
-✅ **Reduce CO₂ emissions** by 400-1,000 kg annually  
-✅ **Run silently** in any room of your home  
-✅ **Support decentralization** with true self-sovereignty  
-✅ **Get started easily** with plug & play images  
+- ✅ **Save $800-1,400** over 5 years compared to a PC 
+- ✅ **Reduce CO₂ emissions** by 400-1,000 kg annually  
+- ✅ **Run silently** in any room of your home  
+- ✅ **Support decentralization** with true self-sovereignty  
+- ✅ **Get started easily** with plug & play images  
 
 Ready to get started? Check out our :doc:`supported-hardware` to choose your board.

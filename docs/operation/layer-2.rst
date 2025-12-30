@@ -88,9 +88,32 @@ You can check out the logs by running:
 
   sudo journalctl -u fuel -f
 
+.. _ethrex-l2:
 
+EthRex L2 :bdg-danger:`Alpha` :bdg-info:`Rust`
+---------
 
-   --eth.rpc-url https://sepolia.infura.io/v3/<YOUR_INFURA_KEY>
+**Official Site:** https://github.com/lambdaclass/ethrex
+
+**EthRex** is a minimalist, modular execution layer written in Rust. It is designed to be highly 
+performant and easy to modify.
+
+1. Installation
+
+Run the apt command:
+
+.. prompt:: bash $
+
+  sudo apt-get update && sudo apt-get install ethrex-l2
+
+2. Configuration
+
+The main configuration file is located at ``/etc/ethereum/ethrex-l2.conf``.
+You should edit this file to configure your L1 connection and other parameters:
+
+.. code-block:: bash
+
+   ARG="--eth.rpc-url https://sepolia.infura.io/v3/<YOUR_INFURA_KEY>
    --l1.on-chain-proposer-address 0x1111111111111111111111111111111111111111
    --l1.bridge-address 0x2222222222222222222222222222222222222222
    --committer.l1-private-key 0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
@@ -100,7 +123,12 @@ You can check out the logs by running:
    --http.port 1729
    --metrics
    --metrics.port 9092
-   --datadir /home/ethereum/.ethrex-l2
+   --datadir /home/ethereum/.ethrex-l2"
+
+3. Setup Note
+
+Ensure you have a valid L1 RPC URL (Sepolia is used in this example) and the correct contract addresses.
+
 
 4. Start the Sequencer
 

@@ -1044,7 +1044,13 @@ The verification and monitoring methods described in Step 4 are a good starting 
 
     Revisit the firewall configuration (Step 3) periodically.  As you become more familiar with your Supernode and its network activity, you might want to refine your firewall rules to further enhance security (e.g., restrict SSH access, implement rate limiting, etc.).  Research best practices for securing Linux servers and Ethereum nodes.
 
-**3. Exploring Advanced Configurations (For Experienced Users):**
+**3. Security & Decentralization (Guardian Node):**
+
+As a Supernode operator, you are in the perfect position to further secure the network. You can run a **Fault Proof Challenger** alongside your node to act as a "Guardian of the Galaxy".
+
+:doc:`Learn how to run a Guardian Node <optimism-challenger>`
+
+**4. Exploring Advanced Configurations (For Experienced Users):**
 
 Once you have a solid understanding of the basic Supernode setup, you can explore more advanced configuration options. **Proceed with caution when modifying advanced settings, and always back up your configuration files before making changes.**
 

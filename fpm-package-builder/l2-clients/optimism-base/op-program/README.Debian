@@ -1,0 +1,19 @@
+optimism-op-program for Debian/Ubuntu
+---------------------------------------
+
+This package installs the 'op-program' binary, which provides the fault proof program logic for Optimism.
+It is primarily used by the 'op-challenger' client (via Cannon) to execute the fault proof FVM.
+
+Usage
+-----
+The binary is installed at /usr/bin/op-program.
+It is technically stateless and deterministic, invoked by the challenger/cannon system.
+
+Maintainer
+----------
+Ethereum on ARM <info@ethereumonarm.com>
+https://ethereumonarm.com
+
+Upstream Project
+----------------
+https://github.com/ethereum-optimism/optimism/tree/develop/op-program

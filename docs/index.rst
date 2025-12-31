@@ -45,10 +45,17 @@ Our images are optimized for the most powerful and efficient ARM boards availabl
 Documentation
 -------------
 
-Explore our guides to set up, manage, and optimize your node.
+Select a topic to get started:
+
+*   :doc:`🚀 Getting Started </getting-started/introduction>`: Step-by-step installation guide.
+*   :doc:`ℹ️ Supported Hardware </overview/supported-hardware>`: List of compatible ARM boards.
+*   :doc:`⚙️ Operation Guide </operation/introduction>`: How to run and manage your node.
+*   :doc:`📦 Packages </packages/index>`: Reference for all supported software packages.
+*   :doc:`💻 Contributing </contributing/guidelines>`: Help us improve the project.
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
    :caption: 🚀 Getting Started
 
    /getting-started/introduction
@@ -58,6 +65,7 @@ Explore our guides to set up, manage, and optimize your node.
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
    :caption: ℹ️ Overview
 
    /overview/introduction
@@ -67,6 +75,7 @@ Explore our guides to set up, manage, and optimize your node.
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
    :caption: ⚙️ Operation
 
    /operation/introduction
@@ -82,6 +91,7 @@ Explore our guides to set up, manage, and optimize your node.
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
    :caption: 🛠️ System Utilities
 
    /system/network-vpn
@@ -91,6 +101,7 @@ Explore our guides to set up, manage, and optimize your node.
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
    :caption: ⚡ Advanced
 
    /advanced/mev-boost
@@ -104,6 +115,7 @@ Explore our guides to set up, manage, and optimize your node.
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
    :caption: 💻 Contributing
 
    /contributing/guidelines
@@ -112,6 +124,7 @@ Explore our guides to set up, manage, and optimize your node.
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
    :caption: 📦 Packages
 
    packages/index

@@ -51,7 +51,23 @@ Configuration
 
 The configuration is managed via ``/etc/ethereum/op-challenger.conf``.
 
-1. **Generate a Private Key**
+1. **Acquire Configuration Files**
+
+   The challenger requires network-specific files to operate.
+
+   *   **genesis.json (L2 Genesis) & rollup.json**: Obtain these from the `Optimism Superchain Registry <https://github.com/ethereum-optimism/superchain-registry>`_ for official networks, or from your deployment artifacts.
+
+   *   **prestate.bin.gz (Absolute Prestate)**: This represents the initial state of the Fault Proof VM (Cannon). It must generated to match the `op-program` binary you are using:
+
+       .. code-block:: bash
+
+           # Generate the prestate file
+           /usr/bin/cannon load-elf --path=/usr/bin/op-program --out=/home/ethereum/prestate.bin.gz --meta=""
+           
+           # Ensure correct permissions
+           chown ethereum:ethereum /home/ethereum/prestate.bin.gz
+
+2. **Generate a Private Key**
 
 You need a dedicated wallet for the Challenger. It needs a small amount of ETH on L1 (Sepolia/Mainnet) to pay for challenge transactions.
 
@@ -62,7 +78,7 @@ You need a dedicated wallet for the Challenger. It needs a small amount of ETH o
     chown ethereum:ethereum /home/ethereum/challenger.key
     chmod 600 /home/ethereum/challenger.key
 
-2. **Edit Configuration**
+3. **Edit Configuration**
 
 Open the config file:
 
@@ -78,6 +94,8 @@ Update the ``ARGS`` variable with your details:
           --l1-beacon=http://localhost:5052 \
           --rollup-rpc=http://localhost:8547 \
           --private-key=/home/ethereum/challenger.key \
+          --cannon-prestate=/home/ethereum/prestate.bin.gz \
+          --cannon-rollup-config=/path/to/rollup.json \
           --cannon-l2-genesis=/path/to/genesis.json \
           --cannon-bin=/usr/bin/op-program \
           --cannon-server=/usr/bin/cannon \

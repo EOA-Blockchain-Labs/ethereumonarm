@@ -1,0 +1,29 @@
+cannon
+======
+
+Package Name: ``optimism-cannon``
+
+The Fault Proof Virtual Machine (FPVM) for Optimism. It is an on-chain MIPS instruction emulator.
+
+Dependencies
+------------
+
+This package is a dependency of ``optimism-op-challenger``.
+
+Usage
+-----
+
+The binary is installed at ``/usr/bin/cannon``.
+
+It is typically invoked automatically by the ``op-challenger`` service.
+
+Maintainer
+----------
+
+*   Ethereum on ARM <info@ethereumonarm.com>
+*   https://ethereumonarm.com
+
+Upstream Project
+----------------
+
+*   https://github.com/ethereum-optimism/optimism/tree/develop/cannon

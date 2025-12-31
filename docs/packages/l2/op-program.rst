@@ -1,0 +1,29 @@
+op-program
+==========
+
+Package Name: ``optimism-op-program``
+
+The Fault Proof Program logic for Optimism. It is the Golang code compiled into MIPS instructions executed by Cannon.
+
+Dependencies
+------------
+
+This package is a dependency of ``optimism-op-challenger`` and is used to generate the prestate.
+
+Usage
+-----
+
+The binary is installed at ``/usr/bin/op-program``.
+
+It is technically stateless and deterministic, invoked by the challenger/cannon system.
+
+Maintainer
+----------
+
+*   Ethereum on ARM <info@ethereumonarm.com>
+*   https://ethereumonarm.com
+
+Upstream Project
+----------------
+
+*   https://github.com/ethereum-optimism/optimism/tree/develop/op-program

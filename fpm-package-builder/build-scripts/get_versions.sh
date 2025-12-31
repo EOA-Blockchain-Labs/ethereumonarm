@@ -150,15 +150,27 @@ normalize_tag() {
 }
 
 # Special-case for op-node (ethereum-optimism/optimism monorepo)
-fetch_opnode_version() {
+# Fetch version for components in ethereum-optimism/optimism monorepo
+# Usage: fetch_optimism_component_version "component_name"
+fetch_optimism_component_version() {
+  local component="$1"
   local tag
+  # Filter tags that start with "component/v"
   tag="$(http_get "https://api.github.com/repos/ethereum-optimism/optimism/releases" \
-    | jq -r '[.[] | select(.tag_name | startswith("op-node/"))] | sort_by(.published_at) | .[-1].tag_name | ltrimstr("op-node/v") // empty' 2>/dev/null || true)"
+    | jq -r --arg comp "$component" '[.[] | select(.tag_name | startswith($comp + "/"))] | sort_by(.published_at) | .[-1].tag_name | sub("^" + $comp + "/v"; "") // empty' 2>/dev/null || true)"
+  
   if [[ -n "$tag" && "$tag" != "null" ]]; then
     printf '%s\n' "$tag"
   else
-    log_verbose "Could not fetch op-node version"
-    printf 'N/A\n'
+    # Fallback to checking tags if releases are missing
+     tag="$(http_get "https://api.github.com/repos/ethereum-optimism/optimism/tags?per_page=100" \
+        | jq -r --arg comp "$component" '.[].name | select(startswith($comp + "/")) | sub("^" + $comp + "/v"; "")' 2>/dev/null | sort -V | tail -n1)"
+     if [[ -n "$tag" ]]; then
+       printf '%s\n' "$tag"
+     else
+       log_verbose "Could not fetch version for $component"
+       printf 'N/A\n'
+     fi
   fi
 }
 
@@ -365,11 +377,19 @@ compare_group() {
     guard_parallel
     (
       local gh_ver repo_ver
-      # Special handling for op-node
-      if [[ "$repo" == "ethereum-optimism/optimism" && "$pkg" == "optimism-op-node" ]]; then
-        gh_ver="$(fetch_opnode_version)"
+      
+      # Handle repo#component syntax
+      local repo_clean="${repo%%#*}"
+      local component_suffix="${repo#*#}"
+      
+      if [[ "$repo" == *"#"* && "$repo_clean" == "ethereum-optimism/optimism" ]]; then
+         # Use the suffix as the component name (e.g. op-challenger)
+         gh_ver="$(fetch_optimism_component_version "$component_suffix")"
+      # Legacy fallback for existing op-node entry if not updated to new syntax yet, or strictly for op-node special handling
+      elif [[ "$repo" == "ethereum-optimism/optimism" && "$pkg" == "optimism-op-node" ]]; then
+         gh_ver="$(fetch_optimism_component_version "op-node")"
       else
-        gh_ver="$(fetch_github_release "$repo")"
+         gh_ver="$(fetch_github_release "$repo_clean")"
       fi
       
       repo_ver="$(get_latest_repo_version "$pkg")"

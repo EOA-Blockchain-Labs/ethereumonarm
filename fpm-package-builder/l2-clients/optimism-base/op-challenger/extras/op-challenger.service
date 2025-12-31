@@ -9,8 +9,8 @@ User=ethereum
 Group=ethereum
 Restart=always
 RestartSec=5
-EnvironmentFile=/etc/ethereum/op-challenger.conf
-ExecStart=/usr/bin/op-challenger $ARGS
+# EnvironmentFile=/etc/ethereum/op-challenger.conf
+ExecStart=/bin/bash -c 'source /etc/ethereum/op-challenger.conf && exec /usr/bin/op-challenger ${ARGS}'
 
 [Install]
 WantedBy=multi-user.target

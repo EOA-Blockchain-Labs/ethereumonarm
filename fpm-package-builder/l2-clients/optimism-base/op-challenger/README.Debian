@@ -35,3 +35,10 @@ https://ethereumonarm.com
 Upstream Project
 ----------------
 https://github.com/ethereum-optimism/optimism
+
+Monitoring
+----------
+
+This package exposes Prometheus metrics on port **7300** by default.
+
+A Grafana dashboard "Op - Challenger" is provided in the **ethereumonarm-monitoring-extras** package (or can be manually imported) to visualize the performance and game status of the challenger.

@@ -120,6 +120,11 @@ Check the status:
     sudo systemctl status op-challenger
     sudo journalctl -u op-challenger -f
 
+Verification
+------------
+
+For a detailed guide on verifying the correct operation of your Challenger, including log analysis and service checks, please refer to :doc:`optimism-challenger-verification`.
+
 Monitoring
 ----------
 
@@ -139,3 +144,35 @@ Troubleshooting
 
 **"Gas estimation failed"**
    Ensure your challenger wallet has enough ETH (on L1) to post bonds and challenges.
+
+Running an L2 Output Proposer (Optional)
+========================================
+
+If you are a chain operator or testing L2 output submission, you may also want to run the **L2 Output Proposer** (``op-proposer``). This component is responsible for submitting L2 state roots to L1.
+
+.. warning::
+   **For standard Guardian/Challenger nodes on Mainnet/Sepolia, you typically do NOT run this.** This is primarily for chain operators.
+
+Installation
+------------
+
+.. prompt:: bash $
+
+    sudo apt-get install optimism-op-proposer
+
+Configuration
+-------------
+
+Edit ``/etc/ethereum/op-proposer.conf``:
+
+1.  **Configure RPCs:** Set ``L1_ETH_RPC`` and ``ROLLUP_RPC``.
+2.  **Set L2OutputOracle:** Set ``L2OO_ADDRESS`` (see network specs).
+3.  **Set Signer:** Provide a ``PRIVATE_KEY`` or ``MNEMONIC`` funded on L1.
+
+Running the Service
+-------------------
+
+.. prompt:: bash $
+
+    sudo systemctl enable --now op-proposer
+    sudo journalctl -u op-proposer -f

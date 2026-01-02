@@ -1,0 +1,29 @@
+op-proposer for Debian
+----------------------
+
+The Optimism L2 Output Proposer (op-proposer) posts L2 output roots to the L1 chain.
+
+Configuration
+-------------
+
+The configuration file is located at /etc/ethereum/op-proposer.conf.
+You must edit this file to configure:
+- RPC endpoints (L1 and Rollup)
+- L2 Output Oracle Address
+- Signer (Private Key or Mnemonic)
+
+Service Management
+------------------
+
+The service is managed by systemd:
+
+    sudo systemctl enable --now op-proposer
+    sudo systemctl status op-proposer
+    sudo journalctl -u op-proposer -f
+
+Documentation
+-------------
+
+For more information, please visit:
+https://docs.optimism.io/
+https://ethereumonarm.com

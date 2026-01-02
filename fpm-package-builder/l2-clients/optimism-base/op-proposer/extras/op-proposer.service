@@ -1,0 +1,16 @@
+[Unit]
+Description=Optimism L2 Output Proposer
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=ethereum
+Group=ethereum
+Restart=always
+RestartSec=5
+# EnvironmentFile=/etc/ethereum/op-proposer.conf
+ExecStart=/bin/bash -c 'source /etc/ethereum/op-proposer.conf && exec /usr/bin/op-proposer ${ARGS}'
+
+[Install]
+WantedBy=multi-user.target

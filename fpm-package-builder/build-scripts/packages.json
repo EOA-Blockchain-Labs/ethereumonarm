@@ -22,7 +22,6 @@
         "ethereum-optimism/op-geth": "optimism-op-geth",
         "ethereum-optimism/optimism#op-node": "optimism-op-node",
         "ethereum-optimism/optimism#op-challenger": "optimism-op-challenger",
-        "ethereum-optimism/optimism#op-proposer": "optimism-op-proposer",
         "paradigmxyz/reth": "optimism-op-reth",
         "NethermindEth/juno": "starknet-juno",
         "madara-alliance/madara": "starknet-madara",

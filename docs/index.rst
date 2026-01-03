@@ -107,6 +107,7 @@ Select a topic to get started:
 
    /advanced/mev-boost
    /advanced/commit-boost
+   /advanced/obol-dvt-setup
    /advanced/testnets
    /advanced/gnosis
    /advanced/using-node-rpc

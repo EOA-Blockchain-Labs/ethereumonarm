@@ -247,3 +247,39 @@ In both cases (command import and service start). You will need to add the ``hoo
 5. Lido Operator Portal for Hoodi is:
 
 https://csm.testnet.fi
+
+Running CSM with Distributed Validators (DVT)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For enhanced resilience and fault tolerance, you can run your Lido CSM validators using **Obol Distributed Validator Technology (DVT)**.
+
+.. note::
+
+   DVT allows multiple operators to run a single validator together, eliminating single points of failure.
+   This is ideal for home stakers who want extra protection against downtime.
+
+To run Lido CSM with Obol DVT:
+
+1. **Set up your DVT cluster** following our :doc:`/advanced/obol-dvt-setup` guide
+2. **Use Lido withdrawal address** during DKG:
+
+   - Mainnet: ``0xB9D7934878B5FB9610B3fE8A5e441e8fad7E293f``
+   - Hoodi: ``0x4473dCDDbf77679A643BdB654dbd86D67F8d32f2``
+
+3. **Use Lido-specific DVT services** instead of regular DVT services:
+
+.. prompt:: bash $
+
+   sudo systemctl enable --now charon.service
+   sudo systemctl enable --now lighthouse-validator-obol-lido.service
+
+Available Lido DVT validator services:
+
+- ``lighthouse-validator-obol-lido.service``
+- ``prysm-validator-obol-lido.service``
+- ``nimbus-validator-obol-lido.service``
+- ``grandine-validator-obol-lido.service``
+
+These services are pre-configured with the Lido fee recipient address.
+
+See :doc:`/advanced/obol-dvt-setup` for complete DVT cluster setup instructions.

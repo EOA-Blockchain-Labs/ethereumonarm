@@ -62,6 +62,7 @@ Select a topic to get started:
    /getting-started/installation
    /getting-started/starting-node
    /getting-started/post-install
+   /getting-started/quickstart-cheatsheet
 
 .. toctree::
    :maxdepth: 2

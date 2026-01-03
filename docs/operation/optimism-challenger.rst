@@ -177,7 +177,11 @@ Configuration
 Edit ``/etc/ethereum/op-proposer.conf``:
 
 1.  **Configure RPCs:** Set ``L1_ETH_RPC`` and ``ROLLUP_RPC``.
-2.  **Set L2OutputOracle:** Set ``L2OO_ADDRESS`` (see network specs).
+2.  **Set Game Factory:** Set ``GAME_FACTORY_ADDRESS`` to your network's ``DisputeGameFactoryProxy``.
+    
+    .. note::
+       Since June 2024, Optimism Mainnet and Sepolia use the **DisputeGameFactory** for permissionless fault proofs. The legacy ``L2OutputOracle`` is deprecated for these networks.
+
 3.  **Set Signer:** Provide a ``PRIVATE_KEY`` or ``MNEMONIC`` funded on L1.
 
 Running the Service

@@ -1,0 +1,15 @@
+[Unit]
+Description=Grandine Validator Client (Obol Lido)
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/dvt/grandine-validator-obol-lido.conf
+ExecStart=/usr/bin/grandine $ARGS
+Restart=always
+User=ethereum
+SyslogIdentifier=grandine-validator-obol-lido
+LimitNOFILE=65536
+LimitNPROC=65536
+
+[Install]
+WantedBy=multi-user.target

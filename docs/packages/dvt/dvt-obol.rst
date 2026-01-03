@@ -25,6 +25,9 @@ Validator Services:
 - ``prysm-validator-hoodi-obol.service``
 - ``teku-validator-obol.service``
 - ``teku-validator-hoodi-obol.service``
+- ``grandine-validator-obol.service``
+- ``grandine-validator-obol-lido.service``
+- ``grandine-validator-hoodi-obol.service``
 
 To enable a service, run:
     sudo systemctl enable --now <service_name>

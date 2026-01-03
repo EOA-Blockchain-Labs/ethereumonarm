@@ -57,7 +57,7 @@ Removes all downloaded archives and generated images.
 
 Built images are named using the format:
 
-```
+```text
 ethonarm_<device>_<YY.MM>.<release>.img
 ```
 

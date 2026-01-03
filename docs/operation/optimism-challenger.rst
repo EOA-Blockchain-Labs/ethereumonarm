@@ -86,20 +86,31 @@ Open the config file:
 
     sudo nano /etc/ethereum/op-challenger.conf
 
-Update the ``ARGS`` variable with your details:
+Update the configuration variables with your details (ensure these match your network):
 
 .. code-block:: bash
 
-    ARGS="--l1-eth-rpc=http://localhost:8545 \
-          --l1-beacon=http://localhost:5052 \
-          --rollup-rpc=http://localhost:8547 \
-          --private-key=/home/ethereum/challenger.key \
-          --cannon-prestate=/home/ethereum/prestate.bin.gz \
-          --cannon-rollup-config=/path/to/rollup.json \
-          --cannon-l2-genesis=/path/to/genesis.json \
-          --cannon-bin=/usr/bin/op-program \
-          --cannon-server=/usr/bin/cannon \
-          --datadir=/home/ethereum/.op-challenger"
+    # RPC Endpoints
+    L1_ETH_RPC="http://localhost:8545"
+    L1_BEACON_RPC="http://localhost:5052"
+    ROLLUP_RPC="http://localhost:8547"
+    L2_ETH_RPC="http://localhost:9545"
+
+    # Game Configuration (Check Optimism docs for your network)
+    GAME_FACTORY_ADDRESS="0x..."
+    TRACE_TYPE="cannon,permissioned"
+
+    # Signer
+    PRIVATE_KEY="/home/ethereum/challenger.key"
+
+    # Cannon Configuration
+    CANNON_PRESTATE="/home/ethereum/prestate.bin.gz"
+    CANNON_ROLLUP_CONFIG="/path/to/rollup.json"
+    CANNON_L2_GENESIS="/path/to/genesis.json"
+    CANNON_BIN="/usr/bin/cannon"
+    CANNON_SERVER="/usr/bin/op-program"
+
+    DATADIR="/home/ethereum/.op-challenger"
 
 .. tip:: 
    For Mainnet/Sepolia network addresses and Genesis files, refer to the `Optimism Networks Repository <https://github.com/ethereum-optimism/ethereum-optimism.github.io>`_.

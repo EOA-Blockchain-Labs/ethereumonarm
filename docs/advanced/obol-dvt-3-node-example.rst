@@ -1,3 +1,5 @@
+:orphan:
+
 Practical Example: 3-Node Cluster
 =================================
 

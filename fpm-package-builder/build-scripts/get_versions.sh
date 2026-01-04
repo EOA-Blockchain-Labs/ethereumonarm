@@ -61,6 +61,27 @@ log_verbose() {
   fi
 }
 
+log_error() {
+  echo "[ERROR] $*" >&2
+}
+
+log_warn() {
+  echo "[WARN] $*" >&2
+}
+
+# Validate that input is valid JSON
+# Returns 0 if valid, 1 if invalid
+validate_json() {
+  local input="$1"
+  if [[ -z "$input" ]]; then
+    return 1
+  fi
+  if jq -e '.' <<<"$input" >/dev/null 2>&1; then
+    return 0
+  fi
+  return 1
+}
+
 cleanup() {
   if [[ -n "${RESULTS_TMP_FILE-}" && -f "${RESULTS_TMP_FILE}" ]]; then
     rm -f -- "${RESULTS_TMP_FILE}"
@@ -126,17 +147,32 @@ http_get() {
   local url="$1"
   local max_retries=3
   local retry_count=0
+  local response=""
+  local http_code=""
+  local max_backoff=8
   
   while (( retry_count < max_retries )); do
-    if curl -fsSL --retry 3 --retry-delay 1 --max-time 20 "${API_HEADERS[@]}" "$url" 2>/dev/null; then
+    # Capture response and HTTP code together (-L follows redirects)
+    response=$(curl -sSL --max-time 20 "${API_HEADERS[@]}" -w "\n%{http_code}" "$url" 2>&1) || true
+    http_code=$(tail -n1 <<<"$response")
+    response=$(sed '$ d' <<<"$response")
+    
+    # Check for successful HTTP response (2xx)
+    if [[ "$http_code" =~ ^2[0-9]{2}$ ]]; then
+      printf '%s' "$response"
       return 0
     fi
+    
     ((++retry_count))
-    log_verbose "Retry $retry_count/$max_retries for $url"
-    sleep "${RATE_LIMIT_SLEEP}"
+    # Exponential backoff: 0.5s, 1s, 2s, capped at max_backoff
+    local backoff
+    backoff=$(awk -v base="${RATE_LIMIT_SLEEP}" -v exp="$retry_count" -v max="$max_backoff" \
+      'BEGIN { val = base * (2 ^ (exp - 1)); print (val > max ? max : val) }')
+    log_verbose "HTTP $http_code from $url - Retry $retry_count/$max_retries (backoff: ${backoff}s)"
+    sleep "$backoff"
   done
   
-  log_verbose "Failed to fetch $url after $max_retries attempts"
+  log_error "Failed to fetch $url after $max_retries attempts (last HTTP code: $http_code)"
   return 1
 }
 
@@ -154,49 +190,81 @@ normalize_tag() {
 # Usage: fetch_optimism_component_version "component_name"
 fetch_optimism_component_version() {
   local component="$1"
-  local tag
-  # Filter tags that start with "component/v"
-  tag="$(http_get "https://api.github.com/repos/ethereum-optimism/optimism/releases" \
-    | jq -r --arg comp "$component" '[.[] | select(.tag_name | startswith($comp + "/"))] | sort_by(.published_at) | .[-1].tag_name | sub("^" + $comp + "/v"; "") // empty' 2>/dev/null || true)"
+  local response=""
+  local tag=""
   
-  if [[ -n "$tag" && "$tag" != "null" ]]; then
-    printf '%s\n' "$tag"
-  else
-    # Fallback to checking tags if releases are missing
-     tag="$(http_get "https://api.github.com/repos/ethereum-optimism/optimism/tags?per_page=100" \
-        | jq -r --arg comp "$component" '.[].name | select(startswith($comp + "/")) | sub("^" + $comp + "/v"; "")' 2>/dev/null | sort -V | tail -n1)"
-     if [[ -n "$tag" ]]; then
-       printf '%s\n' "$tag"
-     else
-       log_verbose "Could not fetch version for $component"
-       printf 'N/A\n'
-     fi
+  log_verbose "Fetching Optimism component version for $component"
+  
+  # Try releases first
+  if response="$(http_get "https://api.github.com/repos/ethereum-optimism/optimism/releases")"; then
+    if validate_json "$response"; then
+      tag="$(jq -r --arg comp "$component" \
+        '[.[] | select(.tag_name | startswith($comp + "/"))] | sort_by(.published_at) | .[-1].tag_name | sub("^" + $comp + "/v"; "") // empty' \
+        <<<"$response")"
+      if [[ -n "$tag" && "$tag" != "null" ]]; then
+        printf '%s\n' "$tag"
+        return 0
+      fi
+    else
+      log_verbose "Invalid JSON in Optimism releases response"
+    fi
   fi
+  
+  # Fallback to checking tags if releases are missing
+  log_verbose "No release found for $component, trying tags"
+  if response="$(http_get "https://api.github.com/repos/ethereum-optimism/optimism/tags?per_page=100")"; then
+    if validate_json "$response"; then
+      tag="$(jq -r --arg comp "$component" \
+        '.[].name | select(startswith($comp + "/")) | sub("^" + $comp + "/v"; "")' \
+        <<<"$response" | sort -V | tail -n1)"
+      if [[ -n "$tag" ]]; then
+        printf '%s\n' "$tag"
+        return 0
+      fi
+    else
+      log_verbose "Invalid JSON in Optimism tags response"
+    fi
+  fi
+  
+  log_verbose "Could not fetch version for $component"
+  printf 'N/A\n'
 }
 
 fetch_github_release() {
   local repo="$1"
+  local response=""
   local tag=""
   
   log_verbose "Fetching release for $repo"
   
   # Try latest release first
-  if tag="$(http_get "https://api.github.com/repos/${repo}/releases/latest" \
-        | jq -r '.tag_name // empty' 2>/dev/null)"; then
-    if [[ -n "$tag" && "$tag" != "null" ]]; then
-      normalize_tag "$tag"
-      return 0
+  if response="$(http_get "https://api.github.com/repos/${repo}/releases/latest")"; then
+    if validate_json "$response"; then
+      tag="$(jq -r '.tag_name // empty' <<<"$response")"
+      if [[ -n "$tag" && "$tag" != "null" ]]; then
+        normalize_tag "$tag"
+        return 0
+      fi
+      log_verbose "No tag_name in release response for $repo"
+    else
+      log_verbose "Invalid JSON in release response for $repo"
     fi
+  else
+    log_verbose "API request failed for $repo releases"
   fi
   
   # Fall back to tags
   log_verbose "No release found for $repo, trying tags"
-  if tag="$(http_get "https://api.github.com/repos/${repo}/tags?per_page=100" \
-        | jq -r '.[].name' 2>/dev/null | sed 's#^.*/##' | sed 's/^v//' \
-        | grep -E '^[0-9]+\.[0-9]+' | sort -V | tail -n1)"; then
-    if [[ -n "$tag" ]]; then
-      printf '%s\n' "$tag"
-      return 0
+  if response="$(http_get "https://api.github.com/repos/${repo}/tags?per_page=100")"; then
+    if validate_json "$response"; then
+      tag="$(jq -r '.[].name' <<<"$response" | sed 's#^.*/##' | sed 's/^v//' \
+            | grep -E '^[0-9]+\.[0-9]+' | sort -V | tail -n1)"
+      if [[ -n "$tag" ]]; then
+        printf '%s\n' "$tag"
+        return 0
+      fi
+    else
+      log_verbose "Invalid JSON in tags response for $repo"
     fi
   fi
   

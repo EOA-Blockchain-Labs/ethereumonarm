@@ -16,6 +16,26 @@ You can edit this file to change the command line arguments passed to the client
 
     sudo systemctl restart op-challenger
 
+Trace Types
+~~~~~~~~~~~
+
+The ``--trace-type`` flag determines which fault proof VMs are used:
+
+*   ``cannon`` - MIPS-based VM (default, recommended)
+*   ``cannon-kona`` - Cannon with Kona host
+*   ``permissioned`` - Permissioned games (uses Cannon)
+*   ``asterisc`` - RISC-V based VM (requires ``asterisc`` binary)
+*   ``asterisc-kona`` - Asterisc with Kona host
+
+.. important::
+
+    Recent versions of ``op-challenger`` default to ``cannon,asterisc-kona,cannon-kona``,
+    which requires the Asterisc binary. To use only Cannon, explicitly set:
+
+    .. code-block:: bash
+
+        TRACE_TYPE="cannon"
+
 Service Management
 ------------------
 

@@ -106,7 +106,7 @@ Update the configuration variables with your details (ensure these match your ne
     # Cannon Configuration
     CANNON_BIN="/usr/bin/cannon"
     CANNON_SERVER="/usr/bin/op-program"
-    CANNON_PRESTATES_URL="https://storage.googleapis.com/optimism-cannon-prestates/mainnet/"
+    CANNON_PRESTATES_URL="https://storage.googleapis.com/optimism/cannon-prestates/"
 
     DATADIR="/home/ethereum/.op-challenger"
 

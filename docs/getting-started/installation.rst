@@ -63,7 +63,11 @@ Prerequisites
 Before you begin, ensure you have the following components:
 
 * **microSD Card**: For the operating system image.
-* **NVMe SSD**: M.2 2280 NVMe SSD. A high-end or mid-range disk is recommended.
+* **NVMe SSD**: M.2 2280 NVMe SSD with **at least 2TB capacity** (4TB recommended for future growth). A high-end or mid-range disk is required for blockchain sync performance.
+
+  .. note::
+     For **Raspberry Pi 5**, you'll need an NVMe HAT. See the :doc:`RPi5 Storage Guide <../operation/rpi5-storage>` for recommended hardware.
+
 * **Ethernet Cable**: For a stable network connection.
 * **Power Supply**: Official or high-quality power supply recommended for your specific board.
 

@@ -40,8 +40,104 @@ A distributed validator cluster consists of:
    Losing access to your key share without proper backups may make your validator deposit unrecoverable.
    Always backup the ``.charon`` directory.
 
+Charon Architecture
+-------------------
+
+Charon acts as a middleware between your validator client and your beacon node. It intercepts the validator duties, coordinates with other Charon nodes to reach consensus, and then submits the signed duties to the beacon node.
+
+.. code-block:: text
+
+    +------------------+       +------------------+       +------------------+
+    | Validator Client | <---> |      Charon      | <---> |    Beacon Node   |
+    +------------------+       +------------------+       +------------------+
+                                        ^
+                                        | P2P Network (TCP/UDP 3610)
+                                        v
+                               +------------------+
+                               | Other Charon Nodes|
+                               +------------------+
+
+Networking & Connectivity
+-------------------------
+
+Charon networking consists of two distinct layers:
+
+1.  **Internal Validator Stack**: The communication between your Validator Client, Charon, and Beacon Node. This should strictly be private (localhost or local private network).
+2.  **External P2P Network**: The communication between Charon nodes. This happens over port **3610** (TCP/UDP).
+
+**Discovery & Relays:**
+Charon uses LibP2P relays to help nodes discover each other and punch through NATs. By default, it uses Obol's public relays. In a VPN setup (like our 3-node example), nodes can communicate directly, but relays still assist in initial discovery if configured.
+
+
+The size of your cluster determines its fault tolerance—its ability to keep operating when some nodes fail or act maliciously.
+
+There are two types of fault tolerance:
+
+- **Byzantine Fault Tolerance (BFT)**: The cluster can survive malicious or compromised nodes (e.g., hacked nodes sending bad data).
+- **Crash Fault Tolerance (CFT)**: The cluster can survive nodes going offline (e.g., power outage, hardware failure).
+
+**To calculate tolerance:**
+
+- **Threshold**: Minimum nodes needed to sign (Quorum) = ``ceil(2n/3)``
+- **BFT Tolerance**: Max malicious nodes = ``floor((n-1)/3)``
+- **CFT Tolerance**: Max offline nodes = ``n - Threshold``
+
+.. list-table:: Cluster Size & Resilience
+   :header-rows: 1
+   :widths: 15 20 15 15 35
+
+   * - Nodes
+     - Threshold
+     - BFT
+     - CFT
+     - Recommendation
+   * - 1
+     - 1
+     - 0
+     - 0
+     - Solo Validator (No DVT benefits)
+   * - 2
+     - 2
+     - 0
+     - 0
+     - ❌ **Not Recommended** (No tolerance)
+   * - 3
+     - 2
+     - 0
+     - 1
+     - ⚠️ **CFT Only** (1 node can crash, but 0 malicious)
+   * - 4
+     - 3
+     - 1
+     - 1
+     - ✅ **Optimal Entry** (Tolerates 1 offline OR 1 malicious)
+   * - 5
+     - 4
+     - 1
+     - 2
+     - ✅ High Availability (Tolerates 2 offline)
+   * - 7
+     - 5
+     - 2
+     - 2
+     - ✅ High Security (Tolerates 2 malicious)
+
+.. note::
+   While a 3-node cluster is easier to organize, it does **not** provide Byzantine Fault Tolerance. It only protects against one node going offline. For full DVT security, start with 4 nodes.
+
+Practical Example: 3-Node Cluster
+---------------------------------
+
+For a complete, step-by-step walkthrough of setting up a **3-node cluster** using Ethereum on ARM devices connected via a WireGuard VPN, please refer to our dedicated guide:
+
+:doc:`/advanced/obol-dvt-3-node-example`
+
+
+
+
 Step 1: Generate Your ENR
 -------------------------
+
 
 An Ethereum Node Record (ENR) identifies your Charon node to other cluster members.
 
@@ -61,7 +157,16 @@ This creates:
 Step 2: Create Cluster Definition (Leader Only)
 -----------------------------------------------
 
-The cluster leader collects ENRs from all operators and creates the cluster definition:
+The cluster leader collects ENRs from all operators and creates the **Cluster Definition**.
+
+This file (`cluster-definition.json`) is the **blueprint** for your cluster. It contains:
+- The cluster name and size.
+- The withdrawal and fee recipient addresses.
+- The ENRs of all participating operators.
+- The definition hash (to ensure all operators use the exact same file).
+
+Run the following command *only* on the leader's node:
+
 
 .. prompt:: bash $
 
@@ -87,7 +192,10 @@ This creates ``/home/ethereum/.charon/cluster-definition.json``.
 Step 3: Run the DKG Ceremony
 ----------------------------
 
-All operators must run the DKG ceremony simultaneously. This generates the distributed keys.
+All operators must run the DKG ceremony simultaneously using the *exact same* `cluster-definition.json` file.
+
+This process establishes a secure channel between operators to generate the distributed private keys without any single entity ever knowing the full key.
+
 
 .. prompt:: bash $
 
@@ -225,9 +333,9 @@ Backup Procedures
 
 Critical files to backup:
 
-- ``/home/ethereum/.charon/charon-enr-private-key``
-- ``/home/ethereum/.charon/cluster-lock.json``
-- ``/home/ethereum/.charon/validator_keys/``
+- ``/home/ethereum/.charon/charon-enr-private-key``: **Identity Key**. Without this, your node cannot participate in the cluster.
+- ``/home/ethereum/.charon/cluster-lock.json``: **Cluster Definition**. Defines the cluster configuration and peers.
+- ``/home/ethereum/.charon/validator_keys/``: **Validator Key Shares**. Your slice of the private key.
 
 The ``ethereumonarm-utils`` package includes ``.charon`` in its backup configuration.
 

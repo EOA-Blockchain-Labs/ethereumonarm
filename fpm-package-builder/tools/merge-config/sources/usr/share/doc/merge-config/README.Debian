@@ -1,4 +1,4 @@
-Merge-Config for Debian
+Merge-Config
 =======================
 
 This package provides essential configuration and setup for Ethereum nodes, specifically focusing on the JWT secret required for the communication between the Consensus Layer and Execution Layer.

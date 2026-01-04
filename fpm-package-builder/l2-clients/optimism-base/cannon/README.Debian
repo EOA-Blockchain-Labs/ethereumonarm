@@ -1,19 +1,29 @@
-optimism-cannon for Debian/Ubuntu
--------------------------------
+cannon
+======
 
-This package installs the 'cannon' binary, which is the Fault Proof Virtual Machine for Optimism.
-It is primarily used by the 'op-challenger' client to verify state transitions.
+Package Name: `optimism-cannon`
+
+The Fault Proof Virtual Machine (FPVM) for Optimism. It is an on-chain MIPS instruction emulator.
+
+Dependencies
+------------
+
+This package is a dependency of `optimism-op-challenger`.
 
 Usage
 -----
-The binary is installed at /usr/bin/cannon.
-It is typically invoked automatically by the op-challenger service.
+
+The binary is installed at `/usr/bin/cannon`.
+
+It is typically invoked automatically by the `op-challenger` service.
 
 Maintainer
 ----------
-Ethereum on ARM <info@ethereumonarm.com>
-https://ethereumonarm.com
+
+*   Ethereum on ARM <info@ethereumonarm.com>
+*   https://ethereumonarm.com
 
 Upstream Project
 ----------------
-https://github.com/ethereum-optimism/optimism/tree/develop/cannon
+
+*   https://github.com/ethereum-optimism/optimism/tree/develop/cannon

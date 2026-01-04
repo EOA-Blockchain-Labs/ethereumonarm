@@ -1,5 +1,5 @@
 MEV-Boost
-=========
+====================
 
 This package provides MEV-Boost, open source middleware run by validators to access a competitive block-building market, packaged for Ethereum on ARM.
 
@@ -24,7 +24,7 @@ Configuration arguments are defined in environment files located in `/etc/ethere
 - `/etc/ethereum/mev-boost-sepolia.conf`
 - `/etc/ethereum/mev-boost-hoodi.conf`
 
-You can edit this file to customize the arguments passed to the binary.
+You can edit these files to customize the arguments passed to the MEV-Boost binary.
 
 Data Directories
 ----------------

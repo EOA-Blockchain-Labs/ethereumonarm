@@ -1,4 +1,4 @@
-Commit-Boost for Debian
+Commit-Boost
 =======================
 
 This package provides Commit-Boost, a sidecar for Ethereum validators to manage commitments, packaged for Ethereum on ARM.

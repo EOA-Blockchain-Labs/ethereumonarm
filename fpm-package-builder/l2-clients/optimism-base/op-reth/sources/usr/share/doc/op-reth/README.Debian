@@ -1,4 +1,4 @@
-Op-Reth for Debian
+Op-Reth
 ==================
 
 This package provides op-reth, a Rust execution client for the Optimism protocol, packaged for Ethereum on ARM.

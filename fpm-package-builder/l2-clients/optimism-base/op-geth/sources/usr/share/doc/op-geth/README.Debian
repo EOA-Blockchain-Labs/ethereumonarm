@@ -1,4 +1,4 @@
-Op-Geth for Debian
+Op-Geth
 ==================
 
 This package provides op-geth, an execution client for the Optimism protocol, packaged for Ethereum on ARM.

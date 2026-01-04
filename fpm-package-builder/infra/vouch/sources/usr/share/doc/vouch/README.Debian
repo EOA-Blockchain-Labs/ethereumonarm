@@ -1,4 +1,4 @@
-Vouch for Debian
+Vouch
 ================
 
 This package provides Vouch, a tool for managing validator keys and acting as a multi-node validator client, packaged for Ethereum on ARM.
@@ -20,7 +20,7 @@ Configuration files are located in `/etc/ethereum/vouch/`.
 
 - `/etc/ethereum/vouch/vouch.yml` (Main configuration file)
 
-The service runs with `--base-dir /etc/ethereum/vouch`, so it looks for configuratiYou can edit this file to customize the arguments passed to the binary.
+The service runs with `--base-dir /etc/ethereum/vouch`, so it looks for configuration. You can edit this file to customize the Vouch configuration.
 
 Data Directories
 ----------------

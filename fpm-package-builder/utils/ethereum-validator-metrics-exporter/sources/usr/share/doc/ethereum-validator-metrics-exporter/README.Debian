@@ -1,4 +1,4 @@
-Ethereum Validator Metrics Exporter for Debian
+Ethereum Validator Metrics Exporter
 ==============================================
 
 This package provides the Ethereum Validator Metrics Exporter, a Prometheus exporter for Ethereum validator metrics, packaged for Ethereum on ARM.

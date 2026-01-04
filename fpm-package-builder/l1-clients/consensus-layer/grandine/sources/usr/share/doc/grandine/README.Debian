@@ -1,4 +1,4 @@
-Grandine for Debian
+Grandine
 ===================
 
 This package provides Grandine, a consensus client for the Ethereum Beacon Chain, packaged for Ethereum on ARM.
@@ -19,7 +19,7 @@ Configuration arguments are defined in the environment files located in `/etc/et
 - `/etc/ethereum/grandine-beacon.conf`: Configuration for the beacon node.
 - `/etc/ethereum/grandine-validator.conf`: Configuration for the validator client.
 
-You can edit these files to customize the arguments passed to the binary.
+You can edit these files to customize the arguments passed to the Grandine binary.
 
 Data Directories
 ----------------

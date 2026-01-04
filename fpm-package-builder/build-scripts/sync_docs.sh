@@ -22,7 +22,6 @@ PACKAGE_FILTER=""
 LIST_MODE=false
 
 # Colors
-RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
@@ -113,11 +112,11 @@ declare -a PACKAGE_MAPPINGS=(
 rst_to_readme() {
     local content="$1"
     
-    # Convert double backticks to single backticks
-    content=$(echo "$content" | sed "s/\`\`/\`/g")
+    # Convert double backticks to single backticks using bash parameter expansion
+    content="${content//\`\`/\`}"
     
     # Output the converted content
-    echo "$content"
+    printf '%s' "$content"
 }
 
 # List all mappings
@@ -173,10 +172,6 @@ sync_package() {
     converted_content=$(rst_to_readme "$(cat "$rst_file")")
     
     if files_differ "$rst_file" "$readme_file"; then
-        local pkg_name
-        pkg_name=$(basename "$readme_file" | sed 's/README.Debian//')
-        pkg_name="${readme_rel%%/*}"
-        
         echo -e "${BLUE}→ Syncing: ${rst_rel} → ${readme_rel}${NC}"
         
         if [[ "$DRY_RUN" == true ]]; then
@@ -211,7 +206,6 @@ main() {
     fi
     
     local synced=0
-    local skipped=0
     local errors=0
     
     for mapping in "${PACKAGE_MAPPINGS[@]}"; do

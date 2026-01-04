@@ -96,24 +96,22 @@ Update the configuration variables with your details (ensure these match your ne
     ROLLUP_RPC="http://localhost:8547"
     L2_ETH_RPC="http://localhost:9545"
 
-    # Game Configuration (Check Optimism docs for your network)
-    GAME_FACTORY_ADDRESS="0x..."
-    TRACE_TYPE="cannon,permissioned"
+    # Network (for well-known networks: op-mainnet, op-sepolia, base-mainnet, base-sepolia)
+    NETWORK="op-mainnet"
+    TRACE_TYPE="cannon"
 
     # Signer
     PRIVATE_KEY="/home/ethereum/challenger.key"
 
     # Cannon Configuration
-    CANNON_PRESTATE="/home/ethereum/prestate.bin.gz"
-    CANNON_ROLLUP_CONFIG="/path/to/rollup.json"
-    CANNON_L2_GENESIS="/path/to/genesis.json"
     CANNON_BIN="/usr/bin/cannon"
     CANNON_SERVER="/usr/bin/op-program"
+    CANNON_PRESTATES_URL="https://storage.googleapis.com/optimism-cannon-prestates/mainnet/"
 
     DATADIR="/home/ethereum/.op-challenger"
 
 .. tip:: 
-   For Mainnet/Sepolia network addresses and Genesis files, refer to the `Optimism Networks Repository <https://github.com/ethereum-optimism/ethereum-optimism.github.io>`_.
+   For custom OP Stack chains not listed above, use ``GAME_FACTORY_ADDRESS`` instead of ``NETWORK``.
 
 Running the Guardian
 --------------------
@@ -191,3 +189,8 @@ Running the Service
 
     sudo systemctl enable --now op-proposer
     sudo journalctl -u op-proposer -f
+
+Testing on Sepolia
+==================
+
+For a complete step-by-step guide on testing op-challenger on the Sepolia testnet from scratch, including L1/L2 node setup, wallet creation, and faucet funding, see :doc:`op-challenger-testnet`.

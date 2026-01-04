@@ -1,33 +1,42 @@
-Testing Op-Challenger on Sepolia Testnet
-=========================================
-
-This guide walks you through testing the Optimism Fault Proof Challenger on the **Sepolia testnet** from scratch, including setting up L1 and L2 nodes, creating a wallet, and funding it via faucets.
+This guide walks you through testing the Optimism Fault Proof Challenger on the **Sepolia testnet** using a multi-machine setup connected via PiVPN/WireGuard.
 
 .. important::
    This guide is for **testing purposes only**. For mainnet operation, see :doc:`optimism-challenger`.
 
+Prerequisites
+-------------
+
+This guide assumes you have:
+
+- **3 ARM devices** running Ethereum on ARM (Rock 5B, Orange Pi 5 Plus, NanoPC-T6, etc.)
+- **PiVPN/WireGuard configured** per :doc:`/system/network-vpn` (10.1.25.0/24 subnet)
+- L1 clients pre-installed (Nethermind, Lighthouse come with the image)
+
 Architecture Overview
 ---------------------
 
-The op-challenger requires a complete L1 + L2 stack:
+We use 3 machines connected via WireGuard VPN:
 
 .. code-block:: text
 
-   ┌─────────────────────────────────────────────────────────────┐
-   │                    Op-Challenger                            │
-   │            (Monitors & Challenges Invalid Proofs)           │
-   └─────────────────────────────────────────────────────────────┘
-                              │
-         ┌────────────────────┼────────────────────┐
-         ▼                    ▼                    ▼
-   ┌───────────┐       ┌───────────┐        ┌───────────┐
-   │ L1 EL RPC │       │ L1 Beacon │        │  L2 RPCs  │
-   │(Nethermind)│       │(Lighthouse)│        │(op-node)  │
-   └───────────┘       └───────────┘        └───────────┘
-         │                    │                    │
-         └────────────────────┼────────────────────┘
-                              ▼
-                     Ethereum Sepolia
+   ┌─────────────────────────────────────────────────────────────────────────┐
+   │                        WireGuard VPN (10.1.25.0/24)                     │
+   └─────────────────────────────────────────────────────────────────────────┘
+            │                         │                         │
+            ▼                         ▼                         ▼
+   ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+   │   Machine 1     │     │   Machine 2     │     │   Machine 3     │
+   │   L1 NODE       │     │   L2 NODE       │     │   CHALLENGER    │
+   │  10.1.25.11     │     │  10.1.25.9      │     │  10.1.25.10     │
+   ├─────────────────┤     ├─────────────────┤     ├─────────────────┤
+   │ • Nethermind    │     │ • op-geth       │     │ • op-challenger │
+   │   (EL :8545)    │     │   (EL :9545)    │     │ • cannon        │
+   │ • Lighthouse    │     │ • op-node       │     │ • op-program    │
+   │   (CL :5052)    │     │   (RPC :8545)   │     │                 │
+   └─────────────────┘     └─────────────────┘     └─────────────────┘
+            │                         │
+            └─────────────────────────┘
+                    Ethereum Sepolia
 
 Available Packages
 ------------------
@@ -63,24 +72,17 @@ The following Optimism packages are available:
      - ``optimism-op-reth``
      - L2 Execution Layer (Reth alternative)
 
-Step 1: Install L2 Packages
-----------------------------
+Machine 1: L1 Node (10.1.25.11)
+================================
 
-The Ethereum on ARM image already includes L1 clients (Nethermind, Lighthouse, etc.). You only need to install the L2/Optimism packages:
+This machine runs the Ethereum L1 clients (Nethermind + Lighthouse) for Sepolia.
 
-.. prompt:: bash $
+L1 clients are pre-installed on the Ethereum on ARM image.
 
-   # L2 Clients (op-challenger pulls cannon and op-program as dependencies)
-   sudo apt-get update
-   sudo apt-get install optimism-op-geth optimism-op-node optimism-op-challenger
+Configure Nethermind
+--------------------
 
-Step 2: Configure L1 Layer (Sepolia)
-------------------------------------
-
-Nethermind (Execution Layer)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Edit ``/etc/ethereum/nethermind-sepolia.conf``:
+Edit ``/etc/ethereum/nethermind-sepolia.conf`` to bind to VPN interface:
 
 .. code-block:: bash
 
@@ -89,13 +91,13 @@ Edit ``/etc/ethereum/nethermind-sepolia.conf``:
        -dd /home/ethereum/.nethermind-sepolia \
        --JsonRpc.JwtSecretFile /etc/ethereum/jwtsecret \
        --JsonRpc.Enabled true \
-       --JsonRpc.Host 127.0.0.1 \
+       --JsonRpc.Host 0.0.0.0 \
        --JsonRpc.Port 8545 \
        --Metrics.Enabled true \
        --Metrics.ExposePort 7070"
 
-Lighthouse (Consensus Layer)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Configure Lighthouse
+--------------------
 
 Edit ``/etc/ethereum/lighthouse-beacon-sepolia.conf``:
 
@@ -105,7 +107,7 @@ Edit ``/etc/ethereum/lighthouse-beacon-sepolia.conf``:
        beacon \
        --eth1 \
        --http \
-       --http-address 127.0.0.1 \
+       --http-address 0.0.0.0 \
        --http-port 5052 \
        --execution-endpoint http://127.0.0.1:8551 \
        --execution-jwt /etc/ethereum/jwtsecret \
@@ -127,27 +129,37 @@ Wait for L1 to sync (can take several hours). Check progress:
    sudo journalctl -fu nethermind-sepolia
    sudo journalctl -fu lighthouse-beacon-sepolia
 
-Step 3: Configure L2 Layer (OP-Sepolia)
----------------------------------------
+Machine 2: L2 Node (10.1.25.9)
+===============================
 
-Create a separate JWT secret for L2:
+This machine runs the Optimism L2 clients (op-geth + op-node).
+
+Install L2 Packages
+-------------------
+
+.. prompt:: bash $
+
+   sudo apt-get update
+   sudo apt-get install optimism-op-geth optimism-op-node
+
+Create a JWT secret for L2:
 
 .. prompt:: bash $
 
    sudo openssl rand -hex 32 | sudo tee /etc/ethereum/jwtsecret-l2
    sudo chmod 644 /etc/ethereum/jwtsecret-l2
 
-Op-Geth (L2 Execution)
-~~~~~~~~~~~~~~~~~~~~~~
+Configure Op-Geth
+-----------------
 
-Create ``/etc/ethereum/op-geth-sepolia.conf``:
+Edit ``/etc/ethereum/op-geth.conf``:
 
 .. code-block:: bash
 
    ARGS="--datadir=/home/ethereum/.op-geth-sepolia \
        --verbosity=3 \
        --op-network=op-sepolia \
-       --http --http.port=31303 --http.addr=127.0.0.1 \
+       --http --http.port=9545 --http.addr=0.0.0.0 \
        --authrpc.addr=127.0.0.1 \
        --authrpc.jwtsecret=/etc/ethereum/jwtsecret-l2 \
        --authrpc.port=8555 \
@@ -155,19 +167,19 @@ Create ``/etc/ethereum/op-geth-sepolia.conf``:
        --syncmode=snap \
        --metrics=true --metrics.addr=0.0.0.0 --metrics.port=7301"
 
-Op-Node (L2 Rollup)
-~~~~~~~~~~~~~~~~~~~
+Configure Op-Node
+-----------------
 
-Create ``/etc/ethereum/op-node-sepolia.conf``:
+Edit ``/etc/ethereum/op-node.conf`` (note: L1 endpoints point to Machine 1):
 
 .. code-block:: bash
 
-   ARGS="--l1=http://127.0.0.1:8545 \
-       --l1.beacon=http://127.0.0.1:5052 \
+   ARGS="--l1=http://10.1.25.11:8545 \
+       --l1.beacon=http://10.1.25.11:5052 \
        --l2=http://127.0.0.1:8555 \
        --network=op-sepolia \
-       --rpc.addr=127.0.0.1 \
-       --rpc.port=9545 \
+       --rpc.addr=0.0.0.0 \
+       --rpc.port=8545 \
        --l2.jwt-secret=/etc/ethereum/jwtsecret-l2 \
        --metrics.enabled \
        --metrics.addr=0.0.0.0 \
@@ -175,21 +187,33 @@ Create ``/etc/ethereum/op-node-sepolia.conf``:
        --syncmode=execution-layer"
 
 Start L2 Services
-~~~~~~~~~~~~~~~~~
+-----------------
 
-After L1 is synced:
+After L1 is synced on Machine 1:
 
 .. prompt:: bash $
 
    sudo systemctl enable --now op-geth op-node
 
-Step 4: Create a Challenger Wallet
-----------------------------------
+Machine 3: Challenger (10.1.25.10)
+===================================
+
+This machine runs the op-challenger (with cannon and op-program).
+
+Install Challenger Packages
+---------------------------
+
+.. prompt:: bash $
+
+   sudo apt-get update
+   sudo apt-get install optimism-op-challenger
+
+This automatically installs ``optimism-cannon`` and ``optimism-op-program`` as dependencies.
+
+Create Challenger Wallet
+------------------------
 
 The challenger needs a funded wallet to submit challenge transactions.
-
-Option 1: Using OpenSSL
-~~~~~~~~~~~~~~~~~~~~~~~
 
 .. prompt:: bash $
 
@@ -201,20 +225,8 @@ Option 1: Using OpenSSL
    # Get the public address (requires cast from Foundry)
    cast wallet address --private-key $(cat /home/ethereum/challenger-testnet.key)
 
-Option 2: Using Foundry Cast
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. prompt:: bash $
-
-   # Install Foundry if not already installed
-   curl -L https://foundry.paradigm.xyz | bash
-   foundryup
-
-   # Create a new encrypted keystore
-   cast wallet new /home/ethereum/keystore challenger-testnet
-
-Step 5: Fund the Wallet
------------------------
+Fund the Wallet
+---------------
 
 You need **Sepolia ETH** (for L1 transactions). Use one of these faucets:
 
@@ -236,26 +248,26 @@ You need **Sepolia ETH** (for L1 transactions). Use one of these faucets:
      - Alchemy account
 
 .. tip::
-   Request funds daily over several days to accumulate enough for testing. You'll need at least **0.1 ETH** for basic testing.
+   Request funds daily over several days. You'll need at least **0.1 ETH** for testing.
 
-Step 6: Configure Op-Challenger
--------------------------------
+Configure Op-Challenger
+-----------------------
 
-Create ``/etc/ethereum/op-challenger-sepolia.conf``:
+Edit ``/etc/ethereum/op-challenger.conf`` (note: L1/L2 endpoints point to other machines):
 
 .. code-block:: bash
 
    # Challenger Data Directory
-   DATADIR="/home/ethereum/.op-challenger-sepolia"
+   DATADIR="/home/ethereum/.op-challenger"
    NUM_CONFIRMATIONS=1
 
-   # L1 RPCs (Nethermind + Lighthouse)
-   L1_ETH_RPC="http://127.0.0.1:8545"
-   L1_BEACON_RPC="http://127.0.0.1:5052"
+   # L1 RPCs (Machine 1: 10.1.25.11)
+   L1_ETH_RPC="http://10.1.25.11:8545"
+   L1_BEACON_RPC="http://10.1.25.11:5052"
 
-   # L2 RPCs (op-node + op-geth)
-   ROLLUP_RPC="http://127.0.0.1:9545"
-   L2_ETH_RPC="http://127.0.0.1:31303"
+   # L2 RPCs (Machine 2: 10.1.25.9)
+   ROLLUP_RPC="http://10.1.25.9:8545"
+   L2_ETH_RPC="http://10.1.25.9:9545"
 
    # Network (automatically sets correct DisputeGameFactory address)
    NETWORK="op-sepolia"
@@ -264,7 +276,7 @@ Create ``/etc/ethereum/op-challenger-sepolia.conf``:
    # Cannon Configuration
    CANNON_BIN="/usr/bin/cannon"
    CANNON_SERVER="/usr/bin/op-program"
-   CANNON_PRESTATES_URL="https://storage.googleapis.com/optimism-cannon-prestates/sepolia/"
+   CANNON_PRESTATES_URL="https://storage.googleapis.com/optimism/cannon-prestates/"
 
    # Signer (use your testnet key)
    PRIVATE_KEY="/home/ethereum/challenger-testnet.key"
@@ -287,13 +299,13 @@ Create the data directory:
 
 .. prompt:: bash $
 
-   sudo mkdir -p /home/ethereum/.op-challenger-sepolia
-   sudo chown ethereum:ethereum /home/ethereum/.op-challenger-sepolia
+   sudo mkdir -p /home/ethereum/.op-challenger
+   sudo chown ethereum:ethereum /home/ethereum/.op-challenger
 
-Step 7: Start the Challenger
-----------------------------
+Start the Challenger
+--------------------
 
-After L2 is synced:
+After L2 is synced on Machine 2:
 
 .. prompt:: bash $
 
@@ -305,8 +317,8 @@ Check the logs:
 
    sudo journalctl -fu op-challenger
 
-Step 8: Verify Operation
-------------------------
+Verification
+============
 
 **Signs of a healthy challenger:**
 
@@ -316,56 +328,62 @@ Step 8: Verify Operation
 
       INFO [01-04|12:00:00] Monitoring games    count=5 type=FaultDisputeGame
 
-2. **No Connection Errors:** Ensure no repeated L1/L2 connection errors.
+2. **No Connection Errors:** Ensure no L1/L2 connection errors.
 
-3. **Metrics Available:** Check metrics at ``http://localhost:7300/metrics``
+3. **Metrics Available:** Check metrics at ``http://10.1.25.10:7300/metrics``
 
 Service Summary
 ---------------
 
 .. list-table::
    :header-rows: 1
-   :widths: 25 25 25 25
+   :widths: 15 25 20 15 25
 
-   * - Service
-     - Config File
+   * - Machine
+     - Service
+     - VPN IP
      - Port
      - Purpose
-   * - ``nethermind-sepolia``
-     - ``nethermind-sepolia.conf``
-     - 8545 (RPC), 8551 (Auth)
+   * - 1
+     - ``nethermind-sepolia``
+     - 10.1.25.11
+     - 8545
      - L1 Execution
-   * - ``lighthouse-beacon-sepolia``
-     - ``lighthouse-beacon-sepolia.conf``
-     - 5052 (HTTP)
+   * - 1
+     - ``lighthouse-beacon-sepolia``
+     - 10.1.25.11
+     - 5052
      - L1 Consensus
-   * - ``op-geth``
-     - ``op-geth-sepolia.conf``
-     - 31303 (RPC), 8555 (Auth)
+   * - 2
+     - ``op-geth``
+     - 10.1.25.9
+     - 9545
      - L2 Execution
-   * - ``op-node``
-     - ``op-node-sepolia.conf``
-     - 9545 (RPC)
-     - L2 Rollup
-   * - ``op-challenger``
-     - ``op-challenger-sepolia.conf``
-     - 7300 (Metrics)
+   * - 2
+     - ``op-node``
+     - 10.1.25.9
+     - 8545
+     - L2 Rollup RPC
+   * - 3
+     - ``op-challenger``
+     - 10.1.25.10
+     - 7300
      - Challenger
 
 Troubleshooting
 ---------------
 
 **"Failed to connect to L1"**
-   - Verify Nethermind is running and synced
-   - Check ``L1_ETH_RPC`` points to correct port (8545)
+   - Check VPN connectivity: ``ping 10.1.25.11``
+   - Verify Nethermind is bound to ``0.0.0.0``
 
 **"L1 beacon client not available"**
-   - Verify Lighthouse is running
-   - Check ``L1_BEACON_RPC`` points to correct port (5052)
+   - Check VPN connectivity: ``ping 10.1.25.11``
+   - Verify Lighthouse is bound to ``0.0.0.0``
 
-**"Failed to fetch game"**
-   - Verify L2 is synced (``op-node`` and ``op-geth``)
-   - Check ``GAME_FACTORY_ADDRESS`` is correct for OP-Sepolia
+**"Failed to connect to L2"**
+   - Check VPN connectivity: ``ping 10.1.25.9``
+   - Verify op-node/op-geth are bound to ``0.0.0.0``
 
 **"Insufficient funds"**
    - Your challenger wallet needs more Sepolia ETH
@@ -374,6 +392,6 @@ Troubleshooting
 See Also
 --------
 
+- :doc:`/system/network-vpn` - PiVPN/WireGuard setup guide
 - :doc:`optimism-challenger` - Production setup guide
 - :doc:`optimism-challenger-verification` - Verification procedures
-- :doc:`optimism-l2` - Full Optimism L2 node setup

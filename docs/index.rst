@@ -85,7 +85,6 @@ Select a topic to get started:
    /operation/layer-1
    /operation/layer-2
    /operation/optimism-l2
-   /operation/supernode
    /operation/web3-stack
    /operation/storage-management
    /operation/rpi5-storage

@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-01-03 03:57:02 UTC_
+_Last updated: 2026-01-04 04:14:06 UTC_
 
  **What this report compares**
 
@@ -17,10 +17,10 @@ _Last updated: 2026-01-03 03:57:02 UTC_
 
 ## Summary
 
-- Total packages checked: **35**
-- ✅ Up-to-date: **33** (94.3%)
+- Total packages checked: **34**
+- ✅ Up-to-date: **33** (97.1%)
 - ❌ Outdated: **1** (2.9%)
-- ❓ N/A: **1** (2.9%)
+- ❓ N/A: **0** (0.0%)
 
 
 ## Infra
@@ -76,7 +76,6 @@ _Last updated: 2026-01-03 03:57:02 UTC_
 | `optimism-op-challenger` | `1.7.0` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.7.0` | ✅ Up-to-date |
 | `optimism-op-geth` | `1.101604.0` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101604.0` | ✅ Up-to-date |
 | `optimism-op-node` | `1.16.4` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.16.4` | ✅ Up-to-date |
-| `optimism-op-proposer` | `N/A` ([ethereum-optimism/optimism#op-proposer](https://github.com/ethereum-optimism/optimism#op-proposer)) | `N/A` | ❓ N/A |
 | `optimism-op-reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
 | `starknet-juno` | `0.15.16` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.16` | ✅ Up-to-date |
 | `starknet-madara` | `0.10.0` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.0` | ✅ Up-to-date |

@@ -1,4 +1,4 @@
-Ethereum on ARM Nginx Proxy Extras for Debian
+Ethereum on ARM Nginx Proxy Extras
 =============================================
 
 This meta-package configures Nginx to act as a reverse proxy for Ethereum execution layer clients, allowing secure RPC access.
@@ -15,11 +15,6 @@ Data Directories
 ----------------
 
 This package does not store persistent data.
-
-User and Group
---------------
-
-This package does not create any new users or groups.
 
 Package Details
 ---------------

@@ -1,4 +1,4 @@
-Ethereum Metrics Exporter for Debian
+Ethereum Metrics Exporter
 ====================================
 
 This package provides the Ethereum Metrics Exporter, a client-agnostic tool for monitoring Ethereum nodes, packaged for Ethereum on ARM.

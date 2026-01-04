@@ -1,4 +1,4 @@
-Madara for Debian
+Madara
 =================
 
 This package provides Madara, a hybrid Starknet client written in Rust, packaged for Ethereum on ARM.

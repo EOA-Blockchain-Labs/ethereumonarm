@@ -1,4 +1,4 @@
-EthStaker Deposit CLI for Debian
+EthStaker Deposit CLI
 ================================
 
 This package provides the EthStaker Deposit CLI, a tool for creating EIP-2335 format BLS12-381 keystores, packaged for Ethereum on ARM.
@@ -12,13 +12,6 @@ This is a command-line tool. You can run it using the following command:
 
 Run `deposit --help` for more information on available commands and options.
 
-User and Group
---------------
-
-This tool is installed as a system-wide binary and can be run by any user.
-
-You can edit this file to customize the arguments passed to the binary.
-
 Data Directories
 ----------------
 
@@ -27,7 +20,7 @@ This package does not store persistent data. Key generation output is user-speci
 User and Group
 --------------
 
-This CLI tool runs as the invoking user.
+This tool is installed as a system-wide binary and can be run by any user.
 
 Package Details
 ---------------

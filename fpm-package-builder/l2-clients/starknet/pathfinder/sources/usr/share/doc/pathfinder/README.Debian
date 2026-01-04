@@ -1,4 +1,4 @@
-Pathfinder for Debian
+Pathfinder
 =====================
 
 This package provides Pathfinder, a Starknet full node implementation in Rust, packaged for Ethereum on ARM.

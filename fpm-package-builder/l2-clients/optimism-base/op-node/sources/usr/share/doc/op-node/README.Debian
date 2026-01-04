@@ -1,4 +1,4 @@
-Op-Node for Debian
+Op-Node
 ==================
 
 This package provides op-node, the rollup client for the Optimism protocol, packaged for Ethereum on ARM.

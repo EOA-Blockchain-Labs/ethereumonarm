@@ -1,5 +1,5 @@
 Reth
-====
+===============
 
 This package provides Reth, the Rust implementation of the Ethereum protocol by Paradigm, packaged for Ethereum on ARM.
 

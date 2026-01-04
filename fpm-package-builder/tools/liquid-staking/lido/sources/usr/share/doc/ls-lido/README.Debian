@@ -1,4 +1,4 @@
-Lido Liquid Staking Infra for Debian
+Lido Liquid Staking Infra
 ====================================
 
 This package provides configuration files and systemd service overrides to run Ethereum validators with the Lido Liquid Staking protocol on Ethereum on ARM.
@@ -37,11 +37,6 @@ Data Directories
 ----------------
 
 This package configures existing validators. See their documentation for data directory locations.
-
-User and Group
---------------
-
-The service overrides run as the `ethereum` user and group.
 
 Package Details
 ---------------

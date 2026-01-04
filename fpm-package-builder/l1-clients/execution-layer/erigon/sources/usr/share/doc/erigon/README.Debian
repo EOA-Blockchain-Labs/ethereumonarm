@@ -1,5 +1,5 @@
 Erigon
-======
+=================
 
 This package provides Erigon, an implementation of Ethereum (execution client), packaged for Ethereum on ARM.
 

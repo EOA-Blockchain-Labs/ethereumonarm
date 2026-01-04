@@ -1,4 +1,4 @@
-StakeWise V3 Operator for Debian
+StakeWise V3 Operator
 ==============================
 
 This package provides the StakeWise V3 Operator, a tool for managing StakeWise V3 validators, packaged for Ethereum on ARM.
@@ -20,7 +20,7 @@ Configuration arguments are defined in the environment file located in `/etc/eth
 
 - `/etc/ethereum/stakewise-operator.conf`
 
-You can edit this file to customize the arguments passed to the StakeWise Operator binary.
+You can edit this file to customize the generic arguments passed to the binary.
 
 Data Directories
 ----------------

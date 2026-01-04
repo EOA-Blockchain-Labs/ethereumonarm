@@ -1,4 +1,4 @@
-Swarm (Bee) for Debian
+Swarm (Bee)
 ======================
 
 This package provides Bee, a Swarm client implemented in Go, packaged for Ethereum on ARM.
@@ -19,7 +19,9 @@ Configuration
 Configuration arguments are defined in the environment file and YAML configuration located in `/etc/`.
 
 - `/etc/default/bee`: Environment variables for the service.
-- `/etc/bee/bee.yaml`: MainYou can edit this file to customize the arguments passed to the binary.
+- `/etc/bee/bee.yaml`: Main configuration file for the Bee node.
+
+You can edit this file to customize the generic arguments passed to the Bee binary.
 
 Data Directories
 ----------------

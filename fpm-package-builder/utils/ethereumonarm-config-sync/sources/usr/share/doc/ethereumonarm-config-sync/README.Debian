@@ -1,4 +1,4 @@
-Ethereum on ARM Config Sync for Debian
+Ethereum on ARM Config Sync
 ======================================
 
 This package provides a synchronization script and service for Ethereum on ARM configuration files.
@@ -21,11 +21,6 @@ Data Directories
 ----------------
 
 This package does not store persistent data.
-
-User and Group
---------------
-
-The service runs as root (oneshot).
 
 Package Details
 ---------------

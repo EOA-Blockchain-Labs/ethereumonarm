@@ -61,7 +61,6 @@ Select a topic to get started:
    /getting-started/introduction
    /getting-started/installation
    /getting-started/starting-node
-   /getting-started/post-install
    /getting-started/quickstart-cheatsheet
 
 .. toctree::
@@ -69,7 +68,7 @@ Select a topic to get started:
    :hidden:
    :caption: ℹ️ Overview
 
-   /overview/introduction
+   /overview/about
    /overview/why-arm
    /overview/supported-hardware
    /overview/features
@@ -86,7 +85,6 @@ Select a topic to get started:
    /operation/layer-2
    /operation/optimism-l2
    /operation/web3-stack
-   /operation/storage-management
    /operation/rpi5-storage
 
 .. toctree::

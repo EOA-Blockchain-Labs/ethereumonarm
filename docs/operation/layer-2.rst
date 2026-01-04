@@ -351,17 +351,13 @@ Client Comparison
 
 .. _optimism:
 
-Optimism :bdg-success:`Production Ready` :bdg-info:`Go`
---------
+Optimism / Base :bdg-success:`Production Ready` :bdg-info:`Go`
+---------------
 
-**Official Site:** https://www.optimism.io/
+**Official Sites:** https://www.optimism.io/ | https://base.org/
 
 Optimism is a Layer 2 scaling solution for Ethereum that uses Optimistic Rollups to increase scalability. 
-It processes transactions off-chain and submits them to Ethereum L1, significantly reducing gas costs while 
-maintaining Ethereum's security guarantees.
-
-**Base** (developed by Coinbase) is built on the Optimism stack and shares the same architecture, making it 
-part of the Optimism "Superchain" ecosystem.
+**Base** (developed by Coinbase) is built on the same Optimism stack.
 
 Architecture
 ~~~~~~~~~~~~
@@ -371,219 +367,43 @@ An Optimism/Base node consists of two components:
 1. **Execution Client** - Processes transactions (op-geth or op-reth)
 2. **Consensus Client** - Op-Node (rollup node that derives L2 chain from L1)
 
-Security & Decentralization
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You can actively contribute to the security of the Optimism Superchain by running a **Fault Proof Challenger** (Guardian Node). This service monitors the network for invalid state transitions and challenges them.
-
-:doc:`How to run a Guardian Node (Challenger) <optimism-challenger>`
-
-Prerequisites
-~~~~~~~~~~~~~
-
 .. important::
    You need access to a **synced Ethereum L1 node** (both Execution and Consensus layers).
 
-Available Execution Clients
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Quick Start
+~~~~~~~~~~~
 
-.. tab-set::
-
-   .. tab-item:: Op-Geth (Recommended)
-
-      **Op-Geth** is the official Geth fork optimized for Optimism.
-
-      **Features:**
-      - Snap sync support (faster initial sync)
-      - Battle-tested and widely used
-      - Official Optimism implementation
-
-      **Services:**
-      - Optimism: ``op-geth.service``
-      - Base: ``op-geth-base.service``
-
-      **Config Files:**
-      - Optimism: ``/etc/ethereum/op-geth.conf``
-      - Base: ``/etc/ethereum/op-geth-base.conf``
-
-      **Data Directories:**
-      - Optimism: ``/home/ethereum/.op-geth``
-      - Base: ``/home/ethereum/.op-geth-base``
-
-   .. tab-item:: Op-Reth
-
-      **Op-Reth** is the Reth implementation for Optimism (Rust-based).
-
-      **Features:**
-      - High performance Rust implementation
-      - Lower resource usage
-      - Newer, actively developed
-
-      **Services:**
-      - Optimism: ``op-reth.service``
-      - Base: ``op-reth-base.service``
-
-      **Config Files:**
-      - Optimism: ``/etc/ethereum/op-reth.conf``
-      - Base: ``/etc/ethereum/op-reth-base.conf``
-
-      **Data Directories:**
-      - Optimism: ``/home/ethereum/.op-reth``
-      - Base: ``/home/ethereum/.op-reth-base``
-
-Setup Instructions
-~~~~~~~~~~~~~~~~~~
-
-Choose either **Optimism** or **Base** (not both simultaneously).
-
-1. Configure L1 Connection
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Edit the Op-Node configuration file to point to your L1 node:
-
-**For Optimism:**
+**Installation:**
 
 .. prompt:: bash $
 
-  sudo nano /etc/ethereum/op-node.conf
+  sudo apt-get update
+  sudo apt-get install optimism-op-geth optimism-op-node
 
-**For Base:**
-
-.. prompt:: bash $
-
-  sudo nano /etc/ethereum/op-node-base.conf
-
-Update the L1 endpoints:
+**Configure L1 connection** in ``/etc/ethereum/op-node.conf``:
 
 .. code-block:: bash
 
-  ARGS="--l1=http://192.168.0.10:8545 \
-      --l1.beacon=http://192.168.0.10:5052 \
-      ...
+  ARGS="--l1=http://YOUR_L1_IP:8545 \
+      --l1.beacon=http://YOUR_L1_IP:5052 \
+      ..."
 
-Replace ``192.168.0.10`` with your L1 node IP (use ``localhost`` or ``127.0.0.1`` if running on the same machine).
-
-2. Start Execution Client
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Choose your execution client and network:
-
-.. tab-set::
-
-   .. tab-item:: Optimism + Op-Geth
-
-      .. prompt:: bash $
-
-        sudo systemctl start op-geth
-        sudo journalctl -u op-geth -f
-
-   .. tab-item:: Optimism + Op-Reth
-
-      .. prompt:: bash $
-
-        sudo systemctl start op-reth
-        sudo journalctl -u op-reth -f
-
-   .. tab-item:: Base + Op-Geth
-
-      .. prompt:: bash $
-
-        sudo systemctl start op-geth-base
-        sudo journalctl -u op-geth-base -f
-
-   .. tab-item:: Base + Op-Reth
-
-      .. prompt:: bash $
-
-        sudo systemctl start op-reth-base
-        sudo journalctl -u op-reth-base -f
-
-.. important::
-   Wait for the execution client to start before proceeding to the next step.
-
-3. Start Op-Node
-^^^^^^^^^^^^^^^^
-
-Start the corresponding Op-Node service:
-
-**For Optimism:**
+**Start the services:**
 
 .. prompt:: bash $
 
+  sudo systemctl start op-geth
   sudo systemctl start op-node
-  sudo journalctl -u op-node -f
-
-**For Base:**
-
-.. prompt:: bash $
-
-  sudo systemctl start op-node-base
-  sudo journalctl -u op-node-base -f
-
-The node will begin syncing. Initial sync can take several hours depending on your hardware and network.
-
-Verification
-~~~~~~~~~~~~
-
-Check that both services are running:
-
-.. prompt:: bash $
-
-  sudo systemctl status op-geth op-node
-
-Or for Base:
-
-.. prompt:: bash $
-
-  sudo systemctl status op-geth-base op-node-base
-
-Test RPC connection:
-
-.. prompt:: bash $
-
-  curl -X POST http://localhost:31303 \
-    -H "Content-Type: application/json" \
-    -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-
-Configuration Details
-~~~~~~~~~~~~~~~~~~~~~
-
-**Ports:**
-
-.. csv-table::
-   :align: left
-   :header: Service, HTTP RPC, Auth RPC, Metrics, P2P
-
-   Op-Geth, 31303, 8555, 7301, 30303
-   Op-Reth, 8545, 9551, -, 30303
-   Op-Node, 9545, -, 7300, -
-
-**Key Configuration Options:**
-
-- ``--syncmode=snap`` - Fast sync mode (op-geth)
-- ``--rollup.sequencerhttp`` - Sequencer endpoint
-- ``--l1`` - L1 Execution RPC endpoint
-- ``--l1.beacon`` - L1 Beacon API endpoint
-- ``--l2.jwt-secret`` - JWT secret path
-
-Base vs Optimism
-~~~~~~~~~~~~~~~~~
-
-**Base** is built on the Optimism stack with these differences:
-
-- Different network ID (8453 for Base)
-- Different sequencer endpoint (``mainnet-sequencer.base.org``)
-- Separate data directories and services
-- Part of Optimism Superchain ecosystem
-
-Both use the same client software with different configurations.
 
 .. seealso::
    
-   **Advanced Setup: Running an Optimism Supernode**
+   **Complete Setup Guide**
    
-   For a comprehensive guide on running both L1 and L2 nodes on the same hardware (32GB RAM required),
-   see :doc:`optimism-l2`.
+   For detailed instructions including hardware requirements, all client options (Op-Geth, Op-Reth), 
+   Base configuration, and running a full Supernode (L1+L2 on same hardware), see:
+   
+   - :doc:`Running an Optimism Supernode <optimism-l2>` - Comprehensive 32GB RAM setup
+   - :doc:`Running a Guardian Node (Challenger) <optimism-challenger>` - Secure the network
 
 Troubleshooting
 ---------------

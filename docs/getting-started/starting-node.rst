@@ -80,3 +80,17 @@ You can access Grafana's Dashboard as well to get further info of the clients.
 .. note::
   Ethereum on ARM supports 5 EL clients: :guilabel:`Geth`, :guilabel:`Nethermind`, 
   :guilabel:`Erigon`, :guilabel:`Reth` and :guilabel:`Besu` (all already installed in your system).
+
+What's Next
+-----------
+
+Awesome! You are now running an Ethereum node!
+
+The next step is to get your client synced and become more familiar with your node.
+For more info about how the node works and to check sync status, please visit
+our :doc:`Operation Guide <../operation/introduction>`.
+
+.. tip::
+   Remember that you can stake with your ARM board. If you have
+   32 ETH check out our **Consensus clients** section and get your validator up
+   and running.

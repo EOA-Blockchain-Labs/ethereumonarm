@@ -105,7 +105,6 @@ Edit ``/etc/ethereum/lighthouse-beacon-sepolia.conf``:
 
    ARGS="--network sepolia \
        beacon \
-       --eth1 \
        --http \
        --http-address 0.0.0.0 \
        --http-port 5052 \

@@ -13,6 +13,7 @@ This package installs systemd services for various networks. The services are di
 - `nethermind-sepolia.service` (Sepolia Testnet)
 - `nethermind-hoodi.service` (Hoodi Testnet)
 - `nethermind-op.service` (Optimism Mainnet)
+- `nethermind-op-sepolia.service` (Optimism Sepolia)
 
 To enable a service, run:
     sudo systemctl enable --now <service_name>
@@ -27,6 +28,7 @@ Configuration arguments are defined in environment files located in `/etc/ethere
 - **Sepolia**: `/etc/ethereum/nethermind-sepolia.conf`
 - **Hoodi**: `/etc/ethereum/nethermind-hoodi.conf`
 - **Optimism**: `/etc/ethereum/nethermind-op.conf`
+- **Optimism Sepolia**: `/etc/ethereum/nethermind-op-sepolia.conf`
 
 You can edit these files to customize the generic arguments passed to the Nethermind binary.
 
@@ -40,6 +42,7 @@ By default, this package stores data in the `ethereum` user's home directory:
 - `/home/ethereum/.nethermind-sepolia` (Sepolia Testnet)
 - `/home/ethereum/.nethermind-hoodi` (Hoodi Testnet)
 - `/home/ethereum/.nethermind-op` (Optimism)
+- `/home/ethereum/.nethermind-op-sepolia` (Optimism Sepolia)
 
 User and Group
 --------------

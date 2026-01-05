@@ -379,7 +379,13 @@ The first crucial step in setting up your Optimism Supernode is to establish a f
     *   **Execution Layer (EL):**  Handles transaction execution, state management, and the Ethereum Virtual Machine (EVM).  Examples of EL clients include Geth, Nethermind, Erigon, and Besu.
     *   **Consensus Layer (CL):**  (Also known as the Beacon Chain) Handles block production, attestation, and finalization, ensuring network consensus. Examples of CL clients include Lighthouse, Prysm, Nimbus, Teku, Lodestar, and Grandine.
 
-    The Ethereum on ARM image you flashed comes pre-configured to support several client combinations.  For this detailed guide, **we will use Geth as the Execution Layer (EL) client and Prysm as the Consensus Layer (CL) client.** These are popular and well-regarded clients. You can explore other client options later, but for a first-time setup, Geth and Prysm are recommended.
+    The Ethereum on ARM image you flashed comes pre-configured to support several client combinations.  For this detailed guide, **we will utilize Geth as the Execution Layer (EL) client and Prysm as the Consensus Layer (CL) client.** These are popular and well-regarded clients.
+
+    .. note::
+       **Alternative Client: Nethermind**
+       Nethermind is another excellent Execution Layer client fully supported on ARM. You can choose to run Nethermind instead of Geth for your L1 node.  If you choose Nethermind, simply replace ``geth`` with ``nethermind`` in the service management commands (e.g., ``sudo systemctl start nethermind``).
+
+    You can explore other client options later, but for a first-time setup, Geth and Prysm are recommended.
 
 2.  **Start the Consensus Layer (CL) Client - Prysm Beacon Chain:**
 
@@ -509,7 +515,15 @@ The first crucial step in setting up your Optimism Supernode is to establish a f
 Step 2: Setting up the Layer 2 (Optimism) Node
 -----------------------------------------------
 
-Once your Layer 1 (L1) Ethereum node (Geth and Prysm) is fully synchronized, you can proceed to set up the Layer 2 (L2) Optimism node. The L2 node, in our case, consists of ``op-geth`` (Optimism's modified Geth) and ``op-node`` (the core Optimism node software).
+Once your Layer 1 (L1) Ethereum node (Geth/Nethermind and Prysm) is fully synchronized, you can proceed to set up the Layer 2 (L2) Optimism node. You have two primary options for the L2 Execution Client:
+
+*   **Option A: op-geth + op-node (Standard):** Using the Optimism fork of Geth paired with the op-node rollup client.
+*   **Option B: Nethermind (Integrated):** Using Nethermind, which has a built-in rollup node, simplifying the setup to a single service.
+
+Option A: op-geth + op-node (Standard Setup)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The L2 node, in our case, consists of ``op-geth`` (Optimism's modified Geth) and ``op-node`` (the core Optimism node software).
 
 1.  **Configure ``op-node`` - Connecting to the L1 Node:**
 
@@ -657,6 +671,58 @@ Once your Layer 1 (L1) Ethereum node (Geth and Prysm) is fully synchronized, you
         *   **Restart Both ``op-geth`` and ``op-node``:**  Restarting both L2 components together (``sudo systemctl restart op-geth && sudo systemctl restart op-node``) can sometimes resolve synchronization problems.
 
     Once both ``op-geth`` and ``op-node`` are synchronized and running smoothly, you have successfully set up your Optimism L2 node on top of your L1 Ethereum node, creating a functional Optimism Supernode!  Proceed to Step 3 for optional but recommended firewall configuration.
+
+Option B: Nethermind (Integrated Rollup Node)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Nethermind offers a streamlined setup where the execution client and the rollup node are integrated into a single binary. This reduces the number of services you need to manage.
+
+1.  **Configure Nethermind L2:**
+
+    You need to tell Nethermind where your L1 node is. Edit the configuration file for your chosen network (Mainnet or Sepolia).
+
+    **For Optimism Mainnet:**
+
+    .. prompt:: bash $
+
+        sudo nano /etc/ethereum/nethermind-op.conf
+
+    **For Optimism Sepolia:**
+
+    .. prompt:: bash $
+
+        sudo nano /etc/ethereum/nethermind-op-sepolia.conf
+
+    Ensure the following lines point to your L1 node (assuming it's on localhost):
+
+    .. code-block:: text
+
+        --optimism-l1ethapiendpoint http://localhost:8545
+        --optimism-l1beaconapiendpoint http://localhost:5052
+
+2.  **Start Nethermind L2:**
+
+    **For Optimism Mainnet:**
+
+    .. prompt:: bash $
+
+        sudo systemctl enable --now nethermind-op
+
+    **For Optimism Sepolia:**
+
+    .. prompt:: bash $
+
+        sudo systemctl enable --now nethermind-op-sepolia
+
+3.  **Monitor Sync:**
+
+    .. prompt:: bash $
+
+        sudo journalctl -fu nethermind-op
+        # OR for Sepolia
+        sudo journalctl -fu nethermind-op-sepolia
+
+    Look for logs indicating "Healthy" status and block synchronization.
 
 Step 3: Firewall Configuration
 -------------------------------

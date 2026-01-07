@@ -83,8 +83,12 @@ The templates are optimized for **Full Nodes**, defaulting to high-performance A
 
 You can override the following variables at build time:
 
-* `disk_size_gb`: Size of the root disk (Default: `2048` GB).
-* `instance_type` (AWS) / `machine_type` (GCP) / `vm_size` (Azure): The builder instance size.
+| Provider | Variable | Default Value | Description |
+| :--- | :--- | :--- | :--- |
+| **All** | `disk_size_gb` | `2048` (2TB) | Root disk size. Required for Full Node sync. |
+| **AWS** | `instance_type` | `t4g.xlarge` | 4 vCPU, 16GB RAM. |
+| **GCP** | `machine_type` | `t2a-standard-4` | 4 vCPU, 16GB RAM. |
+| **Azure** | `vm_size` | `Standard_D4ps_v5` | 4 vCPU, 16GB RAM. |
 
 Example:
 

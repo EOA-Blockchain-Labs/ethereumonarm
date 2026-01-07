@@ -91,3 +91,45 @@ Example:
 ```bash
 packer build -var "disk_size_gb=100" aws.pkr.hcl
 ```
+
+## Example: Successful AWS AMI Creation
+
+When you run `packer build aws.pkr.hcl`, a successful build output will look like this:
+
+```text
+==> ethereum-on-arm-aws.amazon-ebs.ethereum-node: Prevalidating AMI Name: ethereum-on-arm-node-2026-01-07-2018
+==> ethereum-on-arm-aws.amazon-ebs.ethereum-node: Found Image ID: ami-0071c8c431eea0edb
+==> ethereum-on-arm-aws.amazon-ebs.ethereum-node: Launching a source AWS instance...
+==> ethereum-on-arm-aws.amazon-ebs.ethereum-node: Provisioning with shell script: scripts/provision.sh
+    ethereum-on-arm-aws.amazon-ebs.ethereum-node: Updating system...
+    ethereum-on-arm-aws.amazon-ebs.ethereum-node: Installing Ethereum packages...
+    ethereum-on-arm-aws.amazon-ebs.ethereum-node: Installing Monitoring packages...
+==> ethereum-on-arm-aws.amazon-ebs.ethereum-node: Stopping the source instance...
+==> ethereum-on-arm-aws.amazon-ebs.ethereum-node: Waiting for the instance to stop...
+==> ethereum-on-arm-aws.amazon-ebs.ethereum-node: Creating AMI: ethereum-on-arm-node-2026-01-07-2018
+==> ethereum-on-arm-aws.amazon-ebs.ethereum-node: AMI: ami-0925af779d95c2b3e
+==> ethereum-on-arm-aws.amazon-ebs.ethereum-node: Terminating the source AWS instance...
+==> Builds finished. The artifacts of successful builds are:
+--> ethereum-on-arm-aws.amazon-ebs.ethereum-node: AMIs were created:
+us-east-1: ami-0925af779d95c2b3e
+```
+
+## Start Node with Terraform
+
+Once your AMI is created (e.g., `ami-0925af779d95c2b3e`), you can use it in Terraform to launch a node:
+
+```hcl
+resource "aws_instance" "ethereum_node" {
+  ami           = "ami-0925af779d95c2b3e"
+  instance_type = "t4g.xlarge" # Recommended: 4 vCPUs, 16GB RAM
+
+  root_block_device {
+    volume_size = 2048 # 2 TB disk
+    volume_type = "gp3"
+  }
+
+  tags = {
+    Name = "Ethereum Node"
+  }
+}
+```

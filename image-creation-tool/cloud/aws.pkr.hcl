@@ -57,6 +57,8 @@ variable "instance_type" {
 
 # Fetch the latest Ubuntu 24.04 LTS ARM64 Server AMI
 data "amazon-ami" "ubuntu-arm64" {
+  access_key = var.aws_access_key
+  secret_key = var.aws_secret_key
   filters = {
     name                = "ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-arm64-server-*"
     root-device-type    = "ebs"

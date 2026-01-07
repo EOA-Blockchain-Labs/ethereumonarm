@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-01-06 04:04:15 UTC_
+_Last updated: 2026-01-07 04:04:52 UTC_
 
  **What this report compares**
 
@@ -18,8 +18,8 @@ _Last updated: 2026-01-06 04:04:15 UTC_
 ## Summary
 
 - Total packages checked: **34**
-- ✅ Up-to-date: **33** (97.1%)
-- ❌ Outdated: **1** (2.9%)
+- ✅ Up-to-date: **32** (94.1%)
+- ❌ Outdated: **2** (5.9%)
 - ❓ N/A: **0** (0.0%)
 
 
@@ -35,7 +35,7 @@ _Last updated: 2026-01-06 04:04:15 UTC_
 | `ethstaker-deposit-cli` | `1.2.2` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.2.2` | ✅ Up-to-date |
 | `mev-boost` | `1.10.1` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.10.1` | ✅ Up-to-date |
 | `stakewise-operator` | `4.1.2` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.1.2` | ✅ Up-to-date |
-| `vero` | `1.3.0` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.3.0` | ✅ Up-to-date |
+| `vero` | `1.3.1` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.3.0` | ❌ Outdated |
 | `vouch` | `1.12.0` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.12.0` | ✅ Up-to-date |
 
 

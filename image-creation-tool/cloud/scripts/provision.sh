@@ -38,6 +38,7 @@ apt-get -y upgrade
 
 echo "Installing base packages..."
 wait_for_apt_lock
+# shellcheck disable=SC2086
 apt-get -y install $BASE_PACKAGES
 
 # 2. Add Repositories
@@ -75,6 +76,7 @@ chmod 0440 /etc/sudoers.d/90-ethereum-nopasswd
 # 4. Install Software
 echo "Installing Ethereum packages..."
 wait_for_apt_lock
+# shellcheck disable=SC2086
 apt-get -y install $ETHEREUM_PACKAGES
 
 echo "Installing Monitoring packages..."
@@ -86,10 +88,12 @@ mkdir -p /home/prometheus/{metrics2,node-exporter}
 chown -R prometheus:prometheus /home/prometheus/{metrics2,node-exporter}
 
 wait_for_apt_lock
+# shellcheck disable=SC2086
 apt-get -y install $MONITORING_PACKAGES
 
 echo "Installing Nginx..."
 wait_for_apt_lock
+# shellcheck disable=SC2086
 apt-get -y install $NGINX_PACKAGES
 
 # 5. Configuration & Services

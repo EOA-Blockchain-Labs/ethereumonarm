@@ -7,7 +7,7 @@
 [![Twitter](https://img.shields.io/twitter/follow/EthereumOnARM?style=social)](https://x.com/EthereumOnARM)
 [![Bluesky](https://img.shields.io/badge/Bluesky-Follow-0085FF?logo=bluesky&logoColor=white)](https://bsky.app/profile/ethereumonarm.bsky.social)
 [![Farcaster](https://img.shields.io/badge/Farcaster-Follow-8A63D2?logo=farcaster&logoColor=white)](https://farcaster.xyz/ethereumonarm)
-[![License](https://img.shields.io/github/license/diglos/ethereumonarm)](https://github.com/diglos/ethereumonarm/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/EOA-Blockchain-Labs/ethereumonarm)](https://github.com/EOA-Blockchain-Labs/ethereumonarm/blob/main/LICENSE)
 [![GitPOAP Badge](https://public-api.gitpoap.io/v1/repo/diglos/ethereumonarm/badge)](https://www.gitpoap.io/gh/diglos/ethereumonarm)
 
 **Ethereum on ARM** is a project that makes it easy to run a full Ethereum node on

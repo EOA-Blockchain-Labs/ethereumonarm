@@ -3,6 +3,8 @@ MEV-Boost
 
 This package provides MEV-Boost, open source middleware run by validators to access a competitive block-building market, packaged for Ethereum on ARM.
 
+For a complete guide on how to configure your node and clients to use MEV-Boost, see :doc:`/advanced/mev-boost`.
+
 Services
 --------
 

@@ -25,6 +25,8 @@ Install the ``dvt-obol`` package:
 
    sudo apt-get update && sudo apt-get install dvt-obol
 
+For package details, installation paths, and service names, see :doc:`/packages/dvt/dvt-obol`.
+
 Understanding Distributed Validators
 -------------------------------------
 

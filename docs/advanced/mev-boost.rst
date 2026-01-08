@@ -12,6 +12,10 @@ there has been a lot of controversy about MEV as some relays comply
 with OFAC sanctions which means that some transactions are in the end censored by this relays.
 
 We are including in our default config file ``/etc/ethereum/mev-boost.conf`` **NO censorship** relays only.
+ 
+For package details, installation paths, and service names, see :doc:`/packages/infra/mev-boost`.
+
+As a point of reference, we use the `EthStaker relay list`_
 
 As a point of reference, we use the `EthStaker relay list`_
 

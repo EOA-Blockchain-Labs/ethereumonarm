@@ -3,6 +3,8 @@ Obol Charon
 
 This package provides Charon, the Obol Distributed Validator Technology (DVT) client, packaged for Ethereum on ARM.
 
+For a step-by-step guide on setting up a Distributed Validator cluster, see :doc:`/advanced/obol-dvt-setup`.
+
 Services
 --------
 

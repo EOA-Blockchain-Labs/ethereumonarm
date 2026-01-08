@@ -35,27 +35,12 @@ Download and Install
       Power on and wait 10-15 min
 
 
-Ethereum on ARM provides official support for the following Single Board Computers (SBCs):
+Supported Hardware
+------------------
 
-.. list-table:: Supported Hardware
-   :widths: 25 25 50
-   :header-rows: 1
+Ethereum on ARM provides official support for Rock 5B, Orange Pi 5 Plus, NanoPC T6, and Raspberry Pi 5.
 
-   * - Board
-     - Minimum RAM
-     - Notes
-   * - **NanoPC T6**
-     - 16 GB
-     - Compact and powerful
-   * - **Rock 5B**
-     - 16 GB
-     - Excellent performance
-   * - **Orange Pi 5 Plus**
-     - 16 GB (32 GB for Supernode)
-     - Supernode requires 32GB RAM for higher resource demands
-   * - **Raspberry Pi 5**
-     - 16 GB
-     - Widely available
+For a detailed list of recommended hardware, technical specifications, and purchase links, please see :doc:`../overview/supported-hardware`.
 
 Prerequisites
 -------------
@@ -74,39 +59,6 @@ Before you begin, ensure you have the following components:
 .. warning::
    Avoid NVMe disks with a **Phison controller** due to known Linux kernel compatibility issues.
    Check the `SSD Compatibility List <https://docs.google.com/spreadsheets/d/1B27_j9NDPU3cNlj2HKcrfpJKHkOf-Oi1DbuuQva2gT4/edit>`_ before purchasing.
-
-Hardware Purchase
------------------
-
-NanoPC T6
-~~~~~~~~~
-* `NanoPC T6 board 16 GB`_
-
-Rock 5B
-~~~~~~~
-* `Rock 5B board 16 GB`_
-* `Acrylic protector with passive heatsink`_
-* `Radxa power supply`_
-
-Orange Pi 5 Plus
-~~~~~~~~~~~~~~~~
-* `Orange Pi 5 Plus 16 GB RAM`_
-* `Orange Pi 5 Plus 32 GB RAM`_
-* `Orange Pi 5 Plus Case with heatsink`_
-
-Raspberry Pi 5
-~~~~~~~~~~~~~~
-* `Raspberry Pi 5 (16 GB RAM)`_
-* **Geekworm** P579 case and X1001 NVMe Hat or **GeeekPi** case with N04 NVMe Hat.
-
-.. _NanoPC T6 board 16 GB: https://www.friendlyelec.com/index.php?route=product/product&product_id=292
-.. _Rock 5B board 16 GB: https://shop.allnetchina.cn/products/rock5-model-b?variant=39514839515238
-.. _Acrylic protector with passive heatsink: https://shop.allnetchina.cn/products/rock5-b-acrylic-protector?variant=39877626396774
-.. _Radxa power supply: https://shop.allnetchina.cn/products/radxa-power-pd-30w?variant=39929851904102
-.. _Orange Pi 5 Plus 16 GB RAM: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-5-plus.html
-.. _Orange Pi 5 Plus 32 GB RAM: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-5-plus-32GB.html
-.. _Orange Pi 5 Plus Case with heatsink: https://aliexpress.com/item/1005005728553439.html
-.. _Raspberry Pi 5 (16 GB RAM): https://www.raspberrypi.com/products/raspberry-pi-5/
 
 .. _image-downloads:
 

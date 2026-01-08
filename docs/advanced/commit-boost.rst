@@ -7,6 +7,8 @@ Commit-Boost is a new standard for Ethereum validators that safely requests bloc
 
 We are including a default configuration file at ``/etc/ethereum/commit-boost.conf``.
 
+For package details, installation paths, and service names, see :doc:`/packages/infra/commit-boost`.
+
 Using Commit-Boost
 ------------------
 

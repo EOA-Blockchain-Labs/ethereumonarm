@@ -1,0 +1,5 @@
+# This file is used to define key codebase owners
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Matches every file
+* @ethereumonarm

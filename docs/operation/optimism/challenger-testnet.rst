@@ -132,7 +132,7 @@ Wait for L1 to sync (can take several hours). Check progress:
    sudo journalctl -fu lighthouse-beacon-sepolia
 
 Machine 2: L2 Node (10.1.25.9)
------------------------------
+------------------------------
 
 This machine runs the Optimism L2 clients (op-geth + op-node).
 

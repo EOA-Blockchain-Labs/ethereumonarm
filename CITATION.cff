@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Ethereum on ARM Team"
+title: "Ethereum on ARM"
+url: "https://github.com/EOA-Blockchain-Labs/ethereumonarm"
+preferred-citation:
+  type: software
+  authors:
+    - family-names: "Ethereum on ARM Team"
+  title: "Ethereum on ARM: Plug-and-Play Ethereum Nodes for ARM Devices"
+  year: 2024
+  url: "https://ethereumonarm.com"

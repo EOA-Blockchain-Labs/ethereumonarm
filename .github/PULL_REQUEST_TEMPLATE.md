@@ -1,6 +1,6 @@
 # Description
 
-Please include a summary of the change and which issue is fixed.
+<!-- Please include a summary of the change and which issue is fixed. -->
 
 ## Type of change
 
@@ -11,10 +11,7 @@ Please include a summary of the change and which issue is fixed.
 
 ## How Has This Been Tested?
 
-Please describe the tests that you ran to verify your changes.
-
-- [ ] Test A
-- [ ] Test B
+<!-- Please describe the tests that you ran to verify your changes. -->
 
 ## Checklist
 
@@ -23,4 +20,3 @@ Please describe the tests that you ran to verify your changes.
 - [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have made corresponding changes to the documentation
 - [ ] My changes generate no new warnings
-- [ ] Any dependent changes have been merged and published

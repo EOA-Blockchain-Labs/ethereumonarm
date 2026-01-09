@@ -1,9 +1,8 @@
 .. Ethereum on ARM Backup Utility (Restic Edition)
    SPDX-License-Identifier: MIT
 
-##############################################
 Ethereum on ARM Secure Backup Utility (Restic)
-##############################################
+==============================================
 
 The ``ethereumonarm-utils`` package provides an automated, **encrypted, incremental backup system** for Ethereum nodes.
 
@@ -12,7 +11,7 @@ It integrates `Restic <https://restic.net/>`_ (for encryption, deduplication, an
 The backup runs automatically through a ``systemd`` timer, minimizing I/O and user maintenance.
 
 Installation
-============
+------------
 
 To install the package from the official Ethereum on ARM repository:
 
@@ -28,12 +27,12 @@ The installation process will:
 3. Create and register the ``ethereum-backup.service`` and ``ethereum-backup.timer`` units for automated execution.
 
 Configuration
-=============
+-------------
 
 Before using the backup system, you must configure **Rclone** (to access cloud storage) and **Restic** (for encryption and deduplication).
 
 Step 1: Configure Rclone Remote
--------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``Rclone`` provides access to cloud backends such as Google Drive, Dropbox, or S3.
 
@@ -52,7 +51,7 @@ Once you have created your remote, verify it with:
 You will use the remote name in the next step.
 
 Step 2: Configure Restic Repository
------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 After setting up Rclone, edit the main configuration file:
 
@@ -93,7 +92,7 @@ Create the password file used to encrypt your repository:
    Keep a secure copy of this password offline. Without it, **your backups cannot be restored**.
 
 Step 3: Initialize Restic Repository
-------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Initialize the encrypted Restic repository (this must be done once):
 
@@ -108,7 +107,7 @@ Expected output:
    created restic repository 3ef5f6a3 at rclone:mydrive-crypt:/ethereumonarm-backups
 
 Enabling Automatic Backups
-==========================
+--------------------------
 
 Once configuration is complete, enable the daily backup timer:
 
@@ -123,10 +122,10 @@ To verify scheduling:
    systemctl list-timers | grep ethereum-backup
 
 Usage and Management
-====================
+--------------------
 
 Manual Backup
--------------
+~~~~~~~~~~~~~
 
 You can trigger an immediate backup at any time:
 
@@ -135,7 +134,7 @@ You can trigger an immediate backup at any time:
    sudo systemctl start ethereum-backup.service
 
 Viewing Logs
-------------
+~~~~~~~~~~~~
 
 All backup activity (including Restic and Rclone output) is logged to the ``systemd`` journal:
 
@@ -144,7 +143,7 @@ All backup activity (including Restic and Rclone output) is logged to the ``syst
    journalctl -u ethereum-backup.service -f
 
 Backup Script Logic
-===================
+-------------------
 
 The script automatically performs the following steps:
 
@@ -154,7 +153,7 @@ The script automatically performs the following steps:
 4. Logs results to ``systemd-journal`` for review.
 
 Simplified Logic Example
-------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
@@ -185,31 +184,31 @@ Simplified Logic Example
    log "Old snapshots pruned. Backup finished."
 
 Managing Snapshots
-==================
+------------------
 
 List all snapshots
-------------------
+~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
    restic snapshots
 
 Forget and prune old snapshots
-------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
    restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 6 --prune
 
 Check repository integrity
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
    restic check
 
 Restore files or directories
-----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Restore the latest snapshot:
 
@@ -225,7 +224,7 @@ Restore specific directories:
 
 
 Security and Resource Recommendations
-=====================================
+-------------------------------------
 
 =============================  ======================================================  =====================
 Setting                        Purpose                                                 Recommended
@@ -239,7 +238,7 @@ Setting                        Purpose                                          
 =============================  ======================================================  =====================
 
 Troubleshooting
-===============
+---------------
 
 ===================================  =======================================  ===================================
 Problem                              Likely Cause                             Solution
@@ -252,7 +251,7 @@ Problem                              Likely Cause                             So
 ===================================  =======================================  ===================================
 
 Summary
-=======
+-------
 
 This Restic-based backup system provides:
 

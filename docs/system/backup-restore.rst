@@ -241,15 +241,15 @@ Setting                        Purpose                                          
 Troubleshooting
 ===============
 
-===============================  =======================================  ===================================
-Problem                          Likely Cause                             Solution
-===============================  =======================================  ===================================
-``repository master key not found`` Incorrect password file               Check ``/etc/ethereum/restic.passwd``
-``rclone not configured``        Missing remote                           Run ``rclone config``
-``Permission denied``            Wrong ownership or permissions           Use ``root:root`` and mode ``600``
-``Upload too slow``              Limited bandwidth                        Add ``--limit-upload 1M``
-``Out of memory``                Small SBC RAM                            Limit number of source folders
-===============================  =======================================  ===================================
+===================================  =======================================  ===================================
+Problem                              Likely Cause                             Solution
+===================================  =======================================  ===================================
+``repository master key not found``  Incorrect password file                  Check ``/etc/ethereum/restic.passwd``
+``rclone not configured``            Missing remote                           Run ``rclone config``
+``Permission denied``                Wrong ownership or permissions           Use ``root:root`` and mode ``600``
+``Upload too slow``                  Limited bandwidth                        Add ``--limit-upload 1M``
+``Out of memory``                    Small SBC RAM                            Limit number of source folders
+===================================  =======================================  ===================================
 
 Summary
 =======

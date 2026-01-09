@@ -166,7 +166,7 @@ Prysm :bdg-success:`Production Ready` :bdg-info:`Go`
    :align: left
   :header: Systemd Services, Home Directory, Config Files, Ports
 
-  `prysm-beacon prysm-validator`, `/home/ethereum/.eth2`, `/etc/ethereum/prysm-beacon.conf /etc/ethereum/prysm-validator.conf`, `TCP: 13000, UDP: 12000`
+  ``prysm-beacon prysm-validator``, ``/home/ethereum/.eth2``, ``/etc/ethereum/prysm-beacon.conf /etc/ethereum/prysm-validator.conf``, ``TCP: 13000, UDP: 12000``
 
 1.- Port forwarding
 

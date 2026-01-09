@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-01-08 04:04:38 UTC_
+_Last updated: 2026-01-09 04:04:41 UTC_
 
  **What this report compares**
 
@@ -48,7 +48,7 @@ _Last updated: 2026-01-08 04:04:38 UTC_
 | `lighthouse` | `8.0.1` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.0.1` | ✅ Up-to-date |
 | `lodestar` | `1.38.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.38.0` | ✅ Up-to-date |
 | `nimbus` | `25.12.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.12.0` | ✅ Up-to-date |
-| `prysm` | `7.1.2` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.1` | ❌ Outdated |
+| `prysm` | `7.1.2` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.2` | ✅ Up-to-date |
 | `teku` | `25.12.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.12.0` | ✅ Up-to-date |
 
 
@@ -79,7 +79,7 @@ _Last updated: 2026-01-08 04:04:38 UTC_
 | `optimism-op-reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
 | `starknet-juno` | `0.15.16` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.16` | ✅ Up-to-date |
 | `starknet-madara` | `0.10.0` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.0` | ✅ Up-to-date |
-| `starknet-pathfinder` | `0.21.3` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.3` | ✅ Up-to-date |
+| `starknet-pathfinder` | `0.21.4` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.3` | ❌ Outdated |
 
 
 

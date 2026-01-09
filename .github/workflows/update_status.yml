@@ -15,7 +15,7 @@ jobs:
       
       # 1. Checks out your repository's code AND its submodules
       - name: Check out repository and submodules
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: 'recursive'
       

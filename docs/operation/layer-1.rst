@@ -127,7 +127,7 @@ Ethereum on ARM supports the main Consensus Layer clients available.
 .. _lighthouse-beacon-setup:
 
 Lighthouse :bdg-success:`Production Ready` :bdg-info:`Rust`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :guilabel:`Lighthouse` is a full CL client written in Rust.
 

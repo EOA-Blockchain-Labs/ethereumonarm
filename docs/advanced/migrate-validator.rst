@@ -293,7 +293,7 @@ Teku
         --from=slashing_protection.json
 
 Step 6: Start the validator service
-----------------------------------
+-----------------------------------
 
 Enable and start **only the validator you use**:
 

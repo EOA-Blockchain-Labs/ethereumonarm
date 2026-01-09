@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y make && rm -rf /var/lib/apt/lists/*
 
 # Install requirements
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt && pip install sphinx-autobuild
 
 # Default command can be overridden in docker-compose
 CMD ["/bin/bash"]

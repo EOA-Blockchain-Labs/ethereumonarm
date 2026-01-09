@@ -135,7 +135,7 @@ Lighthouse :bdg-success:`Production Ready` :bdg-info:`Rust`
    :align: left
   :header: Systemd Services, Home Directory, Config Files, Ports
 
-  `lighthouse-beacon lighthouse-validator`, `/home/ethereum/.lighthouse`, `/etc/ethereum/lighthouse-beacon.conf /etc/ethereum/lighthouse-validator.conf`, `TCP/UDP: 9000`
+  "``lighthouse-beacon lighthouse-validator``", "``/home/ethereum/.lighthouse``", "``/etc/ethereum/lighthouse-beacon.conf /etc/ethereum/lighthouse-validator.conf``", "``TCP/UDP: 9000``"
 
 
 1.- Port forwarding
@@ -166,7 +166,7 @@ Prysm :bdg-success:`Production Ready` :bdg-info:`Go`
    :align: left
   :header: Systemd Services, Home Directory, Config Files, Ports
 
-  ``prysm-beacon prysm-validator``, ``/home/ethereum/.eth2``, ``/etc/ethereum/prysm-beacon.conf /etc/ethereum/prysm-validator.conf``, ``TCP: 13000, UDP: 12000``
+  "``prysm-beacon prysm-validator``", "``/home/ethereum/.eth2``", "``/etc/ethereum/prysm-beacon.conf /etc/ethereum/prysm-validator.conf``", "``TCP: 13000, UDP: 12000``"
 
 1.- Port forwarding
 
@@ -197,7 +197,7 @@ Teku :bdg-success:`Production Ready` :bdg-info:`Java`
    :align: left
   :header: Systemd Services, Home Directory, Config File, Ports
 
-  `teku-beacon teku-validator`, `/home/ethereum/.teku/beacon /home/ethereum/.teku/validator`, `/etc/ethereum/teku-beacon.conf /etc/ethereum/teku-validator.conf`, `TCP/UDP: 9000`
+  "``teku-beacon teku-validator``", "``/home/ethereum/.teku/beacon /home/ethereum/.teku/validator``", "``/etc/ethereum/teku-beacon.conf /etc/ethereum/teku-validator.conf``", "``TCP/UDP: 9000``"
 
 1.- Port forwarding
 
@@ -234,7 +234,7 @@ Nimbus :bdg-success:`Production Ready` :bdg-info:`Nim`
    :align: left
   :header: Systemd Service, Home Directory, Config File, Ports
 
-  `nimbus`, `/home/ethereum/.nimbus-beacon /home/ethereum/.nimbus-validator`, `/etc/ethereum/nimbus-beacon.conf /etc/ethereum/nimbus-validator.conf`, `TCP/UDP: 9000`
+  "``nimbus``", "``/home/ethereum/.nimbus-beacon /home/ethereum/.nimbus-validator``", "``/etc/ethereum/nimbus-beacon.conf /etc/ethereum/nimbus-validator.conf``", "``TCP/UDP: 9000``"
 
 1.- Port forwarding
 
@@ -278,7 +278,7 @@ Lodestar :bdg-success:`Production Ready` :bdg-info:`TypeScript`
    :align: left
   :header: Systemd Services, Home Directory, Config File, Ports
 
-  `lodestar-beacon lodestar-validator`, `/home/ethereum/.lodestar`, `/etc/ethereum/lodestar-beacon.conf /etc/ethereum/lodestar-validator.conf`, `TCP/UDP: 9000`
+  "``lodestar-beacon lodestar-validator``", "``/home/ethereum/.lodestar``", "``/etc/ethereum/lodestar-beacon.conf /etc/ethereum/lodestar-validator.conf``", "``TCP/UDP: 9000``"
 
 1.- Port forwarding
 
@@ -305,7 +305,7 @@ Grandine :bdg-success:`Production Ready` :bdg-info:`Rust`
    :align: left
   :header: Systemd Services, Home Directory, Config Files, Ports
 
-  `grandine-beacon grandine-validator`, `/home/ethereum/.grandine`, `/etc/ethereum/grandine-beacon.conf /etc/ethereum/grandine-validator.conf`, `TCP/UDP: 9000`
+  "``grandine-beacon grandine-validator``", "``/home/ethereum/.grandine``", "``/etc/ethereum/grandine-beacon.conf /etc/ethereum/grandine-validator.conf``", "``TCP/UDP: 9000``"
 
 1.- Port forwarding
 

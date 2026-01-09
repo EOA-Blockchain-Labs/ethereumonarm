@@ -62,7 +62,7 @@ if ! id -u ethereum >/dev/null 2>&1; then
     # Set default password (should be changed by user, or disabled for key-only access)
     echo "ethereum:ethereum" | chpasswd
     chage -d 0 ethereum
-    
+
     # Add to groups
     for GRP in sudo netdev audio video dialout plugdev; do
         adduser ethereum "$GRP"
@@ -70,7 +70,7 @@ if ! id -u ethereum >/dev/null 2>&1; then
 fi
 
 # Passwordless sudo for ethereum user
-echo "ethereum ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/90-ethereum-nopasswd
+echo "ethereum ALL=(ALL) NOPASSWD: ALL" >/etc/sudoers.d/90-ethereum-nopasswd
 chmod 0440 /etc/sudoers.d/90-ethereum-nopasswd
 
 # 4. Install Software
@@ -124,12 +124,12 @@ timedatectl set-ntp true
 
 # EOA Release Info
 EOA_MAJOR_VERSION=$(date +"%y.%m")
-echo "Ethereum on ARM Cloud Image $EOA_MAJOR_VERSION" > /etc/eoa-release
+echo "Ethereum on ARM Cloud Image $EOA_MAJOR_VERSION" >/etc/eoa-release
 
 # Bash Alias
-echo "alias update-ethereum='sudo apt-get update && sudo apt-get install $ETHEREUM_PACKAGES'" >> /etc/bash.bashrc
+echo "alias update-ethereum='sudo apt-get update && sudo apt-get install $ETHEREUM_PACKAGES'" >>/etc/bash.bashrc
 if ! grep -q "if \[ -f /etc/bash.bashrc \];" /etc/profile; then
-    echo "if [ -f /etc/bash.bashrc ]; then . /etc/bash.bashrc; fi" >> /etc/profile
+    echo "if [ -f /etc/bash.bashrc ]; then . /etc/bash.bashrc; fi" >>/etc/profile
 fi
 
 # Monitoring configuration

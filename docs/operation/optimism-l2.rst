@@ -1001,7 +1001,7 @@ After completing the installation and firewall configuration, it is crucial to *
 
         If Geth is fully synchronized, the `eth_syncing` RPC method should return `false`:
 
-        .. code-block:: json
+        .. code-block:: text
 
             {"jsonrpc":"2.0","id":1,"result":false}
 
@@ -1021,7 +1021,7 @@ After completing the installation and firewall configuration, it is crucial to *
 
         If Prysm is synced, the `syncing` endpoint should return `false`:
 
-        .. code-block:: json
+        .. code-block:: text
 
             {"data":{"head_slot":"...","syncing":false,"...":...}}
 
@@ -1041,7 +1041,7 @@ After completing the installation and firewall configuration, it is crucial to *
 
         If `op-geth` is synced, `eth_syncing` should return `false`:
 
-        .. code-block:: json
+        .. code-block:: text
 
             {"jsonrpc":"2.0","id":1,"result":false}
 

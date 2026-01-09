@@ -127,7 +127,7 @@ Ethereum on ARM supports the main Consensus Layer clients available.
 .. _lighthouse-beacon-setup:
 
 Lighthouse :bdg-success:`Production Ready` :bdg-info:`Rust`
-~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :guilabel:`Lighthouse` is a full CL client written in Rust.
 
@@ -158,7 +158,7 @@ The Lighthouse beacon chain is now started. Wait for it to get in sync. Choose a
 .. _prysm-beacon-setup:
 
 Prysm :bdg-success:`Production Ready` :bdg-info:`Go`
-~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :guilabel:`Prysm` is a full Consensus Layer client written in Go.
 
@@ -189,7 +189,7 @@ The Prysm beacon chain is now started. Wait for it to get in sync. Choose an Exe
 .. _teku-beacon-setup:
 
 Teku :bdg-success:`Production Ready` :bdg-info:`Java`
-~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :guilabel:`Teku` is a full Consensus Layer client written in Java.
 
@@ -216,7 +216,7 @@ The Teku beacon chain is now started. Wait for it to get in sync. Choose an Exec
 .. _nimbus-beacon-setup:
 
 Nimbus :bdg-success:`Production Ready` :bdg-info:`Nim`
-~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. warning::
 
@@ -270,7 +270,7 @@ The Nimbus Beacon Chain is now started. Wait for it to get in sync. Choose an Ex
 .. _lodestar-beacon-setup:
 
 Lodestar :bdg-success:`Production Ready` :bdg-info:`TypeScript`
-~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :guilabel:`Lodestar` is a full Consensus Layer client written in Type Script.
 
@@ -297,7 +297,7 @@ The Lodestar beacon chain is now started. Wait for it to get in sync. Choose an 
 .. _grandine-beacon-setup:
 
 Grandine :bdg-success:`Production Ready` :bdg-info:`Rust`
-~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :guilabel:`Grandine` is a full Consensus Layer client written in Rust.
 
@@ -417,7 +417,7 @@ It comes down to **Snap Sync** vs **Execution Sync**:
 .. _geth-setup:
 
 Geth :bdg-success:`Production Ready` :bdg-info:`Go`
-~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :guilabel:`Geth` is the most used EL client. It is developed by the Ethereum Foundation team
 and the performance on ARM64 devices is outstanding. It is capable of syncing the whole blockchain 
@@ -445,7 +445,7 @@ For further info of how the node is doing you can use Systemd journal:
 .. _nethermind-setup:
 
 Nethermind :bdg-success:`Production Ready` :bdg-info:`.NET`
-~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :guilabel:`Nethermind` is a .NET enterprise-friendly full Execution Layer client.
 
@@ -464,7 +464,7 @@ In order to start the client run:
 .. _besu-setup:
 
 Hyperledger Besu :bdg-success:`Production Ready` :bdg-info:`Java`
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. csv-table::
    :align: left
@@ -481,7 +481,7 @@ In order to start the client run:
 .. _ethrex-setup:
 
 EthRex :bdg-warning:`Testing` :bdg-info:`Rust`
-~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :guilabel:`EthRex` is a lightweight, performant, and modular Ethereum execution client powering next-gen L1 and L2 solutions.
 
@@ -503,7 +503,7 @@ In order to start the client run:
 .. _reth-setup:
 
 Reth :bdg-success:`Production Ready` :bdg-info:`Rust`
-~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :guilabel:`Reth` (Rust Ethereum) is an Ethereum execution client implementation that focuses on friendliness, modularity, and speed.
 
@@ -543,7 +543,7 @@ In order to start the client run:
 .. _erigon-setup:
 
 Erigon :bdg-success:`Production Ready` :bdg-info:`Go` :bdg-primary:`Built-in CL`
-~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. csv-table::
    :align: left

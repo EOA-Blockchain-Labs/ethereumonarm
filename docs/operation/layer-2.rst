@@ -45,7 +45,7 @@ Hardware Requirements
 .. _fuel-network:
 
 Fuel Network :bdg-success:`Production Ready` :bdg-info:`Rust`
-------------
+-------------------------------------------------------------
 
 **Official Site:** https://fuel.network/
 
@@ -91,7 +91,7 @@ You can check out the logs by running:
 .. _ethrex-l2:
 
 EthRex L2 :bdg-danger:`Alpha` :bdg-info:`Rust`
----------
+----------------------------------------------
 
 **Official Site:** https://github.com/lambdaclass/ethrex
 
@@ -216,7 +216,7 @@ Congrats, your Ethrex L2 Sequencer and Prover are now running on your Ethereum o
 .. _arbitrum:
 
 Arbitrum :bdg-success:`Production Ready` :bdg-info:`Go`
---------
+-------------------------------------------------------
 
 **Official Site:** https://arbitrum.io/
 
@@ -256,7 +256,7 @@ The Arbitrum node is up and running.
 .. _starknet:
 
 Starknet :bdg-success:`Production Ready` :bdg-info:`Rust`
---------
+---------------------------------------------------------
 
 **Official Site:** https://www.starknet.io/
 
@@ -352,7 +352,7 @@ Client Comparison
 .. _optimism:
 
 Optimism / Base :bdg-success:`Production Ready` :bdg-info:`Go`
----------------
+--------------------------------------------------------------
 
 **Official Sites:** https://www.optimism.io/ | https://base.org/
 

@@ -227,16 +227,16 @@ Restore specific directories:
 Security and Resource Recommendations
 =====================================
 
-==========================  ===============================================  =====================
-Setting                     Purpose                                          Recommended
-==========================  ===============================================  =====================
-**Encrypted Rclone Remote** Adds an extra layer of encryption                ✅ Yes
+===========================  ===============================================  =====================
+Setting                      Purpose                                          Recommended
+===========================  ===============================================  =====================
+**Encrypted Rclone Remote**  Adds an extra layer of encryption                ✅ Yes
 **Password File Permissions** Protect password secrecy                       ``chmod 600``
-**Exclude Blockchain Data** Avoid huge backups of chain DB                   ✅ Yes
-**Systemd Timer**           Safe for unattended Armbian nodes                ✅ Yes
-**Upload Throttling**       Avoid bandwidth saturation                       ``--limit-upload 1M``
-**Disable Compression**     Reduce CPU load on SBC                           ``--no-compress``
-==========================  ===============================================  =====================
+**Exclude Blockchain Data**  Avoid huge backups of chain DB                   ✅ Yes
+**Systemd Timer**            Safe for unattended Armbian nodes                ✅ Yes
+**Upload Throttling**        Avoid bandwidth saturation                       ``--limit-upload 1M``
+**Disable Compression**      Reduce CPU load on SBC                           ``--no-compress``
+===========================  ===============================================  =====================
 
 Troubleshooting
 ===============

@@ -110,12 +110,12 @@ To verify the checksum in your terminal:
 
 
 Installation Guide
-==================
+------------------
 
 .. _flashing-the-image:
 
 Flashing the Image
-------------------
+~~~~~~~~~~~~~~~~~~
 
 .. tab-set::
 
@@ -163,7 +163,7 @@ Flashing the Image
 .. _first-boot:
 
 First Boot
-----------
+~~~~~~~~~~
 
 1. Insert the **microSD card** into your board.
 2. Ensure the **NVMe SSD** and **Ethernet cable** are connected.
@@ -191,7 +191,7 @@ The system will boot up quickly, but the **initial setup script** will run in th
    Please wait approximately **10-15 minutes** for the installation script to complete. The board **will reboot automatically** once finished. Do not interrupt the power supply.
 
 Logging In
-----------
+~~~~~~~~~~
 
 Once the installation is complete, log in via SSH or a locally connected monitor/keyboard.
 
@@ -221,10 +221,10 @@ Once the installation is complete, log in via SSH or a locally connected monitor
       sudo nmap -sP 192.168.1.0/24
 
 System Maintenance
-==================
+------------------
 
 Update Ethereum Packages
-------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 The system includes a convenient alias to update the Ethereum clients and tools. Run:
 
@@ -235,7 +235,7 @@ The system includes a convenient alias to update the Ethereum clients and tools.
 This command fetches the latest packages from the Ethereum on ARM repository and installs them.
 
 Image Upgrade
--------------
+~~~~~~~~~~~~~
 
 To upgrade an existing Ethereum on ARM node to the new version without losing your chain data:
 
@@ -259,7 +259,7 @@ To upgrade an existing Ethereum on ARM node to the new version without losing yo
 5. Power on. The installer will detect the previous configuration backups and restore your `/etc/ethereum` client settings.
 
 Re-installation (Wipe)
-----------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
 To perform a clean install that **wipes all data** on the NVMe disk:
 
@@ -275,7 +275,7 @@ To perform a clean install that **wipes all data** on the NVMe disk:
 2. Reboot or power cycle. The startup script will detect this file and reformat the drive during the next boot process.
 
 Troubleshooting
-===============
+---------------
 
 * **LEDs not blinking?** Check your power supply voltage and cable connection.
 * **No Network?** Ensure the Ethernet cable is plugged in *before* powering on.

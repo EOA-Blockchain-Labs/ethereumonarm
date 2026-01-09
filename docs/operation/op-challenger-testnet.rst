@@ -76,7 +76,7 @@ The following Optimism packages are available:
      - L2 Execution Layer (Reth alternative)
 
 Machine 1: L1 Node (10.1.25.11)
-================================
+-------------------------------
 
 This machine runs the Ethereum L1 clients (Nethermind + Lighthouse) for Sepolia.
 
@@ -132,7 +132,7 @@ Wait for L1 to sync (can take several hours). Check progress:
    sudo journalctl -fu lighthouse-beacon-sepolia
 
 Machine 2: L2 Node (10.1.25.9)
-===============================
+-----------------------------
 
 This machine runs the Optimism L2 clients (op-geth + op-node).
 
@@ -198,7 +198,7 @@ After L1 is synced on Machine 1:
    sudo systemctl enable --now op-geth op-node
 
 Machine 3: Challenger (10.1.25.10)
-===================================
+----------------------------------
 
 This machine runs the op-challenger (with cannon and op-program).
 
@@ -320,7 +320,7 @@ Check the logs:
    sudo journalctl -fu op-challenger
 
 Verification
-============
+------------
 
 **Signs of a healthy challenger:**
 

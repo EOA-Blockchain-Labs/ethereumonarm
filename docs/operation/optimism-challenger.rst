@@ -155,7 +155,7 @@ Troubleshooting
    Ensure your challenger wallet has enough ETH (on L1) to post bonds and challenges.
 
 Running an L2 Output Proposer (Optional)
-========================================
+----------------------------------------
 
 If you are a chain operator or testing L2 output submission, you may also want to run the **L2 Output Proposer** (``op-proposer``). This component is responsible for submitting L2 state roots to L1.
 
@@ -163,14 +163,14 @@ If you are a chain operator or testing L2 output submission, you may also want t
    **For standard Guardian/Challenger nodes on Mainnet/Sepolia, you typically do NOT run this.** This is primarily for chain operators.
 
 Installation
-------------
+~~~~~~~~~~~~
 
 .. prompt:: bash $
 
     sudo apt-get install optimism-op-proposer
 
 Configuration
--------------
+~~~~~~~~~~~~~
 
 Edit ``/etc/ethereum/op-proposer.conf``:
 
@@ -183,7 +183,7 @@ Edit ``/etc/ethereum/op-proposer.conf``:
 3.  **Set Signer:** Provide a ``PRIVATE_KEY`` or ``MNEMONIC`` funded on L1.
 
 Running the Service
--------------------
+~~~~~~~~~~~~~~~~~~~
 
 .. prompt:: bash $
 
@@ -191,6 +191,6 @@ Running the Service
     sudo journalctl -u op-proposer -f
 
 Testing on Sepolia
-==================
+------------------
 
 For a complete step-by-step guide on testing op-challenger on the Sepolia testnet from scratch, including L1/L2 node setup, wallet creation, and faucet funding, see :doc:`op-challenger-testnet`.

@@ -132,7 +132,7 @@ Check the status:
 Verification
 ------------
 
-For a detailed guide on verifying the correct operation of your Challenger, including log analysis and service checks, please refer to :doc:`optimism-challenger-verification`.
+For a detailed guide on verifying the correct operation of your Challenger, including log analysis and service checks, please refer to :doc:`challenger-verification`.
 
 Monitoring
 ----------
@@ -193,4 +193,4 @@ Running the Service
 Testing on Sepolia
 ------------------
 
-For a complete step-by-step guide on testing op-challenger on the Sepolia testnet from scratch, including L1/L2 node setup, wallet creation, and faucet funding, see :doc:`op-challenger-testnet`.
+For a complete step-by-step guide on testing op-challenger on the Sepolia testnet from scratch, including L1/L2 node setup, wallet creation, and faucet funding, see :doc:`challenger-testnet`.

@@ -4,7 +4,7 @@ Testnet Guide: Multi-Machine Setup
 This guide walks you through testing the Optimism Fault Proof Challenger on the **Sepolia testnet** using a multi-machine setup connected via PiVPN/WireGuard.
 
 .. important::
-   This guide is for **testing purposes only**. For mainnet operation, see :doc:`optimism-challenger`.
+   This guide is for **testing purposes only**. For mainnet operation, see :doc:`challenger`.
 
 Prerequisites
 -------------
@@ -395,5 +395,5 @@ See Also
 --------
 
 - :doc:`/system/network-vpn` - PiVPN/WireGuard setup guide
-- :doc:`optimism-challenger` - Production setup guide
-- :doc:`optimism-challenger-verification` - Verification procedures
+- :doc:`challenger` - Production setup guide
+- :doc:`challenger-verification` - Verification procedures

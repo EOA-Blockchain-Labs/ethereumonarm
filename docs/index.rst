@@ -83,10 +83,7 @@ Select a topic to get started:
    /operation/node-types
    /operation/layer-1
    /operation/layer-2
-   /operation/optimism-l2
-   /operation/optimism-challenger
-   /operation/optimism-challenger-verification
-   /operation/op-challenger-testnet
+   /operation/optimism/index
    /operation/web3-stack
    /operation/rpi5-storage
 

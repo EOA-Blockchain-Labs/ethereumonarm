@@ -1114,7 +1114,7 @@ The verification and monitoring methods described in Step 4 are a good starting 
 
 As a Supernode operator, you are in the perfect position to further secure the network. You can run a **Fault Proof Challenger** alongside your node to act as a "Guardian of the Galaxy".
 
-:doc:`Learn how to run a Guardian Node <optimism-challenger>`
+:doc:`Learn how to run a Guardian Node <challenger>`
 
 **4. Exploring Advanced Configurations (For Experienced Users):**
 

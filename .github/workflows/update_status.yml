@@ -30,7 +30,7 @@ jobs:
       
       # 4. Commits the changes to the repository if the file has been modified
       - name: Commit and push if changed
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: 'docs(status): Auto-update package versions'
           file_pattern: STATUS.md

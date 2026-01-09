@@ -4,6 +4,6 @@ sphinx-prompt>=1.5.0
 sphinx-sitemap
 sphinx==9.1.0
 docutils>=0.21,<0.23
-sphinx-autobuild
+
 sphinx-copybutton
 sphinx-design

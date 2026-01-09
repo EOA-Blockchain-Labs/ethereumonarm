@@ -20,10 +20,10 @@ Sepolia is the recommended default testnet for application development. The Sepo
 *   Permissioned validator set ensures finality and reliability.
 
 **Resources**
-*   `Website <https://sepolia.otterscan.io/>`_
-*   `GitHub <https://github.com/eth-clients/sepolia>`_
-*   `Otterscan <https://sepolia.otterscan.io/>`_
-*   `Etherscan <https://sepolia.etherscan.io/>`_
+*   `Website <https://sepolia.otterscan.io/>`__
+*   `GitHub <https://github.com/eth-clients/sepolia>`__
+*   `Otterscan <https://sepolia.otterscan.io/>`__
+*   `Etherscan <https://sepolia.etherscan.io/>`__
 *   `Blockscout <https://eth-sepolia.blockscout.com/>`_
 
 **Faucets**
@@ -31,7 +31,7 @@ Sepolia is the recommended default testnet for application development. The Sepo
 *   `Infura Sepolia Faucet <https://www.infura.io/faucet/sepolia>`_
 *   `QuickNode Sepolia Faucet <https://faucet.quicknode.com/ethereum/sepolia>`_
 *   `Google Cloud Web3 Sepolia Faucet <https://cloud.google.com/application/web3/faucet/ethereum/sepolia>`_
-*   `PoW Faucet <https://sepolia-faucet.pk910.de/>`_
+*   `PoW Faucet <https://sepolia-faucet.pk910.de/>`__
 
 Hoodi
 ~~~~~
@@ -44,16 +44,16 @@ Hoodi is a testnet for testing validating and staking. The Hoodi network is open
 *   **Realistic environment**: Mimics mainnet conditions, taking longer to sync and requiring more storage.
 
 **Resources**
-*   `Website <https://hoodi.ethpandaops.io/>`_
-*   `GitHub <https://github.com/eth-clients/hoodi>`_
+*   `Website <https://hoodi.ethpandaops.io/>`__
+*   `GitHub <https://github.com/eth-clients/hoodi>`__
 *   `Explorer <https://hoodi.beaconcha.in/>`_
 *   `Checkpoint Sync <https://checkpoint-sync.hoodi.ethpandaops.io/>`_
-*   `Otterscan <https://hoodi.otterscan.io/>`_
-*   `Etherscan <https://hoodi.etherscan.io/>`_
+*   `Otterscan <https://hoodi.otterscan.io/>`__
+*   `Etherscan <https://hoodi.etherscan.io/>`__
 
 **Faucets**
 *   `Hoodi Faucet <https://faucet.hoodi.ethpandaops.io/>`_
-*   `PoW Faucet <https://hoodi-faucet.pk910.de/>`_
+*   `PoW Faucet <https://hoodi-faucet.pk910.de/>`__
 
 Ephemery
 ~~~~~~~~

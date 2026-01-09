@@ -326,7 +326,7 @@ Verify on a beacon explorer that:
 * Attestations are successful
 
 Reinstalling the OS (Re-flashing SD Card)
-----------------------------------------
+------------------------------------------
 
 If you re-flash the SD card while using NVMe storage:
 

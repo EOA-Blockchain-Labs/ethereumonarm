@@ -110,8 +110,11 @@ prepare: ## Download latest Lighthouse and stage into $(SOURCESDIR)/usr/bin
 	wget -q -O ".build/$(LIGHTHOUSE_TARBALL)" "$(LIGHTHOUSE_URL)" || { echo "❌ Download failed: $(LIGHTHOUSE_URL)"; exit 1; };
 	wget -q -O ".build/$(LIGHTHOUSE_ASC)" "$(LIGHTHOUSE_ASC_URL)" || { echo "❌ Signature download failed: $(LIGHTHOUSE_ASC_URL)"; exit 1; };
 	@echo "🔐 Verifying GPG Signature..."
-	gpg --keyserver keyserver.ubuntu.com --recv-keys $(LIGHTHOUSE_GPG_KEY) || { echo "❌ Failed to import GPG key"; exit 1; };
+	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys $(LIGHTHOUSE_GPG_KEY) 2>/dev/null || \
+		gpg --batch --keyserver keyserver.ubuntu.com --recv-keys $(LIGHTHOUSE_GPG_KEY) || \
+		{ echo "❌ Failed to import GPG key"; exit 1; };
 	gpg --verify ".build/$(LIGHTHOUSE_ASC)" ".build/$(LIGHTHOUSE_TARBALL)" || { echo "❌ GPG signature verification FAILED!"; rm -f ".build/$(LIGHTHOUSE_TARBALL)"; exit 1; };
+
 	@echo "📦 Extracting binary..."
 	tar -xzf ".build/$(LIGHTHOUSE_TARBALL)" -C $(SOURCESDIR)/usr/bin/ lighthouse
 	chmod 0755 "$(SOURCESDIR)/usr/bin/lighthouse"

@@ -1,16 +1,20 @@
 [Unit]
-  Description=DVT SSV Network Service
-  StartLimitIntervalSec=500
-  StartLimitBurst=5
+Description=DVT SSV Network Service
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=500
+StartLimitBurst=5
 
 [Service]
-  EnvironmentFile=/etc/ethereum/ssv.conf
-  Restart=on-failure
-  RestartSec=5s
-  ExecStart=/usr/bin/ssvnode start-node $ARGS
-  Type=simple
-  User=ethereum
-  TimeoutSec=0
+EnvironmentFile=/etc/ethereum/ssv.conf
+Restart=on-failure
+RestartSec=5s
+ExecStart=/usr/bin/ssvnode start-node $ARGS
+Type=simple
+User=ethereum
+SyslogIdentifier=ssv
+LimitNOFILE=65536
+LimitNPROC=65536
 
 [Install]
-  WantedBy=multi-user.target
+WantedBy=multi-user.target

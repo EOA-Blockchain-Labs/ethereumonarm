@@ -1,6 +1,7 @@
 [Unit]
 Description=Nimbus Validator Client (Obol Lido)
-After=network.target
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/dvt/nimbus-validator-obol-lido.conf

@@ -1,6 +1,7 @@
 [Unit]
 Description=Teku Validator Client (Obol)
-After=network.target
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 EnvironmentFile=/etc/ethereum/dvt/teku-validator-obol.conf

@@ -112,8 +112,11 @@ prepare: ## Download latest Reth and stage into $(SOURCESDIR)/usr/bin
 	wget -q -O ".build/$(RETH_TARBALL)" "$(RETH_URL)" || { echo "❌ Download failed: $(RETH_URL)"; exit 1; };
 	wget -q -O ".build/$(RETH_ASC)" "$(RETH_ASC_URL)" || { echo "❌ Signature download failed: $(RETH_ASC_URL)"; exit 1; };
 	@echo "🔐 Verifying GPG Signature..."
-	gpg --keyserver keyserver.ubuntu.com --recv-keys $(RETH_GPG_KEY) || { echo "❌ Failed to import GPG key"; exit 1; };
+	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys $(RETH_GPG_KEY) 2>/dev/null || \
+		gpg --batch --keyserver keyserver.ubuntu.com --recv-keys $(RETH_GPG_KEY) || \
+		{ echo "❌ Failed to import GPG key"; exit 1; };
 	gpg --verify ".build/$(RETH_ASC)" ".build/$(RETH_TARBALL)" || { echo "❌ GPG signature verification FAILED!"; rm -f ".build/$(RETH_TARBALL)"; exit 1; };
+
 	@echo "📦 Extracting binary..."
 	tar -xzf ".build/$(RETH_TARBALL)" -C $(SOURCESDIR)/usr/bin/ reth
 	chmod 0755 "$(SOURCESDIR)/usr/bin/reth"

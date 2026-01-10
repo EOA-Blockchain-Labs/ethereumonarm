@@ -76,7 +76,7 @@ prepare:
 	@echo "🛠 Building cannon binary from source..."
 	cd .build/cannon_src/cannon && \
 		env GO111MODULE=on CGO_ENABLED=1 GOOS=linux CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ GOARCH=arm64 \
-		go build -v -o ./build/bin/cannon ./cmd/cannon \
+		go build -v -o ./build/bin/cannon . \
 		|| { echo "❌ Go build failed"; exit 1; }
 	
 	@echo "📂 Staging binary..."

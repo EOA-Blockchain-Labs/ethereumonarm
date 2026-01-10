@@ -42,8 +42,8 @@ The Ethereum on ARM project consists of three main components:
    │  4. Package with FPM        │     │       DISTRIBUTION CHANNELS          │
    │  5. Test & validate         │     │  ──────────────────────────────────  │
    └──────────────┬──────────────┘     │  • Ready-to-flash SBC images         │
-                  │                     │  • Cloud marketplace images          │
-                  ▼                     │  • Direct image downloads            │
+                  │                    │  • Cloud marketplace images          │
+                  ▼                    │  • Direct image downloads            │
    ┌─────────────────────────────┐     └──────────────────────────────────────┘
    │      APT REPOSITORY         │
    │  ─────────────────────────  │

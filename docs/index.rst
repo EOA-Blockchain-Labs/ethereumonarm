@@ -72,6 +72,8 @@ Select a topic to get started:
    /overview/why-arm
    /overview/supported-hardware
    /overview/features
+   /overview/architecture
+
 
 .. toctree::
    :maxdepth: 2

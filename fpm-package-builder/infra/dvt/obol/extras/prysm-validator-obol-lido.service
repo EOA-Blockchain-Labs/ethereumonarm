@@ -1,6 +1,7 @@
 [Unit]
 Description=Prysm Validator Client (Obol Lido)
-After=network.target
+After=network-online.target
+Wants=network-online.target
 Requires=prysm-beacon.service
 
 [Service]

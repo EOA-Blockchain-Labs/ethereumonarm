@@ -1,18 +1,21 @@
 [Unit]
-  Description=Obol DVT Charon Service for Ethereum Mainnet
-  StartLimitIntervalSec=500
-  StartLimitBurst=5
+Description=Obol DVT Charon Service for Ethereum Mainnet
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=500
+StartLimitBurst=5
 
 [Service]
-  EnvironmentFile=/etc/ethereum/dvt/charon.conf
-  WorkingDirectory=/home/ethereum
-  Restart=on-failure
-  RestartSec=5s
-  ExecStart=/usr/bin/charon run $ARGS
-  Type=simple
-  User=ethereum
-  TimeoutSec=0
-  SyslogIdentifier=charon
+EnvironmentFile=/etc/ethereum/dvt/charon.conf
+WorkingDirectory=/home/ethereum
+Restart=on-failure
+RestartSec=5s
+ExecStart=/usr/bin/charon run $ARGS
+Type=simple
+User=ethereum
+SyslogIdentifier=charon
+LimitNOFILE=65536
+LimitNPROC=65536
 
 [Install]
-  WantedBy=multi-user.target
+WantedBy=multi-user.target

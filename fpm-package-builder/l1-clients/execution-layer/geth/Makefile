@@ -106,9 +106,13 @@ prepare: ## Download latest Geth and verify PGP signature
 	
 	@echo "🔐 Verifying PGP signature..."
 	# Import Geth Linux Builder key if not present (key ID: 9BA28146)
-	gpg --list-keys $(GETH_PGP_KEY) >/dev/null 2>&1 || gpg --keyserver keyserver.ubuntu.com --recv-keys $(GETH_PGP_KEY) || { echo "❌ Failed to import GPG key $(GETH_PGP_KEY)"; exit 1; };
+	gpg --list-keys $(GETH_PGP_KEY) >/dev/null 2>&1 || \
+		gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys $(GETH_PGP_KEY) 2>/dev/null || \
+		gpg --batch --keyserver keyserver.ubuntu.com --recv-keys $(GETH_PGP_KEY) || \
+		{ echo "❌ Failed to import GPG key $(GETH_PGP_KEY)"; exit 1; };
 	# Verify signature
 	gpg --verify ".build/$(GETH_TARBALL).asc" ".build/$(GETH_TARBALL)" || { echo "❌ PGP signature verification FAILED!"; rm -f ".build/$(GETH_TARBALL)"*; exit 1; };
+
 	
 	@echo "📦 Extracting binary..."
 	tar -xzf ".build/$(GETH_TARBALL)" -C $(SOURCESDIR)/usr/bin --strip-components=1 --wildcards '*/geth'

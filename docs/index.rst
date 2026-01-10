@@ -92,6 +92,7 @@ Select a topic to get started:
    :hidden:
    :caption: 🔒 Staking
 
+   /staking/index
    /staking/solo-staking
    /staking/lido
    /staking/obol-dvt-setup
@@ -112,6 +113,7 @@ Select a topic to get started:
    :hidden:
    :caption: 🛠️ System Utilities
 
+   /system/index
    /system/network-vpn
    /system/backup-restore
    /system/security
@@ -122,6 +124,7 @@ Select a topic to get started:
    :hidden:
    :caption: ⚡ Advanced Configuration
 
+   /advanced/index
    /advanced/mev-boost
    /advanced/commit-boost
    /advanced/using-node-rpc

@@ -66,4 +66,4 @@ Upstream Project
 
 *   https://github.com/ethereum-optimism/optimism
 
-See :doc:`/operation/optimism/challenger` for a detailed operational guide.
+See :doc:`/networks/optimism/challenger` for a detailed operational guide.

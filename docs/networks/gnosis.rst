@@ -57,7 +57,7 @@ Example: Running Nethermind and Lighthouse
     sudo systemctl enable --now lighthouse-beacon-gnosis
 
 For monitoring, logs, and lifecycle management, refer to the
-:doc:`Managing Clients </operation/managing-clients>` guide.
+:doc:`Managing Clients </running-a-node/managing-clients>` guide.
 
 Configuration
 -------------

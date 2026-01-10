@@ -89,11 +89,13 @@ Running an ARM node instead of a desktop PC saves approximately:
 **Real-World Example**
 
 A Rock 5B running Geth + Lighthouse 24/7:
+
 - Daily cost: **$0.04-0.06**
 - Monthly cost: **$1.20-1.80**
 - Yearly cost: **$15-20**
 
 Compare to a gaming PC running the same setup:
+
 - Daily cost: **$0.50-0.80**
 - Monthly cost: **$15-24**
 - Yearly cost: **$180-300**

@@ -402,8 +402,8 @@ Quick Start
    For detailed instructions including hardware requirements, all client options (Op-Geth, Op-Reth), 
    Base configuration, and running a full Supernode (L1+L2 on same hardware), see:
    
-   - :doc:`Running an Optimism Supernode <optimism/supernode>` - Comprehensive 32GB RAM setup
-   - :doc:`Running a Guardian Node (Challenger) <optimism/challenger>` - Secure the network
+   - :doc:`Running an Optimism Supernode </networks/optimism/supernode>` - Comprehensive 32GB RAM setup
+   - :doc:`Running a Guardian Node (Challenger) </networks/optimism/challenger>` - Secure the network
 
 Troubleshooting
 ---------------

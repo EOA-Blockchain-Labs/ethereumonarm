@@ -11,8 +11,8 @@ unlike traditionally locked staking that prevents users from accessing their fun
 **Lido Community Staking Module**
 
 The Community Staking Module (CSM) is the Lido on Ethereum protocol's first module with **permissionless entry**, 
-allowing any node operator — and especially community stakers, from solo stakers, to groups of friends, to 
-amateur operators — to operate validators by providing an ETH-based safety deposit.
+allowing any node operator and especially community stakers, from solo stakers, to groups of friends, to 
+amateur operators to operate validators by providing an ETH-based safety deposit.
 
 .. note::
   Lido **CSM allows any user to become a Home Staker with a fraction of ETH** necessary for a Vanilla validator (2.3), **contribute to the 
@@ -260,7 +260,7 @@ For enhanced resilience and fault tolerance, you can run your Lido CSM validator
 
 To run Lido CSM with Obol DVT:
 
-1. **Set up your DVT cluster** following our :doc:`/advanced/obol-dvt-setup` guide
+1. **Set up your DVT cluster** following our :doc:`/staking/obol-dvt-setup` guide
 2. **Use Lido withdrawal address** during DKG:
 
    - Mainnet: ``0xB9D7934878B5FB9610B3fE8A5e441e8fad7E293f``
@@ -282,4 +282,4 @@ Available Lido DVT validator services:
 
 These services are pre-configured with the Lido fee recipient address.
 
-See :doc:`/advanced/obol-dvt-setup` for complete DVT cluster setup instructions.
+See :doc:`/staking/obol-dvt-setup` for complete DVT cluster setup instructions.

@@ -25,7 +25,7 @@ the Execution Layer where the chain head is. We will run :guilabel:`Lighthouse`.
 
 .. tip::
   All CL clients are configured to use **CheckPoint Sync** that will get the 
-  Beacon Chain in sync in just a few minutes. Take a look to our :doc:`Layer 1 Guide <../operation/layer-1>` for 
+  Beacon Chain in sync in just a few minutes. Take a look to our :doc:`Layer 1 Guide <../running-a-node/layer-1>` for 
   more info.
 
 For starting the :guilabel:`Lighthouse` CL Beacon Chain, follow these steps:
@@ -88,7 +88,7 @@ Awesome! You are now running an Ethereum node!
 
 The next step is to get your client synced and become more familiar with your node.
 For more info about how the node works and to check sync status, please visit
-our :doc:`Operation Guide <../operation/introduction>`.
+our :doc:`Operation Guide <../running-a-node/introduction>`.
 
 .. tip::
    Remember that you can stake with your ARM board. If you have

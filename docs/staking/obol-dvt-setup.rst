@@ -132,7 +132,7 @@ Practical Example: 3-Node Cluster
 
 For a complete, step-by-step walkthrough of setting up a **3-node cluster** using Ethereum on ARM devices connected via a WireGuard VPN, please refer to our dedicated guide:
 
-:doc:`/advanced/obol-dvt-3-node-example`
+:doc:`/staking/obol-dvt-3-node-example`
 
 
 
@@ -397,7 +397,7 @@ For Lido Community Staking Module operators, use the Lido-specific DVT services 
 - ``nimbus-validator-obol-lido.service``
 - ``grandine-validator-obol-lido.service``
 
-See :doc:`/advanced/lido` for complete Lido CSM setup instructions including withdrawal addresses for DKG.
+See :doc:`/staking/lido` for complete Lido CSM setup instructions including withdrawal addresses for DKG.
 
 Troubleshooting
 ---------------

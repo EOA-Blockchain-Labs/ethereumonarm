@@ -49,7 +49,7 @@ Select a topic to get started:
 
 *   :doc:`🚀 Getting Started </getting-started/introduction>`: Step-by-step installation guide.
 *   :doc:`ℹ️ Supported Hardware </overview/supported-hardware>`: List of compatible ARM boards.
-*   :doc:`⚙️ Operation Guide </operation/introduction>`: How to run and manage your node.
+*   :doc:`⚙️ Operation Guide </running-a-node/introduction>`: How to run and manage your node.
 *   :doc:`📦 Packages </packages/index>`: Reference for all supported software packages.
 *   :doc:`💻 Contributing </contributing/guidelines>`: Help us improve the project.
 
@@ -76,16 +76,35 @@ Select a topic to get started:
 .. toctree::
    :maxdepth: 2
    :hidden:
-   :caption: ⚙️ Operation
+   :caption: ⚙️ Running a Node
 
-   /operation/introduction
-   /operation/managing-clients
-   /operation/node-types
-   /operation/layer-1
-   /operation/layer-2
-   /operation/optimism/index
-   /operation/web3-stack
-   /operation/rpi5-storage
+   /running-a-node/introduction
+   /running-a-node/managing-clients
+   /running-a-node/node-types
+   /running-a-node/layer-1
+   /running-a-node/layer-2
+   /running-a-node/web3-stack
+   /running-a-node/rpi5-storage
+   /running-a-node/testnets
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: 🔒 Staking
+
+   /staking/solo-staking
+   /staking/lido
+   /staking/obol-dvt-setup
+   /staking/migrate-validator
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: 🌐 Networks
+
+   /networks/optimism/index
+   /networks/gnosis
+
 
 .. toctree::
    :maxdepth: 2
@@ -100,17 +119,12 @@ Select a topic to get started:
 .. toctree::
    :maxdepth: 2
    :hidden:
-   :caption: ⚡ Advanced
+   :caption: ⚡ Advanced Configuration
 
    /advanced/mev-boost
    /advanced/commit-boost
-   /advanced/obol-dvt-setup
-   /advanced/testnets
-   /advanced/gnosis
    /advanced/using-node-rpc
-   /advanced/lido
    /advanced/manual-verification
-   /advanced/migrate-validator
 
 .. toctree::
    :maxdepth: 2
@@ -119,7 +133,7 @@ Select a topic to get started:
 
    /contributing/guidelines
    /contributing/building-images
-   /reference/sources
+   /contributing/sources
 
 .. toctree::
    :maxdepth: 2

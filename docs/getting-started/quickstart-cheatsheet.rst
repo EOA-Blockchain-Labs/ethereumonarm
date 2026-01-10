@@ -158,6 +158,6 @@ Need More Help?
 ---------------
 
 - :doc:`Full Installation Guide </getting-started/installation>`
-- :doc:`Managing Clients </operation/managing-clients>`
+- :doc:`Managing Clients </running-a-node/managing-clients>`
 - :doc:`Troubleshooting </system/troubleshooting>`
 - `Discord Community <https://discord.gg/ve2Z8fxz5N>`_

@@ -1,33 +1,299 @@
-/* Override the blue sidebar with a dark Ethereum-style grey */
-.wy-nav-side {
-    background: #484848;
+/* ======================================================================
+   Ethereum on ARM - Custom CSS Enhancements for Furo Theme
+   ====================================================================== */
+
+/* ----------------------------------------------------------------------
+   Color Variables (Ethereum-inspired palette)
+   ---------------------------------------------------------------------- */
+:root {
+    --eoa-purple: #8c6ddf;
+    --eoa-purple-light: #a58ee8;
+    --eoa-blue: #5c8dea;
+    --eoa-green: #4caf50;
+    --eoa-orange: #ff9800;
+    --eoa-red: #f44336;
+    --eoa-gray-dark: #1a1a2e;
+    --eoa-gray-medium: #2d2d44;
+    --eoa-gray-light: #e8e8e8;
 }
 
-/* Adjust the search box background to match */
-.wy-side-nav-search {
-    background: #4f4f4f;
+/* Dark mode color overrides */
+html[data-theme="dark"] {
+    --color-background-primary: #16161d;
+    --color-background-secondary: #1e1e28;
+    --color-brand-primary: var(--eoa-purple);
+    --color-brand-content: var(--eoa-purple-light);
 }
 
-/* Ensure links in the sidebar are readable */
-.wy-menu-vertical a {
-    color: #d9d9d9;
+/* Light mode color overrides */
+html[data-theme="light"] {
+    --color-brand-primary: #6b4fbb;
+    --color-brand-content: #5a3daa;
 }
 
-.wy-menu-vertical a:hover {
-    color: #ffffff;
-    background: #3a3a3a;
+/* ----------------------------------------------------------------------
+   Code Block Enhancements
+   ---------------------------------------------------------------------- */
+
+/* Styled code blocks with subtle gradient border */
+.highlight pre {
+    border-radius: 8px;
+    border-left: 4px solid var(--eoa-purple);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* Mobile navigation overrides */
-.wy-nav-top {
-    background: #484848;
+html[data-theme="dark"] .highlight pre {
+    background: linear-gradient(135deg, #1e1e2e 0%, #252535 100%);
 }
 
-.wy-nav-top a {
-    color: #d9d9d9;
+/* Inline code styling */
+code.literal {
+    background-color: rgba(140, 109, 223, 0.1);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 0.9em;
 }
 
-/* Mobile menu button */
-.wy-nav-top i {
-    color: #d9d9d9;
+html[data-theme="dark"] code.literal {
+    background-color: rgba(140, 109, 223, 0.2);
+    color: #e0d0ff;
+}
+
+/* ----------------------------------------------------------------------
+   Table Enhancements
+   ---------------------------------------------------------------------- */
+
+table.docutils {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+table.docutils thead {
+    background: linear-gradient(135deg, var(--eoa-purple) 0%, var(--eoa-blue) 100%);
+}
+
+table.docutils thead th {
+    color: white !important;
+    font-weight: 600;
+    padding: 12px 16px;
+    border: none;
+}
+
+table.docutils tbody tr:nth-child(even) {
+    background-color: rgba(140, 109, 223, 0.05);
+}
+
+html[data-theme="dark"] table.docutils tbody tr:nth-child(even) {
+    background-color: rgba(140, 109, 223, 0.1);
+}
+
+table.docutils tbody td {
+    padding: 10px 16px;
+}
+
+/* ----------------------------------------------------------------------
+   Admonition Enhancements
+   ---------------------------------------------------------------------- */
+
+/* Base admonition styling */
+.admonition {
+    border-radius: 8px;
+    border-left-width: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Note - Blue */
+.admonition.note {
+    border-left-color: var(--eoa-blue);
+}
+
+.admonition.note > .admonition-title {
+    background-color: rgba(92, 141, 234, 0.15);
+}
+
+/* Tip - Green */
+.admonition.tip {
+    border-left-color: var(--eoa-green);
+}
+
+.admonition.tip > .admonition-title {
+    background-color: rgba(76, 175, 80, 0.15);
+}
+
+/* Important - Purple */
+.admonition.important {
+    border-left-color: var(--eoa-purple);
+}
+
+.admonition.important > .admonition-title {
+    background-color: rgba(140, 109, 223, 0.15);
+}
+
+/* Warning - Orange */
+.admonition.warning {
+    border-left-color: var(--eoa-orange);
+}
+
+.admonition.warning > .admonition-title {
+    background-color: rgba(255, 152, 0, 0.15);
+}
+
+/* Danger/Caution - Red */
+.admonition.danger,
+.admonition.caution {
+    border-left-color: var(--eoa-red);
+}
+
+.admonition.danger > .admonition-title,
+.admonition.caution > .admonition-title {
+    background-color: rgba(244, 67, 54, 0.15);
+}
+
+/* Seealso - Purple gradient */
+.admonition.seealso {
+    border-left-color: var(--eoa-purple);
+    background: linear-gradient(135deg, rgba(140, 109, 223, 0.05) 0%, rgba(92, 141, 234, 0.05) 100%);
+}
+
+/* ----------------------------------------------------------------------
+   Card Enhancements (sphinx-design)
+   ---------------------------------------------------------------------- */
+
+.sd-card {
+    border-radius: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sd-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(140, 109, 223, 0.2);
+}
+
+.sd-card-header {
+    border-radius: 12px 12px 0 0;
+}
+
+/* ----------------------------------------------------------------------
+   Badge Enhancements
+   ---------------------------------------------------------------------- */
+
+.sd-badge {
+    border-radius: 20px;
+    font-weight: 500;
+    padding: 4px 12px;
+}
+
+/* ----------------------------------------------------------------------
+   Sidebar Enhancements
+   ---------------------------------------------------------------------- */
+
+html[data-theme="dark"] .sidebar-tree .reference {
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+html[data-theme="dark"] .sidebar-tree .reference:hover {
+    color: var(--eoa-purple-light);
+}
+
+/* Active page indicator */
+.sidebar-tree .current-page > .reference {
+    border-left: 3px solid var(--eoa-purple);
+    padding-left: 8px;
+    font-weight: 600;
+}
+
+/* ----------------------------------------------------------------------
+   Dropdown Enhancements
+   ---------------------------------------------------------------------- */
+
+details.sd-dropdown {
+    border-radius: 8px;
+    margin: 1em 0;
+}
+
+details.sd-dropdown > summary {
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+details.sd-dropdown[open] > summary {
+    border-radius: 8px 8px 0 0;
+}
+
+/* ----------------------------------------------------------------------
+   Button/Link Enhancements
+   ---------------------------------------------------------------------- */
+
+a.reference.external::after {
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+a.reference.external:hover::after {
+    opacity: 1;
+}
+
+/* ----------------------------------------------------------------------
+   Copy Button Enhancement
+   ---------------------------------------------------------------------- */
+
+button.copybtn {
+    border-radius: 6px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+button.copybtn:hover {
+    transform: scale(1.05);
+}
+
+button.copybtn:active {
+    transform: scale(0.95);
+}
+
+/* ----------------------------------------------------------------------
+   Scrollbar Styling (Dark Mode)
+   ---------------------------------------------------------------------- */
+
+html[data-theme="dark"] ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: var(--eoa-gray-dark);
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: var(--eoa-gray-medium);
+    border-radius: 5px;
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: var(--eoa-purple);
+}
+
+/* ----------------------------------------------------------------------
+   Announcement Banner Enhancement
+   ---------------------------------------------------------------------- */
+
+.announcement {
+    background: linear-gradient(90deg, var(--eoa-purple) 0%, var(--eoa-blue) 100%);
+    font-weight: 500;
+}
+
+/* ----------------------------------------------------------------------
+   Footer Enhancement
+   ---------------------------------------------------------------------- */
+
+footer {
+    border-top: 1px solid rgba(140, 109, 223, 0.2);
+}
+
+footer a {
+    transition: color 0.2s ease;
+}
+
+footer a:hover {
+    color: var(--eoa-purple-light);
 }

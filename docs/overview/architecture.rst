@@ -23,15 +23,15 @@ The Ethereum on ARM project consists of three main components:
    └─────────────────────────────────────────────────────────────────────────────┘
    
    ┌─────────────────────────────┐     ┌──────────────────────────────────────┐
-   │   SOURCE CODE / BINARIES   │     │         IMAGE CREATION TOOL          │
+   │   SOURCE CODE / BINARIES    │     │         IMAGE CREATION TOOL          │
    │  ─────────────────────────  │     │  ──────────────────────────────────  │
    │  • Ethereum L1 clients      │     │  Ubuntu Images:                      │
    │  • Ethereum L2 clients      │     │  • Raspberry Pi 5                    │
    │  • Infrastructure tools     │     │  • Rock 5B / 5T                      │
    │  • Web3 applications        │     │  • Orange Pi 5 Plus                  │
    └──────────────┬──────────────┘     │  • NanoPC-T6                         │
-                  │                     │  ──────────────────────────────────  │
-                  ▼                     │  Cloud Images (Packer):              │
+                  │                    │  ──────────────────────────────────  │
+                  ▼                    │  Cloud Images (Packer):              │
    ┌─────────────────────────────┐     │  • AWS AMI                           │
    │     FPM PACKAGE BUILDER     │     │  • Google Cloud                      │
    │  ─────────────────────────  │     │  • Microsoft Azure                   │
@@ -61,12 +61,12 @@ The Ethereum on ARM project consists of three main components:
    ┌─────────────────────────────────────────────────────────────────────────────┐
    │                            END USER DEVICES                                 │
    │  ─────────────────────────────────────────────────────────────────────────  │
-   │                                                                              │
-   │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐    │
-   │  │  Raspberry   │  │   Rockchip   │  │  Cloud VMs   │  │   Orange Pi  │    │
-   │  │    Pi 5      │  │    Rock 5    │  │  (ARM-based) │  │    5 Plus    │    │
-   │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘    │
-   │                                                                              │
+   │                                                                             │
+   │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
+   │  │  Raspberry   │  │   Rockchip   │  │  Cloud VMs   │  │   Orange Pi  │     │
+   │  │    Pi 5      │  │    Rock 5    │  │  (ARM-based) │  │    5 Plus    │     │
+   │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘     │
+   │                                                                             │
    └─────────────────────────────────────────────────────────────────────────────┘
 
 

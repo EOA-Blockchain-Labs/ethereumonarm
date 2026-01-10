@@ -240,9 +240,14 @@ Replace ``192.168.0.10`` with your actual L1 node IP address.
 
 We need to download and decompress the initial snapshot in order to initialize the database. Run:
 
-.. prompt:: bash $
+.. code-block:: bash
 
-  nitro-snapshot
+  mkdir -p /home/ethereum/.arbitrum/arb1/nitro
+  cd /home/ethereum/.arbitrum/arb1/nitro
+  wget -O - https://snapshot.arbitrum.foundation/arb1/nitro-pruned.tar | tar -xvf -
+
+.. warning::
+   The snapshot is very large (2+ TB). Use ``screen`` or ``tmux`` to prevent disconnection.
 
 Once finished, start the :guilabel:`Nitro` client service and wait for the client to get in sync:
 
@@ -252,6 +257,11 @@ Once finished, start the :guilabel:`Nitro` client service and wait for the clien
   sudo journalctl -u nitro -f
 
 The Arbitrum node is up and running.
+
+.. seealso::
+
+   For detailed configuration options, hardware requirements, and RPC access, see the
+   :doc:`full Arbitrum guide </networks/arbitrum>`.
 
 .. _starknet:
 

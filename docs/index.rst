@@ -103,6 +103,7 @@ Select a topic to get started:
    :caption: 🌐 Networks
 
    /networks/optimism/index
+   /networks/arbitrum
    /networks/gnosis
 
 

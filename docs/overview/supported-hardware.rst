@@ -15,7 +15,7 @@ In order to run an Ethereum node with our images, you will need one of these dev
   We strongly recommend **NanoPC T6, Rock 5B or Orange Pi 5 Plus** boards to run an Ethereum full/staking node. 
 
 This is the recommended hardware to run an **Execution Layer client** + **Consensus Layer client**. 
-If you don't know what an Ethereum node is, please visit the :doc:`Operation Introduction </operation/introduction>`.
+If you don't know what an Ethereum node is, please visit the :doc:`Operation Introduction </running-a-node/introduction>`.
 
 .. warning::
   The Raspberry Pi 5 doesn't have native NVMe disk support. If you own a Raspberry Pi 5 with 16 GB of RAM and want to run 

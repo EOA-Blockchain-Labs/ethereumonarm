@@ -93,7 +93,7 @@ Comprehensive Client Support
       
       * fuel-core
       
-      See :doc:`../operation/layer-2` for setup guides.
+      See :doc:`../running-a-node/layer-2` for setup guides.
 
 Package Management System
 --------------------------
@@ -119,7 +119,7 @@ Package Management System
 * Downgrade to specific versions when needed
 * Browse packages at `apt.ethereumonarm.com/pool/main <https://apt.ethereumonarm.com/pool/main/>`_
 
-See :doc:`../operation/managing-clients` for detailed package management.
+See :doc:`../running-a-node/managing-clients` for detailed package management.
 
 Service Management & Automation
 --------------------------------
@@ -180,7 +180,7 @@ Advanced Monitoring & Metrics
 * **Status alerts** and effectiveness metrics
 * **Easy setup** with API key configuration
 
-See :doc:`../operation/managing-clients` for monitoring setup.
+See :doc:`../running-a-node/managing-clients` for monitoring setup.
 
 Advanced Features
 -----------------
@@ -226,7 +226,7 @@ We actively promote **client diversity** to strengthen the Ethereum network:
 * **Minority client support** to prevent single-client dominance
 * **Documentation** for all client combinations
 
-See our :doc:`../operation/layer-1` guide for client selection recommendations.
+See our :doc:`../running-a-node/layer-1` guide for client selection recommendations.
 
 Community & Support
 -------------------

@@ -33,7 +33,7 @@ Choose the path that best fits your goals:
       Start Here
 
    .. grid-item-card:: ⚡ Supernode
-      :link: ../operation/optimism/supernode
+      :link: ../networks/optimism/supernode
       :link-type: doc
       :text-align: center
       :class-card: sd-border-warning
@@ -46,7 +46,7 @@ Choose the path that best fits your goals:
       Go to Guide
 
    .. grid-item-card:: 🌐 Layer 2 Only
-      :link: ../operation/layer-2
+      :link: ../running-a-node/layer-2
       :link-type: doc
       :text-align: center
       :class-card: sd-border-info

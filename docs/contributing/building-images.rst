@@ -235,7 +235,7 @@ To remove all generated images and downloaded files, run:
 
    make clean
 
-For more information, the existing documentation includes a :doc:`Getting Started Guide </getting-started/introduction>` and a :doc:`Operation Guide </operation/introduction>`, which offer further details on Ethereum and client management.
+For more information, the existing documentation includes a :doc:`Getting Started Guide </getting-started/introduction>` and a :doc:`Operation Guide </running-a-node/introduction>`, which offer further details on Ethereum and client management.
 
 4.4. Cloud Image Builder
 ^^^^^^^^^^^^^^^^^^^^^^^^

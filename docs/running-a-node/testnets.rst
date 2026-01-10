@@ -16,10 +16,12 @@ Sepolia
 Sepolia is the recommended default testnet for application development. The Sepolia network uses a permissioned validator set controlled by client & testing teams.
 
 **Why use Sepolia?**
+
 *   Stable environment for contract and application developers.
 *   Permissioned validator set ensures finality and reliability.
 
 **Resources**
+
 *   `Website <https://sepolia.otterscan.io/>`__
 *   `GitHub <https://github.com/eth-clients/sepolia>`__
 *   `Otterscan <https://sepolia.otterscan.io/>`__
@@ -27,6 +29,7 @@ Sepolia is the recommended default testnet for application development. The Sepo
 *   `Blockscout <https://eth-sepolia.blockscout.com/>`_
 
 **Faucets**
+
 *   `Alchemy Sepolia Faucet <https://sepoliafaucet.com/>`_
 *   `Infura Sepolia Faucet <https://www.infura.io/faucet/sepolia>`_
 *   `QuickNode Sepolia Faucet <https://faucet.quicknode.com/ethereum/sepolia>`_
@@ -39,11 +42,13 @@ Hoodi
 Hoodi is a testnet for testing validating and staking. The Hoodi network is open for users wanting to run a testnet validator. Stakers wanting to test protocol upgrades before they are deployed to mainnet should therefore use Hoodi.
 
 **Why use Hoodi?**
+
 *   **Open validator set**: Stakers can test running validators and network upgrades.
 *   **Large state**: Useful for testing complex smart contract interactions.
 *   **Realistic environment**: Mimics mainnet conditions, taking longer to sync and requiring more storage.
 
 **Resources**
+
 *   `Website <https://hoodi.ethpandaops.io/>`__
 *   `GitHub <https://github.com/eth-clients/hoodi>`__
 *   `Explorer <https://hoodi.beaconcha.in/>`_
@@ -52,6 +57,7 @@ Hoodi is a testnet for testing validating and staking. The Hoodi network is open
 *   `Etherscan <https://hoodi.etherscan.io/>`__
 
 **Faucets**
+
 *   `Hoodi Faucet <https://faucet.hoodi.ethpandaops.io/>`_
 *   `PoW Faucet <https://hoodi-faucet.pk910.de/>`__
 
@@ -61,6 +67,7 @@ Ephemery
 Ephemery is a unique kind of testnet that fully resets every month. The execution and consensus state reverts back to genesis every 28 days, which means anything that happens on the testnet is ephemeral.
 
 **Why use Ephemery?**
+
 *   **Always fresh state**: Ideal for short term testing, fast node bootstrap.
 *   **Low resource requirements**: <5GB storage on average, quickest sync.
 *   **Training ground**: Perfect for 'hello world' applications and practicing validator setups without long-term commitment.
@@ -76,6 +83,7 @@ To run a client on a specific testnet, Ethereum on ARM uses a simple service nam
 **Format**: ``<client>-<network>``
 
 Examples:
+
 *   ``geth-sepolia``
 *   ``lighthouse-beacon-hoodi``
 *   ``prysm-validator-sepolia``

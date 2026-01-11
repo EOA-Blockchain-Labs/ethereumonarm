@@ -1,3 +1,12 @@
+# =============================================================================
+# Ethereum on ARM - Vouch Configuration
+# =============================================================================
+# Service: vouch.service
+# Documentation: https://ethereum-on-arm-documentation.readthedocs.io/en/latest/packages/l1/vouch
+#
+# This file is loaded by the vouch service.
+# =============================================================================
+
 # log-file is the location for Vouch log output.  If this is not provided logs will be written to the console.
 # log-file: /var/log/vouch.log
 # log-level is the global log level for Vouch logging.

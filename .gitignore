@@ -1,11 +1,49 @@
-.vscode
-fpm-package-builder/.vagrant/
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# System
+.DS_Store
+Thumbs.db
+
+# General Build & Temp
+.build/
+.cache/
+*.log
+*.tmp
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+.venv
+
+# Documentation
+docs/_build/
+
+# Vagrant
+.vagrant/
+
+# Packer
+packer_cache/
+*.box
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# Project Specific
 fpm-package-builder/packages/
 image-creation-tool/ubuntu/*.img
 image-creation-tool/ubuntu/*.zip
 image-creation-tool/ubuntu/*.xz
 image-creation-tool/ubuntu-rescue/*.img
 image-creation-tool/ubuntu/manifest.txt
-.DS_Store
-.build/
-.cache/

@@ -22,18 +22,78 @@ the Ethereum network, either by running a full node or by staking from home.
 
 - **Graphical User Interface (EOA-gui)**: A console menu that simplifies the
   setup of L1/L2 nodes, for both full and archive nodes (currently in alpha).
-- **Multiple client support**:
-  - **Execution layer**: Geth, Erigon, Besu, Nethermind, Reth and EthRex.
-  - **Consensus layer**: Prysm, Nimbus, Teku, Lodestar, Lighthouse and Grandine.
-- **L2 support**: Compatible with Optimism, Arbitrum, Starknet, Fuel and EthRex L2.
-- **Distributed Validator Technology (DVT)**: We support research and
-  implementation for better decentralization like SSV and Obol.
+- **Extensive Protocol Support**: Full support for L1 Consensus & Execution clients, Layer 2 networks, and DVT infrastructure.
 - **Client diversity**: We actively promote the use of minority clients.
-- **Testnet ready**: Full support for Sepolia, Hoodi, and Ephemery testnets.
+- **Testnet ready**: Full support for Sepolia, Holesky, and Ephemery testnets.
 - **Advanced monitoring**: Ready-to-use dashboards with Prometheus and Grafana
   for detailed tracking of your node's performance.
 - **Optimized operating system**: Custom configurations on top of Armbian to
   ensure your node is stable and efficient.
+
+## 📦 Supported Software
+
+We support a wide range of Ethereum software, all packaged as standard `.deb` files for easy management.
+
+### Layer 1 Consensus
+
+| Client | Repository |
+| :--- | :--- |
+| **Grandine** | [grandinetech/grandine](https://github.com/grandinetech/grandine) |
+| **Lighthouse** | [sigp/lighthouse](https://github.com/sigp/lighthouse) |
+| **Lodestar** | [ChainSafe/lodestar](https://github.com/ChainSafe/lodestar) |
+| **Nimbus** | [status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2) |
+| **Prysm** | [prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm) |
+| **Teku** | [ConsenSys/teku](https://github.com/ConsenSys/teku) |
+
+### Layer 1 Execution
+
+| Client | Repository |
+| :--- | :--- |
+| **Besu** | [hyperledger/besu](https://github.com/hyperledger/besu) |
+| **Erigon** | [ledgerwatch/erigon](https://github.com/ledgerwatch/erigon) |
+| **EthRex** | [lambdaclass/ethrex](https://github.com/lambdaclass/ethrex) |
+| **Geth** | [ethereum/go-ethereum](https://github.com/ethereum/go-ethereum) |
+| **Nethermind** | [NethermindEth/nethermind](https://github.com/NethermindEth/nethermind) |
+| **Nimbus EL** | [status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1) |
+| **Reth** | [paradigmxyz/reth](https://github.com/paradigmxyz/reth) |
+
+### Layer 2
+
+| Component | Repository |
+| :--- | :--- |
+| **Arbitrum Nitro** | [OffchainLabs/nitro](https://github.com/OffchainLabs/nitro) |
+| **EthRex L2** | [lambdaclass/ethrex](https://github.com/lambdaclass/ethrex) |
+| **Fuel Core** | [FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core) |
+| **Optimism** (Components) | [ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism) |
+| **Optimism** (op-geth) | [ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth) |
+| **Optimism** (op-reth) | [paradigmxyz/reth](https://github.com/paradigmxyz/reth) |
+| **Starknet Juno** | [NethermindEth/juno](https://github.com/NethermindEth/juno) |
+| **Starknet Madara** | [madara-alliance/madara](https://github.com/madara-alliance/madara) |
+| **Starknet Pathfinder** | [eqlabs/pathfinder](https://github.com/eqlabs/pathfinder) |
+| **zkSync Era** | [matter-labs/zksync-era](https://github.com/matter-labs/zksync-era) |
+
+### Infrastructure & Tools
+
+| Tool | Repository |
+| :--- | :--- |
+| **Commit-Boost** | [Commit-Boost/commit-boost-client](https://github.com/Commit-Boost/commit-boost-client) |
+| **Obol Charon** | [ObolNetwork/charon](https://github.com/ObolNetwork/charon) |
+| **SSV Node** | [ssvlabs/ssv](https://github.com/ssvlabs/ssv) |
+| **MEV-Boost** | [flashbots/mev-boost](https://github.com/flashbots/mev-boost) |
+| **Vouch** | [attestantio/vouch](https://github.com/attestantio/vouch) |
+| **Vero** | [serenita-org/vero](https://github.com/serenita-org/vero) |
+| **Eth. Metrics Exporter** | [ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter) |
+| **Val. Metrics Exporter** | [ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter) |
+| **EthStaker Deposit CLI** | [eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli) |
+| **StakeWise Operator** | [stakewise/v3-operator](https://github.com/stakewise/v3-operator) |
+
+### Web3
+
+| Application | Repository |
+| :--- | :--- |
+| **Swarm Bee** | [ethersphere/bee](https://github.com/ethersphere/bee) |
+| **IPFS Kubo** | [ipfs/kubo](https://github.com/ipfs/kubo) |
+| **Status-Go** | [status-im/status-go](https://github.com/status-im/status-go) |
 
 ## ⚙️ Supported devices
 

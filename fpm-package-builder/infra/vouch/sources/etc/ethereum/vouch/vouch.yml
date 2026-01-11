@@ -2,7 +2,7 @@
 # Ethereum on ARM - Vouch Configuration
 # =============================================================================
 # Service: vouch.service
-# Documentation: https://ethereum-on-arm-documentation.readthedocs.io/en/latest/packages/l1/vouch
+# Documentation: https://ethereum-on-arm-documentation.readthedocs.io/en/latest/packages/l1/vouch.html
 #
 # This file is loaded by the vouch service.
 # =============================================================================

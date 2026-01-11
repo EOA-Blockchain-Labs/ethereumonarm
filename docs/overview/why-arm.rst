@@ -4,14 +4,22 @@
 Why Choose ARM Hardware?
 ========================
 
-ARM-based Single Board Computers (SBCs) offer the ideal platform for running Ethereum nodes at home. They provide an unbeatable combination of low power consumption, affordability, reliability, and true decentralization that traditional computers and cloud services simply cannot match.
+ARM-based Single Board Computers (SBCs) offer the ideal platform for running Ethereum nodes at home. They provide an unbeatable combination of efficiency, affordability, and reliability that traditional computers and cloud services simply cannot match.
 
-Quick Comparison
-----------------
+At a Glance
+-----------
 
 .. grid:: 1 2 2 4
    :gutter: 3
 
+   .. grid-item-card:: 💰 Annual Cost
+      :text-align: center
+      :class-card: sd-border-success
+      
+      **~$15-20/year**
+      
+      vs $3000+ (Cloud)
+      
    .. grid-item-card:: ⚡ Power Usage
       :text-align: center
       :class-card: sd-border-success
@@ -19,14 +27,6 @@ Quick Comparison
       **5-15W**
       
       vs 100-300W (PC)
-      
-   .. grid-item-card:: 💰 Annual Cost
-      :text-align: center
-      :class-card: sd-border-success
-      
-      **$15-20/year**
-      
-      vs $100-300 (PC)
       
    .. grid-item-card:: 🔇 Noise Level
       :text-align: center
@@ -44,140 +44,10 @@ Quick Comparison
       
       No cloud dependency
 
-Energy Efficiency: The Game Changer
+1. The Economic Case: Unbeatable ROI
 ------------------------------------
 
-**Power Consumption**
-
-ARM boards consume dramatically less power than alternatives:
-
-.. list-table::
-   :header-rows: 1
-   :align: left
-
-   * - Hardware
-     - Idle Power
-     - Under Load
-     - Annual Cost*
-   * - ARM SBC (Rock 5B, NanoPC T6)
-     - 5-8W
-     - 10-15W
-     - $15-20
-   * - Intel NUC
-     - 15-25W
-     - 50-100W
-     - $60-120
-   * - Gaming PC / Desktop
-     - 50-100W
-     - 150-300W
-     - $180-360
-   * - Cloud VPS (equivalent)
-     - N/A
-     - N/A
-     - $120-240
-
-\*Based on $0.15/kWh electricity rate, 24/7 operation
-
-**Environmental Impact**
-
-Running an ARM node instead of a desktop PC saves approximately:
-
-* **1,000-2,500 kWh** of electricity per year
-* **400-1,000 kg** of CO₂ emissions annually
-* Equivalent to planting **20-50 trees** per year
-
-**Real-World Example**
-
-A Rock 5B running Geth + Lighthouse 24/7:
-
-- Daily cost: **$0.04-0.06**
-- Monthly cost: **$1.20-1.80**
-- Yearly cost: **$15-20**
-
-Compare to a gaming PC running the same setup:
-
-- Daily cost: **$0.50-0.80**
-- Monthly cost: **$15-24**
-- Yearly cost: **$180-300**
-
-**Savings over 5 years: $800-1,400**
-
-Cost-Effective: Total Cost of Ownership
-----------------------------------------
-
-**Initial Investment**
-
-.. list-table::
-   :header-rows: 1
-   :align: left
-
-   * - Component
-     - ARM SBC
-     - Intel NUC
-     - Gaming PC
-     - Cloud VPS
-   * - Board/System
-     - $100-150
-     - $400-600
-     - $800-1,500
-     - $0
-   * - RAM (16GB)
-     - Included
-     - $50-100
-     - $60-100
-     - N/A
-   * - Storage (2TB NVMe)
-     - $120-180
-     - $120-180
-     - $120-180
-     - N/A
-   * - Case + Cooling
-     - $20-40
-     - Included
-     - $50-150
-     - N/A
-   * - Power Supply
-     - $15-25
-     - Included
-     - $80-150
-     - N/A
-   * - **Total Initial**
-     - **$255-395**
-     - **$570-880**
-     - **$1,110-2,080**
-     - **$0**
-
-**5-Year Total Cost of Ownership**
-
-.. list-table::
-   :header-rows: 1
-   :align: left
-
-   * - Cost Factor
-     - ARM SBC
-     - Intel NUC
-     - Gaming PC
-     - Cloud VPS
-   * - Initial Hardware
-     - $300
-     - $700
-     - $1,500
-     - $0
-   * - Electricity (5 years)
-     - $90
-     - $450
-     - $1,350
-     - N/A
-   * - Hosting/Subscription
-     - $0
-     - $0
-     - $0
-     - $9,000
-   * - **Total (5 years)**
-     - **$390**
-     - **$1,150**
-     - **$2,850**
-     - **$9,000**
+Running an Ethereum node used to be expensive. ARM hardware changes the equation completely.
 
 **Cloud vs ARM: 1-Year Reality Check**
 
@@ -193,271 +63,131 @@ We analyzed the cost of running a high-performance cloud instance (4 vCPU, 16GB 
 
 **Result:** You can buy **7-8 high-end ARM nodes** for the price of renting **one** cloud instance for a single year.
 
+**Energy Efficiency**
 
-**For Stakers**
-
-Lower operational costs mean higher returns:
-
-* **ARM**: ~99% of staking rewards are profit (after electricity)
-* **Gaming PC**: ~95% of rewards are profit
-* **Cloud VPS**: ~85-90% of rewards are profit
-
-Performance & Capabilities
----------------------------
-
-**Modern ARM64 Architecture**
-
-Today's ARM boards are powerful enough for demanding Ethereum workloads:
-
-* **8-core CPUs** (up to 2.4 GHz)
-* **16-32GB RAM** options available
-* **PCIe 3.0 NVMe** support for fast storage
-* **2.5 Gigabit Ethernet** for network performance
-
-**Supported Clients**
-
-ARM boards can run **all major Ethereum clients**:
-
-* **Execution Layer**: Geth, Nethermind, Besu, Reth, Erigon, EthRex
-* **Consensus Layer**: Lighthouse, Prysm, Nimbus, Teku, Lodestar, Grandine
-* **Layer 2**: Optimism, Arbitrum, Starknet, Fuel
-
-See :doc:`features` for complete client list.
-
-**Validator Capacity**
-
-* **16GB RAM**: Run mainnet validator + execution/consensus clients
-* **32GB RAM**: Run multiple validators or L1 + L2 simultaneously (Supernode)
-
-**Sync Performance**
-
-* **Checkpoint sync**: 1-2 hours (Consensus Layer)
-* **Snap sync**: 12-24 hours (Execution Layer)
-* Comparable to x86 hardware with NVMe storage
-
-True Decentralization
-----------------------
-
-**Geographic Freedom**
-
-* **Run from anywhere**: Home, office, or any location with internet
-* **No data center dependency**: Not limited to cloud provider regions
-* **Censorship resistant**: No third party can shut down your node
-
-**Network Resilience**
-
-* **Diverse infrastructure**: Reduces single points of failure
-* **Client diversity**: Easy to run minority clients
-* **Home staking**: Strengthens Ethereum's decentralization
-* **Self-sovereignty**: Full control over your node and keys
-
-**No Vendor Lock-in**
-
-* **No subscriptions**: One-time hardware purchase
-* **No terms of service**: You own the hardware
-* **No account required**: No cloud provider accounts
-* **No bandwidth limits**: No surprise overage charges
-
-Silent & Compact Design
-------------------------
-
-**Noise Levels**
+ARM boards consume dramatically less power than x86 alternatives, saving you money and reducing environmental impact.
 
 .. list-table::
    :header-rows: 1
    :align: left
 
    * - Hardware
-     - Noise Level
-     - Description
-   * - ARM SBC (passive cooling)
-     - 0 dB
-     - Completely silent
-   * - ARM SBC (with fan)
-     - 15-25 dB
-     - Whisper quiet
-   * - Intel NUC
-     - 25-35 dB
-     - Quiet hum
-   * - Gaming PC
-     - 35-50 dB
-     - Noticeable fan noise
+     - Annual Electricity Cost*
+     - CO₂ Emissions
+   * - **ARM SBC** (Rock 5B)
+     - **$15-20**
+     - Low
+   * - **Intel NUC**
+     - $60-120
+     - Medium
+   * - **Gaming PC**
+     - $180-360
+     - High
 
-**Physical Footprint**
+*\*Based on $0.15/kWh electricity rate, 24/7 operation*
 
-* **Size**: Credit card to small book (10x10x5 cm typical)
-* **Weight**: 100-200 grams
-* **Placement**: Fits on shelf, in closet, beside router
-* **Heat**: Minimal heat output, no room warming
+**5-Year Total Cost of Ownership**
 
-**Home-Friendly**
-
-* **No RGB lighting**: Professional, discrete appearance
-* **Low heat**: Can be placed in enclosed spaces
-* **Cable management**: Single power cable, single ethernet cable
-* **WAF (Wife Acceptance Factor)**: High - barely noticeable
-
-Reliability & Longevity
-------------------------
-
-**Built to Run 24/7**
-
-* **Designed for embedded systems**: Made for continuous operation
-* **Low heat generation**: Extends component lifespan
-* **No moving parts**: Solid-state design (except optional fan)
-* **Proven track record**: Community members running for 3+ years
-
-**Expected Lifespan**
-
-* **Hardware**: 5-10 years typical lifespan
-* **Software support**: Regular updates via APT repository
-* **Community**: Active support and documentation
-* **Upgrade path**: Easy to migrate to newer boards
-
-**Maintenance**
-
-* **Minimal intervention**: Set it and forget it
-* **Automatic updates**: Via package manager
-* **Remote management**: SSH access from anywhere
-* **Easy recovery**: Reflash image if needed
-
-Plug & Play Experience
------------------------
-
-**Ethereum on ARM Advantages**
-
-Our custom images make ARM boards incredibly easy to use:
-
-* **Flash & Boot**: Write image to SD card, insert NVMe, power on
-* **Auto-Configuration**: Automatic disk formatting and partitioning
-* **Network Setup**: DHCP configuration out of the box
-* **Service Management**: All clients pre-configured as systemd services
-
-**No Linux Expertise Required**
-
-* **33 packages** maintained and up-to-date (97% current)
-* **APT repository**: Easy updates with standard commands
-* **Pre-configured**: Grafana dashboards, Prometheus metrics
-* **Documentation**: Step-by-step guides for everything
-
-**Time to Production**
-
-* **Image flash**: 5-10 minutes
-* **First boot setup**: 5 minutes
-* **Client sync**: 12-24 hours (depending on client)
-* **Total hands-on time**: ~30 minutes
-
-See :doc:`../getting-started/installation` to get started.
-
-Comparison Table
-----------------
+Over the long term, the savings are massive.
 
 .. list-table::
    :header-rows: 1
    :align: left
-   :widths: 20 20 20 20 20
 
-   * - Factor
+   * - Cost Factor
      - ARM SBC
      - Intel NUC
      - Gaming PC
      - Cloud VPS
-   * - **Initial Cost**
-     - $255-395
-     - $570-880
-     - $1,110-2,080
-     - $0
-   * - **Monthly Cost**
-     - $1-2
-     - $5-10
-     - $15-25
-     - $150-200
-   * - **Power Usage**
-     - 5-15W
-     - 50-100W
-     - 150-300W
-     - N/A
-   * - **Noise**
-     - Silent
-     - Quiet
-     - Moderate
-     - N/A
-   * - **Size**
-     - Tiny
-     - Small
-     - Large
-     - N/A
-   * - **Setup Difficulty**
-     - Easy
-     - Moderate
-     - Moderate
-     - Easy
-   * - **Decentralization**
-     - ✅ Full
-     - ✅ Full
-     - ✅ Full
-     - ❌ Centralized
-   * - **Maintenance**
-     - Low
-     - Low
-     - Moderate
-     - None
-   * - **Lifespan**
-     - 5-10 years
-     - 5-8 years
-     - 3-5 years
-     - N/A
-   * - **Censorship Resistant**
-     - ✅ Yes
-     - ✅ Yes
-     - ✅ Yes
-     - ❌ No
+   * - **Total (5 Years)**
+     - **$390**
+     - **$1,150**
+     - **$2,850**
+     - **$9,000+**
 
-Real-World Use Cases
+
+2. Incredible Performance
+-------------------------
+
+Don't let the size fool you. Modern ARM64 architecture is a powerhouse.
+
+*   **8-Core CPUs**: High-performance cores capable of handling heavy execution payloads.
+*   **Fast Storage**: Full support for NVMe SSDs via PCIe 3.0, matching desktop storage speeds.
+*   **Memory**: Up to 32GB RAM available, enough for:
+    *   Ethereum Mainnet L1 (Execution + Consensus)
+    *   Layer 2 networks (Optimism, Arbitrum)
+    *   Thousands of validators
+
+**Supported Clients**
+
+You are not limited in software choice. ARM supports the full web3 stack:
+*   **Execution**: Geth, Nethermind, Besu, Reth, Erigon
+*   **Consensus**: Lighthouse, Prysm, Teku, Nimbus, Lodestar
+*   **Layer 2**: Optimism, Arbitrum, Starknet
+
+3. Home-Native Design
 ---------------------
 
-**Home Staker**
+ARM boards are designed to live in your home, not a data center.
 
-*"I run a validator on my Rock 5B. It sits next to my router, completely silent. My electricity bill barely changed, and I have full control over my keys."*
+*   **Silent Operation**: Most boards run fanless (0dB) or with a whisper-quiet low-RPM fan.
+*   **Tiny Footprint**: Fits in a closet, on a bookshelf, or next to your router. No bulky tower cases.
+*   **Low Heat**: Uses so little power that it won't heat up your room.
+*   **High "WAF"**: Wife Acceptance Factor is high due to the discrete, tidy nature of the hardware.
 
-- **Hardware**: Rock 5B 16GB + 2TB NVMe
-- **Setup**: Geth + Lighthouse + Validator
-- **Cost**: $15/year electricity
-- **Uptime**: 99.8%
+4. The Easiest Way to Run a Node
+--------------------------------
 
-**Multi-Network Operator**
+We have done the hard work for you.
 
-*"With 32GB RAM, I run both Ethereum mainnet and Optimism L2 on the same board. Perfect for testing and development."*
+*   **Plug & Play Images**: Flash the SD card, plug it in, and turn it on.
+*   **Auto-Configuration**: Our scripts handle disk formatting, paritioning, and user setup automatically.
+*   **Pre-Installed Software**: Geth, Nethermind, Lighthouse, and more are pre-installed as systemd services.
+*   **Zero Linux Knowledge Needed**: You don't need to be a sysadmin. If you can flash an SD card, you can run a node.
 
-- **Hardware**: Orange Pi 5 Plus 32GB + 4TB NVMe
-- **Setup**: Geth + Prysm + op-geth + op-node
-- **Use case**: Supernode (L1 + L2)
+5. True Decentralization
+------------------------
 
-**Privacy-Conscious User**
+Running on ARM is the ultimate expression of Ethereum's values.
 
-*"I don't trust cloud providers with my transaction data. Running my own node means my wallet queries stay private."*
+*   **Self-Sovereignty**: You own the hardware. No terms of service, no monthly fees, no one can shut you off.
+*   **Client Diversity**: We support minority clients to help strengthen the network.
+*   **Geographic Distribution**: Home stakers spread the network across residential ISPs globally, avoiding data center centralization.
 
-- **Hardware**: NanoPC T6 16GB + 2TB NVMe
-- **Setup**: Nethermind + Nimbus
-- **Benefit**: Complete transaction privacy
+Real-World Usage
+----------------
 
-**Developer**
+**The Home Staker**
+*"I run a validator on my Rock 5B. It sits next to my router, completely silent. My electricity bill barely changed (-$1.50/mo), and I have full control over my keys."*
 
-*"I develop DApps and need a reliable local node for testing. ARM boards are perfect - cheap, quiet, and always available."*
+**The Supernode Operator**
+*"With a 32GB Orange Pi 5 Plus, I run Ethereum Mainnet, Optimism, and an Arbitrum node all on one device for my dev work."*
 
-- **Hardware**: Rock 5B 16GB + 2TB NVMe
-- **Setup**: Reth + Lodestar (Sepolia testnet)
-- **Benefit**: Local development environment
+Summary Comparison
+------------------
 
-The Bottom Line
----------------
+.. list-table::
+   :header-rows: 1
+   :align: left
+   :widths: 20 20 20 20
 
-ARM Single Board Computers are the **most practical, economical, and efficient** way to run your own Ethereum node:
-
-- ✅ **Save $800-1,400** over 5 years compared to a PC 
-- ✅ **Reduce CO₂ emissions** by 400-1,000 kg annually  
-- ✅ **Run silently** in any room of your home  
-- ✅ **Support decentralization** with true self-sovereignty  
-- ✅ **Get started easily** with plug & play images  
-
-Ready to get started? Check out our :doc:`supported-hardware` to choose your board.
+   * - Factor
+     - ARM SBC
+     - Intel NUC
+     - Cloud VPS
+   * - **Year 1 Cost**
+     - **~$420**
+     - ~$800
+     - ~$3,000+
+   * - **Power**
+     - **5-15W**
+     - 20-50W
+     - N/A
+   * - **Noise**
+     - **Silent**
+     - Quiet Fan
+     - N/A
+   * - **Ownership**
+     - **You**
+     - You
+     - Jeff Bezos

@@ -56,10 +56,22 @@ Running an Ethereum node used to be expensive. ARM hardware changes the equation
 
 We analyzed the cost of running a high-performance cloud instance (4 vCPU, 16GB RAM, 2TB SSD) using our :ref:`Cloud Image Builder <development_guide>` across AWS, GCP, and Azure.
 
-*   **Cloud Cost (1 Year):** **~$3,000 - $3,700**
-    *   *Based on AI-estimated monthly costs of ~$250-310 for comparable specs.*
-*   **ARM Device Cost (1 Year):** **~$420**
-    *   *Includes Hardware (~$400) + Electricity (~$20).*
+.. grid:: 1 1 2 2
+   :gutter: 3
+
+   .. grid-item-card:: ☁️ Cloud Provider (1 Year)
+      :class-card: sd-border-danger
+
+      **~$3,000 - $3,700**
+
+      *Based on AI estimates for 4vCPU/16GB/2TB ($250-310/mo)*
+
+   .. grid-item-card:: 🛡️ ARM Device (1 Year)
+      :class-card: sd-border-success
+
+      **~$420**
+
+      *Includes Hardware (~$400) + Electricity (~$20)*
 
 **Result:** You can buy **7-8 high-end ARM nodes** for the price of renting **one** cloud instance for a single year.
 
@@ -121,6 +133,7 @@ Don't let the size fool you. Modern ARM64 architecture is a powerhouse.
 **Supported Clients**
 
 You are not limited in software choice. ARM supports the full web3 stack:
+
 *   **Execution**: Geth, Nethermind, Besu, Reth, Erigon
 *   **Consensus**: Lighthouse, Prysm, Teku, Nimbus, Lodestar
 *   **Layer 2**: Optimism, Arbitrum, Starknet

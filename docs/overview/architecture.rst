@@ -12,7 +12,7 @@ High-Level Overview
 
 The Ethereum on ARM project consists of three main components:
 
-1. **Package Builder** (``fpm-package-builder/``) - Creates .deb and .rpm packages for Ethereum clients
+1. **Package Builder** (``fpm-package-builder/``) - Creates .deb packages for Ethereum clients
 2. **Image Creation Tool** (``image-creation-tool/``) - Builds ready-to-use OS images for ARM devices
 3. **APT Repository** (``repo.ethereumonarm.com``) - Hosts the built packages for distribution
 

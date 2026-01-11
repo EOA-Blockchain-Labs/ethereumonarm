@@ -12,7 +12,7 @@ export DEBIAN_FRONTEND=noninteractive
 # --- Configuration ---
 # Packages
 BASE_PACKAGES="apt-utils nginx bash-completion file gdisk gpg parted net-tools rsync software-properties-common dphys-swapfile ufw vim wget kitty-terminfo"
-ETHEREUM_PACKAGES="arbitrum-nitro besu commit-boost dvt-obol erigon ethstaker-deposit-cli ethereumonarm-utils ethrex fuel-network geth grandine lighthouse lodestar ls-lido mev-boost nethermind nimbus optimism-op-geth optimism-op-node prysm reth starknet-juno starknet-madara teku"
+ETHEREUM_PACKAGES="arbitrum-nitro bee besu commit-boost dvt-obol dvt-ssv erigon ethstaker-deposit-cli ethereumonarm-utils ethrex fuel-network geth grandine kubo lighthouse lodestar ls-lido mev-boost nethermind nimbus optimism-cannon optimism-op-challenger optimism-op-geth optimism-op-node optimism-op-program optimism-op-proposer optimism-op-reth prysm reth starknet-juno starknet-madara starknet-pathfinder teku vero vouch"
 MONITORING_PACKAGES="ethereumonarm-monitoring-extras grafana prometheus prometheus-node-exporter ethereum-metrics-exporter"
 NGINX_PACKAGES="ethereumonarm-config-sync ethereumonarm-nginx-proxy-extras"
 
@@ -45,6 +45,16 @@ apt-get -y install $BASE_PACKAGES
 echo "Adding Ethereum on ARM repository..."
 wget -qO- http://apt.ethereumonarm.com/eoa.apt.keyring.gpg | tee /etc/apt/trusted.gpg.d/eoa.gpg >/dev/null
 add-apt-repository -y -n "deb http://apt.ethereumonarm.com noble main"
+
+echo "Cleaning up old Grafana keys from the deprecated apt-key keyring..."
+OLD_GRAFANA_KEY_ID=$(apt-key list 2>/dev/null | grep -i 'Grafana Labs' -B 1 | head -n 1 | awk '{print $NF}' | cut -d/ -f2 | tail -c 9)
+if [ -n "$OLD_GRAFANA_KEY_ID" ]; then
+    echo "Found old Grafana key ID in apt keyring: ${OLD_GRAFANA_KEY_ID}. Deleting it..."
+    apt-key del "$OLD_GRAFANA_KEY_ID"
+else
+    echo "No old Grafana key found in the deprecated apt keyring. Skipping deletion."
+fi
+rm -f /usr/share/keyrings/grafana.key
 
 echo "Adding Grafana repository..."
 mkdir -p /etc/apt/keyrings/
@@ -123,8 +133,12 @@ EOF
 timedatectl set-ntp true
 
 # EOA Release Info
+# EOA Release Info
+EOA_MINOR_VERSION=${EOA_MINOR_VERSION:-0}
 EOA_MAJOR_VERSION=$(date +"%y.%m")
-echo "Ethereum on ARM Cloud Image $EOA_MAJOR_VERSION" >/etc/eoa-release
+EOA_VERSION="Ethereum on ARM $EOA_MAJOR_VERSION.$EOA_MINOR_VERSION"
+echo "$EOA_VERSION" >/etc/eoa-release
+
 
 # Bash Alias
 echo "alias update-ethereum='sudo apt-get update && sudo apt-get install $ETHEREUM_PACKAGES'" >>/etc/bash.bashrc
@@ -140,7 +154,17 @@ set-ethereumonarm-monitoring-extras -o || echo "Warning: Failed to apply specifi
 # Nginx
 systemctl enable nginx
 
-# 6. Cleanup
+# 6. Security Hardening & Firewall
+echo "Applying basic security hardening..."
+passwd -l root
+
+echo "Disabling UFW firewall..."
+ufw --force disable
+
+echo "Ensuring correct ownership for /home/ethereum..."
+chown -R ethereum:ethereum /home/ethereum/
+
+# 7. Cleanup
 echo "Cleaning up..."
 apt-get clean
 rm -rf /var/lib/apt/lists/*

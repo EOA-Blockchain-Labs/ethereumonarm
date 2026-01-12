@@ -11,38 +11,15 @@ High-Level Architecture
 
 The project pipeline flows from upstream source code through our build systems to final artifacts (packages and images) consumed by end users.
 
-.. code-block:: text
+.. image:: ../_static/images/schema-light.png
+   :align: center
+   :class: only-light
+   :alt: Ethereum on ARM Architecture Schema
 
-   ┌─────────────────────────────┐           ┌─────────────────────────────┐
-   │   1. UPSTREAM SOURCES       │           │   2. FPM PACKAGE BUILDER    │
-   │  ─────────────────────────  │           │  ─────────────────────────  │
-   │  • Ethereum L1 Clients      │ ────────► │  • Download Binaries        │
-   │  • Ethereum L2 Clients      │           │  • Verify Signatures        │
-   │  • Infrastructure Tools     │           │  • Package .deb / .rpm      │
-   └─────────────────────────────┘           └──────────────┬──────────────┘
-                                                            │
-                  ┌─────────────────────────────────────────┘
-                  ▼
-   ┌─────────────────────────────┐           ┌─────────────────────────────┐
-   │   3. APT REPOSITORY         │           │   4. IMAGE CREATION TOOL    │
-   │  ─────────────────────────  │           │  ─────────────────────────  │
-   │  • Execution Layer          │ ────────► │  • SBC Support (Armbian)    │
-   │  • Consensus Layer          │           │  • Cloud Support (Packer)   │
-   │  • L2 Clients (OP, Arb)     │           │  • Pre-install Packages     │
-   └──────────────┬──────────────┘           └──────────────┬──────────────┘
-                  │                                         │
-                  │◄────────────────────────────────────────┘
-                  ▼
-   ┌─────────────────────────────┐           ┌─────────────────────────────┐
-   │   5. DISTRIBUTED IMAGES     │           │   6. END USER DEVICES       │
-   │  ─────────────────────────  │           │  ─────────────────────────  │
-   │  • Ready-to-flash .img      │ ────────► │  • Raspberry Pi 5           │
-   │  • AWS / GCP / Azure Images │           │  • Rock 5B / 5T / NanoPC    │
-   │       │           │  • Orange Pi 5 Plus         │
-   └─────────────────────────────┘           └─────────────────────────────┘
-                                                            ▲
-                                                            │
-                     (Direct Updates via APT) ──────────────┘
+.. image:: ../_static/images/schema-dark.png
+   :align: center
+   :class: only-dark
+   :alt: Ethereum on ARM Architecture Schema
 
 1. **Package Builder**: Compiles binary packages (`.deb`) from upstream sources for ARM64.
 2. **APT Repository**: Hosts these packages, allowing for standard `apt install` and updates.

@@ -81,7 +81,7 @@ If you don't know what an Ethereum node is, please visit the :doc:`Operation Int
 
     **Buy Links**
 
-    * `Orange Pi 5 Plus official page <http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-5-plus.html>`_
+    * `Orange Pi 5 Plus official page <https://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-5-plus.html>`_
     * `Orange Pi 5 Plus Case with heatsink <https://aliexpress.com/item/1005005728553439.html>`_
 
   .. tab:: Raspberry Pi 5

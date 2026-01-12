@@ -232,7 +232,14 @@ The system includes a convenient alias to update the Ethereum clients and tools.
 
    update-ethereum
 
-This command fetches the latest packages from the Ethereum on ARM repository and installs them.
+This command fetches the latest packages from the Ethereum on ARM repository and installs **all supported clients and tools**.
+
+.. warning::
+    This command will install **all available packages** defined in the ``ETHEREUM_PACKAGES`` list (Geth, Nethermind, Lighthouse, Teku, etc.), even if you only use specific ones. If you prefer to update only your installed packages, use standard APT commands:
+
+    .. code-block:: bash
+
+       sudo apt update && sudo apt upgrade
 
 Image Upgrade
 ~~~~~~~~~~~~~

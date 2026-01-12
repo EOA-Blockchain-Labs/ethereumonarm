@@ -1,6 +1,10 @@
 .. Ethereum on ARM documentation documentation master file, created by
    sphinx-quickstart on Wed Jan 13 19:04:18 2021.
 
+.. meta::
+   :description lang=en: Why run Ethereum on ARM hardware? Discover benefits of low power consumption, affordability, and silent operation for home staking nodes.
+   :keywords: ARM vs x86 Ethereum, energy efficient node, silent crypto mining, low power blockchain, home validator
+
 Why Choose ARM Hardware?
 ========================
 

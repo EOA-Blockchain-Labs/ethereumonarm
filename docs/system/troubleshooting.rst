@@ -1,6 +1,10 @@
 .. Ethereum on ARM documentation master file
    Created by sphinx-quickstart on Wed Jan 13 19:04:18 2021.
 
+.. meta::
+   :description lang=en: Troubleshooting Ethereum on ARM nodes. Common issues with sync, memory, disk space, and networking. Debug Geth, Lighthouse, and other clients.
+   :keywords: Ethereum node troubleshooting, sync issues, out of memory, node not syncing, debug blockchain
+
 .. |check_script| replace:: :command:`eoa_check`
 .. |send_script| replace:: :command:`eoa_send`
 

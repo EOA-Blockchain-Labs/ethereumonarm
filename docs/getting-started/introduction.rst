@@ -1,6 +1,10 @@
 .. Ethereum on ARM documentation documentation master file, created by
    sphinx-quickstart on Wed Jan 13 19:04:18 2021.
 
+.. meta::
+   :description lang=en: Quick start guide for Ethereum on ARM. Set up a full Ethereum node on Rock 5B, NanoPC T6, Orange Pi 5 Plus, or Raspberry Pi 5 in minutes.
+   :keywords: Ethereum node setup, ARM single board computer, quick start guide, Ethereum on ARM tutorial
+
 Introduction
 ============
 

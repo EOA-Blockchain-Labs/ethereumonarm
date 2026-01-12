@@ -1,6 +1,10 @@
 .. Ethereum on ARM documentation documentation master file, created by
    sphinx-quickstart on Wed Jan 13 19:04:18 2021.
 
+.. meta::
+   :description lang=en: Recommended hardware for Ethereum on ARM. NanoPC T6, Rock 5B, Orange Pi 5 Plus, Raspberry Pi 5 specs, buy links, and NVMe SSD requirements.
+   :keywords: NanoPC T6 Ethereum, Rock 5B validator, Orange Pi 5 Plus node, Raspberry Pi 5 blockchain, NVMe SSD compatibility
+
 Recommended Hardware
 ====================
 

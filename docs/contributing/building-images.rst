@@ -1,5 +1,9 @@
 .. _development_guide:
 
+.. meta::
+   :description lang=en: Build Ethereum on ARM images and packages. Development guide for FPM package builder, Armbian images, and cloud image creation with Packer.
+   :keywords: build ARM image, FPM packages, Armbian Ethereum, cloud image builder, development guide
+
 Development Guide
 =================
 

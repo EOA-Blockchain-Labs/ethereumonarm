@@ -1,5 +1,9 @@
 .. _contributing-guidelines:
 
+.. meta::
+   :description lang=en: Contribute to Ethereum on ARM. Guidelines for code contributions, documentation improvements, and package development for ARM blockchain nodes.
+   :keywords: contribute Ethereum, open source blockchain, ARM development, documentation contribution, package development
+
 Contributing Guidelines
 =======================
 

@@ -1,5 +1,9 @@
 .. _staking-guide:
 
+.. meta::
+   :description lang=en: Ethereum staking on ARM hardware. Solo staking with 32 ETH, Lido CSM, Obol DVT, and validator migration guides for home validators.
+   :keywords: Ethereum staking, solo staking, home validator, 32 ETH deposit, proof of stake rewards
+
 Staking Guide
 =============
 

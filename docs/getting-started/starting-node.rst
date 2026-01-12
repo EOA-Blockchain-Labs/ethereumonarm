@@ -1,6 +1,10 @@
 .. Ethereum on ARM documentation documentation master file, created by
    sphinx-quickstart on Wed Jan 13 19:04:18 2021.
 
+.. meta::
+   :description lang=en: Start your Ethereum node on ARM hardware. Learn how to run Geth, Lighthouse, and other clients with systemd on NanoPC T6, Rock 5B, and RPi5.
+   :keywords: start Ethereum node, systemd blockchain, run Geth ARM, Lighthouse beacon chain, consensus client
+
 Running an Ethereum node
 ========================
 

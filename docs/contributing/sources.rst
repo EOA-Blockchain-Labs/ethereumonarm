@@ -1,5 +1,9 @@
 .. _contributing-sources:
 
+.. meta::
+   :description lang=en: Source code and upstream projects for Ethereum on ARM. Links to Geth, Lighthouse, Prysm, Nethermind, and other client repositories.
+   :keywords: Ethereum source code, client repositories, upstream projects, open source blockchain, ARM64 packages
+
 Sources & Upstream Projects
 ===========================
 

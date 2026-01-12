@@ -1,6 +1,10 @@
 .. Ethereum on ARM documentation documentation master file, created by
    sphinx-quickstart on Wed Jan 13 19:04:18 2021.
 
+.. meta::
+   :description lang=en: Manage Ethereum clients with systemd on ARM. Start, stop, monitor Geth, Nethermind, Lighthouse, Teku. View logs and update packages via APT.
+   :keywords: systemd Ethereum, manage Geth, journalctl blockchain, APT Ethereum packages, update node software
+
 Managing Clients
 ================
 

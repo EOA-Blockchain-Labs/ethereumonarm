@@ -1,5 +1,9 @@
 .. _system-utilities:
 
+.. meta::
+   :description lang=en: System utilities for Ethereum on ARM. Network configuration, VPN setup, backup and restore, security hardening, and troubleshooting guides.
+   :keywords: Ethereum node utilities, ARM system config, node backup, UFW firewall, troubleshooting blockchain
+
 System Utilities
 ================
 

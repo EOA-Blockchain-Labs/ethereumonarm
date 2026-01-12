@@ -1,6 +1,10 @@
 Download and Install
 ====================
 
+.. meta::
+   :description lang=en: Download and install Ethereum on ARM images for NanoPC T6, Rock 5B, Orange Pi 5 Plus, and RPi5. Step-by-step flashing guide with SHA256 checksums.
+   :keywords: Ethereum ARM image download, flash SD card, NanoPC T6 Ethereum, Rock 5B crypto node, Raspberry Pi 5 Ethereum
+
 .. grid:: 1 2 2 3
    :gutter: 2
 

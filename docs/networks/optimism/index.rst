@@ -1,6 +1,10 @@
 Optimism Superchain
 ===================
 
+.. meta::
+   :description lang=en: Run Optimism Superchain nodes on ARM. Supernode setup, fault proof challengers, and testnet guides for OP Stack on NanoPC T6 and Rock 5B.
+   :keywords: Optimism node ARM, OP Superchain, fault proof challenger, op-node, op-geth ARM
+
 .. toctree::
    :maxdepth: 2
    :caption: Optimism Guides

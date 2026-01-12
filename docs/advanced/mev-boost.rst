@@ -1,6 +1,10 @@
 .. Ethereum on ARM documentation documentation master file, created by
    sphinx-quickstart on Wed Jan 13 19:04:18 2021.
 
+.. meta::
+   :description lang=en: MEV-Boost setup for Ethereum validators on ARM. Maximize staking rewards with Flashbots relays on NanoPC T6, Rock 5B, and Raspberry Pi 5.
+   :keywords: MEV-Boost ARM, Flashbots validator, maximize staking rewards, block builder, MEV relay setup
+
 MEV boost
 =========
 

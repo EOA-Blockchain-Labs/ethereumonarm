@@ -1,6 +1,10 @@
 Raspberry Pi 5 Example Setup
 ============================
 
+.. meta::
+   :description lang=en: Raspberry Pi 5 NVMe storage guide for Ethereum nodes. Recommended NVMe HATs, compatible SSDs, and setup instructions for blockchain storage.
+   :keywords: Raspberry Pi 5 NVMe, NVMe HAT, GeeekPi N04, Geekworm X1001, RPi5 Ethereum storage
+
 This guide helps you put together and use a Raspberry Pi 5 16GB with a 52Pi Aluminum Case and NVMe HAT.
 
 

@@ -1,6 +1,10 @@
 Gnosis Chain
 ============
 
+.. meta::
+   :description lang=en: Run Gnosis Chain nodes on ARM. Setup guide for xDAI/Gnosis validators and full nodes on NanoPC T6, Rock 5B, and Raspberry Pi 5.
+   :keywords: Gnosis Chain ARM, xDAI node, Gnosis validator, low-cost Gnosis node, GNO staking
+
 Gnosis Chain is one of the earliest Ethereum sidechains and remains true to the values of the decentralized Web3 ecosystem. It is an EVM-compatible execution-layer blockchain designed for low-cost, fast-finality transactions, using xDAI (a USD-pegged stablecoin) to pay for gas fees.
 
 The network is secured by a large and highly decentralized validator set on the Gnosis Beacon Chain, making it one of the most resilient and decentralized Ethereum-aligned networks. Gnosis Chain mirrors Ethereum’s execution-layer and consensus-layer architecture to ensure credible neutrality and robust security, and it is governed by GnosisDAO.

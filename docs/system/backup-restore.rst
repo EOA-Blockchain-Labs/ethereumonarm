@@ -1,6 +1,10 @@
 .. Ethereum on ARM Backup Utility (Restic Edition)
    SPDX-License-Identifier: MIT
 
+.. meta::
+   :description lang=en: Backup and restore Ethereum node data. Protect validator keys, chain data, and configurations on ARM hardware with encrypted Restic backups.
+   :keywords: backup Ethereum node, restore validator, protect chain data, node recovery, validator key backup, Restic backup
+
 Ethereum on ARM Secure Backup Utility (Restic)
 ==============================================
 

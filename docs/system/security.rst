@@ -1,5 +1,9 @@
 .. _node-security:
 
+.. meta::
+   :description lang=en: Security hardening for Ethereum nodes on ARM. UFW firewall setup, SSH security, and best practices for protecting home validators.
+   :keywords: Ethereum node security, UFW firewall, SSH hardening, validator security, secure staking
+
 Node Security
 =============
 

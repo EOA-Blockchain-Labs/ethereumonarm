@@ -1,5 +1,9 @@
 .. Ethereum on ARM documentation documentation master file
 
+.. meta::
+   :description lang=en: Commit-Boost PBS sidecar for Ethereum validators on ARM. Proposer commitments and relay integration for NanoPC T6 and Rock 5B.
+   :keywords: Commit-Boost ARM, PBS sidecar, proposer commitments, Ethereum relay, block building
+
 Commit-Boost
 ============
 

@@ -1,5 +1,9 @@
 .. _using-your-node:
 
+.. meta::
+   :description lang=en: Use your Ethereum node RPC on ARM. Connect MetaMask, query blockchain data, and configure Nginx reverse proxy for secure HTTPS access.
+   :keywords: Ethereum RPC access, MetaMask own node, JSON-RPC query, Nginx Ethereum, private Ethereum node
+
 Using Your Node
 ===============
 

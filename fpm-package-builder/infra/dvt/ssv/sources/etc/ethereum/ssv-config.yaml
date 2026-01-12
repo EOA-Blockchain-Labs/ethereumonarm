@@ -3,7 +3,7 @@ global:
   LogLevel: info
   
   # Debug logs file path
-  LogFilePath: /home/ethereum/.ssv/debug.log
+  # LogFilePath: /home/ethereum/.ssv/debug.log
   
   # Number of log files preserved, 500MB each (time duration depends on number of validators and other factors).
   # Roughly equates to half a day.

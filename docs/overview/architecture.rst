@@ -4,142 +4,89 @@
 Project Architecture
 ======================
 
-This page provides an overview of the Ethereum on ARM project architecture, including the 
-build system, package distribution, and supported platforms.
+This page provides an overview of the Ethereum on ARM project architecture, illustrating how source code is transformed into distributed packages and ready-to-run images.
 
-High-Level Overview
-===================
+High-Level Architecture
+=======================
 
-The Ethereum on ARM project consists of three main components:
-
-1. **Package Builder** (``fpm-package-builder/``) - Creates .deb packages for Ethereum clients
-2. **Image Creation Tool** (``image-creation-tool/``) - Builds ready-to-use OS images for ARM devices
-3. **APT Repository** (``repo.ethereumonarm.com``) - Hosts the built packages for distribution
+The project pipeline flows from upstream source code through our build systems to final artifacts (packages and images) consumed by end users.
 
 .. code-block:: text
 
-   ┌─────────────────────────────────────────────────────────────────────────────┐
-   │                        Ethereum on ARM Architecture                         │
-   └─────────────────────────────────────────────────────────────────────────────┘
-   
-   ┌─────────────────────────────┐     ┌──────────────────────────────────────┐
-   │   SOURCE CODE / BINARIES    │     │         IMAGE CREATION TOOL          │
-   │  ─────────────────────────  │     │  ──────────────────────────────────  │
-   │  • Ethereum L1 clients      │     │  Ubuntu Images:                      │
-   │  • Ethereum L2 clients      │     │  • Raspberry Pi 5                    │
-   │  • Infrastructure tools     │     │  • Rock 5B / 5T                      │
-   │  • Web3 applications        │     │  • Orange Pi 5 Plus                  │
-   └──────────────┬──────────────┘     │  • NanoPC-T6                         │
-                  │                    │  ──────────────────────────────────  │
-                  ▼                    │  Cloud Images (Packer):              │
-   ┌─────────────────────────────┐     │  • AWS AMI                           │
-   │     FPM PACKAGE BUILDER     │     │  • Google Cloud                      │
-   │  ─────────────────────────  │     │  • Microsoft Azure                   │
-   │  Build Pipeline:            │     └─────────────────┬────────────────────┘
-   │  1. Download binaries       │                       │
-   │  2. Verify GPG signatures   │                       ▼
-   │  3. Stage files             │     ┌──────────────────────────────────────┐
-   │  4. Package with FPM        │     │       DISTRIBUTION CHANNELS          │
-   │  5. Test & validate         │     │  ──────────────────────────────────  │
-   └──────────────┬──────────────┘     │  • Ready-to-flash SBC images         │
-                  │                    │  • Cloud marketplace images          │
-                  ▼                    │  • Direct image downloads            │
-   ┌─────────────────────────────┐     └──────────────────────────────────────┘
-   │      APT REPOSITORY         │
-   │  ─────────────────────────  │
-   │  repo.ethereumonarm.com     │
-   │  ─────────────────────────  │
-   │  Packages:                  │
-   │  • Execution Layer clients  │
-   │  • Consensus Layer clients  │
-   │  • L2 clients (OP, Arb...)  │
-   │  • DVT (Obol, SSV)          │
-   │  • MEV-boost, monitoring    │
-   └──────────────┬──────────────┘
-                  │
+   ┌─────────────────────────────┐           ┌─────────────────────────────┐
+   │   1. UPSTREAM SOURCES       │           │   2. FPM PACKAGE BUILDER    │
+   │  ─────────────────────────  │           │  ─────────────────────────  │
+   │  • Ethereum L1 Clients      │ ────────► │  • Download Binaries        │
+   │  • Ethereum L2 Clients      │           │  • Verify Signatures        │
+   │  • Infrastructure Tools     │           │  • Package .deb / .rpm      │
+   └─────────────────────────────┘           └──────────────┬──────────────┘
+                                                            │
+                  ┌─────────────────────────────────────────┘
                   ▼
-   ┌─────────────────────────────────────────────────────────────────────────────┐
-   │                            END USER DEVICES                                 │
-   │  ─────────────────────────────────────────────────────────────────────────  │
-   │                                                                             │
-   │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-   │  │  Raspberry   │  │   Rockchip   │  │  Cloud VMs   │  │   Orange Pi  │     │
-   │  │    Pi 5      │  │    Rock 5    │  │  (ARM-based) │  │    5 Plus    │     │
-   │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘     │
-   │                                                                             │
-   └─────────────────────────────────────────────────────────────────────────────┘
+   ┌─────────────────────────────┐           ┌─────────────────────────────┐
+   │   3. APT REPOSITORY         │           │   4. IMAGE CREATION TOOL    │
+   │  ─────────────────────────  │           │  ─────────────────────────  │
+   │  • Execution Layer          │ ────────► │  • SBC Support (Armbian)    │
+   │  • Consensus Layer          │           │  • Cloud Support (Packer)   │
+   │  • L2 Clients (OP, Arb)     │           │  • Pre-install Packages     │
+   └──────────────┬──────────────┘           └──────────────┬──────────────┘
+                  │                                         │
+                  │◄────────────────────────────────────────┘
+                  ▼
+   ┌─────────────────────────────┐           ┌─────────────────────────────┐
+   │   5. DISTRIBUTED IMAGES     │           │   6. END USER DEVICES       │
+   │  ─────────────────────────  │           │  ─────────────────────────  │
+   │  • Ready-to-flash .img      │ ────────► │  • Raspberry Pi 5           │
+   │  • AWS / GCP / Azure Images │           │  • Rock 5B / 5T / NanoPC    │
+   │       │           │  • Orange Pi 5 Plus         │
+   └─────────────────────────────┘           └─────────────────────────────┘
+                                                            ▲
+                                                            │
+                     (Direct Updates via APT) ──────────────┘
 
+1. **Package Builder**: Compiles binary packages (`.deb`) from upstream sources for ARM64.
+2. **APT Repository**: Hosts these packages, allowing for standard `apt install` and updates.
+3. **Image Creation Tool**: Builds full operating system images pre-installed with the repository and configuration scripts.
+4. **End Users**: Consume either the packages (existing systems) or full images (new deployments).
 
-Package Builder Structure
-=========================
+Component Details
+=================
 
-The ``fpm-package-builder/`` directory is organized by client category:
+1. FPM Package Builder
+----------------------
+
+Located in ``fpm-package-builder/``, this component is responsible for:
+
+*   **Fetching Sources**: Downloading upstream releases or cloning repositories.
+*   **Compilation**: Compiling binaries for ``linux/arm64`` (if not pre-built).
+*   **Packaging**: Wrapping binaries, systemd services, and default configuration into Debian (`.deb`) packages.
+
+**Directory Structure:**
 
 .. code-block:: text
 
    fpm-package-builder/
-   ├── l1-clients/
-   │   ├── execution-layer/     # Geth, Besu, Reth, Erigon, Nethermind, Ethrex
-   │   └── consensus-layer/     # Lighthouse, Prysm, Teku, Nimbus, Lodestar, Grandine
-   ├── l2-clients/
-   │   ├── optimism-base/       # OP-Geth, OP-Node, OP-Reth, OP-Challenger
-   │   ├── arbitrum/            # Nitro
-   │   ├── starknet/            # Juno, Madara, Pathfinder
-   │   └── ...
-   ├── infra/
-   │   ├── dvt/                 # Obol Charon, SSV Network
-   │   └── mev-boost/           # MEV-Boost for all networks
-   ├── utils/                   # Monitoring exporters, config sync tools
-   ├── tools/                   # Staking deposit CLI, liquid staking
-   ├── web3/                    # Swarm Bee, IPFS Kubo
-   └── build-scripts/           # Version checking, documentation sync
+   ├── l1-clients/        # Execution & Consensus clients (Geth, Prysm, etc.)
+   ├── l2-clients/        # Layer 2 solutions (Optimism, Arbitrum)
+   ├── infra/             # DVT, MEV-Boost, Monitoring
+   └── utils/             # System utilities
 
+2. Image Creation Tool
+----------------------
 
-Build Process Flow
-==================
+Located in ``image-creation-tool/``, this component builds the final OS images.
 
-Each package follows a consistent build pipeline:
+*   **SBC Images**: Uses **Armbian** build tools to create bootable images for specific hardware (Rock 5B, Raspberry Pi 5).
+*   **Cloud Images**: Uses **Packer** to build Amazon Machine Images (AMI) and other cloud formats (VHD, GCE).
 
-1. **Version Resolution**: Query GitHub API for latest release
-2. **Download**: Fetch pre-built binaries (or build from source for Rust/Go)
-3. **Signature Verification**: Validate GPG signatures where available
-4. **Staging**: Copy binaries, configs, and systemd units to staging directory
-5. **Packaging**: Create .deb package using FPM with proper metadata
-6. **Testing**: Verify package was created successfully
+3. Configuration Standards
+--------------------------
 
+To ensure consistency across the ecosystem, all packages adhere to a strict standard:
 
-Configuration Management
-========================
+*   **Service Management**: All clients run as **systemd** services.
+*   **User Isolation**: Services run under the dedicated ``ethereum`` user.
+*   **Config Location**: All environment flags are loaded from ``/etc/ethereum/<client>.conf``.
+*   **Data Persistence**: Data is stored in ``/home/ethereum/.<client>``.
 
-Packages use a consistent configuration approach:
-
-- **Configuration files**: ``/etc/ethereum/<service>.conf``
-- **Systemd units**: Use ``EnvironmentFile`` to source configuration
-- **Data directories**: ``/home/ethereum/.<client>``
-- **JWT secrets**: ``/etc/ethereum/jwtsecret``
-
-Example systemd service pattern:
-
-.. code-block:: ini
-
-   [Unit]
-   Description=Geth Execution Layer Client
-   After=network-online.target
-   Wants=network-online.target
-
-   [Service]
-   EnvironmentFile=/etc/ethereum/geth.conf
-   ExecStart=/usr/bin/geth $ARGS
-   Restart=on-failure
-   User=ethereum
-
-   [Install]
-   WantedBy=multi-user.target
-
-
-See Also
-========
-
-- :ref:`getting-started` - Quick start guide for new users
-- :ref:`supported-hardware` - List of supported ARM devices
-- :ref:`contributing-sources` - How to build from source
+This standardization allows users to mix and match any combination of Execution and Consensus clients easily.

@@ -78,7 +78,7 @@ Output will be in `_build/html/`.
 
 ## 📁 Project Structure
 
-```
+```text
 docs/
 ├── conf.py              # Sphinx configuration
 ├── requirements.txt     # Python dependencies

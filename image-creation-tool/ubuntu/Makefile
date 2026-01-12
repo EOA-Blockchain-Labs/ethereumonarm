@@ -27,8 +27,8 @@ rock5b_url := https://es.sbcmirror.org/dl/rock-5b/archive/Armbian_25.11.1_Rock-5
 rock5b_iso := Armbian_25.11.1_Rock-5b_noble_vendor_6.1.115_minimal.img
 rock5b_offset := 16777216
 
-rock5t_url := https://k-space.ee.armbian.com/archive/rock-5t/archive/Armbian_25.8.1_Rock-5t_bookworm_vendor_6.1.115_minimal.img.xz
-rock5t_iso := Armbian_25.8.1_Rock-5t_bookworm_vendor_6.1.115_minimal.img
+rock5t_url := https://es.sbcmirror.org/dl/rock-5t/archive/Armbian_25.11.1_Rock-5t_noble_vendor_6.1.115_minimal.img.xz
+rock5t_iso := Armbian_25.11.1_Rock-5t_noble_vendor_6.1.115_minimal.img
 rock5t_offset := 16777216
 
 orangepi5-plus_url := https://es.sbcmirror.org/dl/orangepi5-plus/archive/Armbian_25.11.1_Orangepi5-plus_noble_vendor_6.1.115_minimal.img.xz 

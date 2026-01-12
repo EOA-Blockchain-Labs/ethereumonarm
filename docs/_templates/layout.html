@@ -1,0 +1,50 @@
+{% extends "furo/base.html" %}
+
+{% block extrahead %}
+{{ super() }}
+{# Open Graph Meta Tags for Social Sharing #}
+<meta property="og:title" content="{{ title }} - Ethereum on ARM" />
+<meta property="og:description" content="{% if metatags and metatags.description %}{{ metatags.description }}{% else %}Run Ethereum nodes on affordable ARM hardware with Ethereum on ARM.{% endif %}" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ pageurl }}" />
+<meta property="og:image" content="https://ethereum-on-arm-documentation.readthedocs.io/en/latest/_static/images/eoa_logo.png" />
+<meta property="og:site_name" content="Ethereum on ARM Documentation" />
+<meta property="og:locale" content="en_US" />
+
+{# Twitter Card Meta Tags #}
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@EthereumOnARM" />
+<meta name="twitter:title" content="{{ title }} - Ethereum on ARM" />
+<meta name="twitter:description" content="{% if metatags and metatags.description %}{{ metatags.description }}{% else %}Run Ethereum nodes on affordable ARM hardware with Ethereum on ARM.{% endif %}" />
+<meta name="twitter:image" content="https://ethereum-on-arm-documentation.readthedocs.io/en/latest/_static/images/eoa_logo.png" />
+
+{# Additional SEO Tags #}
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="{{ pageurl }}" />
+
+{# Schema.org structured data for documentation #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "{{ title }}",
+  "description": "{% if metatags and metatags.description %}{{ metatags.description }}{% else %}Ethereum on ARM documentation{% endif %}",
+  "author": {
+    "@type": "Organization",
+    "name": "Ethereum on ARM"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ethereum on ARM",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ethereum-on-arm-documentation.readthedocs.io/en/latest/_static/images/eoa_logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ pageurl }}"
+  }
+}
+</script>
+{% endblock %}

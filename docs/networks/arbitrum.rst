@@ -1,6 +1,10 @@
 Arbitrum
 ========
 
+.. meta::
+   :description lang=en: Run Arbitrum Nitro nodes on ARM hardware. Setup guide for Arbitrum One rollup node on NanoPC T6, Rock 5B, and Orange Pi 5 Plus.
+   :keywords: Arbitrum Nitro ARM, Arbitrum node, Layer 2 rollup, Arbitrum One, Nitro node setup
+
 Arbitrum is a Layer 2 scaling solution for Ethereum that uses Optimistic Rollups to increase transaction throughput while reducing gas costs. By processing transactions off-chain and posting compressed data to Ethereum mainnet, Arbitrum provides a secure and efficient scaling solution.
 
 Ethereum on ARM provides the **Arbitrum Nitro** client, enabling you to run your own Arbitrum node on ARM-based devices.

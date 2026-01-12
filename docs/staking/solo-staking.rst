@@ -1,6 +1,10 @@
 Solo Staking
 ============
 
+.. meta::
+   :description lang=en: Complete solo staking guide for Ethereum on ARM. Generate validator keys, deposit 32 ETH, import keys, and run validators with Lighthouse, Prysm, or Teku.
+   :keywords: solo staking guide, ethstaker-deposit-cli, 32 ETH validator, Ethereum launchpad, home staking
+
 .. warning::
 
   **DISCLAIMER**: Ethereum is an experimental technology. **Running the Ethereum on ARM image as

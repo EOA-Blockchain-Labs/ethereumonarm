@@ -1,6 +1,10 @@
 Quickstart Cheatsheet
 =====================
 
+.. meta::
+   :description lang=en: Ethereum on ARM command cheatsheet. Quick reference for node operations, systemd service management, sync status, and troubleshooting commands.
+   :keywords: Ethereum node commands, systemctl blockchain, node management cheatsheet, ARM Ethereum CLI, sync status
+
 A quick reference for common Ethereum on ARM operations.
 
 .. tip::

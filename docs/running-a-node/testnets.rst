@@ -1,5 +1,9 @@
 .. _running-testnets:
 
+.. meta::
+   :description lang=en: Run Ethereum testnets on ARM. Setup guides for Sepolia, Hoodi, and Ephemery testnets. Practice staking before using real ETH.
+   :keywords: Sepolia testnet, Hoodi testnet, Ephemery, test Ethereum node, testnet validator, practice staking
+
 Running on Testnets
 ===================
 

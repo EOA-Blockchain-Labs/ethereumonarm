@@ -1,6 +1,10 @@
 Running web3 stack
 ==================
 
+.. meta::
+   :description lang=en: Web3 decentralized storage on ARM. Run IPFS Kubo and Swarm Bee nodes on Rock 5B and NanoPC T6 for distributed file storage.
+   :keywords: IPFS ARM, Swarm Bee node, decentralized storage, Kubo IPFS, Web3 infrastructure
+
 The Web3 refers to the set of technologies, protocols, and tools designed 
 to build decentralized applications (dApps) and create a more **decentralized, 
 user-centric internet.**

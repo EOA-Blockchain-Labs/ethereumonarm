@@ -1,5 +1,9 @@
 .. _operation-introduction:
 
+.. meta::
+   :description lang=en: Complete guide to running Ethereum nodes on ARM. Manage clients with systemd, understand node types, and set up L1/L2 infrastructure.
+   :keywords: run Ethereum node, systemd Ethereum, node types, full node, archive node, Layer 2 blockchain
+
 Running a Node
 ==============
 

@@ -67,6 +67,18 @@ extensions = [
     "sphinx_design",
 ]
 
+# -- SEO Configuration -------------------------------------------------------
+
+# Page title format (used in <title> tag)
+html_title = 'Ethereum on ARM Documentation'
+
+# SEO metadata for social sharing and search engines
+html_context = {
+    'description': 'Run Ethereum nodes on affordable ARM hardware. Complete guides for NanoPC T6, Rock 5B, Orange Pi 5 Plus, and Raspberry Pi 5.',
+    'og_image': 'https://ethereum-on-arm-documentation.readthedocs.io/en/latest/_static/images/eoa_logo.png',
+    'twitter_site': '@EthereumOnARM',
+}
+
 # Sitemap configuration
 html_baseurl = 'https://ethereum-on-arm-documentation.readthedocs.io/en/latest/'
 sitemap_url_scheme = "{lang}{version}{link}"

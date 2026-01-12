@@ -1,5 +1,9 @@
 .. _advanced-configuration:
 
+.. meta::
+   :description lang=en: Advanced Ethereum node configuration on ARM. MEV-Boost setup, Commit-Boost PBS, RPC access, and manual binary verification guides.
+   :keywords: MEV-Boost ARM, PBS sidecar, node RPC, binary verification, advanced Ethereum
+
 Advanced Configuration
 ======================
 

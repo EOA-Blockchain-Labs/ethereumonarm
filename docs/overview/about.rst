@@ -1,6 +1,10 @@
 .. Ethereum on ARM documentation documentation master file, created by
    sphinx-quickstart on Wed Jan 13 19:04:18 2021.
 
+.. meta::
+   :description lang=en: About Ethereum on ARM. Learn how custom Linux images enable affordable, energy-efficient Ethereum nodes on ARM single board computers.
+   :keywords: Ethereum on ARM project, decentralization, home Ethereum node, low-cost crypto node, ARM blockchain
+
 Introduction
 ============
 

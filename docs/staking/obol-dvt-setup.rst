@@ -1,6 +1,10 @@
 Obol DVT Setup Guide
 ====================
 
+.. meta::
+   :description lang=en: Obol DVT setup on ARM. Run distributed validators with Charon middleware for fault tolerance. Multi-operator staking on NanoPC T6 and Rock 5B.
+   :keywords: Obol DVT, Charon middleware, distributed validator, fault tolerant staking, multi-operator validator
+
 This guide explains how to set up and run a Distributed Validator (DV) cluster using Obol's Charon middleware on Ethereum on ARM.
 
 .. note::

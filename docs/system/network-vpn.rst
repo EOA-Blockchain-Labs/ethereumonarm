@@ -1,5 +1,9 @@
 .. _pivpn-wireguard-intra-vpn:
 
+.. meta::
+   :description lang=en: VPN and network configuration for Ethereum nodes. PiVPN WireGuard setup for secure remote access to your ARM blockchain nodes.
+   :keywords: WireGuard Ethereum, PiVPN node, remote node access, VPN blockchain, secure validator
+
 ################################
 PiVPN and WireGuard: "Intra-VPN"
 ################################

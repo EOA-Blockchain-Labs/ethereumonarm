@@ -1,5 +1,9 @@
 .. _architecture:
 
+.. meta::
+   :description lang=en: Ethereum on ARM system architecture. Learn how the package builder, APT repository, and image creation tools work together.
+   :keywords: Ethereum node architecture, ARM package builder, FPM packaging, image creation, systemd services
+
 ======================
 Project Architecture
 ======================

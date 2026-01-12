@@ -1,6 +1,10 @@
 Running Layer 2 nodes
 =====================
 
+.. meta::
+   :description lang=en: Run Layer 2 nodes on ARM hardware. Guides for Optimism op-node, Arbitrum Nitro, Starknet Juno, and Fuel Network on NanoPC T6 and Rock 5B.
+   :keywords: Optimism node ARM, Arbitrum Nitro, Starknet Juno, Layer 2 blockchain, op-geth, rollup node
+
 As explained in the Node Types section there are various L2 technologies to 
 scale the Ethereum blockchain and lower the transaction fees.
 

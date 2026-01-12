@@ -1,6 +1,10 @@
 Lido Liquid Staking
 ===================
 
+.. meta::
+   :description lang=en: Lido Community Staking Module on ARM. Run a CSM operator with 1.5 ETH bond on NanoPC T6 or Rock 5B. Permissionless Ethereum staking.
+   :keywords: Lido CSM, Community Staking Module, permissionless staking, Lido ARM, staking with less ETH
+
 **Liquid Staking** refers to a decentralized protocol that allows users to stake their ETH, while simultaneously receiving 
 a liquid token representing their staked assets.
 

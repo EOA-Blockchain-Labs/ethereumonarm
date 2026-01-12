@@ -1,6 +1,10 @@
 .. Ethereum on ARM documentation documentation master file, created by
    sphinx-quickstart on Wed Jan 13 19:04:18 2021.
 
+.. meta::
+   :description lang=en: Ethereum on ARM features. 33 packages, 6 execution clients, 6 consensus clients, Layer 2 support, Grafana monitoring, and APT repository.
+   :keywords: Ethereum client software, Geth Nethermind ARM, Lighthouse Prysm validator, Layer 2 ARM, blockchain monitoring
+
 Main Features
 =============
 

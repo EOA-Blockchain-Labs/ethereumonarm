@@ -1,6 +1,10 @@
 Running Layer 1 nodes
 =====================
 
+.. meta::
+   :description lang=en: Run Ethereum L1 nodes on ARM. Setup guides for Geth, Nethermind, Reth, Erigon, Lighthouse, Prysm, Teku, Nimbus. Checkpoint sync and staking.
+   :keywords: Ethereum mainnet ARM, Geth setup, Lighthouse beacon, Prysm validator, checkpoint sync, consensus client
+
 In order to run an Ethereum node you will need to run 2 different clients at the same time: 
 **one Consensus Layer Client (Beacon Chain) and one Execution Layer Client**.
 

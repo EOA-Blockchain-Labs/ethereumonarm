@@ -1,6 +1,10 @@
 Migrating a Validator
 =====================
 
+.. meta::
+   :description lang=en: Safely migrate Ethereum validators to new hardware. Step-by-step guide to move validator keys without slashing risk on Ethereum on ARM.
+   :keywords: migrate validator, move validator keys, avoid slashing, validator migration, new hardware validator
+
 .. danger::
 
    **SLASHING RISK: DOUBLE SIGNING**

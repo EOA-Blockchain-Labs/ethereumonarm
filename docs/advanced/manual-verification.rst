@@ -1,5 +1,9 @@
 .. _manual-binary-verification:
 
+.. meta::
+   :description lang=en: Verify Ethereum client binaries on ARM. GPG signature verification and SHA256 hash checking for Geth, Lighthouse, Prysm, and other clients.
+   :keywords: verify Ethereum binary, GPG signature check, SHA256 hash, binary verification, secure node
+
 Manual Binary Verification Guide
 ================================
 

@@ -1,6 +1,10 @@
 Ethereum nodes
 ==============
 
+.. meta::
+   :description lang=en: Ethereum node types explained. Understand full nodes vs archive nodes vs light clients. Storage requirements and use cases for ARM hardware.
+   :keywords: full node vs archive node, light client, Ethereum node storage, pruned node, historical state
+
 There are 2 main categories of Ethereum nodes you can run:
 
 * **Layer 1 nodes** (Mainnet)

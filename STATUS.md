@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-01-12 04:14:14 UTC_
+_Last updated: 2026-01-13 04:04:54 UTC_
 
  **What this report compares**
 
@@ -18,8 +18,8 @@ _Last updated: 2026-01-12 04:14:14 UTC_
 ## Summary
 
 - Total packages checked: **34**
-- ✅ Up-to-date: **32** (94.1%)
-- ❌ Outdated: **2** (5.9%)
+- ✅ Up-to-date: **30** (88.2%)
+- ❌ Outdated: **4** (11.8%)
 - ❓ N/A: **0** (0.0%)
 
 
@@ -59,7 +59,7 @@ _Last updated: 2026-01-12 04:14:14 UTC_
 |:--------|:-------------------|:------------------------|:------:|
 | `besu` | `25.12.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `25.12.0` | ✅ Up-to-date |
 | `erigon` | `3.3.2` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.3.2` | ✅ Up-to-date |
-| `ethrex` | `8.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `8.0.0` | ✅ Up-to-date |
+| `ethrex` | `9.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `8.0.0` | ❌ Outdated |
 | `geth` | `1.16.7` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.7` | ✅ Up-to-date |
 | `nethermind` | `1.35.8` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.35.8` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.2.2` | ❌ Outdated |
@@ -79,7 +79,7 @@ _Last updated: 2026-01-12 04:14:14 UTC_
 | `optimism-op-reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
 | `starknet-juno` | `0.15.16` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.16` | ✅ Up-to-date |
 | `starknet-madara` | `0.10.0` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.0` | ✅ Up-to-date |
-| `starknet-pathfinder` | `0.21.4` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.4` | ✅ Up-to-date |
+| `starknet-pathfinder` | `0.21.5` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.4` | ❌ Outdated |
 
 
 

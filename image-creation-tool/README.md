@@ -1,116 +1,60 @@
 # Image Creation Tool
 
-This directory contains the tooling to build custom **Ethereum on ARM** images based on Armbian.
+This directory contains tooling to build custom **Ethereum on ARM** images for various platforms.
 
 ## Overview
 
-The build process downloads official Armbian minimal images, mounts them, injects the Ethereum on ARM first-boot scripts, and produces ready-to-flash `.img` files for supported devices.
+Ethereum on ARM provides pre-built images that turn ARM devices into full Ethereum nodes with a single flash. This directory contains the build infrastructure used to create those images.
 
-## Supported Devices
+## Image Types
 
-| Device | Armbian Base | Notes |
-| ------ | ------------ | ----- |
-| **Raspberry Pi 5** | `rpi4b` | Uses RPi4 base image |
-| **Rock 5B** | `rock-5b` | Vendor kernel 6.1.x |
-| **Rock 5T** | `rock-5t` | Vendor kernel 6.1.x |
-| **Orange Pi 5 Plus** | `orangepi5-plus` | Vendor kernel 6.1.x |
-| **NanoPC T6** | `nanopct6-lts` | Vendor kernel 6.1.x |
+| Directory | Platform | Description |
+| --------- | -------- | ----------- |
+| [`ubuntu/`](ubuntu/) | **ARM SBCs** | Builds images for single-board computers (Rock 5B, NanoPC T6, etc.) based on Armbian |
+| [`cloud/`](cloud/) | **Cloud Providers** | Builds AMIs for AWS, GCP, and Azure using HashiCorp Packer |
 
-## Prerequisites
+## Quick Start
 
-- **Linux host** (Ubuntu 22.04+ recommended)
-- **sudo** privileges for mounting images
-- **Tools**: `wget`, `xz-utils`, `make`
-
-```bash
-sudo apt-get install wget xz-utils make
-```
-
-## Usage
-
-### Build All Images
+### Build SBC Images
 
 ```bash
 cd ubuntu
-make all
+make help                    # Show available options
+make all                     # Build all device images
+make build DEVICE=rock5b     # Build single device
 ```
 
-This downloads Armbian images for all supported devices, injects the first-boot scripts, and outputs final images.
+See [`ubuntu/README.md`](ubuntu/README.md) for full documentation.
 
-### Build a Single Device
+### Build Cloud Images
 
 ```bash
-make build DEVICE=rock5b
+cd cloud
+packer init aws.pkr.hcl      # Initialize Packer
+packer build aws.pkr.hcl     # Build AWS AMI
 ```
 
-Available devices: `rpi5`, `rock5b`, `rock5t`, `orangepi5-plus`, `nanopct6`
+See [`cloud/README.md`](cloud/README.md) for full documentation.
 
-### Clean Up
-
-```bash
-make clean
-```
-
-Removes all downloaded archives and generated images.
-
-## Output
-
-Built images are named using the format:
+## Directory Structure
 
 ```text
-ethonarm_<device>_<YY.MM>.<release>.img
+image-creation-tool/
+├── README.md                 # This file
+├── ubuntu/                   # SBC image builder
+│   ├── Makefile              # Build automation
+│   └── sources/              # First-boot scripts and configs
+│       ├── usr/local/bin/ethereum-first-boot
+│       ├── etc/systemd/system/ethereum-first-boot.service
+│       └── usr/local/sbin/check_install
+└── cloud/                    # Cloud image builder
+    ├── aws.pkr.hcl           # AWS Packer template
+    ├── gcp.pkr.hcl           # GCP Packer template
+    ├── azure.pkr.hcl         # Azure Packer template
+    └── scripts/provision.sh  # Cloud provisioning script
 ```
-
-Example: `ethonarm_rock5b_26.01.00.img`
-
-A `manifest.txt` file is generated with SHA256 checksums for verification.
-
-## How It Works
-
-1. **Download**: Fetches the compressed Armbian minimal image from the official mirror.
-2. **Decompress**: Extracts the `.img` file from the `.xz` archive.
-3. **Mount**: Loop-mounts the root partition using the device-specific offset.
-4. **Inject Scripts**: Copies the `ethereum-first-boot` script and systemd service.
-5. **Cleanup**: Removes Armbian's interactive first-login prompts.
-6. **Finalize**: Unmounts, renames to the final format, and generates checksums.
-
-## Customization
-
-### Adding a New Device
-
-1. Find the Armbian minimal image URL from [sbcmirror.org](https://es.sbcmirror.org/).
-2. Determine the root partition offset using `fdisk -l <image.img>`.
-3. Add the device to the `Makefile`:
-
-```makefile
-# Add to DEVICES list
-DEVICES = rpi5 rock5b rock5t orangepi5-plus nanopct6 newdevice
-
-# Add device configuration
-newdevice_url := https://es.sbcmirror.org/dl/newdevice/...
-newdevice_iso := Armbian_XX.XX.X_Newdevice_noble_...img
-newdevice_offset := <offset_in_bytes>
-```
-
-### Modifying First-Boot Scripts
-
-Edit the scripts in `sources/`:
-
-- `sources/usr/local/bin/ethereum-first-boot` - Main initialization script
-- `sources/etc/systemd/system/ethereum-first-boot.service` - Systemd service
-- `sources/usr/local/sbin/check_install` - Installation verification
-
-## Troubleshooting
-
-| Issue | Solution |
-| ----- | -------- |
-| **Mount failed** | Verify the partition offset with `fdisk -l` |
-| **Permission denied** | Run with `sudo` or ensure you have sudo privileges |
-| **Download failed** | Check the URL is still valid on sbcmirror.org |
-| **xz decompression error** | Re-download the archive (may be corrupted) |
 
 ## Related Resources
 
-- [Armbian Documentation](https://docs.armbian.com/)
-- [Ethereum on ARM Docs](https://ethereum-on-arm-documentation.readthedocs.io/)
-- [Package Builder](../fpm-package-builder/)
+- [Ethereum on ARM Documentation](https://ethereum-on-arm-documentation.readthedocs.io/)
+- [Package Builder](../fpm-package-builder/) — Builds `.deb` packages for Ethereum clients

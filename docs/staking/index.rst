@@ -37,7 +37,17 @@ Run a validator and earn rewards by securing the Ethereum network.
       :link-type: doc
       :class-card: sd-border-warning
 
-      Distributed Validator Technology for fault tolerance.
+      Distributed Validator Technology with Charon.
+      
+      +++
+      :bdg-info:`Advanced`
+
+   .. grid-item-card:: 🔗 SSV DVT
+      :link: /staking/ssv-dvt-setup
+      :link-type: doc
+      :class-card: sd-border-warning
+
+      Secret Shared Validators for fault-tolerant staking.
       
       +++
       :bdg-info:`Advanced`
@@ -114,7 +124,10 @@ Alternative Staking Options
    - Increased uptime
    - Distributed trust
 
-   :doc:`Obol DVT guide → </staking/obol-dvt-setup>`
+   **Two DVT providers are supported:**
+
+   - :doc:`Obol DVT guide → </staking/obol-dvt-setup>` (Charon middleware)
+   - :doc:`SSV DVT guide → </staking/ssv-dvt-setup>` (Secret Shared Validators)
 
 .. seealso::
 

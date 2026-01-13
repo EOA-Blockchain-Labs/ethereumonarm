@@ -1,16 +1,26 @@
-SSV
-==============
+dvt-ssv
+=======
 
-This package provides SSV (Secret Shared Validators) DVT client, packaged for Ethereum on ARM.
+This package provides SSV Network (Secret Shared Validators) DVT client and tools, packaged for Ethereum on ARM.
+
+Included Binaries
+-----------------
+
+- ``ssvnode`` - SSV node daemon for operator duties
+- ``ssv-keys`` - Key splitting and share generation tool
+- ``ssv-dkg`` - Distributed Key Generation ceremony tool
 
 Services
 --------
 
-This package installs a single systemd service. The service is disabled by default.
+This package installs systemd services. The services are disabled by default.
 
 - ``ssv.service``
 
-To enable the service, run:
+To enable a service, run:
+
+.. prompt:: bash $
+
     sudo systemctl enable --now ssv.service
 
 Configuration
@@ -18,10 +28,10 @@ Configuration
 
 Configuration arguments are defined in the environment file located in ``/etc/ethereum/``.
 
-- ``/etc/ethereum/ssv.conf`` (Startup flags)
-- ``/etc/ethereum/ssv-config.yaml`` (Main configuration file)
+- ``/etc/ethereum/ssv.conf``
+- ``/etc/ethereum/ssv-config.yaml``
 
-You can edit these files to customize the SSV node.
+You can edit these files to customize the arguments passed to the binary.
 
 Data Directories
 ----------------

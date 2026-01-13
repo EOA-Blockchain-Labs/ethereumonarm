@@ -98,6 +98,7 @@ Select a topic to get started:
    /staking/solo-staking
    /staking/lido
    /staking/obol-dvt-setup
+   /staking/ssv-dvt-setup
    /staking/migrate-validator
 
 .. toctree::

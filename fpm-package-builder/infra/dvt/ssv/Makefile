@@ -2,7 +2,8 @@
 # Ethereum on ARM — Production Packaging Makefile (dvt-ssv)
 # ----------------------------------------------------------------------
 # Builds .deb and .rpm packages for ARM systems using FPM.
-# - Clones and builds 'ssvnode' (Go) and 'ssv-keys' (Node) from source
+# - Extracts 'ssvnode' and 'ssv-dkg' from Docker images
+# - Builds 'ssv-keys' (Node) from source
 # - Stages files into ./sources/usr/bin
 # - Applies EOA packaging standards and metadata
 # ======================================================================
@@ -36,6 +37,10 @@ SSV_VERSION := $(shell echo "$(SSV_TAG_V)" | tr -d "v")
 
 SSV_KEYS_TAG_V := $(shell curl -s "https://api.github.com/repos/ssvlabs/ssv-keys/releases/latest" | jq -r '.tag_name')
 SSV_KEYS_VERSION := $(shell echo "$(SSV_KEYS_TAG_V)" | tr -d "v")
+
+# ssv-dkg version for DKG ceremony tool
+SSV_DKG_TAG_V := $(shell curl -s "https://api.github.com/repos/ssvlabs/ssv-dkg/releases/latest" | jq -r '.tag_name')
+SSV_DKG_VERSION := $(shell echo "$(SSV_DKG_TAG_V)" | tr -d "v")
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(SSV_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(SSV_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
@@ -100,6 +105,9 @@ prepare: ## Extract ssvnode from Docker and build ssv-keys from source
 	if [[ -z "$(SSV_KEYS_TAG_V)" || "$(SSV_KEYS_TAG_V)" == "null" ]]; then \
 	    echo "❌ Could not determine latest ssv-keys version via GitHub API."; exit 1; \
 	fi
+	if [[ -z "$(SSV_DKG_TAG_V)" || "$(SSV_DKG_TAG_V)" == "null" ]]; then \
+	    echo "❌ Could not determine latest ssv-dkg version via GitHub API."; exit 1; \
+	fi
 	
 	@echo " Pulling ssvnode Docker image: ssvlabs/ssv-node:$(SSV_TAG_V)..."
 	mkdir -p .build/ssv_keys_src $(SOURCESDIR)/usr/bin
@@ -110,6 +118,15 @@ prepare: ## Extract ssvnode from Docker and build ssv-keys from source
 	docker cp "$$CID:/go/bin/ssvnode" "$(SOURCESDIR)/usr/bin/ssvnode" || { echo "❌ Docker cp failed"; docker rm "$$CID"; exit 1; }; \
 	docker rm "$$CID" > /dev/null
 	chmod 0755 "$(SOURCESDIR)/usr/bin/ssvnode"
+
+	@echo " Pulling ssv-dkg Docker image: ssvlabs/ssv-dkg:$(SSV_DKG_TAG_V)..."
+	docker pull --platform linux/arm64 ssvlabs/ssv-dkg:$(SSV_DKG_TAG_V) || { echo "❌ Docker pull for ssv-dkg failed"; exit 1; }
+
+	@echo " Extracting ssv-dkg binary from container..."
+	CID=$$(docker create --platform linux/arm64 ssvlabs/ssv-dkg:$(SSV_DKG_TAG_V)); \
+	docker cp "$$CID:/app/ssv-dkg" "$(SOURCESDIR)/usr/bin/ssv-dkg" || { echo "❌ Docker cp for ssv-dkg failed"; docker rm "$$CID"; exit 1; }; \
+	docker rm "$$CID" > /dev/null
+	chmod 0755 "$(SOURCESDIR)/usr/bin/ssv-dkg"
 
 	@echo "🔽 Cloning ssv-keys $(SSV_KEYS_VERSION) ($(SSV_KEYS_TAG_V))..."
 	git clone --depth 1 --branch $(SSV_KEYS_TAG_V) https://github.com/ssvlabs/ssv-keys.git .build/ssv_keys_src || { echo "❌ Git clone ssv-keys failed"; exit 1; }
@@ -130,7 +147,7 @@ prepare: ## Extract ssvnode from Docker and build ssv-keys from source
 	@echo "📂 Staging ssv-keys binary..."
 	cp .build/ssv_keys_src/bin/linux/ssv-keys-lin-arm64 $(SOURCESDIR)/usr/bin/ssv-keys
 	chmod 0755 $(SOURCESDIR)/usr/bin/ssv-keys
-	@echo "✅ Binaries ready at $(SOURCESDIR)/usr/bin"
+	@echo "✅ Binaries ready at $(SOURCESDIR)/usr/bin (ssvnode, ssv-keys, ssv-dkg)"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package
@@ -192,6 +209,7 @@ help: ## Show available targets
 	echo ""
 	echo "ssvnode Version : $(SSV_VERSION) (Tag: $(SSV_TAG_V))"
 	echo "ssv-keys Version: $(SSV_KEYS_VERSION) (Tag: $(SSV_KEYS_TAG_V))"
+	echo "ssv-dkg Version : $(SSV_DKG_VERSION) (Tag: $(SSV_DKG_TAG_V))"
 	echo "Sources dir     : $(SOURCESDIR)"
 	echo "Output dir      : $(OUTPUTDIR)"
 	echo ""

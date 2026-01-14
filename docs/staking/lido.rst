@@ -2,7 +2,7 @@ Lido Liquid Staking
 ===================
 
 .. meta::
-   :description lang=en: Lido Community Staking Module on ARM. Run a CSM operator with 1.5 ETH bond on NanoPC T6 or Rock 5B. Permissionless Ethereum staking.
+   :description lang=en: Lido Community Staking Module on ARM. Run a CSM operator with 2.4 ETH bond (or 1.5 ETH if you are an ICS operator)  on NanoPC T6, Rock 5B and Orange Pi 5 Plus. Permissionless Ethereum staking.
    :keywords: Lido CSM, Community Staking Module, permissionless staking, Lido ARM, staking with less ETH
 
 **Liquid Staking** refers to a decentralized protocol that allows users to stake their ETH, while simultaneously receiving 
@@ -17,10 +17,10 @@ Lido Community Staking Module
 
 The Community Staking Module (CSM) is the Lido on Ethereum protocol's first module with **permissionless entry**, 
 allowing any node operator and especially community stakers, from solo stakers, to groups of friends, to 
-amateur operators to operate validators by providing an ETH-based safety deposit.
+amateur operators to run validators by providing an ETH-based safety deposit.
 
 .. note::
-  Lido **CSM allows any user to become a Home Staker with a fraction of ETH** necessary for a Vanilla validator (32 ETH), **contribute to the 
+  Lido **CSM allows any user to become a Home Staker with a fraction of ETH** necessary for a Vanilla validator, **contribute to the 
   network decentralization** and **receive a Liquid staking token** to use in Defi applications.
 
 CSM v2 and Identified Community Stakers (ICS)
@@ -49,8 +49,8 @@ make sure you understand how it works.
 
 .. note::
 
-  With CSM v2, the stake share limit has been increased to 5%. While validator activation times have improved, 
-  there may still be delays during high-demand periods. Check the CSM portal for current queue status.
+  Before creating a node or adding more keys, check if CSM has reached its stake share limit, your validator may 
+  not be activated immediately. You can still upload keys, but they might wait in the queue. 
 
 ----
 
@@ -62,8 +62,9 @@ The Lido CSM staking process follows these steps:
 1. **🖥️ Sync Full Node** - Run Ethereum EL+CL clients with MEV support
 2. **🔑 Generate Keys** - Create validator keys with Lido withdrawal address
 3. **📥 Import Keys** - Import keys to your validator client
-4. **💰 Create Operator** - Register on CSM portal and deposit bond
-5. **▶️ Start Validator** - Enable and monitor validator service
+4. **▶️ Start Validator** - Enable and monitor the validator service
+5. **💰 Create Operator** - Register on CSM portal and deposit bond
+
 
 ----
 
@@ -221,8 +222,8 @@ For more info regarding validator keys generation visit: `homestaker-validator-k
 
 ----
 
-Step 3: Importing Keys and Starting the Validator
--------------------------------------------------
+Step 3: Importing Keys
+----------------------
 
 .. note::
   Before going forward, we recommend to take a look at our section **"Running a Validator Client"** for more info 
@@ -236,10 +237,30 @@ You need to log into your node and run the import command, depending on your cli
 
 .. prompt:: bash $
 
-  lighthouse account validator import --directory=/home/ethereum/validator_keys
+  lighthouse account validator import --directory=/home/ethereum/validator_keys -d /home/ethereum/.lighthouse-validator-lido
 
 Note that we assume that the ``keystore`` and ``deposit_data`` files are in the ``/home/ethereum/validator_keys`` directory. If 
 you generated the keys in your desktop, you will need to copy them into your node.
+
+**Client-Specific Import Commands**
+
+.. csv-table::
+   :header: "Client", "Import Command"
+   :widths: 20, 80
+
+   "**Lighthouse**", "``lighthouse account validator import --directory=/home/ethereum/validator_keys -d /home/ethereum/.lighthouse-validator-lido``"
+   "**Prysm**", "``validator accounts import --keys-dir=/home/ethereum/validator_keys --wallet-dir=/home/ethereum/.prysm-validator-mainnet-lido/prysm-wallet-v2``"
+   "**Nimbus**", "``nimbus_beacon_node deposits import /home/ethereum/validator_keys --data-dir=/home/ethereum/.nimbus-validator-lido``"
+
+If you are using **Prysm** or **Nimbus**, you need to specify the correct path as well:
+
+.. prompt:: bash $
+
+  **Prysm**: validator accounts import --keys-dir=/home/ethereum/validator_keys --wallet-dir=/home/ethereum/.prysm-validator-mainnet-lido/prysm-wallet-v2
+  **Nimbus**: nimbus_beacon_node deposits import /home/ethereum/validator_keys --data-dir=/home/ethereum/.nimbus-validator-lido
+
+Step 4: Starting the Validator
+------------------------------
 
 Now it is time to start the validator. Make sure you add the argument ``lido`` in the validator service, for instance:
 
@@ -253,7 +274,7 @@ Now it is time to start the validator. Make sure you add the argument ``lido`` i
 
 ----
 
-Step 4: Create and Activate the CSM Operator
+Step 5: Create and Activate the CSM Operator
 --------------------------------------------
 
 Now it is time to visit the CSM Lido portal:
@@ -331,17 +352,15 @@ You will need to add the ``hoodi`` flag to target the correct network:
   lighthouse account validator --network hoodi import --directory=/home/ethereum/validator_keys
   sudo systemctl start lighthouse-validator-hoodi-lido
 
-Client-Specific Import Commands
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Client-Specific Import Commands for Hoodi**
 
 .. csv-table::
    :header: "Client", "Import Command"
    :widths: 20, 80
 
-   "**Lighthouse**", "``lighthouse account validator --network hoodi import --directory=/home/ethereum/validator_keys``"
-   "**Prysm**", "``validator accounts import --keys-dir=/home/ethereum/validator_keys --hoodi``"
-   "**Teku**", "No need to specify the network as keys are not imported directly"
-   "**Nimbus**", "``nimbus_beacon_node deposits import /home/ethereum/validator_keys --data-dir=/home/ethereum/.nimbus-validator``"
+   "**Lighthouse**", "``lighthouse account validator --network hoodi import --directory=/home/ethereum/validator_keys -d /home/ethereum/.lighthouse-validator-hoodi-lido``"
+   "**Prysm**", "``validator accounts import --keys-dir=/home/ethereum/validator_keys --hoodi --wallet-dir=/home/ethereum/.prysm-validator-hoodi-lido/prysm-wallet-v2``"
+   "**Nimbus**", "``nimbus_beacon_node deposits import /home/ethereum/validator_keys --data-dir=/home/ethereum/.nimbus-validator-hoodi-lido``"
 
 **Step 5: Lido Operator Portal**
 

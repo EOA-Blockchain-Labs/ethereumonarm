@@ -2,60 +2,79 @@ Quickstart Cheatsheet
 =====================
 
 .. meta::
-   :description lang=en: Ethereum on ARM command cheatsheet. Quick reference for node operations, systemd service management, sync status, and troubleshooting commands.
-   :keywords: Ethereum node commands, systemctl blockchain, node management cheatsheet, ARM Ethereum CLI, sync status
+   :description lang=en: Master your Ethereum on ARM node. One-page reference for diagnostics (eoa_check), service management, security (UFW), sync monitoring, and system maintenance.
+   :keywords: eoa_check, ethereum on arm commands, systemctl, ufw firewall, ethereum config sync, node troubleshooting
 
-A quick reference for common Ethereum on ARM operations.
+A comprehensive reference for managing the entire lifecycle of your Ethereum on ARM node, from health checks to emergency recovery.
 
-.. tip::
-   Keep this page bookmarked for easy access during node management.
+.. contents:: Table of Contents
+   :local:
+   :backlinks: none
+
+Diagnostics & Health
+--------------------
+
+The **Ethereum on ARM Check Script** is your primary tool for diagnosing issues. It analyzes hardware, network, and client status.
+
+.. code-block:: bash
+
+   # Run full system diagnosis
+   sudo eoa_check -l
+
+   # Upload report to share with support (returns a URL)
+   sudo eoa_send
+
+   # Check disk space usage (vital for 2TB+ drives)
+   df -h
+
+   # Monitor real-time system resources (CPU/RAM)
+   htop
 
 Service Management
 ------------------
 
-.. code-block:: bash
-
-   # Start/Stop/Restart a client
-   sudo systemctl start geth
-   sudo systemctl stop geth
-   sudo systemctl restart geth
-
-   # Enable at boot
-   sudo systemctl enable geth
-
-   # Check status
-   sudo systemctl status geth
-
-View Logs
----------
+Manage your Execution Layer (EL) and Consensus Layer (CL) clients. Replace ``<service>`` with your client name (e.g., ``geth``, ``lighthouse-beacon``, ``nethermind``, ``prysm-beacon``).
 
 .. code-block:: bash
 
-   # Follow logs in real-time
-   sudo journalctl -u geth -f
+   # Start / Stop / Restart
+   sudo systemctl start <service>
+   sudo systemctl stop <service>
+   sudo systemctl restart <service>
 
-   # Last 100 lines
-   sudo journalctl -u geth -n 100
+   # Enable auto-start at boot
+   sudo systemctl enable <service>
 
-   # Logs since boot
-   sudo journalctl -u geth -b
+   # Check status (active/failed)
+   sudo systemctl status <service>
 
-Check Sync Status
------------------
+**Review Logs:**
 
-**Geth (Execution Layer)**
+.. code-block:: bash
+
+   # Follow logs in real-time (Ctrl+C to exit)
+   sudo journalctl -u <service> -f
+
+   # View logs solely from the current boot session
+   sudo journalctl -u <service> -b
+
+Monitor Sync Status
+-------------------
+
+**Execution Layer (Geth example)**
 
 .. code-block:: bash
 
    geth attach --exec "eth.syncing"
 
-**Lighthouse (Consensus Layer)**
+**Consensus Layer**
 
 .. code-block:: bash
 
+   # Check generic sync status (JSON output)
    curl -s http://localhost:5052/eth/v1/node/syncing | jq
 
-**op-node (Optimism L2)**
+**Optimism Layer 2**
 
 .. code-block:: bash
 
@@ -63,105 +82,91 @@ Check Sync Status
      -d '{"jsonrpc":"2.0","method":"optimism_syncStatus","params":[],"id":1}' \
      http://localhost:8547 | jq
 
-Disk Usage
-----------
+Network & Security
+------------------
+
+**Firewall (UFW)**
+
+Ethereum on ARM includes custom UFW profiles. Only enable what you need.
 
 .. code-block:: bash
 
-   # Check overall disk usage
-   df -h
+   # 1. Enable SSH (CRITICAL: Do this first!)
+   sudo ufw allow "OpenSSH"
 
-   # Check Ethereum data directories
-   du -sh /home/ethereum/.ethereum
-   du -sh /home/ethereum/.lighthouse
+   # 2. Allow specific Ethereum traffic
+   sudo ufw allow "Ethereum EL P2P"
+   sudo ufw allow "Ethereum CL P2P"
 
-Configuration Files
--------------------
+   # 3. Enable the firewall
+   sudo ufw enable
 
-All client configurations are stored in ``/etc/ethereum/``:
+   # List status and active rules
+   sudo ufw status verbose
 
-.. code-block:: bash
-
-   # List all configs
-   ls -la /etc/ethereum/
-
-   # Edit a config (example: Geth)
-   sudo nano /etc/ethereum/geth.conf
-
-   # After editing, restart the service
-   sudo systemctl restart geth
-
-Common Client Pairs
--------------------
-
-+-------------------+-------------------+
-| Execution Layer   | Consensus Layer   |
-+===================+===================+
-| ``geth``          | ``lighthouse``    |
-+-------------------+-------------------+
-| ``nethermind``    | ``prysm``         |
-+-------------------+-------------------+
-| ``besu``          | ``teku``          |
-+-------------------+-------------------+
-| ``reth``          | ``nimbus``        |
-+-------------------+-------------------+
-
-Quick Install Commands
-----------------------
-
-**L1 Node (Geth + Lighthouse)**
+**Port Checks**
 
 .. code-block:: bash
 
-   sudo apt update
-   sudo apt install geth lighthouse
+   # View all listening ports
+   sudo ss -tuln
 
-**Optimism L2 Node**
+System Maintenance
+------------------
 
-.. code-block:: bash
-
-   sudo apt install optimism-op-geth optimism-op-node
-
-**Starknet Node (Juno)**
+**Updates**
 
 .. code-block:: bash
 
-   sudo apt install starknet-juno
+   # Update all Ethereum on ARM packages (clients & tools)
+   update-ethereum
 
-Useful Ports
-------------
+   # Standard OS update
+   sudo apt update && sudo apt upgrade
 
-+-------------------+-------+---------------------------+
-| Service           | Port  | Description               |
-+===================+=======+===========================+
-| Geth RPC          | 8545  | HTTP JSON-RPC             |
-+-------------------+-------+---------------------------+
-| Geth WS           | 8546  | WebSocket RPC             |
-+-------------------+-------+---------------------------+
-| Geth P2P          | 30303 | Peer discovery            |
-+-------------------+-------+---------------------------+
-| Lighthouse API    | 5052  | Beacon API                |
-+-------------------+-------+---------------------------+
-| Prometheus        | 9090  | Metrics server            |
-+-------------------+-------+---------------------------+
-| Grafana           | 3000  | Dashboard UI              |
-+-------------------+-------+---------------------------+
+**Configuration Backup**
 
-Backup Validator Keys
----------------------
-
-.. warning::
-   Always back up your validator keys to a secure offline location.
+Crucial before performing image upgrades. This saves your ``/etc/ethereum`` configs to the NVMe drive.
 
 .. code-block:: bash
 
-   # Example: Copy Lighthouse validator keys
-   sudo cp -r /home/ethereum/.lighthouse/validators /path/to/backup/
+   sudo ethereumonarm-config-sync.sh
+
+**Emergency: Wipe & Reset**
+
+To completely wipe the NVMe disk and reinstall a fresh node (requires a reboot):
+
+.. code-block:: bash
+
+   # Trigger a reformat on next boot
+   touch /home/ethereum/.format_me
+   sudo reboot
+
+Client Reference
+----------------
+
+Standard service names for common clients:
+
++----------------+--------------------------+-----------------------------+
+| Client         | Service Name             | Config Path                 |
++================+==========================+=============================+
+| **Geth**       | ``geth``                 | ``/etc/ethereum/geth.conf`` |
++----------------+--------------------------+-----------------------------+
+| **Nethermind** | ``nethermind``           | ``/etc/ethereum/nethermind.conf`` |
++----------------+--------------------------+-----------------------------+
+| **Besu**       | ``besu``                 | ``/etc/ethereum/besu.conf`` |
++----------------+--------------------------+-----------------------------+
+| **Lighthouse** | ``lighthouse-beacon``    | ``/etc/ethereum/lighthouse.conf`` |
++----------------+--------------------------+-----------------------------+
+| **Prysm**      | ``prysm-beacon``         | ``/etc/ethereum/prysm.conf``|
++----------------+--------------------------+-----------------------------+
+| **Nimbus**     | ``nimbus-beacon``        | ``/etc/ethereum/nimbus.conf``|
++----------------+--------------------------+-----------------------------+
+| **Teku**       | ``teku``                 | ``/etc/ethereum/teku.conf`` |
++----------------+--------------------------+-----------------------------+
 
 Need More Help?
 ---------------
 
-- :doc:`Full Installation Guide </getting-started/installation>`
-- :doc:`Managing Clients </running-a-node/managing-clients>`
-- :doc:`Troubleshooting </system/troubleshooting>`
-- `Discord Community <https://discord.gg/ve2Z8fxz5N>`_
+*   **Discord**: `Join the Community <https://discord.gg/ve2Z8fxz5N>`_ (Post your ``eoa_send`` link here)
+*   **Troubleshooting Guide**: :doc:`../system/troubleshooting`

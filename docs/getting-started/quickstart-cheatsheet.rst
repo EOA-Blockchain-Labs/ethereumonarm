@@ -7,9 +7,7 @@ Quickstart Cheatsheet
 
 A comprehensive reference for managing the entire lifecycle of your Ethereum on ARM node, from health checks to emergency recovery.
 
-.. contents:: Table of Contents
-   :local:
-   :backlinks: none
+
 
 Diagnostics & Health
 --------------------

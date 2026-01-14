@@ -22,6 +22,12 @@ amateur operators to operate validators by providing an ETH-based safety deposit
   Lido **CSM allows any user to become a Home Staker with a fraction of ETH** necessary for a Vanilla validator (2.3), **contribute to the 
   network decentralization** and **receive a Liquid staking token** to use in Defi applications.
 
+**CSM v2 and Identified Community Stakers (ICS)**
+
+With the launch of **CSM v2 in October 2025**, Lido introduced the **Identified Community Stakers (ICS)** program, 
+which offers reduced bond requirements for verified community members. The stake share limit was also increased 
+to 5%, improving validator activation times.
+
 Lido CSM
 ~~~~~~~~
 
@@ -35,11 +41,25 @@ We prepared the clients with the appropiate config to make it easier to run a Li
 but it is important for you to take a look at the Lido Portal, particularly, the **"Intro"** and **"Quick Start sections"** and 
 make sure you understand how it works.
 
+.. note::
+
+  With CSM v2, the stake share limit has been increased to 5%. While validator activation times have improved, 
+  there may still be delays during high-demand periods. Check the CSM portal for current queue status.
+
+Fee Recipient Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. warning::
 
-  As of today (2Q 2025), **CSM has reached its stake share limit so your validator won't be activated until this limit is increased**. Stay 
-  tuned with Lido updates. You can still upload keys, but they are very unlikely to receive deposits in the near 
-  future (possibly for months).
+  **Setting the correct fee recipient address is critical.** Incorrect configuration will result in penalties. 
+  The Ethereum on ARM ``ls-lido`` package pre-configures these addresses, but you should verify them.
+
+**Mainnet Fee Recipient**: ``0x388C818CA8B9251b393131C08a736A67ccB19297``
+
+**Hoodi Testnet Fee Recipient**: ``0x9b108015fe433F173696Af3Aa0CF7CDb3E104258``
+
+These addresses are configured in the Lido-specific validator services (e.g., ``lighthouse-validator-lido``). 
+If you're setting up manually or verifying configuration, ensure the fee recipient matches these addresses.
 
 Prerrequisites
 ~~~~~~~~~~~~~~
@@ -98,8 +118,15 @@ Creating validator keys
 
 Time to create the validator keys that will be used by your client to stake.
 
-**You will need at least 2.4 ETH for the first validator and 1.3 ETH for each Additional validator**. Depending on your available ETH 
-(and how much you are willing to stake), you can calculate how many validator keys you can create.
+The bond requirements depend on whether you are an **Identified Community Staker (ICS)** or a **general operator**:
+
+- **ICS (Identified Community Stakers)**: **1.5 ETH** for the first validator
+- **General Operators**: **2.4 ETH** for the first validator  
+- **Both**: **1.3 ETH** for each additional validator
+
+The ICS program, introduced with CSM v2, offers reduced bonds for verified community members. Check the CSM portal 
+for eligibility requirements. Depending on your available ETH (and how much you are willing to stake), you can 
+calculate how many validator keys you can create.
 
 You have 2 main options for creating the validator keys:
 
@@ -185,7 +212,7 @@ Now it is time to visit the CSM Lido portal
 
 https://csm.lido.fi
 
-1. Clic in **"Become a Node Operator"**. Make sure you have at least **2.4** ETH. 
+1. Clic in **"Become a Node Operator"**. Make sure you have at least **1.5 ETH** (for ICS participants) or **2.4 ETH** (for general operators). 
 
 2. **Accept the terms** and **choose your wallet** that will create the Operator and make the deposit.
 
@@ -199,9 +226,9 @@ https://csm.lido.fi
 
 Done, you are now running a CSM Lido Validator. Now, you need to wait for the Validator to get enabled. 
 
-.. warning::
+.. note::
 
-  Remember that, currently, CSM Lido has reached its stake share limit so it won't be activated unless this limits get increased.
+  With CSM v2, the stake share limit is now 5%. Activation times have improved, but check the CSM portal for current queue status.
 
 Running CSM on Hoodi testnet
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -224,6 +251,8 @@ Running CSM on ``hoodi`` is pretty much the same process but you need to make so
 
 Regarding ``deposit`` command line, replace ``mainnet`` for ``hoodi``. **Make sure to set this withdrawal 
 address** in both cases to: ``0x4473dCDDbf77679A643BdB654dbd86D67F8d32f2``
+
+**Hoodi Fee Recipient**: ``0x9b108015fe433F173696Af3Aa0CF7CDb3E104258``
 
 .. warning::
 

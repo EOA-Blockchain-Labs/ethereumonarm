@@ -15,7 +15,7 @@ SHELL := /bin/bash
 # Package metadata
 # ----------------------------------------------------------------------
 PKG_NAME        ?= ethereum-metrics-exporter
-PKG_RELEASE     ?= 4
+PKG_RELEASE     ?= 0
 PKG_ARCH        ?= arm64
 PKG_ARCH_RPM    ?= aarch64
 PKG_VENDOR      ?= Ethereum on ARM

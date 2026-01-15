@@ -285,7 +285,10 @@ Choose the tab for the client you are using:
 
           setup_validator_passwords
 
-      This will prompt you for your keystore password and create a `.txt` file for each keystore with correct permissions.
+      This will prompt you for your keystore password and create a `.txt` file for each keystore with correct permissions. If 
+      your keystore files are not stored in /home/ethereum/validator_keys you will be ask for a custom path.
+
+      Remember that this password is the one that you used to create the keystore files with the `deposit` cli or the `wagyu` gui tool.
       
       You should now have matching files like:
 
@@ -294,7 +297,7 @@ Choose the tab for the client you are using:
         keystore-m_12381_3600_0_0_0-1661710189.json
         keystore-m_12381_3600_0_0_0-1661710189.txt
 
-      Set the fee recipient address:
+      Set the fee recipient address, for instance:
 
       .. prompt:: bash $
 

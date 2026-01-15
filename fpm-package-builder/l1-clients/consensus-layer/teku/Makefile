@@ -57,6 +57,7 @@ FPM_COMMON_OPTS = \
     --maintainer "$(PKG_MAINTAINER)" \
     --category "$(CATEGORY)" \
     --url "$(WEB_URL)" \
+    --after-install extras/postinst.sh \
     -C $(SOURCESDIR) \
     -x '*/.gitkeep'
 

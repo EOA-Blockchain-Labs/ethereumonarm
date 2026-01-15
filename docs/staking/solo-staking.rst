@@ -285,7 +285,7 @@ Choose the tab for the client you are using:
 
           setup_validator_passwords
 
-      This will generate a secure random password and create a `.txt` file for each keystore with correct permissions.
+      This will prompt you for your keystore password and create a `.txt` file for each keystore with correct permissions.
       
       You should now have matching files like:
 

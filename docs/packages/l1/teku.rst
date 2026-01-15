@@ -84,7 +84,7 @@ Package Details
 Validator Setup
 ---------------
 
-This package includes a helper script to generate secure passwords for your validator keystores.
+This package includes a helper script to easily create the necessary password files for your validator keystores.
 
 1. Place your validator keystores (``.json`` files) in a directory (default: ``/home/ethereum/validator_keys``).
 2. Run the setup script:
@@ -93,4 +93,4 @@ This package includes a helper script to generate secure passwords for your vali
 
     setup_validator_passwords
 
-This will generate a secure random password and create a matching ``.txt`` password file for each keystore, ensuring correct permissions (600).
+This will prompt you for the password used during keystore generation and create a matching ``.txt`` password file for each keystore, ensuring correct permissions (600).

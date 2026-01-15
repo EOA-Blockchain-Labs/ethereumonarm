@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-01-14 04:12:15 UTC_
+_Last updated: 2026-01-15 04:07:07 UTC_
 
  **What this report compares**
 
@@ -18,8 +18,8 @@ _Last updated: 2026-01-14 04:12:15 UTC_
 ## Summary
 
 - Total packages checked: **34**
-- ✅ Up-to-date: **29** (85.3%)
-- ❌ Outdated: **5** (14.7%)
+- ✅ Up-to-date: **32** (94.1%)
+- ❌ Outdated: **2** (5.9%)
 - ❓ N/A: **0** (0.0%)
 
 
@@ -30,7 +30,7 @@ _Last updated: 2026-01-14 04:12:15 UTC_
 | `commit-boost` | `0.9.2` ([Commit-Boost/commit-boost-client](https://github.com/Commit-Boost/commit-boost-client)) | `0.9.2` | ✅ Up-to-date |
 | `dvt-obol` | `1.8.1` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.8.0` | ❌ Outdated |
 | `dvt-ssv` | `2.3.9` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.3.9` | ✅ Up-to-date |
-| `ethereum-metrics-exporter` | `0.29.0` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.28.3` | ❌ Outdated |
+| `ethereum-metrics-exporter` | `0.29.1` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.29.1` | ✅ Up-to-date |
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |
 | `ethstaker-deposit-cli` | `1.2.2` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.2.2` | ✅ Up-to-date |
 | `mev-boost` | `1.10.1` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.10.1` | ✅ Up-to-date |
@@ -58,7 +58,7 @@ _Last updated: 2026-01-14 04:12:15 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
 | `besu` | `25.12.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `25.12.0` | ✅ Up-to-date |
-| `erigon` | `3.3.2` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.3.2` | ✅ Up-to-date |
+| `erigon` | `3.3.3` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.3.3` | ✅ Up-to-date |
 | `ethrex` | `9.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `9.0.0` | ✅ Up-to-date |
 | `geth` | `1.16.8` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.16.8` | ✅ Up-to-date |
 | `nethermind` | `1.36.0` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.36.0` | ✅ Up-to-date |
@@ -74,8 +74,8 @@ _Last updated: 2026-01-14 04:12:15 UTC_
 | `arbitrum-nitro` | `3.9.5` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.9.5` | ✅ Up-to-date |
 | `fuel-network` | `0.47.1` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.47.1` | ✅ Up-to-date |
 | `optimism-op-challenger` | `1.8.0` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.8.0` | ✅ Up-to-date |
-| `optimism-op-geth` | `1.101605.0` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101604.0` | ❌ Outdated |
-| `optimism-op-node` | `1.16.5` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.16.4` | ❌ Outdated |
+| `optimism-op-geth` | `1.101605.0` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101605.0` | ✅ Up-to-date |
+| `optimism-op-node` | `1.16.5` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.16.5` | ✅ Up-to-date |
 | `optimism-op-reth` | `1.9.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.9.3` | ✅ Up-to-date |
 | `starknet-juno` | `0.15.16` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.16` | ✅ Up-to-date |
 | `starknet-madara` | `0.10.0` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.0` | ✅ Up-to-date |

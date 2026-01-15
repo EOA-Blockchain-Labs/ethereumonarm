@@ -279,20 +279,14 @@ Choose the tab for the client you are using:
 
    .. tab-item:: Teku
 
-      Create a password file for each validator keystore. The file must have the same name as the keystore with a ``.txt`` extension.
-
-      View your keystore files:
+      Create a password file for each validator keystore using the helper script:
 
       .. prompt:: bash $
 
-        ls /home/ethereum/validator_keys
+          setup_validator_passwords
 
-      Create password file (replace ``$KEYSTORE_NAME`` with your actual keystore filename):
-
-      .. prompt:: bash $
-
-        echo "$YOUR_PASSWORD" > validator_keys/$KEYSTORE_NAME.txt
-
+      This will generate a secure random password and create a `.txt` file for each keystore with correct permissions.
+      
       You should now have matching files like:
 
       .. code-block:: text

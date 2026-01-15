@@ -80,3 +80,17 @@ Package Details
 
 - **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
 - **Upstream URL**: https://consensys.net/knowledge-base/ethereum-2/teku/
+
+Validator Setup
+---------------
+
+This package includes a helper script to generate secure passwords for your validator keystores.
+
+1. Place your validator keystores (``.json`` files) in a directory (default: ``/home/ethereum/validator_keys``).
+2. Run the setup script:
+
+   .. code-block:: bash
+
+    setup_validator_passwords
+
+This will generate a secure random password and create a matching ``.txt`` password file for each keystore, ensuring correct permissions (600).

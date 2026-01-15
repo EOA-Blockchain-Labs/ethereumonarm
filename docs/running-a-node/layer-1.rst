@@ -238,7 +238,7 @@ Nimbus :bdg-success:`Production Ready` :bdg-info:`Nim`
    :align: left
   :header: Systemd Service, Home Directory, Config File, Ports
 
-  "``nimbus``", "``/home/ethereum/.nimbus-beacon /home/ethereum/.nimbus-validator``", "``/etc/ethereum/nimbus-beacon.conf /etc/ethereum/nimbus-validator.conf``", "``TCP/UDP: 9000``"
+  "``nimbus-beacon nimbus-validator``", "``/home/ethereum/.nimbus-beacon /home/ethereum/.nimbus-validator``", "``/etc/ethereum/nimbus-beacon.conf /etc/ethereum/nimbus-validator.conf``", "``TCP/UDP: 9000``"
 
 1.- Port forwarding
 

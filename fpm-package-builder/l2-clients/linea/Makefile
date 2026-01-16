@@ -14,7 +14,7 @@ SHELL := /bin/bash
 # ----------------------------------------------------------------------
 # Package metadata
 # ----------------------------------------------------------------------
-PKG_NAME        ?= linea
+PKG_NAME        ?= besu-linea
 PKG_RELEASE     ?= 0
 PKG_ARCH        ?= arm64
 PKG_ARCH_RPM    ?= aarch64
@@ -33,7 +33,7 @@ OUTPUTDIR       ?= ../../packages
 # Resolve latest release tag starting with "linea-besu-package-" and excluding "e2e"
 # We use ?per_page=100 to ensure we find it.
 UPSTREAM_TAG_V := $(shell curl -s "https://api.github.com/repos/Consensys/linea-monorepo/releases?per_page=100" | jq -r '[.[] | select(.tag_name | startswith("linea-besu-package-")) | select(.tag_name | contains("e2e") | not)] | .[0].tag_name')
-UPSTREAM_VERSION := $(shell echo "$(UPSTREAM_TAG_V)" | sed 's/linea-besu-package-//')
+UPSTREAM_VERSION := $(shell echo "$(UPSTREAM_TAG_V)" | sed -E 's/.*-v([0-9])/\1/')
 
 # Filename matches the tag name: linea-besu-package-beta-v4.4-rc7-....tar.gz
 UPSTREAM_TARBALL := $(UPSTREAM_TAG_V).tar.gz

@@ -39,6 +39,10 @@ UPSTREAM_VERSION := $(shell echo "$(UPSTREAM_TAG_V)" | tr -d "v")
 UPSTREAM_TARBALL := helios_linux_$(PKG_ARCH).tar.gz
 UPSTREAM_URL     := $(WEB_URL)/releases/download/$(UPSTREAM_TAG_V)/$(UPSTREAM_TARBALL)
 
+# SHA256 checksum extracted from GitHub API asset digest field
+HELIOS_RELEASE_JSON := $(shell curl -sL "https://api.github.com/repos/a16z/helios/releases/latest")
+HELIOS_SHA256 := $(shell echo '$(HELIOS_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(UPSTREAM_TARBALL)") | .digest' | sed 's/sha256://')
+
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(UPSTREAM_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(UPSTREAM_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 

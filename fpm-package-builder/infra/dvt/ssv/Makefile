@@ -119,12 +119,17 @@ prepare: ## Extract ssvnode from Docker and build ssv-keys from source
 	docker rm "$$CID" > /dev/null
 	chmod 0755 "$(SOURCESDIR)/usr/bin/ssvnode"
 
-	@echo " Pulling ssv-dkg Docker image: ssvlabs/ssv-dkg:$(SSV_DKG_TAG_V)..."
-	docker pull --platform linux/arm64 ssvlabs/ssv-dkg:$(SSV_DKG_TAG_V) || { echo "❌ Docker pull for ssv-dkg failed"; exit 1; }
+	@echo "🔽 Cloning ssv-dkg $(SSV_DKG_VERSION) ($(SSV_DKG_TAG_V))..."
+	rm -rf .build/ssv_dkg_src
+	git clone --depth 1 --branch $(SSV_DKG_TAG_V) https://github.com/ssvlabs/ssv-dkg.git .build/ssv_dkg_src || { echo "❌ Git clone ssv-dkg failed"; exit 1; }
 
-	@echo " Extracting ssv-dkg binary from container..."
-	CID=$$(docker create --platform linux/arm64 ssvlabs/ssv-dkg:$(SSV_DKG_TAG_V)); \
-	docker cp "$$CID:/app/ssv-dkg" "$(SOURCESDIR)/usr/bin/ssv-dkg" || { echo "❌ Docker cp for ssv-dkg failed"; docker rm "$$CID"; exit 1; }; \
+	@echo "🐳 Building ssv-dkg Docker image locally (arm64)..."
+	cd .build/ssv_dkg_src && \
+	DOCKER_BUILDKIT=1 docker build --platform linux/arm64 -t ssv-dkg:$(SSV_DKG_TAG_V)-local . || { echo "❌ Docker build ssv-dkg failed"; exit 1; }
+
+	@echo " Extracting ssv-dkg binary from local container..."
+	CID=$$(docker create --platform linux/arm64 ssv-dkg:$(SSV_DKG_TAG_V)-local); \
+	docker cp "$$CID:/bin/ssv-dkg" "$(SOURCESDIR)/usr/bin/ssv-dkg" || { echo "❌ Docker cp for ssv-dkg failed"; docker rm "$$CID"; exit 1; }; \
 	docker rm "$$CID" > /dev/null
 	chmod 0755 "$(SOURCESDIR)/usr/bin/ssv-dkg"
 
@@ -133,16 +138,16 @@ prepare: ## Extract ssvnode from Docker and build ssv-keys from source
 
 	@echo "🔧 Patching ssv-keys package.json for ARM64..."
 	cd .build/ssv_keys_src && \
-	    sed -i '/"package-linux": "pkg dist\/cli-interactive.js --targets node22-linux-x64 --output bin\/linux\/ssv-keys-lin --compress GZip",/a \ \ "package-linux-arm64": "pkg dist/cli-interactive.js --targets node22-linux-arm64 --output bin/linux/ssv-keys-lin-arm64 --compress GZip",' package.json \
+	    perl -i -pe 's|("package-linux":.*",)|$$1\n    "package-linux-arm64": "pkg dist/cli-interactive.js --targets node22-linux-arm64 --output bin/linux/ssv-keys-lin-arm64 --compress GZip",|' package.json \
 	    || { echo "❌ Patching ssv-keys failed"; exit 1; }
 
-	@echo "📦 Installing ssv-keys dependencies (pnpm)..."
+	@echo "📦 Installing ssv-keys dependencies (npm)..."
 	cd .build/ssv_keys_src && \
-	    pnpm install --fetch-timeout 1000000 || { echo "❌ pnpm install failed"; exit 1; }
+	    npm install --force || { echo "❌ npm install failed"; exit 1; }
 	
 	@echo "🛠 Building ssv-keys binary..."
 	cd .build/ssv_keys_src && \
-	    pnpm package-linux-arm64 || { echo "❌ pnpm build failed"; exit 1; }
+	    npm run package-linux-arm64 || { echo "❌ npm build failed"; exit 1; }
 
 	@echo "📂 Staging ssv-keys binary..."
 	cp .build/ssv_keys_src/bin/linux/ssv-keys-lin-arm64 $(SOURCESDIR)/usr/bin/ssv-keys

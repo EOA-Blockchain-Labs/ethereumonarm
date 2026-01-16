@@ -1,0 +1,14 @@
+[Unit]
+Description=Maru Client
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/maru.conf
+ExecStart=/usr/bin/maru $ARGS
+Restart=always
+RestartSec=5
+User=ethereum
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

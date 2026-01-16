@@ -1,0 +1,39 @@
+maru for Debian
+===============
+
+This package provides the ConsenSys Maru Client (Validium/Prover Helper), packaged for Ethereum on ARM.
+
+Services
+--------
+
+This package installs a systemd service, disabled by default:
+
+- `maru.service`
+
+To enable the service, run:
+    sudo systemctl enable --now maru.service
+
+Configuration
+-------------
+
+Configuration arguments are defined in the environment file:
+
+- `/etc/ethereum/maru.conf`
+
+You can edit this file to customize the `ARGS` variable passed to the binary.
+
+Data Directories
+----------------
+
+By default, data is stored in the `ethereum` user's home directory.
+
+User and Group
+--------------
+
+The service runs as the `ethereum` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
+- **Upstream URL**: https://github.com/Consensys/maru

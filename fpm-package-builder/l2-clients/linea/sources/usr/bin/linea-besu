@@ -1,0 +1,214 @@
+#!/usr/bin/env sh
+
+#
+# Copyright 2015 the original author or authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+##############################################################################
+##
+##  besu start up script for UN*X
+##
+##############################################################################
+
+# Attempt to set APP_HOME
+# Resolve links: $0 may be a link
+PRG="$0"
+# Need this for relative symlinks.
+while [ -h "$PRG" ] ; do
+    ls=`ls -ld "$PRG"`
+    link=`expr "$ls" : '.*-> \(.*\)$'`
+    if expr "$link" : '/.*' > /dev/null; then
+        PRG="$link"
+    else
+        PRG=`dirname "$PRG"`"/$link"
+    fi
+done
+SAVED="`pwd`"
+cd "`dirname \"$PRG\"`/.." >/dev/null
+APP_HOME="/usr/share/linea/"
+cd "$SAVED" >/dev/null
+
+APP_NAME="besu"
+APP_BASE_NAME=`basename "$0"`
+
+# Use the maximum available, or set MAX_FD != -1 to use that value.
+MAX_FD="maximum"
+
+warn () {
+    echo "$*"
+}
+
+die () {
+    echo
+    echo "$*"
+    echo
+    exit 1
+}
+
+# OS specific support (must be 'true' or 'false').
+cygwin=false
+msys=false
+darwin=false
+nonstop=false
+case "`uname`" in
+  CYGWIN* )
+    cygwin=true
+    ;;
+  Darwin* )
+    darwin=true
+    ;;
+  MSYS* | MINGW* )
+    msys=true
+    ;;
+  NONSTOP* )
+    nonstop=true
+    ;;
+esac
+
+CLASSPATH=$APP_HOME/lib/besu-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-ethereum-evmtool-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-app-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-ethereum-ethstats-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-consensus-clique-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-consensus-qbft-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-consensus-ibftlegacy-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-consensus-ibft-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-consensus-qbft-core-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-consensus-common-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-ethereum-api-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-ethereum-referencetests-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-consensus-merge-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-ethereum-blockcreation-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-plugins-rocksdb-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-ethereum-eth-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-ethereum-permissioning-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-ethereum-p2p-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-ethereum-core-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-ethereum-core-support-test-25.11.0-linea4.2-test-support.jar:$APP_HOME/lib/besu-config-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-ethereum-trie-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-crypto-services-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-metrics-rocksdb-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-services-pipeline-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-services-tasks-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-metrics-core-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-services-kvstore-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-plugin-api-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-evm-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-datatypes-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-nat-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-ethereum-rlp-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-util-25.11.0-linea4.2.jar:$APP_HOME/lib/besu-crypto-algorithms-25.11.0-linea4.2.jar:$APP_HOME/lib/hibernate-validator-8.0.2.Final.jar:$APP_HOME/lib/jakarta.validation-api-3.1.1.jar:$APP_HOME/lib/jackson-datatype-jdk8-2.19.2.jar:$APP_HOME/lib/core-4.12.3.jar:$APP_HOME/lib/crypto-4.12.3.jar:$APP_HOME/lib/jackson-databind-2.19.2.jar:$APP_HOME/lib/jackson-annotations-2.19.2.jar:$APP_HOME/lib/tuweni-net-2.7.2.jar:$APP_HOME/lib/discovery-25.4.0.jar:$APP_HOME/lib/tuweni-crypto-2.7.2.jar:$APP_HOME/lib/tuweni-units-2.7.2.jar:$APP_HOME/lib/tuweni-rlp-2.7.2.jar:$APP_HOME/lib/tuweni-bytes-2.7.2.jar:$APP_HOME/lib/vertx-web-4.5.22.jar:$APP_HOME/lib/vertx-auth-jwt-4.5.22.jar:$APP_HOME/lib/vertx-unit-4.5.22.jar:$APP_HOME/lib/vertx-web-common-4.5.22.jar:$APP_HOME/lib/vertx-auth-common-4.5.22.jar:$APP_HOME/lib/vertx-bridge-common-4.5.22.jar:$APP_HOME/lib/vertx-core-4.5.22.jar:$APP_HOME/lib/vertx-codegen-4.5.22.jar:$APP_HOME/lib/jackson-core-2.19.2.jar:$APP_HOME/lib/oshi-core-6.6.6.jar:$APP_HOME/lib/log4j-slf4j2-impl-2.25.2.jar:$APP_HOME/lib/graphql-java-22.3.jar:$APP_HOME/lib/java-dataloader-3.3.0.jar:$APP_HOME/lib/org.jupnp.support-3.0.3.jar:$APP_HOME/lib/org.jupnp-3.0.3.jar:$APP_HOME/lib/dnsjava-3.6.3.jar:$APP_HOME/lib/Java-WebSocket-1.5.6.jar:$APP_HOME/lib/kms-2.27.24.jar:$APP_HOME/lib/aws-json-protocol-2.27.24.jar:$APP_HOME/lib/protocol-core-2.27.24.jar:$APP_HOME/lib/aws-core-2.27.24.jar:$APP_HOME/lib/auth-2.27.24.jar:$APP_HOME/lib/regions-2.27.24.jar:$APP_HOME/lib/sdk-core-2.27.24.jar:$APP_HOME/lib/http-auth-aws-2.27.24.jar:$APP_HOME/lib/http-auth-2.27.24.jar:$APP_HOME/lib/http-auth-spi-2.27.24.jar:$APP_HOME/lib/identity-spi-2.27.24.jar:$APP_HOME/lib/apache-client-2.27.24.jar:$APP_HOME/lib/netty-nio-client-2.27.24.jar:$APP_HOME/lib/http-client-spi-2.27.24.jar:$APP_HOME/lib/metrics-spi-2.27.24.jar:$APP_HOME/lib/json-utils-2.27.24.jar:$APP_HOME/lib/retries-2.27.24.jar:$APP_HOME/lib/retries-spi-2.27.24.jar:$APP_HOME/lib/profiles-2.27.24.jar:$APP_HOME/lib/utils-2.27.24.jar:$APP_HOME/lib/slf4j-api-2.0.17.jar:$APP_HOME/lib/caffeine-3.2.0.jar:$APP_HOME/lib/dagger-2.55.jar:$APP_HOME/lib/grpc-netty-1.75.0.jar:$APP_HOME/lib/grpc-util-1.75.0.jar:$APP_HOME/lib/grpc-core-1.75.0.jar:$APP_HOME/lib/tuweni-io-2.7.2.jar:$APP_HOME/lib/grpc-context-1.75.0.jar:$APP_HOME/lib/grpc-api-1.75.0.jar:$APP_HOME/lib/guava-33.4.2-jre.jar:$APP_HOME/lib/splunk-library-javalogging-1.11.8.jar:$APP_HOME/lib/opentelemetry-exporter-otlp-1.47.0.jar:$APP_HOME/lib/opentelemetry-exporter-sender-okhttp-1.47.0.jar:$APP_HOME/lib/logging-interceptor-4.12.0.jar:$APP_HOME/lib/okhttp-4.12.0.jar:$APP_HOME/lib/commons-net-3.12.0.jar:$APP_HOME/lib/commons-io-2.20.0.jar:$APP_HOME/lib/picocli-4.7.6.jar:$APP_HOME/lib/opentelemetry-semconv-incubating-1.30.0-alpha.jar:$APP_HOME/lib/opentelemetry-semconv-1.30.0.jar:$APP_HOME/lib/tuweni-config-2.7.2.jar:$APP_HOME/lib/tuweni-concurrent-2.7.2.jar:$APP_HOME/lib/tuweni-toml-2.7.2.jar:$APP_HOME/lib/javax.inject-1.jar:$APP_HOME/lib/jna-platform-5.16.0.jar:$APP_HOME/lib/secp256k1-1.4.1.jar:$APP_HOME/lib/arithmetic-1.4.1.jar:$APP_HOME/lib/gnark-1.4.1.jar:$APP_HOME/lib/boringssl-1.4.1.jar:$APP_HOME/lib/secp256r1-1.4.1.jar:$APP_HOME/lib/blake2bf-1.4.1.jar:$APP_HOME/lib/besu-native-common-1.4.1.jar:$APP_HOME/lib/jna-5.16.0.jar:$APP_HOME/lib/antlr4-4.13.0.jar:$APP_HOME/lib/antlr4-runtime-4.13.0.jar:$APP_HOME/lib/commons-collections4-4.5.0.jar:$APP_HOME/lib/commons-lang3-3.18.0.jar:$APP_HOME/lib/maven-artifact-3.9.9.jar:$APP_HOME/lib/bcpkix-jdk18on-1.80.jar:$APP_HOME/lib/netty-all-4.2.7.Final.jar:$APP_HOME/lib/abi-4.12.3.jar:$APP_HOME/lib/rlp-4.12.3.jar:$APP_HOME/lib/utils-4.12.3.jar:$APP_HOME/lib/bcutil-jdk18on-1.80.jar:$APP_HOME/lib/bcprov-jdk18on-1.80.jar:$APP_HOME/lib/jansi-2.4.1.jar:$APP_HOME/lib/encoder-1.3.1.jar:$APP_HOME/lib/rocksdbjni-9.7.3.jar:$APP_HOME/lib/spring-security-crypto-6.4.9.jar:$APP_HOME/lib/snappy-java-1.1.10.7.jar:$APP_HOME/lib/jc-kzg-4844-2.1.5.jar:$APP_HOME/lib/log4j-core-2.25.2.jar:$APP_HOME/lib/log4j-jul-2.25.2.jar:$APP_HOME/lib/async-profiler-4.0.jar:$APP_HOME/lib/netty-transport-native-epoll-4.2.7.Final.jar:$APP_HOME/lib/netty-transport-native-epoll-4.2.7.Final-linux-x86_64.jar:$APP_HOME/lib/netty-transport-native-epoll-4.2.7.Final-linux-aarch_64.jar:$APP_HOME/lib/netty-transport-native-epoll-4.2.7.Final-linux-riscv64.jar:$APP_HOME/lib/netty-transport-native-kqueue-4.2.7.Final.jar:$APP_HOME/lib/netty-transport-native-kqueue-4.2.7.Final-osx-x86_64.jar:$APP_HOME/lib/netty-transport-native-kqueue-4.2.7.Final-osx-aarch_64.jar:$APP_HOME/lib/netty-handler-proxy-4.2.7.Final.jar:$APP_HOME/lib/netty-codec-http2-4.2.7.Final.jar:$APP_HOME/lib/netty-codec-http-4.2.7.Final.jar:$APP_HOME/lib/netty-resolver-dns-native-macos-4.2.7.Final-osx-x86_64.jar:$APP_HOME/lib/netty-resolver-dns-native-macos-4.2.7.Final-osx-aarch_64.jar:$APP_HOME/lib/netty-resolver-dns-classes-macos-4.2.7.Final.jar:$APP_HOME/lib/netty-resolver-dns-4.2.7.Final.jar:$APP_HOME/lib/netty-codec-native-quic-4.2.7.Final-linux-x86_64.jar:$APP_HOME/lib/netty-codec-native-quic-4.2.7.Final-linux-aarch_64.jar:$APP_HOME/lib/netty-codec-native-quic-4.2.7.Final-osx-x86_64.jar:$APP_HOME/lib/netty-codec-native-quic-4.2.7.Final-osx-aarch_64.jar:$APP_HOME/lib/netty-codec-native-quic-4.2.7.Final-windows-x86_64.jar:$APP_HOME/lib/netty-codec-classes-quic-4.2.7.Final.jar:$APP_HOME/lib/netty-handler-4.2.7.Final.jar:$APP_HOME/lib/netty-transport-classes-epoll-4.2.7.Final.jar:$APP_HOME/lib/netty-transport-classes-kqueue-4.2.7.Final.jar:$APP_HOME/lib/netty-transport-native-io_uring-4.2.7.Final-linux-x86_64.jar:$APP_HOME/lib/netty-transport-native-io_uring-4.2.7.Final-linux-aarch_64.jar:$APP_HOME/lib/netty-transport-native-io_uring-4.2.7.Final-linux-riscv64.jar:$APP_HOME/lib/netty-transport-classes-io_uring-4.2.7.Final.jar:$APP_HOME/lib/netty-transport-native-unix-common-4.2.7.Final.jar:$APP_HOME/lib/netty-codec-dns-4.2.7.Final.jar:$APP_HOME/lib/netty-codec-socks-4.2.7.Final.jar:$APP_HOME/lib/netty-codec-4.2.7.Final.jar:$APP_HOME/lib/netty-codec-compression-4.2.7.Final.jar:$APP_HOME/lib/netty-codec-protobuf-4.2.7.Final.jar:$APP_HOME/lib/netty-codec-marshalling-4.2.7.Final.jar:$APP_HOME/lib/netty-codec-base-4.2.7.Final.jar:$APP_HOME/lib/netty-transport-4.2.7.Final.jar:$APP_HOME/lib/netty-buffer-4.2.7.Final.jar:$APP_HOME/lib/netty-codec-haproxy-4.2.7.Final.jar:$APP_HOME/lib/netty-codec-http3-4.2.7.Final.jar:$APP_HOME/lib/netty-codec-memcache-4.2.7.Final.jar:$APP_HOME/lib/netty-codec-mqtt-4.2.7.Final.jar:$APP_HOME/lib/netty-codec-redis-4.2.7.Final.jar:$APP_HOME/lib/netty-codec-smtp-4.2.7.Final.jar:$APP_HOME/lib/netty-codec-stomp-4.2.7.Final.jar:$APP_HOME/lib/netty-codec-xml-4.2.7.Final.jar:$APP_HOME/lib/netty-resolver-4.2.7.Final.jar:$APP_HOME/lib/netty-common-4.2.7.Final.jar:$APP_HOME/lib/netty-handler-ssl-ocsp-4.2.7.Final.jar:$APP_HOME/lib/netty-transport-rxtx-4.2.7.Final.jar:$APP_HOME/lib/netty-transport-sctp-4.2.7.Final.jar:$APP_HOME/lib/netty-transport-udt-4.2.7.Final.jar:$APP_HOME/lib/netty-tcnative-boringssl-static-2.0.74.Final.jar:$APP_HOME/lib/netty-tcnative-classes-2.0.74.Final.jar:$APP_HOME/lib/opentelemetry-extension-trace-propagators-1.47.0.jar:$APP_HOME/lib/opentelemetry-sdk-extension-autoconfigure-1.47.0.jar:$APP_HOME/lib/opentelemetry-exporter-otlp-common-1.47.0.jar:$APP_HOME/lib/opentelemetry-exporter-common-1.47.0.jar:$APP_HOME/lib/opentelemetry-sdk-extension-autoconfigure-spi-1.47.0.jar:$APP_HOME/lib/opentelemetry-sdk-1.47.0.jar:$APP_HOME/lib/opentelemetry-sdk-trace-1.47.0.jar:$APP_HOME/lib/opentelemetry-sdk-metrics-1.47.0.jar:$APP_HOME/lib/opentelemetry-sdk-logs-1.47.0.jar:$APP_HOME/lib/opentelemetry-sdk-common-1.47.0.jar:$APP_HOME/lib/opentelemetry-api-1.47.0.jar:$APP_HOME/lib/opentelemetry-context-1.47.0.jar:$APP_HOME/lib/prometheus-metrics-instrumentation-guava-1.3.5.jar:$APP_HOME/lib/prometheus-metrics-instrumentation-jvm-1.3.5.jar:$APP_HOME/lib/prometheus-metrics-core-1.3.5.jar:$APP_HOME/lib/prometheus-metrics-exporter-httpserver-1.3.5.jar:$APP_HOME/lib/prometheus-metrics-exporter-pushgateway-1.3.5.jar:$APP_HOME/lib/prometheus-metrics-exporter-common-1.3.5.jar:$APP_HOME/lib/prometheus-metrics-exposition-formats-1.3.5.jar:$APP_HOME/lib/prometheus-metrics-exposition-textformats-1.3.5.jar:$APP_HOME/lib/prometheus-metrics-config-1.3.5.jar:$APP_HOME/lib/prometheus-metrics-model-1.3.5.jar:$APP_HOME/lib/prometheus-metrics-tracer-initializer-1.3.5.jar:$APP_HOME/lib/prometheus-metrics-tracer-otel-1.3.5.jar:$APP_HOME/lib/prometheus-metrics-tracer-otel-agent-1.3.5.jar:$APP_HOME/lib/prometheus-metrics-tracer-common-1.3.5.jar:$APP_HOME/lib/log4j-api-2.25.2.jar:$APP_HOME/lib/value-annotations-2.10.1.jar:$APP_HOME/lib/okio-jvm-3.6.0.jar:$APP_HOME/lib/kotlin-stdlib-jdk8-1.9.10.jar:$APP_HOME/lib/kotlin-stdlib-jdk7-1.9.10.jar:$APP_HOME/lib/kotlin-stdlib-2.1.0.jar:$APP_HOME/lib/failureaccess-1.0.2.jar:$APP_HOME/lib/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar:$APP_HOME/lib/jspecify-1.0.0.jar:$APP_HOME/lib/jsr305-3.0.2.jar:$APP_HOME/lib/checker-qual-3.43.0.jar:$APP_HOME/lib/gson-2.11.0.jar:$APP_HOME/lib/error_prone_annotations-2.36.0.jar:$APP_HOME/lib/j2objc-annotations-3.0.0.jar:$APP_HOME/lib/jakarta.inject-api-2.0.1.jar:$APP_HOME/lib/rxjava-2.2.21.jar:$APP_HOME/lib/reactor-core-3.6.7.jar:$APP_HOME/lib/reactive-streams-1.0.4.jar:$APP_HOME/lib/framework-1.3.2.jar:$APP_HOME/lib/framework-internal-1.3.2.jar:$APP_HOME/lib/jboss-logging-3.4.3.Final.jar:$APP_HOME/lib/classmate-1.5.1.jar:$APP_HOME/lib/jctools-core-4.0.5.jar:$APP_HOME/lib/animal-sniffer-annotations-1.24.jar:$APP_HOME/lib/perfmark-api-0.27.0.jar:$APP_HOME/lib/annotations-4.1.1.4.jar:$APP_HOME/lib/annotations-13.0.jar:$APP_HOME/lib/tuples-4.12.3.jar:$APP_HOME/lib/jnr-unixsocket-0.38.22.jar:$APP_HOME/lib/ens-normalize-0.2.0.jar:$APP_HOME/lib/plexus-utils-3.5.1.jar:$APP_HOME/lib/jnr-enxio-0.32.17.jar:$APP_HOME/lib/jnr-posix-3.1.19.jar:$APP_HOME/lib/jnr-ffi-2.2.16.jar:$APP_HOME/lib/httpclient-4.5.13.jar:$APP_HOME/lib/commons-codec-1.17.1.jar:$APP_HOME/lib/ST4-4.3.4.jar:$APP_HOME/lib/antlr-runtime-3.5.3.jar:$APP_HOME/lib/org.abego.treelayout.core-1.0.3.jar:$APP_HOME/lib/icu4j-72.1.jar:$APP_HOME/lib/endpoints-spi-2.27.24.jar:$APP_HOME/lib/checksums-2.27.24.jar:$APP_HOME/lib/checksums-spi-2.27.24.jar:$APP_HOME/lib/http-auth-aws-eventstream-2.27.24.jar:$APP_HOME/lib/annotations-2.27.24.jar:$APP_HOME/lib/jnr-constants-0.10.4.jar:$APP_HOME/lib/third-party-jackson-core-2.27.24.jar:$APP_HOME/lib/eventstream-1.0.1.jar:$APP_HOME/lib/httpcore-4.4.16.jar:$APP_HOME/lib/jffi-1.3.13.jar:$APP_HOME/lib/jffi-1.3.13-native.jar:$APP_HOME/lib/asm-commons-9.2.jar:$APP_HOME/lib/asm-util-9.2.jar:$APP_HOME/lib/asm-analysis-9.2.jar:$APP_HOME/lib/asm-tree-9.2.jar:$APP_HOME/lib/asm-9.2.jar:$APP_HOME/lib/jnr-a64asm-1.0.0.jar:$APP_HOME/lib/jnr-x86asm-1.0.2.jar:$APP_HOME/lib/commons-logging-1.2.jar
+
+
+# Determine the Java command to use to start the JVM.
+if [ -n "$JAVA_HOME" ] ; then
+    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
+        # IBM's JDK on AIX uses strange locations for the executables
+        JAVACMD="$JAVA_HOME/jre/sh/java"
+    else
+        JAVACMD="$JAVA_HOME/bin/java"
+    fi
+    if [ ! -x "$JAVACMD" ] ; then
+        die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
+
+Please set the JAVA_HOME variable in your environment to match the
+location of your Java installation."
+    fi
+else
+    JAVACMD="java"
+    which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+
+Please set the JAVA_HOME variable in your environment to match the
+location of your Java installation."
+fi
+
+# Detect Java version
+JAVA_VERSION=$("$JAVACMD" -version 2>&1 | awk -F '"' '/version/ {print $2}' | sed 's/^1\.//' | cut -d'.' -f1)
+
+# Validate it's a number
+if ! [ "$JAVA_VERSION" -eq "$JAVA_VERSION" ] 2>/dev/null; then
+    die "Unable to determine Java version"
+fi
+
+# Add default JVM options here. You can also use JAVA_OPTS and BESU_OPTS to pass JVM options to this script.
+if [ "$JAVA_VERSION" -ge 25 ]; then
+    DEFAULT_JVM_OPTS='"-Dvertx.disableFileCPResolving=true" "-Dbesu.home=$APP_HOME" "-Dlog4j.shutdownHookEnabled=false" "-Dlog4j2.formatMsgNoLookups=true" "-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager" "--add-opens" "java.base/sun.security.provider=ALL-UNNAMED" "--add-opens" "java.base/java.util=ALL-UNNAMED" "-Dio.netty.tryReflectionSetAccessible=true" "--add-exports" "java.base/jdk.internal.misc=ALL-UNNAMED" "--add-opens" "java.base/java.nio=ALL-UNNAMED" "--enable-native-access=ALL-UNNAMED" "-XX:MaxHeapFreeRatio=30" "-XX:MinHeapFreeRatio=10" "-XX:MaxGCPauseMillis=100" "-XX:StartFlightRecording,settings=default.jfc" "-Xlog:jfr*=off" "-XX:+UseCompactObjectHeaders"'
+elif [ "$JAVA_VERSION" -ge 21 ]; then
+    DEFAULT_JVM_OPTS='"-Dvertx.disableFileCPResolving=true" "-Dbesu.home=$APP_HOME" "-Dlog4j.shutdownHookEnabled=false" "-Dlog4j2.formatMsgNoLookups=true" "-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager" "--add-opens" "java.base/sun.security.provider=ALL-UNNAMED" "--add-opens" "java.base/java.util=ALL-UNNAMED" "-Dio.netty.tryReflectionSetAccessible=true" "--add-exports" "java.base/jdk.internal.misc=ALL-UNNAMED" "--add-opens" "java.base/java.nio=ALL-UNNAMED" "--enable-native-access=ALL-UNNAMED" "-XX:MaxHeapFreeRatio=30" "-XX:MinHeapFreeRatio=10" "-XX:MaxGCPauseMillis=100" "-XX:StartFlightRecording,settings=default.jfc" "-Xlog:jfr*=off"'
+else
+    die "Java version must be at least 21 (detected: $JAVA_VERSION)"
+fi
+
+# Increase the maximum file descriptors if we can.
+if [ "$cygwin" = "false" -a "$darwin" = "false" -a "$nonstop" = "false" ] ; then
+    MAX_FD_LIMIT=`ulimit -H -n`
+    if [ $? -eq 0 ] ; then
+        if [ "$MAX_FD" = "maximum" -o "$MAX_FD" = "max" ] ; then
+            MAX_FD="$MAX_FD_LIMIT"
+        fi
+        ulimit -n $MAX_FD
+        if [ $? -ne 0 ] ; then
+            warn "Could not set maximum file descriptor limit: $MAX_FD"
+        fi
+    else
+        warn "Could not query maximum file descriptor limit: $MAX_FD_LIMIT"
+    fi
+fi
+
+# For Darwin, add options to specify how the application appears in the dock
+if $darwin; then
+    GRADLE_OPTS="$GRADLE_OPTS \"-Xdock:name=$APP_NAME\" \"-Xdock:icon=$APP_HOME/media/gradle.icns\""
+fi
+
+# For Cygwin or MSYS, switch paths to Windows format before running java
+if [ "$cygwin" = "true" -o "$msys" = "true" ] ; then
+    APP_HOME=`cygpath --path --mixed "$APP_HOME"`
+    CLASSPATH=`cygpath --path --mixed "$CLASSPATH"`
+
+    JAVACMD=`cygpath --unix "$JAVACMD"`
+
+    # We build the pattern for arguments to be converted via cygpath
+    ROOTDIRSRAW=`find -L / -maxdepth 1 -mindepth 1 -type d 2>/dev/null`
+    SEP=""
+    for dir in $ROOTDIRSRAW ; do
+        ROOTDIRS="$ROOTDIRS$SEP$dir"
+        SEP="|"
+    done
+    OURCYGPATTERN="(^($ROOTDIRS))"
+    # Add a user-defined pattern to the cygpath arguments
+    if [ "$GRADLE_CYGPATTERN" != "" ] ; then
+        OURCYGPATTERN="$OURCYGPATTERN|($GRADLE_CYGPATTERN)"
+    fi
+    # Now convert the arguments - kludge to limit ourselves to /bin/sh
+    i=0
+    for arg in "$@" ; do
+        CHECK=`echo "$arg"|egrep -c "$OURCYGPATTERN" -`
+        CHECK2=`echo "$arg"|egrep -c "^-"`                                 ### Determine if an option
+
+        if [ $CHECK -ne 0 ] && [ $CHECK2 -eq 0 ] ; then                    ### Added a condition
+            eval `echo args$i`=`cygpath --path --ignore --mixed "$arg"`
+        else
+            eval `echo args$i`="\"$arg\""
+        fi
+        i=`expr $i + 1`
+    done
+    case $i in
+        0) set -- ;;
+        1) set -- "$args0" ;;
+        2) set -- "$args0" "$args1" ;;
+        3) set -- "$args0" "$args1" "$args2" ;;
+        4) set -- "$args0" "$args1" "$args2" "$args3" ;;
+        5) set -- "$args0" "$args1" "$args2" "$args3" "$args4" ;;
+        6) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" ;;
+        7) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" ;;
+        8) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" "$args7" ;;
+        9) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" "$args7" "$args8" ;;
+    esac
+fi
+
+# Escape application args
+save () {
+    for i do printf %s\\n "$i" | sed "s/'/'\\\\''/g;1s/^/'/;\$s/\$/' \\\\/" ; done
+    echo " "
+}
+APP_ARGS=`save "$@"`
+
+# Collect all arguments for the java command, following the shell quoting and substitution rules
+eval set -- $DEFAULT_JVM_OPTS $JAVA_OPTS $BESU_OPTS -classpath "\"$CLASSPATH\"" org.hyperledger.besu.Besu "$APP_ARGS"
+
+if [ "$darwin" = "false" -a "$msys" = "false" ]; then
+      if [ "$BESU_USING_JEMALLOC" != "FALSE" -a "$BESU_USING_JEMALLOC" != "false" ]; then
+      # check if jemalloc is available
+      TEST_JEMALLOC=$(LD_PRELOAD=libjemalloc.so sh -c true 2>&1)
+
+      # if jemalloc is available the output is empty, otherwise the output has an error line
+      if [ -z "$TEST_JEMALLOC" ]; then
+        export LD_PRELOAD=libjemalloc.so
+      else
+        # jemalloc not available, as fallback limit malloc to 2 arenas
+        export MALLOC_ARENA_MAX=2
+      fi
+    fi
+fi
+
+exec "$JAVACMD" "$@"

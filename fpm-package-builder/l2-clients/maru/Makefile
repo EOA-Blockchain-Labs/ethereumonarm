@@ -14,34 +14,32 @@ SHELL := /bin/bash
 # ----------------------------------------------------------------------
 # Package metadata
 # ----------------------------------------------------------------------
-PKG_NAME        ?= linea-besu
+PKG_NAME        ?= maru
 PKG_RELEASE     ?= 0
 PKG_ARCH        ?= arm64
 PKG_ARCH_RPM    ?= aarch64
 PKG_VENDOR      ?= Ethereum on ARM
 PKG_LICENSE     ?= Apache License 2.0
-PKG_DESCRIPTION ?= ConsenSys Linea Mainnet Besu Client
+PKG_DESCRIPTION ?= ConsenSys Maru Client
 PKG_MAINTAINER  ?= Ethereum on ARM <info@ethereumonarm.com>
 CATEGORY        ?= science
-WEB_URL         ?= https://github.com/Consensys/linea-monorepo
+WEB_URL         ?= https://github.com/Consensys/maru
 SOURCESDIR      ?= sources
 OUTPUTDIR       ?= ../../packages
 
 # ----------------------------------------------------------------------
 # Upstream version and source info
 # ----------------------------------------------------------------------
-# Resolve latest release tag starting with "linea-besu-package-" and excluding "e2e"
-# We use ?per_page=100 to ensure we find it.
-UPSTREAM_TAG_V := $(shell curl -s "https://api.github.com/repos/Consensys/linea-monorepo/releases?per_page=100" | jq -r '[.[] | select(.tag_name | startswith("linea-besu-package-")) | select(.tag_name | contains("e2e") | not)] | .[0].tag_name')
-UPSTREAM_VERSION := $(shell echo "$(UPSTREAM_TAG_V)" | sed -E 's/.*-v([0-9])/\1/')
+# Resolve latest release tag
+UPSTREAM_TAG_V := $(shell curl -s "https://api.github.com/repos/Consensys/maru/releases/latest" | jq -r '.tag_name')
+UPSTREAM_VERSION := $(shell echo "$(UPSTREAM_TAG_V)" | sed 's/^v//')
 
-# Filename matches the tag name: linea-besu-package-beta-v4.4-rc7-....tar.gz
-UPSTREAM_TARBALL := $(UPSTREAM_TAG_V).tar.gz
+# Filename matches: maru-v1.0.0-....tar.gz 
+UPSTREAM_TARBALL := $(shell curl -s "https://api.github.com/repos/Consensys/maru/releases/latest" | jq -r '.assets[0].name')
 UPSTREAM_URL     := $(WEB_URL)/releases/download/$(UPSTREAM_TAG_V)/$(UPSTREAM_TARBALL)
 
-# Digest from release body "SHA256: <hash>" - Fetched from specific tag endpoint
-# Use awk for compatibility (Body line: "**SHA256:** <hash>")
-UPSTREAM_SHA256 := $(shell curl -s "https://api.github.com/repos/Consensys/linea-monorepo/releases/tags/$(UPSTREAM_TAG_V)" | jq -r '.body' | awk '/SHA256:/ {print $$2}' | head -n 1)
+# Digest from asset metadata
+UPSTREAM_SHA256 := $(shell curl -s "https://api.github.com/repos/Consensys/maru/releases/latest" | jq -r '.assets[0].digest' | sed 's/^sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(UPSTREAM_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(UPSTREAM_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
@@ -103,7 +101,7 @@ prepare: ## Download, verify, and stage binary
 	    echo "❌ Could not determine latest version via GitHub API."; exit 1; \
 	fi
 	@echo "🔽 Downloading $(PKG_NAME) $(UPSTREAM_VERSION) ($(UPSTREAM_TAG_V))..."
-	mkdir -p .build $(SOURCESDIR)/usr/bin $(SOURCESDIR)/usr/share/linea/lib
+	mkdir -p .build $(SOURCESDIR)/usr/bin $(SOURCESDIR)/usr/share/maru
 
 	# Download tarball
 	wget -q -O ".build/$(UPSTREAM_TARBALL)" "$(UPSTREAM_URL)" || { echo "❌ Download failed: $(UPSTREAM_URL)"; exit 1; };
@@ -112,35 +110,23 @@ prepare: ## Download, verify, and stage binary
 	@echo "$(UPSTREAM_SHA256)  .build/$(UPSTREAM_TARBALL)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(UPSTREAM_TARBALL)"; exit 1; };
 
 	@echo "📦 Extracting..."
-	tar -xzf ".build/$(UPSTREAM_TARBALL)" -C .build || { echo "❌ Extraction failed"; exit 1; }
+	mkdir -p .build/extracted
+	tar -xzf ".build/$(UPSTREAM_TARBALL)" -C .build/extracted || { echo "❌ Extraction failed"; exit 1; }
 
-	# Warning: Directory name inside tarball might vary. 
-	# Usually it's "besu-<version>". The Linea package has plugins.
-	# We rely on wildcards or finding the bin directory.
-	
 	@echo "📂 Staging files..."
-	# Find where 'besu' binary is located in extracted files
-	BESU_BIN=$$(find .build -type f -name besu | head -n 1); \
-	if [[ -z "$$BESU_BIN" ]]; then echo "❌ Could not find besu binary in extracted files"; exit 1; fi; \
-	BESU_ROOT=$$(dirname $$(dirname $$BESU_BIN)); \
-	\
-	echo "Found Besu root at: $$BESU_ROOT"; \
-	cp "$$BESU_ROOT/bin/besu" "$(SOURCESDIR)/usr/bin/linea-besu"; \
-	cp -r "$$BESU_ROOT/lib/"* "$(SOURCESDIR)/usr/share/linea/lib/"; \
-	cp -r "$$BESU_ROOT/plugins" "$(SOURCESDIR)/usr/share/linea/" || true 
+	mkdir -p "$(SOURCESDIR)/usr/share/maru"
+	cp -r .build/extracted/* "$(SOURCESDIR)/usr/share/maru/"
+	
+	mkdir -p "$(SOURCESDIR)/usr/bin"
+	# Binary is generic 'app', rename to 'maru'
+	cp "$(SOURCESDIR)/usr/share/maru/bin/app" "$(SOURCESDIR)/usr/bin/maru"
 
 	@echo "🔧 Patching binary paths..."
-	# Replace reference to 'pwd' or relative paths in the launcher script to point to our libs
-	# The default besu script uses relative paths to lib. We need to fix that or ensure BESU_HOME is set.
-	# Standard fix: Replace `pwd -P` or relative ../lib with absolute /usr/share/linea/lib
-	# However, simplest is often letting the script run but setting BESU_HOME?
-	# Let's try the sed approach from the Besu makefile but adapted.
-	# The Besu makefile does: sed -i 's/`pwd -P`/\/usr\/share\/besu\//' ...
-	sed -i.bak 's/`pwd -P`/\/usr\/share\/linea\//' "$(SOURCESDIR)/usr/bin/linea-besu"
-	rm "$(SOURCESDIR)/usr/bin/linea-besu.bak"
+	sed -i.bak 's|^APP_HOME=.*|APP_HOME="/usr/share/maru"|' "$(SOURCESDIR)/usr/bin/maru"
+	rm "$(SOURCESDIR)/usr/bin/maru.bak"
 	
-	chmod 0755 "$(SOURCESDIR)/usr/bin/linea-besu"
-	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/linea-besu"
+	chmod 0755 "$(SOURCESDIR)/usr/bin/maru"
+	@echo "✅ Binary ready at $(SOURCESDIR)/usr/bin/maru"
 
 deb: prepare ## Build .deb package
 	mkdir -p $(OUTPUTDIR)
@@ -163,7 +149,7 @@ rpm: prepare ## Build .rpm package
 	fi
 
 clean: ## Remove staged binaries and temp files
-	rm -rf $(SOURCESDIR)/usr/bin/$(PKG_NAME)* $(SOURCESDIR)/usr/share/linea .build
+	rm -rf $(SOURCESDIR)/usr/bin/$(PKG_NAME)* $(SOURCESDIR)/usr/share/maru .build
 	@echo "🧹 Clean complete."
 
 test: ## Check that .deb exists

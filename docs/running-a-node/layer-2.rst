@@ -419,6 +419,42 @@ Quick Start
    - :doc:`Running an Optimism Supernode </networks/optimism/supernode>` - Comprehensive 32GB RAM setup
    - :doc:`Running a Guardian Node (Challenger) </networks/optimism/challenger>` - Secure the network
 
+Linea
+-----
+
+Linea is a developer-ready zkEVM rollup for scaling Ethereum dApps. It offers full EVM compatibility and combines low gas costs with high throughput and security.
+
+**Client Support:**
+
+- **Execution Client:** Besu (packaged as ``linea-besu``)
+- **Coordinator Helper:** Maru (packaged as ``maru``)
+
+Installation
+~~~~~~~~~~~~
+
+.. code-block:: bash
+
+   # Install Linea Besu Execution Client
+   sudo apt install linea-besu
+   
+   # Install Maru (Optional/Prover)
+   sudo apt install maru
+
+Configuration
+~~~~~~~~~~~~~
+
+Linea usually requires running Besu with a specific profile.
+
+.. code-block:: bash
+
+   # Example: Start Besu with Mainnet profile
+   sudo systemctl enable --now linea.service
+
+For advanced configurations (Sepolia, specific flags), see the package documentation:
+
+- :doc:`../packages/l2/linea`
+- :doc:`../packages/l2/maru`
+
 Troubleshooting
 ---------------
 

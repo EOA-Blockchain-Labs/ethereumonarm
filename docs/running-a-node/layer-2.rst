@@ -422,35 +422,50 @@ Quick Start
 Linea
 -----
 
-Linea is a developer-ready zkEVM rollup for scaling Ethereum dApps. It offers full EVM compatibility and combines low gas costs with high throughput and security.
+Linea
+-----
 
-**Client Support:**
+Linea is a developer-ready zkEVM rollup for scaling Ethereum dApps. It uses a **Dual-Layer Architecture**:
 
-- **Execution Client:** Besu (packaged as ``linea-besu``)
-- **Coordinator Helper:** Maru (packaged as ``maru``)
+1.  **Execution Layer (EL)**: Besu (packaged as ``linea-besu``).
+2.  **Consensus Layer (CL)**: Maru (packaged as ``maru``). Maru replaces the Clique PoA consensus with QBFT and coordinates with the Ethereum mainnet.
 
-Installation
-~~~~~~~~~~~~
+**Resource Requirements:**
+
+-   **RAM**: 16GB Recommended.
+-   **Disk Space**:
+    -   **Full Node**: ~510 GB (Growing ~9 MB/day).
+    -   **Archive Node**: ~4 TB (Growing ~3 GB/day).
+
+**Installation:**
 
 .. code-block:: bash
 
-   # Install Linea Besu Execution Client
+   # Install Execution Client (Besu)
    sudo apt install linea-besu
    
-   # Install Maru (Optional/Prover)
+   # Install Consensus Client (Maru) - Required for consensus
    sudo apt install maru
 
-Configuration
-~~~~~~~~~~~~~
+**Profiles & Services:**
 
-Linea usually requires running Besu with a specific profile.
+The package provides pre-configured systemd services for different profiles:
 
-.. code-block:: bash
+-   **Basic Profile** (Follower Node):
+    -   Mainnet: ``linea.service``
+    -   Sepolia: ``linea-sepolia.service``
+-   **Advanced Profile** (Plugins enabled, needed for ``linea_estimateGas``):
+    -   Mainnet: ``linea-advanced.service``
+    -   Sepolia: ``linea-advanced-sepolia.service``
 
-   # Example: Start Besu with Mainnet profile
-   sudo systemctl enable --now linea.service
+**Maru Configuration:**
 
-For advanced configurations (Sepolia, specific flags), see the package documentation:
+Maru is required for the consensus layer. Ensure it is configured for the same network as Besu:
+
+-   **Mainnet**: ``maru.service`` (Default)
+-   **Sepolia**: ``maru-sepolia.service``
+
+For deeper configuration details, see the package pages:
 
 - :doc:`../packages/l2/linea`
 - :doc:`../packages/l2/maru`

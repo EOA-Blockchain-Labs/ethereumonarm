@@ -1,0 +1,14 @@
+[Unit]
+Description=Linea Sepolia Managed Besu Execution Client (Advanced Profile)
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/linea-advanced-sepolia.conf
+ExecStart=/usr/bin/linea-besu $ARGS
+Restart=always
+RestartSec=5
+User=ethereum
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

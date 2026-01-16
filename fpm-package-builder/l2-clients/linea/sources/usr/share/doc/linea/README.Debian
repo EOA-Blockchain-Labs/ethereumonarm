@@ -1,0 +1,56 @@
+linea for Debian
+================
+
+This package provides ConsenSys Linea Mainnet Besu Client, packaged for Ethereum on ARM.
+
+Services
+--------
+
+This package installs systemd services. The services are disabled by default.
+
+- `linea.service`
+- `linea-advanced.service`
+- `linea-sepolia.service`
+- `linea-advanced-sepolia.service`
+
+To enable a service, run:
+    sudo systemctl enable --now linea.service
+    # Or for Advanced Mainnet:
+    sudo systemctl enable --now linea-advanced.service
+    # Or for Sepolia:
+    sudo systemctl enable --now linea-sepolia.service
+    # Or for Advanced Sepolia:
+    sudo systemctl enable --now linea-advanced-sepolia.service
+
+Configuration
+-------------
+
+Configuration arguments are defined in the environment file located in `/etc/ethereum/`.
+
+- `/etc/ethereum/linea.conf`
+- `/etc/ethereum/linea-advanced.conf`
+- `/etc/ethereum/linea-sepolia.conf`
+- `/etc/ethereum/linea-advanced-sepolia.conf`
+
+You can edit this file to customize the arguments passed to the binary.
+
+Data Directories
+----------------
+
+By default, this package stores data in the `ethereum` user's home directory:
+
+- `/home/ethereum/.linea`
+- `/home/ethereum/.linea-advanced`
+- `/home/ethereum/.linea-sepolia`
+- `/home/ethereum/.linea-advanced-sepolia`
+
+User and Group
+--------------
+
+The service runs as the `ethereum` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
+- **Upstream URL**: https://github.com/Consensys/linea-besu-package

@@ -434,6 +434,7 @@ Linea is a developer-ready zkEVM rollup for scaling Ethereum dApps. It uses a **
 
 -   **RAM**: 16GB Recommended.
 -   **Disk Space**:
+-   
     -   **Full Node**: ~510 GB (Growing ~9 MB/day).
     -   **Archive Node**: ~4 TB (Growing ~3 GB/day).
 

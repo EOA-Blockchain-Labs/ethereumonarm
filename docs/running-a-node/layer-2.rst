@@ -422,21 +422,18 @@ Quick Start
 Linea
 -----
 
-Linea
------
-
 Linea is a developer-ready zkEVM rollup for scaling Ethereum dApps. It uses a **Dual-Layer Architecture**:
 
 1.  **Execution Layer (EL)**: Besu (packaged as ``linea-besu``).
 2.  **Consensus Layer (CL)**: Maru (packaged as ``maru``). Maru replaces the Clique PoA consensus with QBFT and coordinates with the Ethereum mainnet.
 
-**Resource Requirements:**
+.. important::
+   **Resource Requirements**
 
--   **RAM**: 16GB Recommended.
--   **Disk Space**:
--   
-    -   **Full Node**: ~510 GB (Growing ~9 MB/day).
-    -   **Archive Node**: ~4 TB (Growing ~3 GB/day).
+   -   **RAM**: 16GB Recommended.
+   -   **Disk Space**:
+       -   **Full Node**: ~510 GB (Growing ~9 MB/day).
+       -   **Archive Node**: ~4 TB (Growing ~3 GB/day).
 
 **Installation:**
 

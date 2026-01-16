@@ -14,7 +14,7 @@ SHELL := /bin/bash
 # ----------------------------------------------------------------------
 # Package metadata
 # ----------------------------------------------------------------------
-PKG_NAME        ?= besu-linea
+PKG_NAME        ?= linea-besu
 PKG_RELEASE     ?= 0
 PKG_ARCH        ?= arm64
 PKG_ARCH_RPM    ?= aarch64

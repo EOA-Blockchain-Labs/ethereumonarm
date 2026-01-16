@@ -86,39 +86,6 @@ Supported Clients
 
 Ethereum on ARM supports the main Consensus Layer clients available.
 
-.. tab-set::
-
-   .. tab-item:: All Clients
-
-      .. csv-table::
-         :header: Client, Official Binary, Language, Home
-
-         `Lighthouse`, `Yes`, `Rust`, lighthouse-book.sigmaprime.io_
-         `Prysm`, `Yes`, `Go`, docs.prylabs.network_
-         `Nimbus`,`Yes`, `Nim`, nimbus.team_
-         `Teku`, `Yes`, `Java`, consensys.net_
-         `Lodestar`, `Yes`, `Typescript`, lodestar.chainsafe.io_
-         `Grandine`, `Yes`, `Rust`, grandine.io_
-         `Vouch`, `Yes`, `Go`, vouch.io_
-
-   .. tab-item:: By Language
-
-      **Rust-based:**
-      
-      - Lighthouse :bdg-success:`Production Ready`
-      - Grandine :bdg-success:`Production Ready`
-      
-      **Go-based:**
-      
-      - Prysm :bdg-success:`Production Ready`
-      - Vouch :bdg-success:`Production Ready` :bdg-info:`Multi-node`
-      
-      **Other Languages:**
-      
-      - Nimbus (Nim) :bdg-success:`Production Ready`
-      - Teku (Java) :bdg-success:`Production Ready`
-      - Lodestar (TypeScript) :bdg-success:`Production Ready`
-
 .. _lighthouse-book.sigmaprime.io: https://lighthouse-book.sigmaprime.io
 .. _docs.prylabs.network: https://docs.prylabs.network/docs/getting-started/
 .. _nimbus.team: https://nimbus.team
@@ -127,213 +94,247 @@ Ethereum on ARM supports the main Consensus Layer clients available.
 .. _grandine.io: https://grandine.io/
 .. _vouch.io: https://vouch.io/
 
-
-.. _lighthouse-beacon-setup:
-
-Lighthouse :bdg-success:`Production Ready` :bdg-info:`Rust`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-:guilabel:`Lighthouse` is a full CL client written in Rust.
-
 .. csv-table::
-   :align: left
-  :header: Systemd Services, Home Directory, Config Files, Ports
+   :header: Client, Official Binary, Language, Home
 
-  "``lighthouse-beacon lighthouse-validator``", "``/home/ethereum/.lighthouse``", "``/etc/ethereum/lighthouse-beacon.conf /etc/ethereum/lighthouse-validator.conf``", "``TCP/UDP: 9000``"
+   `Lighthouse`, `Yes`, `Rust`, lighthouse-book.sigmaprime.io_
+   `Prysm`, `Yes`, `Go`, docs.prylabs.network_
+   `Nimbus`,`Yes`, `Nim`, nimbus.team_
+   `Teku`, `Yes`, `Java`, consensys.net_
+   `Lodestar`, `Yes`, `Typescript`, lodestar.chainsafe.io_
+   `Grandine`, `Yes`, `Rust`, grandine.io_
+   `Vouch`, `Yes`, `Go`, vouch.io_
 
+**Rust-based:**
 
-1.- Port forwarding
+- Lighthouse :bdg-success:`Production Ready`
+- Grandine :bdg-success:`Production Ready`
 
-You need to open the 9000 port in your router (both UDP and TCP)
+**Go-based:**
 
-2.- Start the beacon chain
+- Prysm :bdg-success:`Production Ready`
+- Vouch :bdg-success:`Production Ready` :bdg-info:`Multi-node`
 
-Under the ethereum account, run:
+**Other Languages:**
 
-.. prompt:: bash $
+- Nimbus (Nim) :bdg-success:`Production Ready`
+- Teku (Java) :bdg-success:`Production Ready`
+- Lodestar (TypeScript) :bdg-success:`Production Ready`
 
-  sudo systemctl start lighthouse-beacon
+.. tab-set::
 
-The Lighthouse client will start to sync the Beacon Chain. **This may take just some minutes as Checkpoint sync 
-is enabled by default.**
+   .. tab-item:: Lighthouse
 
-The Lighthouse beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
+      .. _lighthouse-beacon-setup:
 
-.. _prysm-beacon-setup:
+      **Lighthouse** :bdg-success:`Production Ready` :bdg-info:`Rust`
 
-Prysm :bdg-success:`Production Ready` :bdg-info:`Go`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      :guilabel:`Lighthouse` is a full CL client written in Rust.
 
-:guilabel:`Prysm` is a full Consensus Layer client written in Go.
+      .. csv-table::
+         :align: left
+         :header: Systemd Services, Home Directory, Config Files, Ports
 
-.. csv-table::
-   :align: left
-  :header: Systemd Services, Home Directory, Config Files, Ports
+         "``lighthouse-beacon lighthouse-validator``", "``/home/ethereum/.lighthouse``", "``/etc/ethereum/lighthouse-beacon.conf /etc/ethereum/lighthouse-validator.conf``", "``TCP/UDP: 9000``"
 
-  "``prysm-beacon prysm-validator``", "``/home/ethereum/.eth2``", "``/etc/ethereum/prysm-beacon.conf /etc/ethereum/prysm-validator.conf``", "``TCP: 13000, UDP: 12000``"
 
-1.- Port forwarding
+      1.- Port forwarding
 
-You need to open the 13000 (TCP) and 12000 (UDP) ports in your router/firewall
+      You need to open the 9000 port in your router (both UDP and TCP)
 
-2.- Start the beacon chain
+      2.- Start the beacon chain
 
-Under the ethereum account, run:
+      Under the ethereum account, run:
 
-.. prompt:: bash $
+      .. prompt:: bash $
 
-  sudo systemctl start prysm-beacon
+        sudo systemctl start lighthouse-beacon
 
-This will start to sync the Beacon Chain. **This may take just some minutes as Checkpoint sync 
-is enabled by default.**
+      The Lighthouse client will start to sync the Beacon Chain. **This may take just some minutes as Checkpoint sync 
+      is enabled by default.**
 
+      The Lighthouse beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 
-The Prysm beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
+   .. tab-item:: Prysm
 
-.. _teku-beacon-setup:
+      .. _prysm-beacon-setup:
 
-Teku :bdg-success:`Production Ready` :bdg-info:`Java`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      **Prysm** :bdg-success:`Production Ready` :bdg-info:`Go`
 
-:guilabel:`Teku` is a full Consensus Layer client written in Java.
+      :guilabel:`Prysm` is a full Consensus Layer client written in Go.
 
-.. csv-table::
-   :align: left
-  :header: Systemd Services, Home Directory, Config File, Ports
+      .. csv-table::
+         :align: left
+         :header: Systemd Services, Home Directory, Config Files, Ports
 
-  "``teku-beacon teku-validator``", "``/home/ethereum/.teku/beacon /home/ethereum/.teku/validator``", "``/etc/ethereum/teku-beacon.conf /etc/ethereum/teku-validator.conf``", "``TCP/UDP: 9000``"
+         "``prysm-beacon prysm-validator``", "``/home/ethereum/.eth2``", "``/etc/ethereum/prysm-beacon.conf /etc/ethereum/prysm-validator.conf``", "``TCP: 13000, UDP: 12000``"
 
-1.- Port forwarding
+      1.- Port forwarding
 
-You need to open the 9000 port (both UDP and TCP)
+      You need to open the 13000 (TCP) and 12000 (UDP) ports in your router/firewall
 
-2.- Start the beacon chain
+      2.- Start the beacon chain
 
-Under the ethereum account, run:
+      Under the ethereum account, run:
 
-.. prompt:: bash $
+      .. prompt:: bash $
 
-  sudo systemctl start teku-beacon
+        sudo systemctl start prysm-beacon
 
-The Teku beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
+      This will start to sync the Beacon Chain. **This may take just some minutes as Checkpoint sync 
+      is enabled by default.**
 
-.. _nimbus-beacon-setup:
 
-Nimbus :bdg-success:`Production Ready` :bdg-info:`Nim`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      The Prysm beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 
-.. warning::
+   .. tab-item:: Teku
 
-  From version 23.1.0, we upgraded :guilabel:`Nimbus` to run as 2 independent processes, 
-  1 binary for the Beacon Chain and 1 binary for the validator (so 2 different services). 
+      .. _teku-beacon-setup:
 
-  If you are using a prior release please upgrade and take into account that you need to 
-  run 2 Systemd services.
+      **Teku** :bdg-success:`Production Ready` :bdg-info:`Java`
 
-  **You need to stop the nimbus service before upgrading to 23.1.0**
-  
-:guilabel:`Nimbus` is a full Consensus Layer client written in Nim.
+      :guilabel:`Teku` is a full Consensus Layer client written in Java.
 
-.. csv-table::
-   :align: left
-  :header: Systemd Service, Home Directory, Config File, Ports
+      .. csv-table::
+         :align: left
+         :header: Systemd Services, Home Directory, Config File, Ports
 
-  "``nimbus-beacon nimbus-validator``", "``/home/ethereum/.nimbus-beacon /home/ethereum/.nimbus-validator``", "``/etc/ethereum/nimbus-beacon.conf /etc/ethereum/nimbus-validator.conf``", "``TCP/UDP: 9000``"
+         "``teku-beacon teku-validator``", "``/home/ethereum/.teku/beacon /home/ethereum/.teku/validator``", "``/etc/ethereum/teku-beacon.conf /etc/ethereum/teku-validator.conf``", "``TCP/UDP: 9000``"
 
-1.- Port forwarding
+      1.- Port forwarding
 
-You need to open the 9000 port (both UDP and TCP)
+      You need to open the 9000 port (both UDP and TCP)
 
-2. Copy and paste your Ethereum Address for 
-receiving tips and set the fee recipient flag:
+      2.- Start the beacon chain
 
-.. prompt:: bash $
+      Under the ethereum account, run:
 
-  sudo sed -i 's/changeme/0x1234567890abcdef1234567890abcdef12345678/' /etc/ethereum/nimbus-validator.conf
+      .. prompt:: bash $
 
-Replace ``0x1234567890abcdef1234567890abcdef12345678`` with your actual Ethereum address.
+        sudo systemctl start teku-beacon
 
-3. Enable Checkpoint Sync. 
+      The Teku beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 
-We need to run a command manually before the **Checkpoint Sync** gets started:
+   .. tab-item:: Nimbus
 
-.. prompt:: bash $
+      .. _nimbus-beacon-setup:
 
-  nimbus_beacon_node trustedNodeSync --network=mainnet --data-dir=/home/ethereum/.nimbus-beacon --trusted-node-url=https://sync-mainnet.beaconcha.in --backfill=false
+      **Nimbus** :bdg-success:`Production Ready` :bdg-info:`Nim`
 
-Wait for the command to finish.
+      .. warning::
 
-4. Start the Nimbus Beacon Chain service:
+        From version 23.1.0, we upgraded :guilabel:`Nimbus` to run as 2 independent processes, 
+        1 binary for the Beacon Chain and 1 binary for the validator (so 2 different services). 
 
-.. prompt:: bash $
+        If you are using a prior release please upgrade and take into account that you need to 
+        run 2 Systemd services.
 
-  sudo systemctl start nimbus-beacon
+        **You need to stop the nimbus service before upgrading to 23.1.0**
+        
+      :guilabel:`Nimbus` is a full Consensus Layer client written in Nim.
 
-The Nimbus Beacon Chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
+      .. csv-table::
+         :align: left
+         :header: Systemd Service, Home Directory, Config File, Ports
 
-.. _lodestar-beacon-setup:
+         "``nimbus-beacon nimbus-validator``", "``/home/ethereum/.nimbus-beacon /home/ethereum/.nimbus-validator``", "``/etc/ethereum/nimbus-beacon.conf /etc/ethereum/nimbus-validator.conf``", "``TCP/UDP: 9000``"
 
-Lodestar :bdg-success:`Production Ready` :bdg-info:`TypeScript`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      1.- Port forwarding
 
-:guilabel:`Lodestar` is a full Consensus Layer client written in Type Script.
+      You need to open the 9000 port (both UDP and TCP)
 
-.. csv-table::
-   :align: left
-  :header: Systemd Services, Home Directory, Config File, Ports
+      2. Copy and paste your Ethereum Address for 
+      receiving tips and set the fee recipient flag:
 
-  "``lodestar-beacon lodestar-validator``", "``/home/ethereum/.lodestar``", "``/etc/ethereum/lodestar-beacon.conf /etc/ethereum/lodestar-validator.conf``", "``TCP/UDP: 9000``"
+      .. prompt:: bash $
 
-1.- Port forwarding
+        sudo sed -i 's/changeme/0x1234567890abcdef1234567890abcdef12345678/' /etc/ethereum/nimbus-validator.conf
 
-You need to open the 9000 port (both UDP and TCP)
+      Replace ``0x1234567890abcdef1234567890abcdef12345678`` with your actual Ethereum address.
 
-2.- Start the beacon chain
+      3. Enable Checkpoint Sync. 
 
-Under the ethereum account, run:
+      We need to run a command manually before the **Checkpoint Sync** gets started:
 
-.. prompt:: bash $
+      .. prompt:: bash $
 
-  sudo systemctl start lodestar-beacon
+        nimbus_beacon_node trustedNodeSync --network=mainnet --data-dir=/home/ethereum/.nimbus-beacon --trusted-node-url=https://sync-mainnet.beaconcha.in --backfill=false
 
-The Lodestar beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
+      Wait for the command to finish.
 
-.. _grandine-beacon-setup:
+      4. Start the Nimbus Beacon Chain service:
 
-Grandine :bdg-success:`Production Ready` :bdg-info:`Rust`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      .. prompt:: bash $
 
-:guilabel:`Grandine` is a full Consensus Layer client written in Rust.
+        sudo systemctl start nimbus-beacon
 
-.. csv-table::
-   :align: left
-  :header: Systemd Services, Home Directory, Config Files, Ports
+      The Nimbus Beacon Chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 
-  "``grandine-beacon grandine-validator``", "``/home/ethereum/.grandine``", "``/etc/ethereum/grandine-beacon.conf /etc/ethereum/grandine-validator.conf``", "``TCP/UDP: 9000``"
+   .. tab-item:: Lodestar
 
-1.- Port forwarding
+      .. _lodestar-beacon-setup:
 
-You need to open the 9000 (TCP/UDP) ports in your router/firewall
+      **Lodestar** :bdg-success:`Production Ready` :bdg-info:`TypeScript`
 
-.. warning::
+      :guilabel:`Lodestar` is a full Consensus Layer client written in Type Script.
 
-  Currently, :guilabel:`Grandine` runs in one instance, so if you want to stake you will need to 
-  configure the **Validator** file config and run the **grandine-validator** service that will start both 
-  Beacon and Validator processes,. 
+      .. csv-table::
+         :align: left
+         :header: Systemd Services, Home Directory, Config File, Ports
 
-2.- Start the beacon chain (if you want to run a validator, skip this step and go to staking section)
+         "``lodestar-beacon lodestar-validator``", "``/home/ethereum/.lodestar``", "``/etc/ethereum/lodestar-beacon.conf /etc/ethereum/lodestar-validator.conf``", "``TCP/UDP: 9000``"
 
-Under the ethereum account, run:
+      1.- Port forwarding
 
-.. prompt:: bash $
+      You need to open the 9000 port (both UDP and TCP)
 
-  sudo systemctl start grandine-beacon
+      2.- Start the beacon chain
 
-This will start to sync the Beacon Chain. **This may take just some minutes as Checkpoint sync 
-is enabled by default.**
+      Under the ethereum account, run:
 
+      .. prompt:: bash $
 
-The Grandine beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
+        sudo systemctl start lodestar-beacon
+
+      The Lodestar beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
+
+   .. tab-item:: Grandine
+
+      .. _grandine-beacon-setup:
+
+      **Grandine** :bdg-success:`Production Ready` :bdg-info:`Rust`
+
+      :guilabel:`Grandine` is a full Consensus Layer client written in Rust.
+
+      .. csv-table::
+         :align: left
+         :header: Systemd Services, Home Directory, Config Files, Ports
+
+         "``grandine-beacon grandine-validator``", "``/home/ethereum/.grandine``", "``/etc/ethereum/grandine-beacon.conf /etc/ethereum/grandine-validator.conf``", "``TCP/UDP: 9000``"
+
+      1.- Port forwarding
+
+      You need to open the 9000 (TCP/UDP) ports in your router/firewall
+
+      .. warning::
+
+        Currently, :guilabel:`Grandine` runs in one instance, so if you want to stake you will need to 
+        configure the **Validator** file config and run the **grandine-validator** service that will start both 
+        Beacon and Validator processes,. 
+
+      2.- Start the beacon chain (if you want to run a validator, skip this step and go to staking section)
+
+      Under the ethereum account, run:
+
+      .. prompt:: bash $
+
+        sudo systemctl start grandine-beacon
+
+      This will start to sync the Beacon Chain. **This may take just some minutes as Checkpoint sync 
+      is enabled by default.**
+
+
+      The Grandine beacon chain is now started. Wait for it to get in sync. Choose an Execution Layer client and start it.
 
 Execution Layer nodes
 ---------------------
@@ -346,35 +347,6 @@ Supported clients
 
 Ethereum on ARM supports all available Execution Layer clients.
 
-.. tab-set::
-
-   .. tab-item:: All Clients
-
-      .. csv-table:: Execution Layer Supported Clients
-         :header: Client, Official Binary, Language, Home
-
-         `Geth`, `Yes`, `Go`, geth.ethereum.org_
-         `Nethermind`, `Yes`, `.NET`, nethermind.io_
-         `Erigon`, `Yes`, `Go`, `github.com/ledgerwatch/erigon`_
-         `Hyperledger Besu`, `Yes`, `Java`, hyperledger.org_
-         `EthRex`, `Yes`, `Rust`, ethrex.io_
-         `Reth`, `Yes`, `Rust`, paradigmxyz.github.io_
-
-   .. tab-item:: By Sync Type
-
-      **Snap Sync (Fast):**
-      
-      - Geth :bdg-success:`Production Ready` :bdg-info:`12-18h sync`
-      - Nethermind :bdg-success:`Production Ready` :bdg-info:`12-18h sync`
-      - Hyperledger Besu :bdg-success:`Production Ready` :bdg-info:`18-24h sync`
-      - EthRex :bdg-warning:`Testing` :bdg-info:`12-18h sync`
-      
-      **Execution Sync (Slower, Archive-capable):**
-      
-      - Reth :bdg-success:`Production Ready` :bdg-info:`3-5 days sync`
-      - Erigon :bdg-success:`Production Ready` :bdg-info:`4-6 days sync` :bdg-primary:`Built-in CL`
-
-
 .. _geth.ethereum.org: https://geth.ethereum.org
 .. _nethermind.io: https://nethermind.io
 .. _github.com/ledgerwatch/erigon: https://github.com/ledgerwatch/erigon
@@ -382,8 +354,32 @@ Ethereum on ARM supports all available Execution Layer clients.
 .. _ethrex.io: https://ethrex.xyz/
 .. _paradigmxyz.github.io: https://paradigmxyz.github.io/reth/
 
-Syncing Strategies and Times
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. csv-table:: Execution Layer Supported Clients
+   :header: Client, Official Binary, Language, Home
+
+   `Geth`, `Yes`, `Go`, geth.ethereum.org_
+   `Nethermind`, `Yes`, `.NET`, nethermind.io_
+   `Erigon`, `Yes`, `Go`, `github.com/ledgerwatch/erigon`_
+   `Hyperledger Besu`, `Yes`, `Java`, hyperledger.org_
+   `EthRex`, `Yes`, `Rust`, ethrex.io_
+   `Reth`, `Yes`, `Rust`, paradigmxyz.github.io_
+
+**Snap Sync (Fast):**
+
+- Geth :bdg-success:`Production Ready` :bdg-info:`12-18h sync`
+- Nethermind :bdg-success:`Production Ready` :bdg-info:`12-18h sync`
+- Hyperledger Besu :bdg-success:`Production Ready` :bdg-info:`18-24h sync`
+- EthRex :bdg-warning:`Testing` :bdg-info:`12-18h sync`
+
+**Execution Sync (Slower, Archive-capable):**
+
+- Reth :bdg-success:`Production Ready` :bdg-info:`3-5 days sync`
+- Erigon :bdg-success:`Production Ready` :bdg-info:`4-6 days sync` :bdg-primary:`Built-in CL`
+
+
+.. _Syncing Strategies and Times:
+
+**Syncing Strategies and Times**
 
 One of the most frequently asked questions is: **"How long does it take to sync?"**. The answer depends heavily on the client you choose, specifically because different clients use different syncing technologies.
 
@@ -418,198 +414,206 @@ It comes down to **Snap Sync** vs **Execution Sync**:
   Remember that you need to run a synced Consensus Layer client before starting the Execution Layer client (unless you 
   use :guilabel:`Erigon` and you are not going to stake)
 
-.. _geth-setup:
+.. tab-set::
 
-Geth :bdg-success:`Production Ready` :bdg-info:`Go`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. tab-item:: Geth
 
-:guilabel:`Geth` is the most used EL client. It is developed by the Ethereum Foundation team
-and the performance on ARM64 devices is outstanding. It is capable of syncing the whole blockchain 
-in less than 1 day on a **Raspberry Pi 5 with 16 GB RAM** and in less that 1 day on the 
-**Radxa Rock 5B**.
+      .. _geth-setup:
 
-.. csv-table::
-   :align: left
-  :header: Systemd Service, Home Directory, Config File, Ports
+      **Geth** :bdg-success:`Production Ready` :bdg-info:`Go`
 
-  `geth`, `/home/ethereum/.geth`, `/etc/ethereum/geth.conf`, `TCP/UDP: 30303`
+      :guilabel:`Geth` is the most used EL client. It is developed by the Ethereum Foundation team
+      and the performance on ARM64 devices is outstanding. It is capable of syncing the whole blockchain 
+      in less than 1 day on a **Raspberry Pi 5 with 16 GB RAM** and in less that 1 day on the 
+      **Radxa Rock 5B**.
 
-You can start the client by running:
+      .. csv-table::
+         :align: left
+         :header: Systemd Service, Home Directory, Config File, Ports
 
-.. prompt:: bash $
+         `geth`, `/home/ethereum/.geth`, `/etc/ethereum/geth.conf`, `TCP/UDP: 30303`
 
-  sudo systemctl start geth
+      You can start the client by running:
 
-For further info of how the node is doing you can use Systemd journal:
+      .. prompt:: bash $
 
-.. prompt:: bash $
+         sudo systemctl start geth
 
-  sudo journalctl -u geth -f
+      For further info of how the node is doing you can use Systemd journal:
 
-.. _nethermind-setup:
+      .. prompt:: bash $
 
-Nethermind :bdg-success:`Production Ready` :bdg-info:`.NET`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         sudo journalctl -u geth -f
 
-:guilabel:`Nethermind` is a .NET enterprise-friendly full Execution Layer client.
+   .. tab-item:: Nethermind
 
-.. csv-table::
-   :align: left
-  :header: Systemd Service, Home Directory, Config File, Ports
+      .. _nethermind-setup:
 
-  `nethermind`, `/home/ethereum/.nethermind`, `/opt/nethermind/configs/mainnet.json`, `TCP/UDP: 30303`
+      **Nethermind** :bdg-success:`Production Ready` :bdg-info:`.NET`
 
-In order to start the client run:
+      :guilabel:`Nethermind` is a .NET enterprise-friendly full Execution Layer client.
 
-.. prompt:: bash $
+      .. csv-table::
+         :align: left
+         :header: Systemd Service, Home Directory, Config File, Ports
 
-  sudo systemctl start nethermind  
+         `nethermind`, `/home/ethereum/.nethermind`, `/opt/nethermind/configs/mainnet.json`, `TCP/UDP: 30303`
 
-.. _besu-setup:
+      In order to start the client run:
 
-Hyperledger Besu :bdg-success:`Production Ready` :bdg-info:`Java`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      .. prompt:: bash $
 
-.. csv-table::
-   :align: left
-  :header: Systemd Service, Home Directory, Config File, Ports
+         sudo systemctl start nethermind  
 
-  `besu`, `/home/ethereum/.besu`, `/etc/ethereum/besu.conf`, `TCP/UDP: 30303`
+   .. tab-item:: Besu
 
-In order to start the client run:
+      .. _besu-setup:
 
-.. prompt:: bash $
+      **Hyperledger Besu** :bdg-success:`Production Ready` :bdg-info:`Java`
 
-  sudo systemctl start besu
+      .. csv-table::
+         :align: left
+         :header: Systemd Service, Home Directory, Config File, Ports
 
-.. _ethrex-setup:
+         `besu`, `/home/ethereum/.besu`, `/etc/ethereum/besu.conf`, `TCP/UDP: 30303`
 
-EthRex :bdg-warning:`Testing` :bdg-info:`Rust`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      In order to start the client run:
 
-:guilabel:`EthRex` is a lightweight, performant, and modular Ethereum execution client powering next-gen L1 and L2 solutions.
+      .. prompt:: bash $
 
-.. csv-table::
-   :align: left
-  :header: Systemd Service, Home Directory, Config File, Ports
+         sudo systemctl start besu
 
-  `ethrex`, `/home/ethereum/.ethrex`, `/etc/ethereum/ethrex.conf`, `TCP/UDP: 30303`
+   .. tab-item:: EthRex
 
-In order to start the client run:
+      .. _ethrex-setup:
 
-.. prompt:: bash $
+      **EthRex** :bdg-warning:`Testing` :bdg-info:`Rust`
 
-  sudo systemctl start ethrex
+      :guilabel:`EthRex` is a lightweight, performant, and modular Ethereum execution client powering next-gen L1 and L2 solutions.
 
-.. note::
-   :guilabel:`EthRex` is new in Ethereum on ARM ecosystem, and still under testing 
+      .. csv-table::
+         :align: left
+         :header: Systemd Service, Home Directory, Config File, Ports
 
-.. _reth-setup:
+         `ethrex`, `/home/ethereum/.ethrex`, `/etc/ethereum/ethrex.conf`, `TCP/UDP: 30303`
 
-Reth :bdg-success:`Production Ready` :bdg-info:`Rust`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      In order to start the client run:
 
-:guilabel:`Reth` (Rust Ethereum) is an Ethereum execution client implementation that focuses on friendliness, modularity, and speed.
+      .. prompt:: bash $
 
-.. csv-table::
-   :align: left
-  :header: Systemd Service, Home Directory, Config File, Ports
+         sudo systemctl start ethrex
 
-  `reth`, `/home/ethereum/.reth`, `/etc/ethereum/reth.conf`, `TCP/UDP: 30303`
+      .. note::
+         :guilabel:`EthRex` is new in Ethereum on ARM ecosystem, and still under testing 
 
-In order to start the client run:
+   .. tab-item:: Reth
 
-.. prompt:: bash $
+      .. _reth-setup:
 
-  sudo systemctl start reth
+      **Reth** :bdg-success:`Production Ready` :bdg-info:`Rust`
 
-.. dropdown:: Advanced: Full vs Archive Node Configuration
-   :icon: gear
+      :guilabel:`Reth` (Rust Ethereum) is an Ethereum execution client implementation that focuses on friendliness, modularity, and speed.
 
-   By default, :guilabel:`Reth` runs as an **Archive Node**, storing all historical states. This requires significantly more disk space.
+      .. csv-table::
+         :align: left
+         :header: Systemd Service, Home Directory, Config File, Ports
 
-   If you wish to run a **Full Node** (pruned state) to save disk space, you must enable the full node mode.
+         `reth`, `/home/ethereum/.reth`, `/etc/ethereum/reth.conf`, `TCP/UDP: 30303`
 
-   To do this, edit the configuration file for your network (e.g., ``/etc/ethereum/reth.conf`` for Mainnet) and add the ``--full`` flag to the ``ARGS`` variable.
+      In order to start the client run:
 
-   Example:
+      .. prompt:: bash $
 
-   .. code-block:: bash
+         sudo systemctl start reth
 
-      ARGS="node ... --full"
+      .. dropdown:: Advanced: Full vs Archive Node Configuration
+         :icon: gear
 
-   After saving the file, restart the service:
+         By default, :guilabel:`Reth` runs as an **Archive Node**, storing all historical states. This requires significantly more disk space.
 
-   .. prompt:: bash $
+         If you wish to run a **Full Node** (pruned state) to save disk space, you must enable the full node mode.
 
-     sudo systemctl restart reth
+         To do this, edit the configuration file for your network (e.g., ``/etc/ethereum/reth.conf`` for Mainnet) and add the ``--full`` flag to the ``ARGS`` variable.
 
-.. _erigon-setup:
+         Example:
 
-Erigon :bdg-success:`Production Ready` :bdg-info:`Go` :bdg-primary:`Built-in CL`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         .. code-block:: bash
 
-.. csv-table::
-   :align: left
-  :header: Systemd Service, Home Directory, Config File, Ports
+            ARGS="node ... --full"
 
-  `erigon`, `/home/ethereum/.erigon`, `/etc/ethereum/erigon.conf`, `TCP/UDP: 30303`
+         After saving the file, restart the service:
 
-.. note::
-   **Erigon Setup Options**
-   
-   Erigon 3 includes **Caplin**, its own consensus layer. Choose your setup:
-   
-   **🎯 Simple Setup (Recommended)**
-   
-   - Use built-in Caplin consensus layer
-   - **Service:** ``erigon``
-   - **Use when:** Running a full node without external CL client
-   - **Advantages:** Single service, simpler configuration
-   
-   **🔧 Advanced Setup**
-   
-   - Use external consensus layer client
-   - **Service:** ``erigon-externalcl``
-   - **Use when:** You need compatibility with external CL clients
-   - **Advantages:** More flexibility, can use any CL client
+         .. prompt:: bash $
 
-In order to start the client run:
+           sudo systemctl restart reth
 
-.. prompt:: bash $
+   .. tab-item:: Erigon
 
-  sudo systemctl start erigon
+      .. _erigon-setup:
 
+      **Erigon** :bdg-success:`Production Ready` :bdg-info:`Go` :bdg-primary:`Built-in CL`
 
-.. note::
-   :guilabel:`Erigon` includes Caplin, its own consensus layer, and by default runs 
-   as a full Ethereum node without requiring a separate consensus layer client.
+      .. csv-table::
+         :align: left
+         :header: Systemd Service, Home Directory, Config File, Ports
 
-.. warning::
-   Erigon 3 introduces a major change to Erigon's architecture. Erigon is now configured to use 
-   Caplin as its consensus layer by default.  Users who wish to use an external consensus 
-   layer must explicitly configure Erigon to do so using the `erigon-externalcl` service. 
-   This is a breaking change and requires manual configuration.
+         `erigon`, `/home/ethereum/.erigon`, `/etc/ethereum/erigon.conf`, `TCP/UDP: 30303`
 
-**Caplin Consensus Layer**
+      .. note::
+         **Erigon Setup Options**
+         
+         Erigon 3 includes **Caplin**, its own consensus layer. Choose your setup:
+         
+         **🎯 Simple Setup (Recommended)**
+         
+         - Use built-in Caplin consensus layer
+         - **Service:** ``erigon``
+         - **Use when:** Running a full node without external CL client
+         - **Advantages:** Single service, simpler configuration
+         
+         **🔧 Advanced Setup**
+         
+         - Use external consensus layer client
+         - **Service:** ``erigon-externalcl``
+         - **Use when:** You need compatibility with external CL clients
+         - **Advantages:** More flexibility, can use any CL client
 
-Erigon has integrated Caplin, its own consensus layer, directly into the client. 
-This means that for most users, running a full Ethereum node is as simple as starting the `erigon` service. 
-The need for a separate beacon node client is eliminated in the default configuration.
+      In order to start the client run:
 
-**`erigon-externalcl` Service**
+      .. prompt:: bash $
 
-For advanced use cases or when compatibility with external consensus layer clients is required, 
-EoA provides the `erigon-externalcl` service. This service allows Erigon to operate with a separate consensus client.
+         sudo systemctl start erigon
 
-**Upgrade Notes**
 
-Due to the significant changes to Erigon's architecture, a manual upgrade process is necessary. 
-You can use the new provided config or update yours according to the Erigon documentation.
+      .. note::
+         :guilabel:`Erigon` includes Caplin, its own consensus layer, and by default runs 
+         as a full Ethereum node without requiring a separate consensus layer client.
 
-**Further Information**
+      .. warning::
+         Erigon 3 introduces a major change to Erigon's architecture. Erigon is now configured to use 
+         Caplin as its consensus layer by default.  Users who wish to use an external consensus 
+         layer must explicitly configure Erigon to do so using the `erigon-externalcl` service. 
+         This is a breaking change and requires manual configuration.
 
-For complete details on Erigon configuration, usage, and troubleshooting, please refer to the official Erigon documentation: [https://docs.erigon.tech]
+      **Caplin Consensus Layer**
+
+      Erigon has integrated Caplin, its own consensus layer, directly into the client. 
+      This means that for most users, running a full Ethereum node is as simple as starting the `erigon` service. 
+      The need for a separate beacon node client is eliminated in the default configuration.
+
+      **`erigon-externalcl` Service**
+
+      For advanced use cases or when compatibility with external consensus layer clients is required, 
+      EoA provides the `erigon-externalcl` service. This service allows Erigon to operate with a separate consensus client.
+
+      **Upgrade Notes**
+
+      Due to the significant changes to Erigon's architecture, a manual upgrade process is necessary. 
+      You can use the new provided config or update yours according to the Erigon documentation.
+
+      **Further Information**
+
+      For complete details on Erigon configuration, usage, and troubleshooting, please refer to the official Erigon documentation: [https://docs.erigon.tech]
 
 
 Staking

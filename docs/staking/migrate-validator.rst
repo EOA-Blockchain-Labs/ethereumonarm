@@ -61,68 +61,103 @@ Step 2: Stop the old validator and export slashing protection
 .. note::
 
    On Ethereum on ARM, validator services are client-specific.
-   Common service names include:
 
-   * ``lighthouse-validator``
-   * ``nimbus-validator``
-   * ``prysm-validator``
-   * ``teku-validator``
-   * ``lodestar-validator``
-   * ``grandine-validator``
+.. tab-set::
 
-1. Stop the validator **before exporting slashing protection**.
+   .. tab-item:: Lighthouse
 
-   .. code-block:: bash
+      1. Stop the validator **before exporting slashing protection**.
 
-      sudo systemctl stop lighthouse-validator
-      sudo systemctl stop nimbus-validator
-      sudo systemctl stop prysm-validator
-      sudo systemctl stop teku-validator
-      sudo systemctl stop lodestar-validator
-      sudo systemctl stop grandine-validator
+      .. code-block:: bash
 
-2. Export slashing protection from the **old node**.
+         sudo systemctl stop lighthouse-validator
 
-   Grandine
-     .. code-block:: bash
+      2. Export slashing protection from the **old node**.
 
-        grandine --network <NETWORK> interchange export slashing_protection.json
+      .. code-block:: bash
 
-   Lighthouse
-     .. code-block:: bash
+         lighthouse slashing-protection export \
+           --datadir /home/ethereum/.lighthouse \
+           --output slashing_protection.json
 
-        lighthouse slashing-protection export \
-          --datadir /home/ethereum/.lighthouse \
-          --output slashing_protection.json
+   .. tab-item:: Prysm
 
-   Prysm
-     .. code-block:: bash
+      1. Stop the validator **before exporting slashing protection**.
 
-        prysmctl slashing-protection export \
-          --datadir=/home/ethereum/.eth2 \
-          --output=slashing_protection.json
+      .. code-block:: bash
 
-   Nimbus
-     .. code-block:: bash
+         sudo systemctl stop prysm-validator
 
-        nimbus_beacon_node slashingdb export \
-          --data-dir=/home/ethereum/.local/share/nimbus \
-          slashing_protection.json
+      2. Export slashing protection from the **old node**.
 
-   Teku
-     .. code-block:: bash
+      .. code-block:: bash
 
-        teku slashing-protection export \
-          --data-path=/home/ethereum/.teku \
-          --to=slashing_protection.json
+         prysmctl slashing-protection export \
+           --datadir=/home/ethereum/.eth2 \
+           --output=slashing_protection.json
 
-   Lodestar
-     .. code-block:: bash
+   .. tab-item:: Nimbus
 
-        lodestar validator slashing-protection export \
-          --network <NETWORK> \
-          --file slashing_protection.json \
-          --dataDir /home/ethereum/.lodestar-validator
+      1. Stop the validator **before exporting slashing protection**.
+
+      .. code-block:: bash
+
+         sudo systemctl stop nimbus-validator
+
+      2. Export slashing protection from the **old node**.
+
+      .. code-block:: bash
+
+         nimbus_beacon_node slashingdb export \
+           --data-dir=/home/ethereum/.local/share/nimbus \
+           slashing_protection.json
+
+   .. tab-item:: Teku
+
+      1. Stop the validator **before exporting slashing protection**.
+
+      .. code-block:: bash
+
+         sudo systemctl stop teku-validator
+
+      2. Export slashing protection from the **old node**.
+
+      .. code-block:: bash
+
+         teku slashing-protection export \
+           --data-path=/home/ethereum/.teku \
+           --to=slashing_protection.json
+
+   .. tab-item:: Lodestar
+
+      1. Stop the validator **before exporting slashing protection**.
+
+      .. code-block:: bash
+
+         sudo systemctl stop lodestar-validator
+
+      2. Export slashing protection from the **old node**.
+
+      .. code-block:: bash
+
+         lodestar validator slashing-protection export \
+           --network <NETWORK> \
+           --file slashing_protection.json \
+           --dataDir /home/ethereum/.lodestar-validator
+
+   .. tab-item:: Grandine
+
+      1. Stop the validator **before exporting slashing protection**.
+
+      .. code-block:: bash
+
+         sudo systemctl stop grandine-validator
+
+      2. Export slashing protection from the **old node**.
+
+      .. code-block:: bash
+
+         grandine --network <NETWORK> interchange export slashing_protection.json
 
 3. Verify that ``slashing_protection.json`` exists and back it up securely.
 
@@ -131,14 +166,43 @@ Step 3: Disable and clean up the old validator
 
 1. Disable the validator service so it cannot auto-start:
 
-   .. code-block:: bash
+.. tab-set::
 
-      sudo systemctl disable lighthouse-validator
-      sudo systemctl disable nimbus-validator
-      sudo systemctl disable prysm-validator
-      sudo systemctl disable teku-validator
-      sudo systemctl disable lodestar-validator
-      sudo systemctl disable grandine-validator
+   .. tab-item:: Lighthouse
+
+      .. code-block:: bash
+
+         sudo systemctl disable lighthouse-validator
+
+   .. tab-item:: Prysm
+
+      .. code-block:: bash
+
+         sudo systemctl disable prysm-validator
+
+   .. tab-item:: Nimbus
+
+      .. code-block:: bash
+
+         sudo systemctl disable nimbus-validator
+
+   .. tab-item:: Teku
+
+      .. code-block:: bash
+
+         sudo systemctl disable teku-validator
+
+   .. tab-item:: Lodestar
+
+      .. code-block:: bash
+
+         sudo systemctl disable lodestar-validator
+
+   .. tab-item:: Grandine
+
+      .. code-block:: bash
+
+         sudo systemctl disable grandine-validator
 
 2. Confirm no validator processes are running:
 
@@ -179,144 +243,169 @@ Step 5: Import keys and slashing protection (new node)
    Replace ``<NETWORK>`` with ``mainnet``, ``gnosis`` or ``hoodi``.
    Import slashing protection **before starting the validator**.
 
-Grandine
-~~~~~~~~
+.. tab-set::
 
-1. Import keys:
+   .. tab-item:: Grandine
 
-   .. code-block:: bash
+      1. Import keys:
 
-      grandine --network <NETWORK> validator import \
-        --data-dir /home/ethereum/.grandine-validator \
-        --keystore-dir /home/ethereum/validator_keys \
-        --keystore-password-file /home/ethereum/password.txt
+      .. code-block:: bash
 
-2. Import slashing protection:
+         grandine --network <NETWORK> validator import \
+           --data-dir /home/ethereum/.grandine-validator \
+           --keystore-dir /home/ethereum/validator_keys \
+           --keystore-password-file /home/ethereum/password.txt
 
-   .. code-block:: bash
+      2. Import slashing protection:
 
-      grandine --network <NETWORK> interchange import slashing_protection.json
+      .. code-block:: bash
 
-Lighthouse
-~~~~~~~~~~
+         grandine --network <NETWORK> interchange import slashing_protection.json
 
-1. Import keys:
+   .. tab-item:: Lighthouse
 
-   .. code-block:: bash
+      1. Import keys:
 
-      lighthouse account validator import \
-        --network <NETWORK> \
-        --directory /home/ethereum/validator_keys \
-        --datadir /home/ethereum/.lighthouse
+      .. code-block:: bash
 
-2. Import slashing protection:
+         lighthouse account validator import \
+           --network <NETWORK> \
+           --directory /home/ethereum/validator_keys \
+           --datadir /home/ethereum/.lighthouse
 
-   .. code-block:: bash
+      2. Import slashing protection:
 
-      lighthouse slashing-protection import \
-        --datadir /home/ethereum/.lighthouse \
-        slashing_protection.json
+      .. code-block:: bash
 
-Lodestar
-~~~~~~~~
+         lighthouse slashing-protection import \
+           --datadir /home/ethereum/.lighthouse \
+           slashing_protection.json
 
-1. Import keys:
+   .. tab-item:: Lodestar
 
-   .. code-block:: bash
+      1. Import keys:
 
-      lodestar validator import \
-        --network <NETWORK> \
-        --directory /home/ethereum/validator_keys \
-        --dataDir /home/ethereum/.lodestar-validator
+      .. code-block:: bash
 
-2. Import slashing protection:
+         lodestar validator import \
+           --network <NETWORK> \
+           --directory /home/ethereum/validator_keys \
+           --dataDir /home/ethereum/.lodestar-validator
 
-   .. code-block:: bash
+      2. Import slashing protection:
 
-      lodestar validator slashing-protection import \
-        --network <NETWORK> \
-        --file slashing_protection.json \
-        --dataDir /home/ethereum/.lodestar-validator
+      .. code-block:: bash
 
-Nimbus
-~~~~~~
+         lodestar validator slashing-protection import \
+           --network <NETWORK> \
+           --file slashing_protection.json \
+           --dataDir /home/ethereum/.lodestar-validator
 
-1. Import keys:
+   .. tab-item:: Nimbus
 
-   .. code-block:: bash
+      1. Import keys:
 
-      nimbus_beacon_node deposits import \
-        --data-dir=/home/ethereum/.local/share/nimbus \
-        /home/ethereum/validator_keys
+      .. code-block:: bash
 
-2. Import slashing protection:
+         nimbus_beacon_node deposits import \
+           --data-dir=/home/ethereum/.local/share/nimbus \
+           /home/ethereum/validator_keys
 
-   .. code-block:: bash
+      2. Import slashing protection:
 
-      nimbus_beacon_node slashingdb import \
-        --data-dir=/home/ethereum/.local/share/nimbus \
-        slashing_protection.json
+      .. code-block:: bash
 
-Prysm
-~~~~~
+         nimbus_beacon_node slashingdb import \
+           --data-dir=/home/ethereum/.local/share/nimbus \
+           slashing_protection.json
 
-1. Import keys:
+   .. tab-item:: Prysm
 
-   .. code-block:: bash
+      1. Import keys:
 
-      prysmctl accounts import \
-        --keys-dir=/home/ethereum/validator_keys \
-        --wallet-dir=/home/ethereum/.eth2validators
+      .. code-block:: bash
 
-2. Import slashing protection:
+         prysmctl accounts import \
+           --keys-dir=/home/ethereum/validator_keys \
+           --wallet-dir=/home/ethereum/.eth2validators
 
-   .. code-block:: bash
+      2. Import slashing protection:
 
-      prysmctl slashing-protection import \
-        --datadir=/home/ethereum/.eth2 \
-        --input=slashing_protection.json
+      .. code-block:: bash
 
-Teku
-~~~~
+         prysmctl slashing-protection import \
+           --datadir=/home/ethereum/.eth2 \
+           --input=slashing_protection.json
 
-1. Import keys:
+   .. tab-item:: Teku
 
-   .. code-block:: bash
+      1. Import keys:
 
-      teku validator-client import-keystores \
-        --data-path=/home/ethereum/.teku \
-        --from=/home/ethereum/validator_keys \
-        --recursive=true
+      .. code-block:: bash
 
-2. Import slashing protection:
+         teku validator-client import-keystores \
+           --data-path=/home/ethereum/.teku \
+           --from=/home/ethereum/validator_keys \
+           --recursive=true
 
-   .. code-block:: bash
+      2. Import slashing protection:
 
-      teku slashing-protection import \
-        --data-path=/home/ethereum/.teku \
-        --from=slashing_protection.json
+      .. code-block:: bash
+
+         teku slashing-protection import \
+           --data-path=/home/ethereum/.teku \
+           --from=slashing_protection.json
 
 Step 6: Start the validator service
 -----------------------------------
 
 Enable and start **only the validator you use**:
 
-.. code-block:: bash
+.. tab-set::
 
-   sudo systemctl enable --now lighthouse-validator
-   sudo systemctl enable --now nimbus-validator
-   sudo systemctl enable --now prysm-validator
-   sudo systemctl enable --now teku-validator
-   sudo systemctl enable --now lodestar-validator
-   sudo systemctl enable --now grandine-validator
+   .. tab-item:: Lighthouse
 
-.. note::
+      .. code-block:: bash
 
-   If you are using MEV-Boost or Commit-Boost, you should use the ``-mev``
-   systemd service variants instead. For example:
+         sudo systemctl enable --now lighthouse-validator
 
-   * ``lighthouse-beacon-mev`` instead of ``lighthouse-beacon``
-   * ``lighthouse-validator-mev`` instead of ``lighthouse-validator``
+      .. note::
+
+         If you are using MEV-Boost or Commit-Boost, you should use the ``-mev``
+         systemd service variants instead. For example:
+
+         * ``lighthouse-beacon-mev`` instead of ``lighthouse-beacon``
+         * ``lighthouse-validator-mev`` instead of ``lighthouse-validator``
+
+   .. tab-item:: Prysm
+
+      .. code-block:: bash
+
+         sudo systemctl enable --now prysm-validator
+
+   .. tab-item:: Nimbus
+
+      .. code-block:: bash
+
+         sudo systemctl enable --now nimbus-validator
+
+   .. tab-item:: Teku
+
+      .. code-block:: bash
+
+         sudo systemctl enable --now teku-validator
+
+   .. tab-item:: Lodestar
+
+      .. code-block:: bash
+
+         sudo systemctl enable --now lodestar-validator
+
+   .. tab-item:: Grandine
+
+      .. code-block:: bash
+
+         sudo systemctl enable --now grandine-validator
 
 Follow logs:
 

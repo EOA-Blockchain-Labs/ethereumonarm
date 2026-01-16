@@ -1,0 +1,14 @@
+[Unit]
+Description=Linea Managed Besu Execution Client
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/linea.conf
+ExecStart=/usr/bin/linea-besu $ARGS
+Restart=always
+RestartSec=5
+User=ethereum
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

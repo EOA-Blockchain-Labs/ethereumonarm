@@ -9,9 +9,12 @@ Services
 This package installs a systemd service, disabled by default:
 
 - `maru.service`
+- `maru-sepolia.service`
 
 To enable the service, run:
     sudo systemctl enable --now maru.service
+    # Or for Sepolia:
+    sudo systemctl enable --now maru-sepolia.service
 
 Configuration
 -------------
@@ -19,6 +22,7 @@ Configuration
 Configuration arguments are defined in the environment file:
 
 - `/etc/ethereum/maru.conf`
+- `/etc/ethereum/maru-sepolia.conf`
 
 You can edit this file to customize the `ARGS` variable passed to the binary.
 

@@ -11,18 +11,82 @@ export DEBIAN_FRONTEND=noninteractive
 
 # --- Configuration ---
 # Packages
-BASE_PACKAGES="apt-utils nginx bash-completion file gdisk gpg parted net-tools rsync software-properties-common dphys-swapfile ufw vim wget kitty-terminfo"
-ETHEREUM_PACKAGES="arbitrum-nitro bee besu commit-boost dvt-obol dvt-ssv erigon ethstaker-deposit-cli ethereumonarm-utils ethrex fuel-network geth grandine kubo lighthouse lodestar ls-lido mev-boost nethermind nimbus optimism-cannon optimism-op-challenger optimism-op-geth optimism-op-node optimism-op-program optimism-op-proposer optimism-op-reth prysm reth starknet-juno starknet-madara starknet-pathfinder teku vero vouch"
-MONITORING_PACKAGES="ethereumonarm-monitoring-extras grafana prometheus prometheus-node-exporter ethereum-metrics-exporter"
-NGINX_PACKAGES="ethereumonarm-config-sync ethereumonarm-nginx-proxy-extras"
+BASE_PACKAGES=(
+  "apt-utils"
+  "nginx"
+  "bash-completion"
+  "file"
+  "gdisk"
+  "gpg"
+  "parted"
+  "net-tools"
+  "rsync"
+  "software-properties-common"
+  "dphys-swapfile"
+  "ufw"
+  "vim"
+  "wget"
+  "kitty-terminfo"
+)
+
+ETHEREUM_PACKAGES=(
+  "arbitrum-nitro"
+  "bee"
+  "besu"
+  "commit-boost"
+  "dvt-obol"
+  "dvt-ssv"
+  "erigon"
+  "ethstaker-deposit-cli"
+  "ethereumonarm-utils"
+  "ethrex"
+  "fuel-network"
+  "geth"
+  "grandine"
+  "kubo"
+  "lighthouse"
+  "lodestar"
+  "ls-lido"
+  "mev-boost"
+  "nethermind"
+  "nimbus"
+  "optimism-cannon"
+  "optimism-op-challenger"
+  "optimism-op-geth"
+  "optimism-op-node"
+  "optimism-op-program"
+  "optimism-op-proposer"
+  "optimism-op-reth"
+  "prysm"
+  "reth"
+  "starknet-juno"
+  "starknet-madara"
+  "starknet-pathfinder"
+  "teku"
+  "vero"
+  "vouch"
+)
+
+MONITORING_PACKAGES=(
+  "ethereumonarm-monitoring-extras"
+  "grafana"
+  "prometheus"
+  "prometheus-node-exporter"
+  "ethereum-metrics-exporter"
+)
+
+NGINX_PACKAGES=(
+  "ethereumonarm-config-sync"
+  "ethereumonarm-nginx-proxy-extras"
+)
 
 # --- Functions ---
 
 wait_for_apt_lock() {
-    while fuser /var/lib/dpkg/lock >/dev/null 2>&1 || fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
-        echo "Waiting for other apt processes to finish..."
-        sleep 1
-    done
+  while fuser /var/lib/dpkg/lock >/dev/null 2>&1 || fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
+    echo "Waiting for other apt processes to finish..."
+    sleep 1
+  done
 }
 
 # --- Main Install Logic ---
@@ -38,8 +102,7 @@ apt-get -y upgrade
 
 echo "Installing base packages..."
 wait_for_apt_lock
-# shellcheck disable=SC2086
-apt-get -y install $BASE_PACKAGES
+apt-get -y install "${BASE_PACKAGES[@]}"
 
 # 2. Add Repositories
 echo "Adding Ethereum on ARM repository..."
@@ -49,10 +112,10 @@ add-apt-repository -y -n "deb http://apt.ethereumonarm.com noble main"
 echo "Cleaning up old Grafana keys from the deprecated apt-key keyring..."
 OLD_GRAFANA_KEY_ID=$(apt-key list 2>/dev/null | grep -i 'Grafana Labs' -B 1 | head -n 1 | awk '{print $NF}' | cut -d/ -f2 | tail -c 9)
 if [ -n "$OLD_GRAFANA_KEY_ID" ]; then
-    echo "Found old Grafana key ID in apt keyring: ${OLD_GRAFANA_KEY_ID}. Deleting it..."
-    apt-key del "$OLD_GRAFANA_KEY_ID"
+  echo "Found old Grafana key ID in apt keyring: ${OLD_GRAFANA_KEY_ID}. Deleting it..."
+  apt-key del "$OLD_GRAFANA_KEY_ID"
 else
-    echo "No old Grafana key found in the deprecated apt keyring. Skipping deletion."
+  echo "No old Grafana key found in the deprecated apt keyring. Skipping deletion."
 fi
 rm -f /usr/share/keyrings/grafana.key
 
@@ -68,15 +131,15 @@ apt-get update
 # 3. Create Users
 echo "Creating ethereum user..."
 if ! id -u ethereum >/dev/null 2>&1; then
-    adduser --disabled-password --gecos "" ethereum
-    # Set default password (should be changed by user, or disabled for key-only access)
-    echo "ethereum:ethereum" | chpasswd
-    chage -d 0 ethereum
+  adduser --disabled-password --gecos "" ethereum
+  # Set default password (should be changed by user, or disabled for key-only access)
+  echo "ethereum:ethereum" | chpasswd
+  chage -d 0 ethereum
 
-    # Add to groups
-    for GRP in sudo netdev audio video dialout plugdev; do
-        adduser ethereum "$GRP"
-    done
+  # Add to groups
+  for GRP in sudo netdev audio video dialout plugdev; do
+    adduser ethereum "$GRP"
+  done
 fi
 
 # Passwordless sudo for ethereum user
@@ -86,25 +149,22 @@ chmod 0440 /etc/sudoers.d/90-ethereum-nopasswd
 # 4. Install Software
 echo "Installing Ethereum packages..."
 wait_for_apt_lock
-# shellcheck disable=SC2086
-apt-get -y install $ETHEREUM_PACKAGES
+apt-get -y install "${ETHEREUM_PACKAGES[@]}"
 
 echo "Installing Monitoring packages..."
 # Create prometheus user first
 if ! id -u prometheus >/dev/null 2>&1; then
-    adduser --quiet --system --home /home/prometheus --no-create-home --group --gecos "Prometheus daemon" prometheus
+  adduser --quiet --system --home /home/prometheus --no-create-home --group --gecos "Prometheus daemon" prometheus
 fi
 mkdir -p /home/prometheus/{metrics2,node-exporter}
 chown -R prometheus:prometheus /home/prometheus/{metrics2,node-exporter}
 
 wait_for_apt_lock
-# shellcheck disable=SC2086
-apt-get -y install $MONITORING_PACKAGES
+apt-get -y install "${MONITORING_PACKAGES[@]}"
 
 echo "Installing Nginx..."
 wait_for_apt_lock
-# shellcheck disable=SC2086
-apt-get -y install $NGINX_PACKAGES
+apt-get -y install "${NGINX_PACKAGES[@]}"
 
 # 5. Configuration & Services
 
@@ -141,9 +201,9 @@ echo "$EOA_VERSION" >/etc/eoa-release
 
 
 # Bash Alias
-echo "alias update-ethereum='sudo apt-get update && sudo apt-get install $ETHEREUM_PACKAGES'" >>/etc/bash.bashrc
+echo "alias update-ethereum='sudo apt-get update && sudo apt-get install ${ETHEREUM_PACKAGES[*]}'" >>/etc/bash.bashrc
 if ! grep -q "if \[ -f /etc/bash.bashrc \];" /etc/profile; then
-    echo "if [ -f /etc/bash.bashrc ]; then . /etc/bash.bashrc; fi" >>/etc/profile
+  echo "if [ -f /etc/bash.bashrc ]; then . /etc/bash.bashrc; fi" >>/etc/profile
 fi
 
 # Monitoring configuration

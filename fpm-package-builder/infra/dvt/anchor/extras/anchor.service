@@ -1,0 +1,15 @@
+[Unit]
+Description=Anchor SSV Client
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+EnvironmentFile=/etc/ethereum/anchor.conf
+# Anchor binary is located at /usr/bin/anchor
+ExecStart=/usr/bin/anchor node $ARGS
+Restart=always
+RestartSec=5
+User=ethereum
+
+[Install]
+WantedBy=multi-user.target

@@ -19,13 +19,13 @@ PKG_RELEASE     ?= 0
 PKG_ARCH        ?= arm64
 PKG_ARCH_RPM    ?= aarch64
 PKG_VENDOR      ?= Ethereum on ARM
-PKG_LICENSE     ?= "Apache License 2.0"
+PKG_LICENSE     ?= Apache License 2.0
 PKG_DESCRIPTION ?= A fast, secure, and portable light client for Ethereum
 PKG_MAINTAINER  ?= Ethereum on ARM <info@ethereumonarm.com>
 CATEGORY        ?= science
 WEB_URL         ?= https://github.com/a16z/helios
 SOURCESDIR      ?= sources
-OUTPUTDIR       ?= ../../../../packages
+OUTPUTDIR       ?= ../../../packages
 
 # ----------------------------------------------------------------------
 # Upstream version and source info

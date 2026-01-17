@@ -16,9 +16,14 @@
         "status-im/nimbus-eth1": "nimbus-ec",
         "paradigmxyz/reth": "reth"
     },
+    "Layer 1 Light Clients": {
+        "a16z/helios": "helios"
+    },
     "Layer 2": {
         "OffchainLabs/nitro": "arbitrum-nitro",
         "FuelLabs/fuel-core": "fuel-network",
+        "Consensys/linea": "linea-besu",
+        "maru-network/maru": "maru",
         "ethereum-optimism/op-geth": "optimism-op-geth",
         "ethereum-optimism/optimism#op-node": "optimism-op-node",
         "ethereum-optimism/optimism#op-challenger": "optimism-op-challenger",
@@ -28,6 +33,7 @@
         "eqlabs/pathfinder": "starknet-pathfinder"
     },
     "Infra": {
+        "sigp/anchor": "dvt-anchor",
         "ObolNetwork/charon": "dvt-obol",
         "ssvlabs/ssv": "dvt-ssv",
         "Commit-Boost/commit-boost-client": "commit-boost",

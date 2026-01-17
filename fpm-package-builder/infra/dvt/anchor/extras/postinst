@@ -1,0 +1,6 @@
+#!/bin/sh
+set -e
+
+[ ! -d "/home/ethereum/.anchor" ] && sudo -u ethereum mkdir -p /home/ethereum/.anchor
+
+exit 0

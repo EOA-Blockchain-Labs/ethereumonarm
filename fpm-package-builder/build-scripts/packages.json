@@ -22,8 +22,6 @@
     "Layer 2": {
         "OffchainLabs/nitro": "arbitrum-nitro",
         "FuelLabs/fuel-core": "fuel-network",
-        "Consensys/linea": "linea-besu",
-        "maru-network/maru": "maru",
         "ethereum-optimism/op-geth": "optimism-op-geth",
         "ethereum-optimism/optimism#op-node": "optimism-op-node",
         "ethereum-optimism/optimism#op-challenger": "optimism-op-challenger",

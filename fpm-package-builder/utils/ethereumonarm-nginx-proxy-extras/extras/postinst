@@ -1,5 +1,27 @@
 #!/bin/bash
-# post-installation script
-rm /etc/nginx/sites-enabled/default
-systemctl restart nginx
+# post-installation script for ethereumonarm-nginx-proxy-extras
+# 
+# This script:
+# 1. Creates symlink from sites-enabled to sites-available
+# 2. Removes default nginx site
+# 3. Tests nginx config before restarting
+
+set -e
+
+# Remove the default site if it exists
+rm -f /etc/nginx/sites-enabled/default
+
+# Create symlink for ethereum.conf if not already correct
+if [[ ! -L /etc/nginx/sites-enabled/ethereum.conf ]]; then
+    rm -f /etc/nginx/sites-enabled/ethereum.conf
+    ln -sf /etc/nginx/sites-available/ethereum.conf /etc/nginx/sites-enabled/ethereum.conf
+fi
+
+# Test nginx config before restarting
+if nginx -t 2>/dev/null; then
+    systemctl restart nginx || true
+else
+    echo "Warning: nginx config test failed, skipping restart"
+fi
+
 exit 0

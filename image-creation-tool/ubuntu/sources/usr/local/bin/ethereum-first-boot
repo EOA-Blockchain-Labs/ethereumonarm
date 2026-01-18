@@ -1,709 +1,113 @@
 #!/bin/bash
-# This script is designed to automatically set up an Ethereum node on a small computer.
-# It is intended to run only once, controlled by ethereum-first-boot.service.
+# Ethereum on ARM - Ansible Bootstrap Script
+# This minimal script installs Ansible and runs the provisioning playbook.
+# It is executed once on first boot by ethereum-first-boot.service.
 
-# This file acts as a marker. Its presence tells the system that the setup has already been completed.
-# The service ConditionPathExists=!/root/first-run.flag prevents re-execution.
+set -e
+
+# Configuration
 FLAG="/root/first-run.flag"
-
-
-# Define how long the script should wait for an internet connection to be established (in seconds).
+ANSIBLE_DIR="/opt/ethereumonarm/ansible"
 WAIT_TIME=20
+LOG_FILE="/var/log/ethereum-first-boot.log"
 
-# Display a message indicating the script is waiting for the network.
-echo "Waiting for the network connection to become active..."
-# Pause the script for the duration specified by WAIT_TIME.
-# This gives the system time to connect to the network after booting.
-sleep "$WAIT_TIME"
+# Redirect all output to log file and console
+exec > >(tee -a "${LOG_FILE}") 2>&1
 
-# Now, check if the computer can actually reach the internet.
-echo "Checking for an active internet connection..."
-# The 'wget' command tries to contact github.com.
-# -q: Quiet mode (no output).
-# -t 1: Try only once.
-# --timeout=30: Wait a maximum of 30 seconds for a response.
-# --spider: Don't download anything, just check if the server is reachable.
-# The 'if !' structure means "if the command fails...".
-if ! wget -q -t 1 --timeout=30 --spider http://github.com; then
-    echo "No internet connection detected. The setup cannot continue without internet access. Stopping."
-    exit 1 # Exit with an error code, as internet is crucial.
+echo "=============================================="
+echo "Ethereum on ARM - First Boot Provisioning"
+echo "Started at: $(date)"
+echo "=============================================="
+
+# Wait for network
+echo "Waiting ${WAIT_TIME} seconds for network..."
+sleep "${WAIT_TIME}"
+
+# Check network connectivity
+echo "Checking network connectivity..."
+if ! wget -q -t 3 --timeout=30 --spider http://github.com; then
+  echo "ERROR: No network connection. Cannot proceed."
+  exit 1
 fi
-echo "Internet connection is active."
+echo "Network connection verified."
 
-# Inject Netplan override to make Ethernet interfaces optional (prevent boot delay)
-echo "Creating Netplan override to make Ethernet interfaces optional..."
-tee /etc/netplan/99-optional-interfaces.yaml >/dev/null <<EOF
-network:
-  version: 2
-  ethernets:
-    all-eth-interfaces:
-      optional: true
-EOF
-chmod 600 /etc/netplan/99-optional-interfaces.yaml
+# Detect device model
+echo "Detecting device model..."
+DEVICE_MODEL=$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' || uname -m)
+echo "Detected: ${DEVICE_MODEL}"
 
-# --- Section: Identify the computer's hardware model ---
-echo "Identifying the computer hardware model..."
-# Try to read the model from the device tree (common on ARM devices like Raspberry Pi).
-# '2>/dev/null' suppresses error messages if the file doesn't exist.
-# If that fails (||), use 'uname -m' (machine hardware name) and remove any null characters with 'tr'.
-DEVICE_MODEL=$(cat /sys/firmware/devicetree/base/model 2>/dev/null || uname -m | tr -d '\\0')
-echo "Detected model: $DEVICE_MODEL"
-
-# --- Section: Adaptive swap-size calculation ----------------------------------
-# Calculate swap as 2 × RAM, capped at 32 GB (32768 MB)
-MEM_MB=$(awk '/MemTotal/ {print int($2/1024)}' /proc/meminfo)
-SWAP_SIZE=$((MEM_MB * 2))
-[ "$SWAP_SIZE" -gt 65536 ] && SWAP_SIZE=65536
-echo "Adaptive swap size chosen: ${SWAP_SIZE} MB"
-
-# Configure settings based on the identified computer model.
-# The 'case' statement checks the value of DEVICE_MODEL against known models.
-case "$DEVICE_MODEL" in
-"Raspberry Pi 5 Model B Rev 1.1")
-    TARGET_DISK="/dev/nvme0n1" # The primary storage device (likely an NVMe SSD) for Ethereum data.
-    PARTITION1="p1"            # The first partition on that disk (e.g., /dev/nvme0n1p1).
-    HOSTNAME_SEED="rpi5"       # A base string to help create a unique computer name.
+# Determine device type for Ansible variables
+case "${DEVICE_MODEL}" in
+  *"Raspberry Pi 5"*)
+    DEVICE_TYPE="rpi5"
     ;;
-
-"FriendlyElec NanoPC-T6" | "FriendlyElec NanoPC-T6 LTS")
-    TARGET_DISK="/dev/nvme0n1"
-    PARTITION1="p1"
-    HOSTNAME_SEED="nanopct6"
-
+  *"NanoPC-T6"*)
+    DEVICE_TYPE="nanopct6"
     ;;
-
-"Radxa ROCK 5B")
-    TARGET_DISK="/dev/nvme0n1"
-    PARTITION1="p1"
-    HOSTNAME_SEED="rock5b"
-
+  *"ROCK 5B"*)
+    DEVICE_TYPE="rock5b"
     ;;
-
-"Radxa ROCK 5T")
-    TARGET_DISK="/dev/nvme0n1"
-    PARTITION1="p1"
-    HOSTNAME_SEED="rock5t"
-
+  *"ROCK 5T"*)
+    DEVICE_TYPE="rock5t"
     ;;
-
-    # This handles two possible model names for the Orange Pi 5 Plus.
-"Orange Pi 5 Plus" | "Xunlong Orange Pi 5 Plus")
-    TARGET_DISK="/dev/nvme0n1"
-    PARTITION1="p1"
-    HOSTNAME_SEED="opi5plus"
-
+  *"Orange Pi 5 Plus"*)
+    DEVICE_TYPE="orangepi5plus"
     ;;
-
-# If the detected model doesn't match any of the known ones.
-*)
-    echo "Unsupported or unknown computer model: '$DEVICE_MODEL'. This script cannot automatically configure it. Stopping."
-    exit 1 # Exit with an error code.
+  *)
+    echo "WARNING: Unknown device model. Using defaults."
+    DEVICE_TYPE="unknown"
     ;;
 esac
-# Confirm the settings chosen based on the model.
-echo "Configuration: Target Disk=${TARGET_DISK}, Target Partition Suffix=${PARTITION1}, Hostname Seed=${HOSTNAME_SEED}"
+echo "Device type: ${DEVICE_TYPE}"
 
-# This prevents dpkg and apt from prompting for user input during package installation/configuration.
+# Install Ansible
+echo "Installing Ansible..."
 export DEBIAN_FRONTEND=noninteractive
+apt-get update -qq
+apt-get install -y ansible python3-jmespath || {
+  echo "ERROR: Failed to install Ansible."
+  exit 1
+}
+echo "Ansible installed: $(ansible --version | head -1)"
 
-# --- Section: Define lists of software packages to be installed ---
-# These are basic command-line utilities and tools needed for system administration.
-BASE_PACKAGES="apt-utils nginx bash-completion file gdisk gpg parted net-tools rsync software-properties-common dphys-swapfile ufw vim wget kitty-terminfo"
-# These are various Ethereum client implementations and related tools.
-# This list includes clients for different layers (execution, consensus) and networks (e.g., Arbitrum, Optimism).
-ETHEREUM_PACKAGES="arbitrum-nitro bee besu commit-boost dvt-obol dvt-ssv erigon ethstaker-deposit-cli ethereumonarm-utils ethrex fuel-network geth grandine kubo lighthouse lodestar ls-lido mev-boost nethermind nimbus optimism-cannon optimism-op-challenger optimism-op-geth optimism-op-node optimism-op-program optimism-op-proposer optimism-op-reth prysm reth starknet-juno starknet-madara starknet-pathfinder teku vero vouch"
-# These packages are for monitoring the Ethereum node's performance and system health.
-MONITORING_PACKAGES="ethereumonarm-monitoring-extras grafana prometheus prometheus-node-exporter ethereum-metrics-exporter"
-# Nginx is a web server, often used as a reverse proxy. These packages include Nginx and related configurations.
-NGINX_PACKAGES="ethereumonarm-config-sync ethereumonarm-nginx-proxy-extras"
-
-# --- Section: Configure Network Time Protocol (NTP) for accurate time synchronization ---
-# Accurate time is critical for Ethereum nodes to participate correctly in the network.
-
-# Create a directory for custom systemd-timesyncd configuration files if it doesn't already exist.
-# systemd-timesyncd is the default service on many Linux systems for synchronizing the system clock with NTP servers.
-# The '-p' flag ensures that parent directories are also created if they don't exist.
-mkdir -p /etc/systemd/timesyncd.conf.d/
-
-# Write a custom NTP configuration into 'eoa.conf'.
-# This configuration aims to improve time synchronization accuracy.
-# 'tee' writes the input to both the specified file and standard output (which is redirected to /dev/null to silence it).
-# The 'EOF' markers denote a "here document", allowing multi-line input.
-tee /etc/systemd/timesyncd.conf.d/eoa.conf >/dev/null <<EOF
-# Custom NTP Configuration for Ethereum on ARM
-# This file fine-tunes systemd-timesyncd for better time accuracy.
-# Accurate time is vital for blockchain operations, especially for validators.
-
-[Time]
-# Use Google's public NTP servers for reliable time sources.
-NTP=time1.google.com time2.google.com time3.google.com time4.google.com
-# Adjust polling intervals: how often the system checks with the NTP servers.
-# PollIntervalMinSec: Minimum time between checks (16 seconds).
-# PollIntervalMaxSec: Maximum time between checks (64 seconds).
-# These shorter intervals help reduce time drift.
-PollIntervalMinSec=16
-PollIntervalMaxSec=64
-# RootDistanceMaxSec: Maximum acceptable error from the primary time source (100 seconds).
-RootDistanceMaxSec=100
-EOF
-
-# Tell the system to use NTP for time synchronization.
-timedatectl set-ntp true
-
-echo "Waiting for the system clock to synchronize with NTP servers..."
-MAX_WAIT=20 # Maximum number of seconds to wait for synchronization.
-WAITED=0    # Counter for how long we've waited.
-# Loop until the system reports that NTP synchronization is complete ('yes').
-while [ "$(timedatectl show -p NTPSynchronized --value)" != "yes" ]; do
-    sleep 2                # Wait for 2 seconds before checking again.
-    WAITED=$((WAITED + 2)) # Increment the waited time.
-    # If we've waited longer than MAX_WAIT, stop waiting and issue a warning.
-    if [ $WAITED -ge $MAX_WAIT ]; then
-        echo "Warning: Time synchronization was not confirmed within $MAX_WAIT seconds. Proceeding anyway."
-        break # Exit the loop.
-    fi
-done
-# If the loop exited because sync was achieved (not due to timeout).
-if [ "$(timedatectl show -p NTPSynchronized --value)" = "yes" ]; then
-    echo "System clock synchronized successfully."
+# Verify playbook exists
+if [[ ! -f "${ANSIBLE_DIR}/playbook.yml" ]]; then
+  echo "ERROR: Playbook not found at ${ANSIBLE_DIR}/playbook.yml"
+  exit 1
 fi
 
-# --- Section: Install Basic System Programs ---
-echo "Cleaning up any potentially outdated local package cache..."
-apt-get clean all # Removes downloaded .deb files from /var/cache/apt/archives/
+# Run Ansible playbook
+echo "Running Ansible playbook..."
+cd "${ANSIBLE_DIR}"
 
-echo "Updating the list of available programs (package lists) from repositories..."
-# 'apt-get update' fetches the latest package information from all configured sources.
-# If this command fails, the script exits because it cannot proceed with installations.
-apt-get update || {
-    echo "Failed to update program lists. Please check your network and repository configuration. Stopping."
-    exit 1
-}
-echo "Installing essential basic programs..."
-# 'apt-get -y install' installs packages.
-# -y: Assume "yes" to all prompts (non-interactive).
-# If this fails, the script exits.
-# shellcheck disable=SC2086 # Word splitting is intentional for package list
-apt-get -y install $BASE_PACKAGES || {
-    echo "Failed to install one or more basic programs. Stopping."
-    exit 1
-}
-echo "Basic programs installed successfully."
+ansible-playbook \
+  -i inventory.yml \
+  playbook.yml \
+  --connection=local \
+  -v
 
-# --- Section: Add New Software Repositories (Sources for Programs) and Update Lists ---
-echo "Adding the Ethereum on ARM program repository to the system's sources..."
-# Download the GPG key for the Ethereum on ARM repository and save it to the trusted keys directory.
-# This key is used to verify the authenticity of packages from this repository.
-# -qO-: Download quietly and output to standard output.
-wget -qO- http://apt.ethereumonarm.com/eoa.apt.keyring.gpg | tee /etc/apt/trusted.gpg.d/eoa.gpg >/dev/null
-# Add the Ethereum on ARM repository to the system's software sources.
-# -y: Automatically say yes to prompts.
-# -n: Add repository without prompting for confirmation to update.
-add-apt-repository -y -n "deb http://apt.ethereumonarm.com noble main" || {
-    echo "Failed to add the Ethereum on ARM software repository. Stopping."
-    exit 1
-}
+ANSIBLE_EXIT=$?
 
-
-echo "Cleaning up old Grafana keys from the deprecated apt-key keyring..."
-# Find the short ID of any key containing 'Grafana Labs' in the deprecated keyring.
-OLD_GRAFANA_KEY_ID=$(sudo apt-key list 2>/dev/null | grep -i 'Grafana Labs' -B 1 | head -n 1 | awk '{print $NF}' | cut -d/ -f2 | tail -c 9)
-if [ -n "$OLD_GRAFANA_KEY_ID" ]; then
-    # Delete the old key using the automatically found ID.
-    echo "Found old Grafana key ID in apt keyring: ${OLD_GRAFANA_KEY_ID}. Deleting it..."
-    sudo apt-key del "$OLD_GRAFANA_KEY_ID"
-else
-    echo "No old Grafana key found in the deprecated apt keyring. Skipping deletion."
-fi
-# Remove an old key file if it exists in a common deprecated location.
-sudo rm -f /usr/share/keyrings/grafana.key
-
-# Create the new secure keyring directory if it doesn't exist.
-mkdir -p /etc/apt/keyrings/
-
-# Download Grafana's GPG key, de-armor it (convert from ASCII to binary), and save it to the NEW, SECURE location.
-wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg >/dev/null
-
-# Add the Grafana repository details to a new sources list file using the secure 'signed-by' method.
-echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee /etc/apt/sources.list.d/grafana.list || {
-     echo "Failed to add the Grafana software repository. Stopping."
-     exit 1
- }
-
-# Update the program list again to include packages from the newly added repositories.
-echo "Updating program lists again to include new repositories..."
-apt-get update || {
-    echo "Failed to update program lists after adding new repositories. Stopping."
-    exit 1
-}
-
-# --- Section: Prepare the Target Hard Drive ---
-
-# This function prepares the specified hard drive for use.
-# WARNING: This operation can erase all data on the disk if certain conditions are met.
-# It includes a safety check for a '.format_me' file if an existing '/home/ethereum' directory is found.
-format_disk() {
-    local DISK="$1"                          # The disk device, e.g., /dev/nvme0n1
-    local PART_DEVICE="${DISK}${PARTITION1}" # The specific partition, e.g., /dev/nvme0n1p1
-    local PROCEED_WITH_FORMAT=false          # Flag to determine if formatting should occur.
-
-    echo "Starting preparation for disk ${DISK}."
-    echo "DANGER: All data on ${DISK} may be erased!"
-    echo "Formatting will be SKIPPED ONLY IF an existing '/home/ethereum' directory is found on ${PART_DEVICE} AND a file named '.format_me' is NOT present within it."
-
-    # Check if the target partition device exists and appears to contain a Linux filesystem.
-    # -b "$PART_DEVICE": Checks if it's a block device (like a partition).
-    # file -s "$PART_DEVICE": Gets information about the partition.
-    # grep -oP 'Linux.*filesystem': Searches for "Linux" followed by "filesystem".
-    if [[ -b "$PART_DEVICE" ]] && file -s "$PART_DEVICE" | grep -qP 'Linux.*filesystem'; then
-        # Create a temporary directory to mount the partition for inspection.
-        TMP_DIR=$(mktemp -d) # 'mktemp -d' creates a unique temporary directory.
-        echo "Attempting to temporarily mount ${PART_DEVICE} to check its contents..."
-        # Try to mount the partition to the temporary directory.
-        if mount "$PART_DEVICE" "$TMP_DIR"; then
-            # Check if a directory named 'ethereum' exists at the root of the mounted partition (which would become /home/ethereum).
-            if [ -d "$TMP_DIR/ethereum" ]; then
-                echo "An existing '/home/ethereum' directory structure was found on ${PART_DEVICE}."
-                # Check for the '.format_me' file within this 'ethereum' directory.
-                if [ -f "$TMP_DIR/ethereum/.format_me" ]; then
-                    echo "The '.format_me' file was found in '/home/ethereum'. The disk WILL BE FORMATTED."
-                    PROCEED_WITH_FORMAT=true
-                else
-                    echo "The '.format_me' file was NOT found in '/home/ethereum'. Disk formatting will be SKIPPED."
-                    PROCEED_WITH_FORMAT=false
-                fi
-            else
-                echo "The path '/home/ethereum' does not exist on ${PART_DEVICE}. The disk WILL BE FORMATTED."
-                PROCEED_WITH_FORMAT=true
-            fi
-            # Unmount the partition from the temporary directory.
-            if mountpoint -q "$TMP_DIR"; then # Check if it's actually mounted.
-                umount "$TMP_DIR"
-            fi
-        else
-            echo "Could not mount ${PART_DEVICE} to check its contents. Assuming it needs formatting. The disk WILL BE FORMATTED."
-            PROCEED_WITH_FORMAT=true
-        fi
-        # Remove the temporary directory.
-        if [ -d "$TMP_DIR" ]; then
-            rm -r "$TMP_DIR"
-        fi
-    else
-        echo "Partition ${PART_DEVICE} does not exist or is not recognized as a Linux filesystem. The disk WILL BE FORMATTED."
-        PROCEED_WITH_FORMAT=true
-    fi
-
-    # If the decision is to format the disk:
-    if [ "$PROCEED_WITH_FORMAT" = true ]; then
-        echo "Attempting to unmount any currently mounted partitions on ${DISK}..."
-        # Try to unmount the specific target partition. '2>/dev/null' suppresses errors if it's not mounted.
-        umount "${PART_DEVICE}" 2>/dev/null || echo "Info: Partition ${PART_DEVICE} was not mounted or could not be unmounted."
-        # List all partitions on the disk and their mount points.
-        # awk '$2!=""{print $1}' filters for partitions that have a mount point ($2 is not empty) and prints their device name ($1).
-        # xargs -r -n1 umount then tries to unmount each of them.
-        lsblk -nrpo NAME,MOUNTPOINT "${DISK}" | awk '$2!=""{print $1}' | xargs -r -n1 umount 2>/dev/null || echo "Info: No other mounted partitions found on ${DISK}, or they could not be unmounted."
-        sleep 2 # Pause to allow unmounting operations to complete.
-
-        echo "Wiping any existing filesystem signatures and partition table from ${DISK}..."
-        # 'wipefs --all --force' removes all filesystem, RAID, or partition-table signatures.
-        wipefs --all --force "${DISK}" || {
-            echo "ERROR: Failed to wipe filesystem signatures from ${DISK}. Disk preparation aborted."
-            return 1 # Return an error code from the function.
-        }
-
-        echo "Creating a new GPT partition table and a single Linux partition on ${DISK}..."
-        # Create a new GPT (GUID Partition Table). '--force' overwrites, '--no-reread' avoids immediate kernel reread.
-        echo "label: gpt" | sfdisk --force --no-reread "${DISK}" || {
-            echo "ERROR: Failed to create GPT partition table on ${DISK}. Disk preparation aborted."
-            return 1
-        }
-        # Append a new partition that uses all available space (,,) and set its type to Linux (L).
-        echo ",,L" | sfdisk --append --force --no-reread "${DISK}" || {
-            echo "ERROR: Failed to create the new partition on ${DISK}. Disk preparation aborted."
-            return 1
-        }
-
-        echo "Waiting for the system to recognize the new partition ${PART_DEVICE}..."
-        sleep 5 # Give the system some time.
-        # 'partprobe' asks the kernel to re-read the partition table.
-        partprobe "${DISK}" || echo "Warning: partprobe command encountered an issue or reported no changes for ${DISK}."
-
-        echo "Triggering udev to ensure the system recognizes the new partition..."
-        # 'udevadm trigger' simulates events for device manager (udev) to process new devices.
-        udevadm trigger --action=add --subsystem-match=block || echo "Warning: udevadm trigger command failed."
-        echo "Waiting for udev processing to complete..."
-        # 'udevadm settle' waits until all udev events have been processed.
-        udevadm settle || echo "Warning: udevadm settle command failed."
-        sleep 2
-
-        # Check if the new partition device node has been created.
-        if [ ! -b "${PART_DEVICE}" ]; then # '-b' checks if it's a block device.
-            echo "Warning: The new partition ${PART_DEVICE} was not immediately detected. Waiting longer..."
-            sleep 15 # Wait an additional 15 seconds.
-            partprobe "${DISK}" || echo "Warning: partprobe (2nd attempt) encountered an issue or reported no changes for ${DISK}."
-            udevadm trigger --action=add --subsystem-match=block || echo "Warning: udevadm trigger (2nd attempt) command failed."
-            udevadm settle || echo "Warning: udevadm settle (2nd attempt) command failed."
-            sleep 2
-
-            if [ ! -b "${PART_DEVICE}" ]; then
-                echo "ERROR: The new partition ${PART_DEVICE} could still not be found after extended waiting. Disk setup cannot continue."
-                return 1
-            fi
-            echo "Partition ${PART_DEVICE} was found after the extended wait."
-        fi
-
-        echo "Formatting ${PART_DEVICE} with ext4 filesystem and labeling it 'ethereum_data'..."
-        # Check if the partition is somehow mounted before formatting.
-        if mountpoint -q "${PART_DEVICE}"; then # '-q' for quiet.
-            echo "Warning: ${PART_DEVICE} appears to be mounted. Attempting to unmount before formatting..."
-            umount "${PART_DEVICE}" || {
-                echo "ERROR: Failed to unmount ${PART_DEVICE} before formatting. Disk preparation aborted."
-                return 1
-            }
-            sleep 1 # Brief pause after unmount.
-        fi
-        # 'mkfs.ext4 -F' creates an ext4 filesystem.
-        # -F: Force operation (e.g., if the device is not a partition or is already formatted).
-        # -L "ethereum_data": Sets the filesystem label.
-        mkfs.ext4 -F -L "ethereum_data" "${PART_DEVICE}" || {
-            echo "ERROR: Failed to format ${PART_DEVICE} with ext4. Disk preparation aborted."
-            return 1
-        }
-
-        echo "Disk ${DISK} has been successfully prepared and formatted."
-        return 0 # Success.
-    else
-        echo "Skipping disk formatting for ${DISK} as per the .format_me file check or existing data."
-        return 0 # Return success, as skipping format was an intended outcome.
-    fi
-}
-
-# Call the function to prepare the hard drive. If it fails, stop the script.
-echo "Starting the disk preparation process for ${TARGET_DISK}..."
-format_disk "$TARGET_DISK" || exit 1 # If format_disk returns non-zero, exit script.
-echo "Disk preparation completed."
-
-# Set the reserved block percentage on the new partition to 0%.
-# By default, ext4 reserves 5% of blocks for the root user to prevent system issues if the disk fills up.
-# For a data-only drive, this is often unnecessary.
-echo "Setting reserved block space on ${TARGET_DISK}${PARTITION1} to 0%..."
-tune2fs -m 0 "${TARGET_DISK}${PARTITION1}"
-
-# Configure the system to automatically mount the new partition as /home.
-# The /etc/fstab file controls which filesystems are mounted at boot.
-echo "Updating /etc/fstab to mount ${TARGET_DISK}${PARTITION1} as /home..."
-# Remove any existing lines in /etc/fstab that try to mount something to /home.
-# 'sed -i' edits the file in place. '\|^.*/home.*|d' deletes lines matching the pattern.
-sed -i '\|^.*/home.*|d' /etc/fstab
-# Add the new entry for /home.
-# Format: <device> <mount_point> <filesystem_type> <options> <dump> <pass>
-# Options:
-#   defaults: Use default mount options.
-#   noatime: Do not update inode access times (improves performance).
-#   commit=120: How often to commit data to disk (120 seconds).
-#   data=writeback: Data is written to disk after metadata, can improve performance but slightly higher risk on power loss.
-# 0 2: dump flag (0 = no dump), fsck order (2 = check after root).
-echo "${TARGET_DISK}${PARTITION1} /home ext4 defaults,noatime 0 2" >>/etc/fstab
-echo "Mounting the new /home partition..."
-systemctl daemon-reload # Tell systemd to re-read configuration files, including fstab.
-mount /home || {        # Attempt to mount /home based on the new fstab entry.
-    echo "ERROR: Failed to mount the new /home partition. Please check /etc/fstab and disk status. Stopping."
-    exit 1
-}
-systemctl daemon-reload # Reload daemon configurations again to ensure all services are aware.
-echo "/home mounted successfully."
-
-# --- Section: Set up a dedicated user for Ethereum operations ---
-echo "Setting up the 'ethereum' user account..."
-# Check if the 'ethereum' user already exists. 'id -u' gets user ID; output suppressed.
-if ! id -u ethereum >/dev/null 2>&1; then
-    echo "Creating the 'ethereum' user..."
-    # Create the user:
-    # --disabled-password: User cannot log in with a password initially (e.g., only via SSH keys or after password set).
-    # --gecos "": Sets the GECOS field (user's full name, etc.) to empty.
-    adduser --disabled-password --gecos "" ethereum
-    echo "Setting an initial password for 'ethereum' (user must change this on first login)..."
-    # Set the password for 'ethereum' to 'ethereum'. 'chpasswd' reads 'username:password' from input.
-    echo "ethereum:ethereum" | chpasswd
-    # Force the user to change their password upon their next login.
-    chage -d 0 ethereum # '-d 0' sets the last password change date to epoch, triggering expiry.
-    echo "'ethereum' user created. Password must be changed at first login."
-else
-    echo "User 'ethereum' already exists. Skipping creation."
+if [[ ${ANSIBLE_EXIT} -ne 0 ]]; then
+  echo "=============================================="
+  echo "ERROR: Ansible playbook failed with exit code ${ANSIBLE_EXIT}"
+  echo "The flag file was NOT created."
+  echo "Provisioning will be RETRIED on next boot."
+  echo "Check ${LOG_FILE} for details."
+  echo "=============================================="
+  exit ${ANSIBLE_EXIT}
 fi
 
-echo "Adding 'ethereum' user to relevant system groups..."
-# Add the 'ethereum' user to groups that grant necessary permissions:
-# sudo: Allows running commands as root (with sudo).
-# netdev: Allows managing network interfaces.
-# audio, video: Access to audio/video devices (may not be strictly needed for a server).
-# dialout: Access to serial ports.
-# plugdev: Allows managing pluggable devices.
-for GRP in sudo netdev audio video dialout plugdev; do
-    adduser ethereum "$GRP"
-done
-echo "'ethereum' user added to groups: sudo, netdev, audio, video, dialout, plugdev."
+echo "=============================================="
+echo "Provisioning completed successfully!"
+echo "Finished at: $(date)"
+echo "=============================================="
 
-echo "Granting passwordless sudo privileges to the 'ethereum' user..."
-# This allows the 'ethereum' user to run any command with 'sudo' without entering a password.
-# This is convenient but should be used cautiously.
-SUDOERS_FILE="/etc/sudoers.d/90-ethereum-nopasswd"
-# Create the sudoers configuration file.
-# 'ethereum ALL=(ALL) NOPASSWD: ALL' means:
-#   User 'ethereum' on ALL hosts can run commands as ALL users with NOPASSWD (no password required) for ALL commands.
-echo "ethereum ALL=(ALL) NOPASSWD: ALL" >"$SUDOERS_FILE" || {
-    echo "ERROR: Failed to create the sudoers file for 'ethereum'. Passwordless sudo not configured."
-    # Do not proceed if file creation failed, as permissions step would be on a non-existent file.
-}
-# Set correct, secure permissions for this sudoers file.
-# It must be readable only by root (0440 means r--r-----). sudo ignores files with insecure permissions.
-chmod 0440 "$SUDOERS_FILE" || {
-    echo "ERROR: Failed to set correct permissions on the sudoers file for 'ethereum'. Removing potentially insecure file."
-    # If chmod fails, remove the file as it might be insecure.
-    rm -f "$SUDOERS_FILE"
-    echo "Passwordless sudo not configured due to permission error."
-}
-if [ -f "$SUDOERS_FILE" ]; then
-    echo "Passwordless sudo configured successfully for 'ethereum' user via $SUDOERS_FILE."
-fi
+# Create flag file to prevent re-execution
+touch "${FLAG}"
 
-echo "'ethereum' user setup is complete."
-
-# --- Section: Set up Swap Space (Virtual Memory) using dphys-swapfile ---
-echo "Setting up swap space using dphys-swapfile..."
-
-# Configure swap file location and size
-echo "Configuring swap file location and size in /etc/dphys-swapfile..."
-sudo sed -i "s|#CONF_SWAPFILE=.*|CONF_SWAPFILE=/home/ethereum/swapfile|" /etc/dphys-swapfile
-sudo sed -i "s|#CONF_SWAPSIZE=.*|CONF_SWAPSIZE=${SWAP_SIZE}|" /etc/dphys-swapfile
-sudo sed -i "s|#CONF_MAXSWAP=.*|CONF_MAXSWAP=${SWAP_SIZE}|" /etc/dphys-swapfile
-
-# Enable dphys-swapfile service
-echo "Enabling dphys-swapfile service..."
-sudo systemctl enable dphys-swapfile --now || {
-    echo "ERROR: Failed to enable dphys-swapfile service. Stopping."
-    exit 1
-}
-
-echo "Verifying active swap spaces..."
-sudo swapon --show
-echo "Swap setup completed successfully using dphys-swapfile."
-
-# --- Section: Set Computer Hostname and Network Configuration ---
-echo "Setting up the computer's hostname..."
-# Determine the active network interface used for internet traffic.
-# 'ip route get 8.8.8.8' shows the route to Google's DNS.
-# 'awk '/dev/ {print $5; exit}'' extracts the interface name (e.g., eth0, wlan0).
-ACTIVE_INTERFACE=$(ip route get 8.8.8.8 | awk '/dev/ {print $5; exit}')
-
-if [ -z "$ACTIVE_INTERFACE" ]; then # Check if an interface was found.
-    echo "Warning: Could not automatically determine the active network interface. Skipping hostname setup."
-else
-    echo "Active network interface identified as: $ACTIVE_INTERFACE"
-    # Get the MAC (hardware) address of the active interface.
-    MAC_ADDRESS=$(cat /sys/class/net/"$ACTIVE_INTERFACE"/address)
-    if [ -n "$MAC_ADDRESS" ]; then # Check if MAC address was retrieved.
-        echo "MAC address for $ACTIVE_INTERFACE: $MAC_ADDRESS"
-        # Create a short, unique hash from the MAC address to append to the hostname.
-        # 'sha256sum' calculates a hash, 'cut -c1-8' takes the first 8 characters.
-        MAC_HASH=$(echo "$MAC_ADDRESS" | sha256sum | cut -c1-8)
-        # Construct the new hostname.
-        NEW_HOSTNAME="ethereumonarm-${HOSTNAME_SEED}-${MAC_HASH}"
-        echo "Setting new hostname to: $NEW_HOSTNAME"
-        # Write the new hostname to /etc/hostname (read at boot).
-        echo "$NEW_HOSTNAME" >/etc/hostname
-        # Set the hostname for the current session and persistently.
-        hostnamectl set-hostname "$NEW_HOSTNAME"
-        # Update /etc/hosts to map 127.0.1.1 (a loopback address often used for the local hostname) to the new hostname.
-        # 'sed -i' edits in place. 's/old_pattern/new_pattern/g' replaces occurrences.
-        sed -i "s/127\.0\.1\.1.*/127.0.1.1\t$NEW_HOSTNAME/g" /etc/hosts
-        echo "Computer hostname setup completed."
-    else
-        echo "Warning: Could not retrieve the MAC address for $ACTIVE_INTERFACE. Skipping hostname setup."
-    fi
-fi
-
-# --- Section: Apply System Performance Tweaks ---
-echo "Applying system performance optimizations..."
-# For Armbian systems, zRAM (compressed RAM block device for swap) might be enabled.
-# This script sets up a disk-based swap, so zRAM can be disabled if preferred.
-if [[ -f /etc/default/armbian-zram-config ]]; then # Check if Armbian zRAM config file exists.
-    echo "Armbian zRAM configuration found. Disabling zRAM..."
-    # Change 'ENABLED=true' to 'ENABLED=false' in the config file.
-    sed -i "s/ENABLED=true/ENABLED=false/g" /etc/default/armbian-zram-config
-fi
-
-
-# --- Section: Install Ethereum-related Programs ---
-echo "Installing Ethereum client software and related tools..."
-# Install the packages listed in the ETHEREUM_PACKAGES variable.
-# -y: Assume "yes" to prompts.
-# shellcheck disable=SC2086 # Word splitting is intentional for package list
-apt-get -y install $ETHEREUM_PACKAGES || {
-    echo "ERROR: Failed to install one or more Ethereum programs. Stopping."
-    exit 1
-}
-echo "Ethereum programs installed successfully."
-
-# Create a file to store information about the Ethereum on ARM (EOA) image version.
-echo "Setting Ethereum on ARM release information..."
-EOA_RELEASE_FILE="/etc/eoa-release"
-# EOA_MINOR_VERSION can be optionally set as an environment variable before running the script. Defaults to 0.
-EOA_MINOR_VERSION=${EOA_MINOR_VERSION:-0}
-# EOA_MAJOR_VERSION is generated from the current year and month (e.g., 25.05 for May 2025).
-EOA_MAJOR_VERSION=$(date +"%y.%m")
-EOA_VERSION="Ethereum on ARM $EOA_MAJOR_VERSION.$EOA_MINOR_VERSION"
-# Write the version string to the release file.
-echo "$EOA_VERSION" >"$EOA_RELEASE_FILE"
-echo "EOA release version set to: $EOA_VERSION in $EOA_RELEASE_FILE"
-
-# --- Section: Add a Command Shortcut (Alias) for Updating Ethereum Programs ---
-echo "Adding a convenient shell alias 'update-ethereum' for system updates..."
-# Remove any existing alias for 'update-ethereum' from /etc/bash.bashrc to avoid duplicates.
-sed -i '/^alias update-ethereum=/d' /etc/bash.bashrc
-# Add the new alias to /etc/bash.bashrc, which is sourced by new bash shells.
-# This alias will run 'apt-get update' and then 'apt-get install' for the Ethereum packages.
-cat <<EOF >>/etc/bash.bashrc
-
-# Shortcut command to update Ethereum on ARM core packages
-alias update-ethereum='sudo apt-get update && sudo apt-get install $ETHEREUM_PACKAGES'
-EOF
-
-# Ensure that /etc/bash.bashrc is sourced by /etc/profile for all users.
-# This makes aliases in /etc/bash.bashrc available in login shells.
-# 'grep -q' checks quietly if the line exists. If not (||), append it.
-grep -q "if \[ -f /etc/bash.bashrc \]; then . /etc/bash.bashrc; fi" /etc/profile ||
-    echo "if [ -f /etc/bash.bashrc ]; then . /etc/bash.bashrc; fi" >>/etc/profile
-echo "Alias 'update-ethereum' added. It will be available in new shell sessions."
-
-# --- Section: Set up Monitoring Programs (Grafana, Prometheus) ---
-echo "Setting up monitoring programs (Grafana, Prometheus, Node Exporter)..."
-
-echo "Ensuring the 'prometheus' system user exists..."
-# Check if the 'prometheus' user (typically a system user for running Prometheus services) exists.
-if ! id -u prometheus >/dev/null 2>&1; then
-    # Create the 'prometheus' user if it doesn't exist.
-    # --quiet: Suppress messages.
-    # --system: Create a system user (typically with UID < 1000, no password, no shell).
-    # --home /home/prometheus: Specify home directory (though --no-create-home is used).
-    # --no-create-home: Don't create the home directory (we'll create specific subdirs).
-    # --group: Create a group with the same name ('prometheus').
-    # --gecos "Prometheus daemon": Description for the user.
-    adduser --quiet --system --home /home/prometheus --no-create-home --group --gecos "Prometheus daemon" prometheus
-    echo "System user 'prometheus' created."
-else
-    echo "System user 'prometheus' already exists."
-fi
-# Create specific directories for Prometheus data and Node Exporter textfiles.
-mkdir -p /home/prometheus/{metrics2,node-exporter}
-# Set ownership of these directories to the 'prometheus' user and group.
-chown -R prometheus:prometheus /home/prometheus/{metrics2,node-exporter}
-
-echo "Installing monitoring-related packages..."
-# Install packages listed in MONITORING_PACKAGES.
-# shellcheck disable=SC2086 # Word splitting is intentional for package list
-apt-get -y install $MONITORING_PACKAGES || {
-    echo "ERROR: Failed to install one or more monitoring programs. Stopping."
-    exit 1
-}
-
-echo "Enabling monitoring services to start on boot..."
-# Configure Grafana server, Prometheus, and Prometheus Node Exporter to start automatically when the system boots.
-systemctl enable grafana-server
-systemctl enable prometheus prometheus-node-exporter ethereum-metrics-exporter
-
-echo "Applying specific configurations for Ethereum on ARM monitoring tools..."
-# 'set-ethereumonarm-monitoring-extras -o' is a script likely provided by ethereumonarm-utils
-# to set up dashboards or specific Prometheus scrape targets for Ethereum clients.
-# The '-o' flag might mean "overwrite" or "optimize" or a specific preset.
-set-ethereumonarm-monitoring-extras -o || echo "Warning: Failed to apply specific monitoring settings. Some dashboards or metrics might need manual configuration."
-systemctl daemon-reload # Reload systemd if the above script modified service files.
-echo "Monitoring programs setup and services enabled."
-
-# --- Section: Set up Nginx (Web Server / Reverse Proxy) ---
-echo "Setting up Nginx web server..."
-echo "Installing Nginx and related packages..."
-# Install packages listed in NGINX_PACKAGES.
-# shellcheck disable=SC2086 # Word splitting is intentional for package list
-apt-get -y install $NGINX_PACKAGES || {
-    echo "ERROR: Failed to install Nginx or related packages. Stopping."
-    exit 1
-}
-echo "Enabling Nginx service to start on boot..."
-systemctl enable nginx # Configure Nginx to start automatically.
-echo "Nginx setup completed and service enabled."
-
-# --- Section: Restore Ethereum Client Configurations if they Exist ---
-echo "Checking for existing Ethereum client configurations to restore..."
-# This allows preserving client settings (like validator keys, database paths if customized in configs)
-# if this script is re-run on a system that previously had an Ethereum node.
-# The configurations are expected to be backed up in '/home/ethereum/.etc/ethereum/'.
-if [ -d "/home/ethereum/.etc/ethereum/" ]; then
-    echo "Found existing configurations in /home/ethereum/.etc/ethereum/. Attempting to restore them to /etc/ethereum/..."
-    # 'rsync' synchronizes files and directories.
-    # --min-size=1: Skip empty files (useful if placeholder files exist).
-    # -a: Archive mode (preserves permissions, ownership, timestamps, etc.).
-    # -v: Verbose output.
-    # -z: Compress file data during transfer.
-    rsync --min-size=1 -avz "/home/ethereum/.etc/ethereum/" "/etc/ethereum/"
-    echo "Client configurations restored from /home/ethereum/.etc/ethereum/ to /etc/ethereum/."
-else
-    echo "No existing client configurations found at /home/ethereum/.etc/ethereum/. Skipping restore."
-fi
-
-# --- Section: Apply Basic Security Hardening Measures ---
-echo "Applying basic security hardening measures..."
-echo "Disabling direct root login by locking the root account password..."
-# 'passwd -l root' locks the root account's password. This prevents direct login as root using a password.
-# Root access should then primarily be through 'sudo' by authorized users.
-passwd -l root
-
-# --- Section: Clean up by Removing Other Standard Users ---
-# Get the range for standard user IDs from /etc/login.defs.
-# Standard users typically have UIDs between UID_MIN (e.g., 1000) and UID_MAX.
-UID_MIN=$(awk '/^UID_MIN/{print $2}' /etc/login.defs)
-UID_MAX=$(awk '/^UID_MAX/{print $2}' /etc/login.defs)
-
-echo "Removing other standard user accounts (UIDs between $UID_MIN-$UID_MAX), except for the 'ethereum' user..."
-# 'awk' processes /etc/passwd:
-#   -F:: Sets the field separator to a colon.
-#   -v min/max: Passes shell variables to awk.
-#   '{if($3 >= min && $3 <= max && $1 != "ethereum") print $1}':
-#     If the UID ($3) is within the standard range AND the username ($1) is not 'ethereum', print the username.
-# 'xargs -r deluser --remove-home':
-#   Takes the list of usernames and runs 'deluser --remove-home' for each.
-#   -r: Don't run if input is empty.
-#   --remove-home: Deletes the user's home directory as well.
-# This is done to remove default users that might have been created by the OS image, leaving only the 'ethereum' user.
-awk -F: -v min="$UID_MIN" -v max="$UID_MAX" '{if($3 >= min && $3 <= max && $1 != "ethereum") print $1}' /etc/passwd | xargs -r deluser --remove-home || echo "Warning: Could not remove all other standard users, or no other users to remove."
-
-# --- Section: Finalize Permissions for the Ethereum User's Home Directory ---
-echo "Ensuring correct ownership for /home/ethereum and its contents..."
-# Recursively set the owner and group of /home/ethereum and everything inside it to 'ethereum:ethereum'.
-# This is important after creating the user and potentially moving data (like swap file or config backups).
-chown -R ethereum:ethereum /home/ethereum/
-
-# --- Section: Configure Firewall (UFW - Uncomplicated Firewall) ---
-echo "Disabling the UFW firewall..."
-# This script disables UFW. For a production environment, a properly configured firewall is highly recommended.
-# This step might be included for simplicity during initial setup or if firewall rules are managed externally.
-# '--force' bypasses prompts.
-ufw --force disable
-echo "UFW firewall has been disabled. Remember to configure firewall rules if this node will be internet-facing."
-
-# --- Section: Finalize Setup, Create Flag File, and Restart ---
-echo "Setup process is complete. Creating the first-run flag file and preparing for system restart."
-# Create the flag file. Its presence will prevent this script from running again on subsequent boots.
-touch "$FLAG"
-# Append relevant lines from syslog (system log) about 'rc.local' (which might be how this script is initiated)
-# to the flag file. This can be useful for debugging the first-run process.
-grep "rc.local" /var/log/syslog >>"$FLAG" 2>/dev/null # Suppress error if syslog or pattern not found
-
-# 'sync' ensures all pending disk writes are completed.
-# 'sleep 3' pauses for 3 seconds to allow sync to finish.
-# 'reboot' restarts the computer.
-echo "System will now restart to apply all changes."
-sync && sleep 3 && reboot
-
-# This line should ideally not be reached if reboot is successful.
-exit 0 # Indicate successful completion of the script.
+# Sync and reboot
+echo "System will reboot in 10 seconds..."
+sync
+sleep 10
+reboot

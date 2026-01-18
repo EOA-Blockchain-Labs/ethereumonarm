@@ -66,13 +66,20 @@
         state: directory
         mode: "0755"
 
-    - name: Add APT repository keys
+    - name: Add APT repository keys (binary format)
       ansible.builtin.get_url:
         url: "{{ item.key_url }}"
         dest: "{{ item.keyring }}"
         mode: "0644"
       loop: "{{ apt_sources }}"
-      when: item.key_url is defined
+      when: item.key_url is defined and not (item.dearmor | default(false))
+
+    - name: Add APT repository keys (dearmor ASCII keys)
+      ansible.builtin.shell:
+        cmd: 'curl -fsSL "{{ item.key_url }}" | gpg --dearmor -o "{{ item.keyring }}"'
+        creates: "{{ item.keyring }}"
+      loop: "{{ apt_sources }}"
+      when: item.key_url is defined and (item.dearmor | default(false))
 
     - name: Add APT repositories
       ansible.builtin.apt_repository:

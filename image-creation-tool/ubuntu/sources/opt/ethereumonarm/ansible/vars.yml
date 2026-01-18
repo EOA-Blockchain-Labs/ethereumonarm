@@ -81,11 +81,13 @@ apt_sources:
     key_url: "https://repo.ethereumonarm.com/eoa.apt.keyring.gpg"
     keyring: "/etc/apt/keyrings/ethereumonarm.gpg"
     repo: "deb [signed-by=/etc/apt/keyrings/ethereumonarm.gpg] https://repo.ethereumonarm.com noble main"
+    dearmor: false
 
   - name: "grafana"
     key_url: "https://apt.grafana.com/gpg.key"
     keyring: "/etc/apt/keyrings/grafana.gpg"
     repo: "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main"
+    dearmor: true
 
 # =============================================================================
 # PACKAGE LISTS

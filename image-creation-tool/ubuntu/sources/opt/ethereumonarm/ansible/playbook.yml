@@ -1,0 +1,537 @@
+---
+# Ethereum on ARM - First Boot Provisioning Playbook
+# Single-file playbook with all tasks inline for simplicity
+
+- name: Ethereum on ARM First Boot Provisioning
+  hosts: localhost
+  connection: local
+  become: true
+  gather_facts: true
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+    # =========================================================================
+    # DEVICE DETECTION
+    # =========================================================================
+    - name: Display provisioning start
+      ansible.builtin.debug:
+        msg: "Starting Ethereum on ARM provisioning..."
+
+    - name: Detect device model from device tree
+      ansible.builtin.slurp:
+        src: /sys/firmware/devicetree/base/model
+      register: device_tree_model
+      ignore_errors: true
+
+    - name: Set device model fact
+      ansible.builtin.set_fact:
+        detected_model: "{{ (device_tree_model.content | b64decode | regex_replace('\\x00', '')) if device_tree_model is succeeded else 'Unknown' }}"
+
+    - name: Display detected device
+      ansible.builtin.debug:
+        msg: "Detected device: {{ detected_model }}"
+
+    - name: Match device configuration
+      ansible.builtin.set_fact:
+        target_disk: "{{ item.value.target_disk }}"
+        partition_suffix: "{{ item.value.partition_suffix }}"
+        hostname_seed: "{{ item.value.hostname_seed }}"
+      loop: "{{ devices | dict2items }}"
+      when: item.value.pattern in detected_model
+
+    - name: Fail if device not recognized
+      ansible.builtin.fail:
+        msg: "Unknown device: {{ detected_model }}. Add device config to vars.yml."
+      when: target_disk is not defined
+
+    - name: Calculate swap size (2x RAM, max 64GB)
+      ansible.builtin.set_fact:
+        calculated_swap_mb: "{{ [ansible_memtotal_mb * 2, swap_max_mb] | min | int }}"
+
+    # =========================================================================
+    # APT SETUP
+    # =========================================================================
+    - name: Set DEBIAN_FRONTEND to noninteractive
+      ansible.builtin.lineinfile:
+        path: /etc/environment
+        line: "DEBIAN_FRONTEND=noninteractive"
+        create: true
+        mode: "0644"
+
+    - name: Create APT keyrings directory
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: "0755"
+
+    - name: Add APT repository keys
+      ansible.builtin.get_url:
+        url: "{{ item.key_url }}"
+        dest: "{{ item.keyring }}"
+        mode: "0644"
+      loop: "{{ apt_sources }}"
+      when: item.key_url is defined
+
+    - name: Add APT repositories
+      ansible.builtin.apt_repository:
+        repo: "{{ item.repo }}"
+        state: present
+        filename: "{{ item.name }}"
+      loop: "{{ apt_sources }}"
+
+    - name: Update APT cache
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install base packages
+      ansible.builtin.apt:
+        name: "{{ base_packages }}"
+        state: present
+      retries: 3
+      delay: 10
+
+    # =========================================================================
+    # NETWORK CONFIGURATION
+    # =========================================================================
+    - name: Create netplan override for optional interfaces
+      ansible.builtin.copy:
+        dest: /etc/netplan/99-optional-interfaces.yaml
+        content: |
+          network:
+            version: 2
+            ethernets:
+              all-eth-interfaces:
+                optional: true
+        mode: "0600"
+
+    - name: Ensure timesyncd config directory exists
+      ansible.builtin.file:
+        path: /etc/systemd/timesyncd.conf.d
+        state: directory
+        mode: "0755"
+
+    - name: Configure NTP servers
+      ansible.builtin.copy:
+        dest: /etc/systemd/timesyncd.conf.d/custom-ntp.conf
+        content: |
+          [Time]
+          NTP={{ ntp_servers | join(' ') }}
+          PollIntervalMinSec=16
+          PollIntervalMaxSec=64
+        mode: "0644"
+      notify: Restart timesyncd
+
+    - name: Enable NTP synchronization
+      ansible.builtin.command:
+        cmd: timedatectl set-ntp true
+      changed_when: false
+
+    - name: Get active network interface
+      ansible.builtin.shell:
+        cmd: "ip route get 8.8.8.8 | awk '/dev/ {print $5; exit}'"
+      register: active_interface
+      changed_when: false
+      ignore_errors: true
+
+    - name: Get MAC address
+      ansible.builtin.slurp:
+        src: "/sys/class/net/{{ active_interface.stdout }}/address"
+      register: mac_address
+      when: active_interface.stdout | length > 0
+      ignore_errors: true
+
+    - name: Generate hostname from MAC
+      ansible.builtin.set_fact:
+        generated_hostname: "ethereumonarm-{{ hostname_seed }}-{{ (mac_address.content | b64decode | trim | hash('sha256'))[:8] }}"
+      when: mac_address is succeeded
+
+    - name: Set system hostname
+      ansible.builtin.hostname:
+        name: "{{ generated_hostname }}"
+      when: generated_hostname is defined
+
+    - name: Update /etc/hostname
+      ansible.builtin.copy:
+        dest: /etc/hostname
+        content: "{{ generated_hostname }}\n"
+        mode: "0644"
+      when: generated_hostname is defined
+
+    - name: Update /etc/hosts
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        regexp: "^127\\.0\\.1\\.1"
+        line: "127.0.1.1\t{{ generated_hostname }}"
+      when: generated_hostname is defined
+
+    # =========================================================================
+    # DISK CONFIGURATION
+    # =========================================================================
+    - name: Set partition path
+      ansible.builtin.set_fact:
+        partition_device: "{{ target_disk }}{{ partition_suffix }}"
+
+    - name: Check if partition has filesystem
+      ansible.builtin.command:
+        cmd: "blkid -o value -s TYPE {{ partition_device }}"
+      register: partition_type
+      changed_when: false
+      failed_when: false
+
+    - name: Create temp mount point
+      ansible.builtin.tempfile:
+        state: directory
+        prefix: "disk_check_"
+      register: temp_mount
+      when: partition_type.stdout | length > 0
+
+    - name: Mount partition to check
+      ansible.posix.mount:
+        path: "{{ temp_mount.path }}"
+        src: "{{ partition_device }}"
+        fstype: "{{ partition_type.stdout }}"
+        state: ephemeral
+      when: partition_type.stdout | length > 0
+      register: mounted_check
+
+    - name: Check for ethereum directory
+      ansible.builtin.stat:
+        path: "{{ temp_mount.path }}/ethereum"
+      register: ethereum_dir
+      when: mounted_check is succeeded
+
+    - name: Check for format flag
+      ansible.builtin.stat:
+        path: "{{ temp_mount.path }}/{{ format_flag_file }}"
+      register: format_flag
+      when: mounted_check is succeeded
+
+    - name: Determine if formatting needed
+      ansible.builtin.set_fact:
+        should_format: "{{ partition_type.stdout | length == 0 or format_flag.stat.exists | default(false) }}"
+
+    - name: Unmount temp mount
+      ansible.posix.mount:
+        path: "{{ temp_mount.path }}"
+        state: unmounted
+      when: mounted_check is succeeded
+      ignore_errors: true
+
+    - name: Remove temp mount point
+      ansible.builtin.file:
+        path: "{{ temp_mount.path }}"
+        state: absent
+      when: temp_mount.path is defined
+      ignore_errors: true
+
+    - name: Display format decision
+      ansible.builtin.debug:
+        msg: "Disk {{ target_disk }} will {{ 'BE FORMATTED' if should_format else 'NOT be formatted (data preserved)' }}"
+
+    # Format disk if needed
+    - name: Unmount all partitions on target disk
+      ansible.builtin.shell:
+        cmd: "umount {{ target_disk }}* || true"
+      when: should_format
+
+    - name: Wipe filesystem signatures
+      ansible.builtin.command:
+        cmd: "wipefs --all --force {{ target_disk }}"
+      when: should_format
+
+    - name: Create GPT partition table
+      ansible.builtin.shell:
+        cmd: 'echo "label: gpt" | sfdisk --force --no-reread "{{ target_disk }}"'
+      when: should_format
+
+    - name: Create Linux partition
+      ansible.builtin.shell:
+        cmd: 'echo "type=linux" | sfdisk --append --force --no-reread "{{ target_disk }}"'
+      when: should_format
+
+    - name: Wait for partition
+      ansible.builtin.pause:
+        seconds: 2
+      when: should_format
+
+    - name: Probe partition table
+      ansible.builtin.command:
+        cmd: "partprobe {{ target_disk }}"
+      when: should_format
+
+    - name: Trigger udev
+      ansible.builtin.command:
+        cmd: udevadm settle
+      when: should_format
+
+    - name: Format partition with ext4
+      community.general.filesystem:
+        fstype: ext4
+        dev: "{{ partition_device }}"
+        opts: "-L {{ data_label }}"
+      when: should_format
+
+    - name: Set reserved blocks to 0%
+      ansible.builtin.command:
+        cmd: "tune2fs -m 0 {{ partition_device }}"
+      when: should_format
+
+    # Mount the partition
+    - name: Get partition UUID
+      ansible.builtin.command:
+        cmd: "blkid -o value -s UUID {{ partition_device }}"
+      register: partition_uuid
+      changed_when: false
+
+    - name: Mount /home
+      ansible.posix.mount:
+        path: "{{ data_mount_point }}"
+        src: "UUID={{ partition_uuid.stdout }}"
+        fstype: ext4
+        opts: defaults,noatime
+        state: mounted
+
+    - name: Add to fstab
+      ansible.posix.mount:
+        path: "{{ data_mount_point }}"
+        src: "UUID={{ partition_uuid.stdout }}"
+        fstype: ext4
+        opts: defaults,noatime
+        state: present
+
+    # =========================================================================
+    # USER SETUP
+    # =========================================================================
+    - name: Create ethereum user
+      ansible.builtin.user:
+        name: "{{ ethereum_user }}"
+        comment: "Ethereum Node Operator"
+        shell: /bin/bash
+        create_home: true
+        home: "{{ ethereum_home }}"
+
+    - name: Set initial password
+      ansible.builtin.user:
+        name: "{{ ethereum_user }}"
+        password: "{{ ethereum_password | password_hash('sha512') }}"
+        update_password: always
+
+    - name: Force password change on first login
+      ansible.builtin.command:
+        cmd: "chage -d 0 {{ ethereum_user }}"
+
+    - name: Add user to groups
+      ansible.builtin.user:
+        name: "{{ ethereum_user }}"
+        groups: "{{ ethereum_groups }}"
+        append: true
+
+    - name: Create sudoers file
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/90-ethereum-nopasswd
+        content: "{{ ethereum_user }} ALL=(ALL) NOPASSWD: ALL\n"
+        mode: "0440"
+        validate: "visudo -cf %s"
+
+    # =========================================================================
+    # PACKAGE INSTALLATION
+    # =========================================================================
+    - name: Update APT cache
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install Ethereum packages
+      ansible.builtin.apt:
+        name: "{{ ethereum_packages }}"
+        state: present
+      retries: 3
+      delay: 10
+
+    - name: Install Nginx packages
+      ansible.builtin.apt:
+        name: "{{ nginx_packages }}"
+        state: present
+      retries: 3
+      delay: 10
+
+    # =========================================================================
+    # ETHEREUM CONFIGURATION
+    # =========================================================================
+    - name: Create Ethereum data directories
+      ansible.builtin.file:
+        path: "{{ ethereum_home }}/{{ item }}"
+        state: directory
+        owner: "{{ ethereum_user }}"
+        group: "{{ ethereum_group }}"
+        mode: "0755"
+      loop:
+        - .ethereum
+        - .lighthouse
+        - .local/share/reth
+        - .local/share/teku
+        - .local/share/nimbus
+        - .local/share/lodestar
+        - .prysm
+
+    - name: Write EOA release file
+      ansible.builtin.copy:
+        dest: /etc/eoa-release
+        content: "Ethereum on ARM {{ ansible_date_time.year[-2:] }}.{{ ansible_date_time.month }}.{{ eoa_minor_version }}\n"
+        mode: "0644"
+
+    - name: Add update-ethereum alias
+      ansible.builtin.blockinfile:
+        path: /etc/bash.bashrc
+        block: |
+          # Shortcut to update Ethereum packages
+          alias update-ethereum='sudo apt-get update && sudo apt-get install {{ ethereum_packages | join(" ") }}'
+        marker: "# {mark} ETHEREUM ON ARM ALIAS"
+        create: true
+        mode: "0644"
+
+    - name: Configure swap location
+      ansible.builtin.lineinfile:
+        path: /etc/dphys-swapfile
+        regexp: "^#?CONF_SWAPFILE="
+        line: "CONF_SWAPFILE={{ swap_file }}"
+
+    - name: Configure swap size
+      ansible.builtin.lineinfile:
+        path: /etc/dphys-swapfile
+        regexp: "^#?CONF_SWAPSIZE="
+        line: "CONF_SWAPSIZE={{ calculated_swap_mb }}"
+
+    - name: Configure max swap
+      ansible.builtin.lineinfile:
+        path: /etc/dphys-swapfile
+        regexp: "^#?CONF_MAXSWAP="
+        line: "CONF_MAXSWAP={{ calculated_swap_mb }}"
+
+    - name: Enable swap service
+      ansible.builtin.systemd:
+        name: dphys-swapfile
+        enabled: true
+        state: started
+
+    # =========================================================================
+    # MONITORING SETUP
+    # =========================================================================
+    - name: Create prometheus user
+      ansible.builtin.user:
+        name: "{{ prometheus_user }}"
+        system: true
+        create_home: true
+        home: "{{ prometheus_home }}"
+        shell: /usr/sbin/nologin
+
+    - name: Create prometheus directories
+      ansible.builtin.file:
+        path: "{{ prometheus_home }}/{{ item }}"
+        state: directory
+        owner: "{{ prometheus_user }}"
+        group: "{{ prometheus_user }}"
+        mode: "0755"
+      loop: "{{ prometheus_dirs }}"
+
+    - name: Install monitoring packages
+      ansible.builtin.apt:
+        name: "{{ monitoring_packages }}"
+        state: present
+      retries: 3
+      delay: 10
+
+    - name: Enable prometheus
+      ansible.builtin.systemd:
+        name: prometheus
+        enabled: true
+
+    - name: Enable node exporter
+      ansible.builtin.systemd:
+        name: prometheus-node-exporter
+        enabled: true
+
+    - name: Enable grafana
+      ansible.builtin.systemd:
+        name: grafana-server
+        enabled: true
+
+    - name: Run monitoring extras
+      ansible.builtin.command:
+        cmd: set-ethereumonarm-monitoring-extras -o
+      ignore_errors: true
+      changed_when: false
+
+    # =========================================================================
+    # SECURITY
+    # =========================================================================
+    - name: Lock root account
+      ansible.builtin.command:
+        cmd: passwd -l root
+
+    - name: Get UID range
+      ansible.builtin.shell:
+        cmd: |
+          UID_MIN=$(awk '/^UID_MIN/{print $2}' /etc/login.defs)
+          UID_MAX=$(awk '/^UID_MAX/{print $2}' /etc/login.defs)
+          echo "${UID_MIN}:${UID_MAX}"
+      register: uid_range
+      changed_when: false
+
+    - name: Get users to remove
+      ansible.builtin.shell:
+        cmd: |
+          UID_MIN={{ uid_range.stdout.split(':')[0] }}
+          UID_MAX={{ uid_range.stdout.split(':')[1] }}
+          awk -F: -v min="$UID_MIN" -v max="$UID_MAX" \
+            '{if($3 >= min && $3 <= max && $1 != "{{ ethereum_user }}") print $1}' /etc/passwd
+      register: users_to_remove
+      changed_when: false
+
+    - name: Remove other users
+      ansible.builtin.user:
+        name: "{{ item }}"
+        state: absent
+        remove: true
+      loop: "{{ users_to_remove.stdout_lines }}"
+      when: users_to_remove.stdout_lines | length > 0
+      ignore_errors: true
+
+    - name: Ensure ethereum home ownership
+      ansible.builtin.file:
+        path: "{{ ethereum_home }}"
+        owner: "{{ ethereum_user }}"
+        group: "{{ ethereum_group }}"
+        recurse: true
+
+    - name: Enable nginx
+      ansible.builtin.systemd:
+        name: nginx
+        enabled: true
+
+    # =========================================================================
+    # FINALIZE
+    # =========================================================================
+    - name: Create first-run flag
+      ansible.builtin.file:
+        path: "{{ first_run_flag }}"
+        state: touch
+        mode: "0644"
+
+    - name: Display completion
+      ansible.builtin.debug:
+        msg: "Ethereum on ARM provisioning completed successfully!"
+
+    - name: Schedule reboot
+      ansible.builtin.command:
+        cmd: "shutdown -r +1 'Rebooting to apply Ethereum on ARM configuration'"
+      async: 0
+      poll: 0
+      ignore_errors: true
+
+  handlers:
+    - name: Restart timesyncd
+      ansible.builtin.systemd:
+        name: systemd-timesyncd
+        state: restarted

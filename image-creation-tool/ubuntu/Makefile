@@ -71,6 +71,8 @@ define modify_image
 	@mount_dir=$$(mktemp -d); \
 	trap 'echo "--> Caught signal, cleaning up..."; sudo umount $$mount_dir 2>/dev/null; rm -rf $$mount_dir;' INT TERM EXIT; \
 	sudo mount -o loop,offset=$(2) $(notdir $1) $$mount_dir || { echo "Mount failed"; exit 1; }; \
+	sudo mkdir -p $$mount_dir/opt/ethereumonarm; \
+	sudo cp -a sources/opt/ethereumonarm/ansible $$mount_dir/opt/ethereumonarm/; \
 	sudo cp -a sources/usr/local/bin/ethereum-first-boot $$mount_dir/usr/local/bin/ethereum-first-boot; \
 	sudo chmod +x $$mount_dir/usr/local/bin/ethereum-first-boot; \
 	sudo cp -a sources/etc/systemd/system/ethereum-first-boot.service $$mount_dir/etc/systemd/system/; \

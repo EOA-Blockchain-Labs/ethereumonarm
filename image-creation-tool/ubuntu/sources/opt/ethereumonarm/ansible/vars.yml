@@ -1,0 +1,180 @@
+---
+# Ethereum on ARM - Variables
+# All configuration in one place
+
+# =============================================================================
+# SYSTEM CONFIGURATION
+# =============================================================================
+timezone: "UTC"
+locale: "en_US.UTF-8"
+network_wait_time: 20
+
+# =============================================================================
+# USER CONFIGURATION
+# =============================================================================
+ethereum_user: "ethereum"
+ethereum_group: "ethereum"
+ethereum_home: "/home/ethereum"
+ethereum_password: "ethereum"
+ethereum_groups:
+  - sudo
+  - netdev
+  - audio
+  - video
+  - dialout
+  - plugdev
+
+# =============================================================================
+# DISK CONFIGURATION
+# =============================================================================
+data_mount_point: "/home"
+data_filesystem: "ext4"
+data_label: "ethereum_data"
+format_flag_file: ".format_me"
+
+# =============================================================================
+# SWAP CONFIGURATION
+# =============================================================================
+swap_max_mb: 65536
+swap_file: "/home/ethereum/swapfile"
+
+# =============================================================================
+# DEVICE CONFIGURATIONS
+# Each device has: target_disk, partition_suffix, hostname_seed
+# =============================================================================
+devices:
+  rock5t:
+    pattern: "ROCK 5T"
+    target_disk: "/dev/nvme0n1"
+    partition_suffix: "p1"
+    hostname_seed: "rock5t"
+
+  rock5b:
+    pattern: "ROCK 5B"
+    target_disk: "/dev/nvme0n1"
+    partition_suffix: "p1"
+    hostname_seed: "rock5b"
+
+  rpi5:
+    pattern: "Raspberry Pi 5"
+    target_disk: "/dev/nvme0n1"
+    partition_suffix: "p1"
+    hostname_seed: "rpi5"
+
+  orangepi5plus:
+    pattern: "Orange Pi 5 Plus"
+    target_disk: "/dev/nvme0n1"
+    partition_suffix: "p1"
+    hostname_seed: "opi5plus"
+
+  nanopct6:
+    pattern: "NanoPC-T6"
+    target_disk: "/dev/nvme0n1"
+    partition_suffix: "p1"
+    hostname_seed: "nanopct6"
+
+# =============================================================================
+# APT REPOSITORIES
+# =============================================================================
+apt_sources:
+  - name: "ethereum-on-arm"
+    key_url: "https://repo.ethereumonarm.com/eoa.apt.keyring.gpg"
+    keyring: "/etc/apt/keyrings/ethereumonarm.gpg"
+    repo: "deb [signed-by=/etc/apt/keyrings/ethereumonarm.gpg] https://repo.ethereumonarm.com noble main"
+
+  - name: "grafana"
+    key_url: "https://apt.grafana.com/gpg.key"
+    keyring: "/etc/apt/keyrings/grafana.gpg"
+    repo: "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main"
+
+# =============================================================================
+# PACKAGE LISTS
+# =============================================================================
+base_packages:
+  - apt-utils
+  - bash-completion
+  - file
+  - gdisk
+  - gpg
+  - parted
+  - net-tools
+  - rsync
+  - software-properties-common
+  - dphys-swapfile
+  - ufw
+  - vim
+  - wget
+  - kitty-terminfo
+
+ethereum_packages:
+  - arbitrum-nitro
+  - bee
+  - besu
+  - commit-boost
+  - dvt-obol
+  - dvt-ssv
+  - erigon
+  - ethstaker-deposit-cli
+  - ethereumonarm-utils
+  - ethrex
+  - fuel-network
+  - geth
+  - grandine
+  - kubo
+  - lighthouse
+  - lodestar
+  - ls-lido
+  - mev-boost
+  - nethermind
+  - nimbus
+  - optimism-cannon
+  - optimism-op-challenger
+  - optimism-op-geth
+  - optimism-op-node
+  - optimism-op-program
+  - optimism-op-proposer
+  - optimism-op-reth
+  - prysm
+  - reth
+  - starknet-juno
+  - starknet-madara
+  - starknet-pathfinder
+  - teku
+  - vero
+  - vouch
+
+monitoring_packages:
+  - ethereumonarm-monitoring-extras
+  - grafana
+  - prometheus
+  - prometheus-node-exporter
+  - ethereum-metrics-exporter
+
+nginx_packages:
+  - nginx
+  - ethereumonarm-config-sync
+  - ethereumonarm-nginx-proxy-extras
+
+# =============================================================================
+# NTP SERVERS
+# =============================================================================
+ntp_servers:
+  - time1.google.com
+  - time2.google.com
+  - time3.google.com
+  - time4.google.com
+
+# =============================================================================
+# MONITORING
+# =============================================================================
+prometheus_user: "prometheus"
+prometheus_home: "/home/prometheus"
+prometheus_dirs:
+  - metrics2
+  - node-exporter
+
+# =============================================================================
+# VERSION
+# =============================================================================
+eoa_minor_version: "{{ lookup('env', 'EOA_MINOR_VERSION') | default('0', true) }}"
+first_run_flag: "/root/first-run.flag"

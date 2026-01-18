@@ -356,12 +356,19 @@
       retries: 3
       delay: 10
 
+    - name: Fix any broken dpkg packages
+      ansible.builtin.command:
+        cmd: dpkg --configure -a
+      ignore_errors: true
+      changed_when: false
+
     - name: Install Nginx packages
       ansible.builtin.apt:
         name: "{{ nginx_packages }}"
         state: present
       retries: 3
       delay: 10
+      ignore_errors: true  # nginx-proxy-extras has a known config issue
 
     # =========================================================================
     # ETHEREUM CONFIGURATION

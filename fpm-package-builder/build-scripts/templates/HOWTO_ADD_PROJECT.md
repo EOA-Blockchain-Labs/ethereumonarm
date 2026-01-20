@@ -153,12 +153,21 @@ Finally, make sure the world knows about the new support!
 2. Add your project to the **Supported Software** tables.
     - Format: `| **Project Name** | [org/repo](https://github.com/org/repo) |`
 
+## 7. Update Verification Status
+
+We maintain two tables tracking the verification status of all packages. Please add your new package to both:
+
+1. **Builder README**: `fpm-package-builder/README.md` (Table: "Binary Verification Status")
+2. **Documentation**: `docs/advanced/manual-verification.rst` (Table: "Verified Packages")
+
 ## Checklist
 
 - [ ] Directory created in `fpm-package-builder`
 - [ ] `Makefile` builds `.deb` and `.rpm` created successfully
+- [ ] **Binary Verification** (SHA256/GPG) implemented in Makefile
 - [ ] Systemd service works (start/stop/restart)
 - [ ] Documentation added to `docs/packages/`
 - [ ] `sync_docs.sh` mapping added and run
 - [ ] `packages.json` updated
 - [ ] Root `README.md` updated
+- [ ] Verification tables updated (`fpm-package-builder/README.md` & `docs/advanced/manual-verification.rst`)

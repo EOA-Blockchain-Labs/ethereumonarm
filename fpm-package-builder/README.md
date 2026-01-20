@@ -252,6 +252,9 @@ All packages with binary downloads are verified cryptographically before packagi
 | **Swarm Bee** | Web3 | SHA256 | GitHub API digest |
 | **ethereum-metrics-exporter** | Utils | SHA256 | GitHub API digest |
 | **Starknet Pathfinder** | L2 | SHA256 | GitHub API digest |
+| **Linea Besu** | L2 | SHA256 | GitHub API digest |
+| **Maru** | L2 | SHA256 | GitHub API digest |
+| **Anchor** | Infra | SHA256 | GitHub API digest |
 
 ### ⏳ Pending Verification
 

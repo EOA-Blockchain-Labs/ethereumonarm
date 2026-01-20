@@ -81,6 +81,8 @@ define modify_image
 	sudo rm -f $$mount_dir/etc/systemd/system/getty@.service.d/override.conf || true; \
 	sudo rm -f $$mount_dir/etc/systemd/system/serial-getty@.service.d/override.conf || true; \
 	sudo rm -f $$mount_dir/root/.not_logged_in_yet || true; \
+	sudo ln -sf /dev/null $$mount_dir/etc/systemd/system/systemd-networkd-wait-online.service; \
+	sudo ln -sf /dev/null $$mount_dir/etc/systemd/system/NetworkManager-wait-online.service; \
 	sync; \
 	sudo umount $$mount_dir; \
 	trap - INT TERM EXIT; \

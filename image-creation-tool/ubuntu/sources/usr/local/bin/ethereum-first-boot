@@ -8,7 +8,6 @@ set -e
 # Configuration
 FLAG="/root/first-run.flag"
 ANSIBLE_DIR="/opt/ethereumonarm/ansible"
-WAIT_TIME=20
 LOG_FILE="/var/log/ethereum-first-boot.log"
 
 # Redirect all output to log file and console
@@ -19,17 +18,23 @@ echo "Ethereum on ARM - First Boot Provisioning"
 echo "Started at: $(date)"
 echo "=============================================="
 
-# Wait for network
-echo "Waiting ${WAIT_TIME} seconds for network..."
-sleep "${WAIT_TIME}"
+# Wait for network (polling)
+MAX_RETRIES=30
+echo "Waiting for network connectivity (max ${MAX_RETRIES}s)..."
 
-# Check network connectivity
-echo "Checking network connectivity..."
-if ! wget -q -t 3 --timeout=30 --spider http://github.com; then
-  echo "ERROR: No network connection. Cannot proceed."
+for ((i=1; i<=MAX_RETRIES; i++)); do
+  if wget -q --spider http://github.com; then
+    echo "Network connection verified."
+    break
+  fi
+  echo "Waiting for network... ($i/${MAX_RETRIES})"
+  sleep 1
+done
+
+if (( i > MAX_RETRIES )); then
+  echo "ERROR: No network connection after ${MAX_RETRIES} seconds. Cannot proceed."
   exit 1
 fi
-echo "Network connection verified."
 
 # Detect device model
 echo "Detecting device model..."

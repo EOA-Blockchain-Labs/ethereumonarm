@@ -70,6 +70,7 @@ define modify_image
 	@echo "--> Modifying image $(notdir $1) for device '$3'..."
 	@mount_dir=$$(mktemp -d); \
 	trap 'echo "--> Caught signal, cleaning up..."; sudo umount $$mount_dir 2>/dev/null; rm -rf $$mount_dir;' INT TERM EXIT; \
+	set -e; \
 	sudo mount -o loop,offset=$(2) $(notdir $1) $$mount_dir || { echo "Mount failed"; exit 1; }; \
 	sudo mkdir -p $$mount_dir/opt/ethereumonarm; \
 	sudo cp -a sources/opt/ethereumonarm/ansible $$mount_dir/opt/ethereumonarm/; \

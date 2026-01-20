@@ -89,6 +89,13 @@ apt_sources:
     repo: "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main"
     dearmor: true
 
+  - name: "nginx"
+    key_url: "https://nginx.org/keys/nginx_signing.key"
+    keyring: "/usr/share/keyrings/nginx-archive-keyring.gpg"
+    repo: "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://nginx.org/packages/ubuntu noble nginx"
+    dearmor: true
+    pinning: true
+
 # =============================================================================
 # PACKAGE LISTS
 # =============================================================================

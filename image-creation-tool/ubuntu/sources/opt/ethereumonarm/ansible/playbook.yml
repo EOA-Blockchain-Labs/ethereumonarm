@@ -81,6 +81,17 @@
       loop: "{{ apt_sources }}"
       when: item.key_url is defined and (item.dearmor | default(false))
 
+    - name: Add APT pinning for Nginx
+      ansible.builtin.copy:
+        dest: /etc/apt/preferences.d/99nginx
+        content: |
+          Package: *
+          Pin: origin nginx.org
+          Pin: release o=nginx
+          Pin-Priority: 900
+        mode: "0644"
+      when: apt_sources | selectattr('name', 'equalto', 'nginx') | selectattr('pinning', 'defined') | list | length > 0
+
     - name: Add APT repositories
       ansible.builtin.apt_repository:
         repo: "{{ item.repo }}"

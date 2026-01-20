@@ -142,6 +142,14 @@ If you prefer to build packages yourself or contribute to the project, check out
 - **X/Twitter**: Follow us on **[@EthereumOnARM](https://x.com/EthereumOnARM)**
   to stay updated with the latest news.
 
+## 🔒 Security Standards
+
+Security is our top priority. All software packages in this repository are:
+
+1. **Verified**: Every binary is verified against its upstream SHA256 checksum or GPG signature before being packaged.
+2. **Isolated**: Software runs with dedicated user permissions, never as root (unless strictly required by the OS).
+3. **Auditable**: Our build system (`fpm-package-builder`) is open source, allowing anyone to verify exactly how packages are constructed.
+
 ## 💖 Acknowledgements
 
 This project is possible thanks to the support and donations from our amazing

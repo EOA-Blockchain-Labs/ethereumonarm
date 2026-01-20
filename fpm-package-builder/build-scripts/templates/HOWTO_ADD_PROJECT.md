@@ -46,6 +46,41 @@ The build process is controlled by a `Makefile`. The easiest way to start is to 
 - **Build/Stage Steps**:
   Implement the `prepare` target to download and place files into `sources/usr/bin`, `sources/usr/lib`, etc.
 
+### 2.1. Binary Verification (Mandatory)
+
+All downloaded binaries **MUST** be verified against an upstream checksum (SHA256) or GPG signature.
+
+#### Option A: SHA256 Verification (Recommended for GitHub Releases)
+
+Use the GitHub API to fetch the SHA256 digest listed in the release assets (as seen in `grandine`).
+
+```makefile
+# Fetch digest from GitHub Release Asset "digest" field
+UPSTREAM_SHA256 := $(shell curl -sL "https://api.github.com/repos/org/repo/releases/latest" | jq -r '.assets[] | select(.name == "$(BINARY_NAME)") | .digest' | sed 's/sha256://')
+
+prepare:
+ # ... download ...
+ @echo "$(UPSTREAM_SHA256)  $(SOURCESDIR)/usr/bin/binary" | sha256sum -c - || { echo "❌ SHA256 FAILED!"; exit 1; };
+```
+
+#### Option B: GPG Verification (Higher Security)
+
+If the upstream project provides a PGP signature (like `geth`), prefer this method.
+
+```makefile
+PGP_KEY_ID := 9BA28146
+
+prepare:
+ # Download binary and signature (.asc)
+ wget -O binary url...
+ wget -O binary.asc signature_url...
+ 
+ @echo "🔐 Verifying GPG..."
+ gpg --list-keys $(PGP_KEY_ID) >/dev/null 2>&1 || \
+  gpg --keyserver keyserver.ubuntu.com --recv-keys $(PGP_KEY_ID)
+ gpg --verify binary.asc binary || { echo "❌ GPG FAILED!"; exit 1; };
+```
+
 ## 3. System Integration
 
 If the package runs as a service (daemon), you need to provide a systemd service file.

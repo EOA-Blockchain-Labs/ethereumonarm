@@ -213,3 +213,15 @@ The below table lists the verification method used for each package in our build
      - L2
      - SHA256
      - GitHub API digest
+   * - **Linea Besu**
+     - L2
+     - SHA256
+     - GitHub API digest
+   * - **Maru**
+     - L2
+     - SHA256
+     - GitHub API digest
+   * - **Anchor**
+     - Infra
+     - SHA256
+     - GitHub API digest

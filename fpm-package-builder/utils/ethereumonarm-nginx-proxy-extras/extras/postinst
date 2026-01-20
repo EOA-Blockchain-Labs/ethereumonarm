@@ -9,6 +9,7 @@
 set -e
 
 # Remove the default site if it exists
+mkdir -p /etc/nginx/sites-enabled
 rm -f /etc/nginx/sites-enabled/default
 
 # Create symlink for ethereum.conf if not already correct

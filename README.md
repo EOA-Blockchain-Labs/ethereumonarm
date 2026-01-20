@@ -45,6 +45,12 @@ We support a wide range of Ethereum software, all packaged as standard `.deb` fi
 | **Prysm** | [prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm) |
 | **Teku** | [ConsenSys/teku](https://github.com/ConsenSys/teku) |
 
+#### Light Clients
+
+| Client | Repository |
+| :--- | :--- |
+| **Helios** | [a16z/helios](https://github.com/a16z/helios) |
+
 ### Layer 1 Execution
 
 | Client | Repository |
@@ -64,6 +70,8 @@ We support a wide range of Ethereum software, all packaged as standard `.deb` fi
 | **Arbitrum Nitro** | [OffchainLabs/nitro](https://github.com/OffchainLabs/nitro) |
 | **EthRex L2** | [lambdaclass/ethrex](https://github.com/lambdaclass/ethrex) |
 | **Fuel Core** | [FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core) |
+| **Linea Besu** | [Consensys/linea-monorepo](https://github.com/Consensys/linea-monorepo) |
+| **Maru** | [Consensys/maru](https://github.com/Consensys/maru) |
 | **Optimism** (Components) | [ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism) |
 | **Optimism** (op-geth) | [ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth) |
 | **Optimism** (op-reth) | [paradigmxyz/reth](https://github.com/paradigmxyz/reth) |
@@ -77,6 +85,7 @@ We support a wide range of Ethereum software, all packaged as standard `.deb` fi
 | Tool | Repository |
 | :--- | :--- |
 | **Commit-Boost** | [Commit-Boost/commit-boost-client](https://github.com/Commit-Boost/commit-boost-client) |
+| **DVT Anchor** | [sigp/anchor](https://github.com/sigp/anchor) |
 | **Obol Charon** | [ObolNetwork/charon](https://github.com/ObolNetwork/charon) |
 | **SSV Node** | [ssvlabs/ssv](https://github.com/ssvlabs/ssv) |
 | **MEV-Boost** | [flashbots/mev-boost](https://github.com/flashbots/mev-boost) |

@@ -102,6 +102,8 @@ prepare: ## Download, verify, and stage binary
 	wget -q -O ".build/$(UPSTREAM_TARBALL)" "$(UPSTREAM_URL)" || { echo "❌ Download failed: $(UPSTREAM_URL)"; exit 1; };
 	
 	@echo "📦 Extracting binary..."
+	@echo "$(HELIOS_SHA256)  .build/$(UPSTREAM_TARBALL)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(UPSTREAM_TARBALL)"; exit 1; };
+
 	# Helios tarball contains the binary directly, no directory structure usually
 	tar -xzf ".build/$(UPSTREAM_TARBALL)" -C $(SOURCESDIR)/usr/bin/ helios || { echo "❌ Extraction failed"; exit 1; }
 

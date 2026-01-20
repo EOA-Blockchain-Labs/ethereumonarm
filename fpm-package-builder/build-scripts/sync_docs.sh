@@ -75,6 +75,7 @@ declare -a PACKAGE_MAPPINGS=(
   "l1/nimbus.rst|l1-clients/consensus-layer/nimbus/sources/usr/share/doc/nimbus/README.Debian"
   "l1/prysm.rst|l1-clients/consensus-layer/prysm/sources/usr/share/doc/prysm/README.Debian"
   "l1/teku.rst|l1-clients/consensus-layer/teku/sources/usr/share/doc/teku/README.Debian"
+  "l1/helios.rst|l1-clients/light-clients/helios/sources/usr/share/doc/helios/README.Debian"
 
   # L2 Clients
   "l2/nitro.rst|l2-clients/arbitrum/sources/usr/share/doc/nitro/README.Debian"
@@ -89,8 +90,11 @@ declare -a PACKAGE_MAPPINGS=(
   "l2/juno.rst|l2-clients/starknet/juno/sources/usr/share/doc/juno/README.Debian"
   "l2/madara.rst|l2-clients/starknet/madara/sources/usr/share/doc/madara/README.Debian"
   "l2/pathfinder.rst|l2-clients/starknet/pathfinder/sources/usr/share/doc/pathfinder/README.Debian"
+  "l2/linea.rst|l2-clients/linea/sources/usr/share/doc/linea-besu/README.Debian"
+  "l2/maru.rst|l2-clients/maru/sources/usr/share/doc/maru/README.Debian"
 
   # DVT
+  "dvt/dvt-anchor.rst|infra/dvt/anchor/sources/usr/share/doc/dvt-anchor/README.Debian"
   "dvt/dvt-obol.rst|infra/dvt/obol/sources/usr/share/doc/dvt-obol/README.Debian"
   "dvt/ssv-node.rst|infra/dvt/ssv/sources/usr/share/doc/ssv-node/README.Debian"
 

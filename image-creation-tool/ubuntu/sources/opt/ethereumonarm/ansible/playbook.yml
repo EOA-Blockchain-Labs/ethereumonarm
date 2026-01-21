@@ -334,7 +334,7 @@
       ansible.builtin.user:
         name: "{{ ethereum_user }}"
         password: "{{ ethereum_password | password_hash('sha512') }}"
-        update_password: always
+        update_password: on_create
 
     - name: Force password change on first login
       ansible.builtin.command:

@@ -337,9 +337,6 @@
         password: "{{ ethereum_password | password_hash('sha512') }}"
         update_password: on_create
 
-    - name: Force password change on first login
-      ansible.builtin.command:
-        cmd: "chage -d 0 {{ ethereum_user }}"
 
     - name: Add user to groups
       ansible.builtin.user:
@@ -535,6 +532,14 @@
       ansible.builtin.systemd:
         name: nginx
         enabled: true
+
+    - name: Configure SSH PasswordAuthentication
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PasswordAuthentication'
+        line: 'PasswordAuthentication yes'
+        state: present
+        validate: 'sshd -t -f %s'
 
     # =========================================================================
     # FINALIZE

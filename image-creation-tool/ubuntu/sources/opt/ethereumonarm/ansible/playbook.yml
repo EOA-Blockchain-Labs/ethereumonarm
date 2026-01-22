@@ -499,6 +499,7 @@
     - name: Lock root account
       ansible.builtin.command:
         cmd: passwd -l root
+      changed_when: false
 
     - name: Get UID range
       ansible.builtin.shell:
@@ -540,7 +541,7 @@
         name: nginx
         enabled: true
 
-# =========================================================================
+    # =========================================================================
     # FINAL ACCESS ENFORCEMENT (Safety Step)
     # =========================================================================
     - name: Enforce final password for TTY and SSH
@@ -577,7 +578,7 @@
     - name: Schedule reboot
       ansible.builtin.command:
         cmd: "shutdown -r +1 'Rebooting to apply Ethereum on ARM configuration'"
-      async: 0
+      async: 1
       poll: 0
       ignore_errors: true
 

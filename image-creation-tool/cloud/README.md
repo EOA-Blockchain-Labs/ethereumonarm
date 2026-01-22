@@ -79,6 +79,19 @@ The templates are optimized for **Full Nodes**, defaulting to high-performance A
       azure.pkr.hcl
     ```
 
+## Provisioning Architecture
+
+The provisioning process has been migrated from legacy bash scripts to **Ansible**. This ensures better maintainability, idempotency, and consistency with the Ubuntu ARM image builds.
+
+The provisioning is handled in two stages:
+
+1. **Bootstrap**: A small shell script installs Ansible on the target instance.
+2. **Provision**: The `ansible-local` provisioner runs the [playbook](ansible/playbook.yml) using local [variables](ansible/vars.yml).
+
+### Customizing Provisioning
+
+You can customize the software installed or the system configuration by modifying [image-creation-tool/cloud/ansible/vars.yml](ansible/vars.yml) before starting the build.
+
 ## Customization
 
 You can override the following variables at build time:

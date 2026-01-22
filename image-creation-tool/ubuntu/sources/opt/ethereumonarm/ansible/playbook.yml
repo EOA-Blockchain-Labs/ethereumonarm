@@ -330,8 +330,6 @@
         shell: /bin/bash
         create_home: true
         home: "{{ ethereum_home }}"
-        password: "{{ ethereum_password | password_hash('sha512') }}"
-        update_password: on_create
 
     - name: Add user to groups
       ansible.builtin.user:
@@ -542,7 +540,26 @@
         name: nginx
         enabled: true
 
+# =========================================================================
+    # FINAL ACCESS ENFORCEMENT (Safety Step)
+    # =========================================================================
+    - name: Enforce final password for TTY and SSH
+      ansible.builtin.user:
+        name: "{{ ethereum_user }}"
+        password: "{{ ethereum_password | password_hash('sha512') }}"
+        update_password: always
+      # Forced at the end to overwrite any package-induced changes
 
+    - name: Configure SSH to guarantee password access
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+      loop:
+        - { regexp: '^#?PasswordAuthentication', line: 'PasswordAuthentication yes' }
+        - { regexp: '^#?KbdInteractiveAuthentication', line: 'KbdInteractiveAuthentication yes' }
+        - { regexp: '^#?UsePAM', line: 'UsePAM yes' }
+      notify: Restart ssh
 
     # =========================================================================
     # FINALIZE

@@ -1,289 +1,517 @@
 #!/usr/bin/env bash
 # ============================================================================
-#  Ethereum on ARM - System Diagnostic Script (v3)
-#  Combina simplicidad del script original + robustez y potencia del avanzado.
+#  Ethereum on ARM - Ansible Playbook Verification Script
+#  Validates that the first-boot Ansible playbook completed successfully.
 # ============================================================================
 
-set -euo pipefail
+set -uo pipefail
 
 # ------------------------------------------------------------
-# DEFAULT SETTINGS
+# CONFIGURATION
 # ------------------------------------------------------------
-USE_COLORS=true
-SHOW_SUMMARY=true
-SHOW_LOGS=false
-LOG_FILE="/var/log/eoa_check.log"
+VERSION="1.0.0"
+LOG_FILE="/var/log/eoa_verify.log"
 
-# Output both to console and log
-exec > >(tee -a "$LOG_FILE") 2>&1
+# Package lists (from vars.yml)
+BASE_PACKAGES=(apt-utils bash-completion file gdisk gpg parted net-tools rsync software-properties-common dphys-swapfile ufw vim wget kitty-terminfo)
+ETHEREUM_PACKAGES=(arbitrum-nitro bee besu commit-boost dvt-obol dvt-ssv erigon ethstaker-deposit-cli ethereumonarm-utils ethrex fuel-network geth grandine kubo lighthouse lodestar ls-lido mev-boost nethermind nimbus optimism-cannon optimism-op-challenger optimism-op-geth optimism-op-node optimism-op-program optimism-op-proposer optimism-op-reth prysm reth starknet-juno starknet-madara starknet-pathfinder teku vero vouch)
+MONITORING_PACKAGES=(ethereumonarm-monitoring-extras grafana prometheus prometheus-node-exporter ethereum-metrics-exporter)
+NGINX_PACKAGES=(nginx ethereumonarm-config-sync ethereumonarm-nginx-proxy-extras)
+
+# User config
+ETHEREUM_USER="ethereum"
+ETHEREUM_HOME="/home/ethereum"
+ETHEREUM_GROUPS=(sudo netdev audio video dialout plugdev)
+
+# Directories to check
+ETHEREUM_DIRS=(.ethereum .lighthouse .local/share/reth .local/share/teku .local/share/nimbus .local/share/lodestar .prysm)
 
 # ------------------------------------------------------------
-# ROOT CHECK
+# COUNTERS
 # ------------------------------------------------------------
-if [ "$(id -u)" != "0" ]; then
-    echo "Error: You must be root to run this script. Use sudo."
-    exit 1
-fi
-
-# ------------------------------------------------------------
-# OPTIONS
-#   -n  disable colors
-#   -s  skip summary
-#   -l  show extended logs
-# ------------------------------------------------------------
-while getopts "nsl" opt; do
-    case ${opt} in
-        n) USE_COLORS=false ;;
-        s) SHOW_SUMMARY=false ;;
-        l) SHOW_LOGS=true ;;
-        *) echo "Invalid option -$OPTARG" >&2; exit 1 ;;
-    esac
-done
+PASSED=0
+FAILED=0
+WARNINGS=0
 
 # ------------------------------------------------------------
 # COLORS
 # ------------------------------------------------------------
-if [ "$USE_COLORS" = true ]; then
-    RED='\033[0;91m'; GREEN='\033[0;92m'; ORANGE='\033[0;33m'
-    BOLD='\033[1m'; NC='\033[0m'
-else
-    RED=''; GREEN=''; ORANGE=''; BOLD=''; NC=''
+USE_COLORS=true
+if [[ ! -t 1 ]] || [[ "${NO_COLOR:-}" == "1" ]]; then
+    USE_COLORS=false
 fi
 
-# ------------------------------------------------------------
-# SUMMARY
-# ------------------------------------------------------------
-if [ "$SHOW_SUMMARY" = true ]; then
-    echo -e "${BOLD}This script will check:${NC}"
-    echo "- Hardware: board, RAM, disks, temperature"
-    echo "- Network: IP, ports, connectivity, speed"
-    echo "- System: OS, kernel, firewall, updates"
-    echo "- Ethereum: EL/CL services, JWT, ports"
-    echo "- Logs: processes, syslog, dmesg (optional)"
-    echo
-    read -rp "Continue? (y/n) " -n 1 -r; echo
-    [[ "$REPLY" =~ ^[Yy]$ ]] || exit 1
+if [[ "$USE_COLORS" == true ]]; then
+    GREEN='\033[0;92m'
+    RED='\033[0;91m'
+    YELLOW='\033[0;93m'
+    BOLD='\033[1m'
+    NC='\033[0m'
+else
+    GREEN='' RED='' YELLOW='' BOLD='' NC=''
 fi
 
 # ------------------------------------------------------------
 # HELPERS
 # ------------------------------------------------------------
+pass() {
+    echo -e "[${GREEN}PASS${NC}] $1"
+    ((PASSED++))
+}
+
+fail() {
+    echo -e "[${RED}FAIL${NC}] $1"
+    ((FAILED++))
+}
+
+warn() {
+    echo -e "[${YELLOW}WARN${NC}] $1"
+    ((WARNINGS++))
+}
+
 section() {
-    local title="$1"
-    local line
-    line=$(printf '%*s' "${COLUMNS:-$(tput cols)}" '' | tr ' ' '=')
-    echo -e "\n${BOLD}$line${NC}"
-    echo -e "${BOLD}# $title${NC}"
-    echo -e "${BOLD}$line${NC}"
-}
-separator() { printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -; }
-
-# ------------------------------------------------------------
-# DEPENDENCIES (minimal)
-# ------------------------------------------------------------
-MISSING=()
-for cmd in awk bc curl jq nc ss free lscpu; do
-    command -v "$cmd" >/dev/null || MISSING+=("$cmd")
-done
-
-if [ ${#MISSING[@]} -ne 0 ]; then
-    echo -e "${ORANGE}Installing missing packages: ${MISSING[*]}${NC}"
-    apt-get update -qq
-    apt-get install -y "${MISSING[@]}"
-fi
-
-# ============================================================================
-#  SECTION 1 — HARDWARE
-# ============================================================================
-section "HARDWARE"
-
-# --- BOARD ---
-separator
-echo -e "${BOLD}Board Model:${NC}"
-BOARD=$(tr -d '\0' </sys/firmware/devicetree/base/model 2>/dev/null || true)
-[ -z "$BOARD" ] && BOARD=$(hostnamectl | awk -F: '/Model/ {print $2}' | xargs)
-echo -e "$BOARD"
-
-# --- RAM ---
-separator
-echo -e "${BOLD}RAM:${NC}"
-RAM_GB=$(free -g | awk '/^Mem:/ {print $2}')
-if [ "$RAM_GB" -lt 8 ]; then
-    echo -e "RAM ${RED}FAIL${NC}: ${RAM_GB} GB"
-elif [ "$RAM_GB" -eq 8 ]; then
-    echo -e "RAM ${ORANGE}WARNING${NC}: 8 GB"
-else
-    echo -e "RAM ${GREEN}PASS${NC}: ${RAM_GB} GB"
-fi
-
-# --- DISKS ---
-separator
-echo -e "${BOLD}Disks:${NC}"
-NVME=false; USB=false
-
-if [ -b /dev/nvme0n1 ]; then
-    NVME=true
-    NVME_MODEL=$(tr -d '\0' </sys/class/block/nvme0n1/device/model)
-fi
-
-if [ -b /dev/sda ]; then
-    USB=true
-    USB_MODEL=$(tr -d '\0' </sys/class/block/sda/device/model)
-fi
-
-if $NVME || $USB; then
-    echo -e "Disk Check ${GREEN}PASS${NC}"
-else
-    echo -e "${RED}No SSD/NVMe detected${NC}"
-fi
-
-$NVME && echo "NVMe: $NVME_MODEL"
-$USB && echo "USB SSD: $USB_MODEL"
-
-echo "Swap:"
-swapon -s || true
-
-# --- TEMPERATURE ---
-separator
-echo -e "${BOLD}Temperature:${NC}"
-TEMP=$(awk '{printf "%.2f", $1/1000}' </sys/class/thermal/thermal_zone0/temp 2>/dev/null || echo "0")
-echo "Board Temp: $TEMP°C"
-
-# --- CPU ---
-separator
-echo -e "${BOLD}CPU:${NC}"
-lscpu | grep "Model name" | sed 's/Model name:[ \t]*//' || echo "Unknown"
-echo "Cores: $(nproc)"
-echo "Load: $(uptime | awk -F'load average:' '{print $2}')"
-echo "Uptime: $(uptime -p)"
-
-# ============================================================================
-#  SECTION 2 — NETWORK
-# ============================================================================
-section "NETWORK"
-
-# --- LOCAL IP ---
-separator
-echo -e "${BOLD}Local Network:${NC}"
-ip -4 addr show | grep inet || true
-
-# --- PUBLIC IP ---
-separator
-echo -e "${BOLD}Public Network:${NC}"
-PUB=$(curl -s ifconfig.co/json || echo "{}")
-echo "Public IP: $(echo "$PUB" | jq -r '.ip')"
-echo "ASN:       $(echo "$PUB" | jq -r '.asn')"
-echo "Provider:  $(echo "$PUB" | jq -r '.asn_org')"
-
-# --- PORTS ---
-separator
-echo -e "${BOLD}Forwarded Ports:${NC}"
-for p in 30303 9000; do
-    if nc -z "$(echo "$PUB" | jq -r '.ip')" "$p"; then
-        echo -e "$p ${GREEN}open${NC}"
-    else
-        echo -e "$p ${RED}closed${NC}"
-    fi
-done
-
-# --- SPEED TEST ---
-separator
-echo -e "${BOLD}Speedtest:${NC}"
-if command -v speedtest-cli >/dev/null; then
-    OUT=$(speedtest-cli --csv 2>/dev/null || true)
-    if [ -n "$OUT" ]; then
-        echo "Download: $(echo "$OUT" | awk -F, '{print $7}') bps"
-        echo "Upload:   $(echo "$OUT" | awk -F, '{print $8}') bps"
-    else
-        echo -e "${ORANGE}Speedtest failed${NC}"
-    fi
-else
-    echo -e "${ORANGE}speedtest-cli not installed${NC}"
-fi
-
-# ============================================================================
-#  SECTION 3 — SYSTEM
-# ============================================================================
-section "SYSTEM"
-
-separator
-echo -e "${BOLD}OS & Kernel${NC}"
-cat /etc/os-release
-echo "Kernel: $(uname -r)"
-echo "Arch:   $(uname -m)"
-
-separator
-echo -e "${BOLD}Firewall${NC}"
-ufw status verbose || echo "UFW inactive"
-
-separator
-echo -e "${BOLD}Available Updates${NC}"
-apt-get update -qq
-apt-get --just-print upgrade | grep "^Inst" || echo "No updates"
-
-separator
-echo -e "${BOLD}Listening Ports${NC}"
-ss -tunlp
-
-# ============================================================================
-#  SECTION 4 — ETHEREUM CLIENTS
-# ============================================================================
-section "ETHEREUM"
-
-separator
-echo -e "${BOLD}Clients Detected${NC}"
-
-EXECUTION=(geth erigon besu nethermind reth ethrex nimbus-execution)
-CONSENSUS=(lighthouse prysm teku nimbus lodestar grandine)
-TESTNETS=(sepolia hoodi)
-FOUND_EL=false; FOUND_CL=false
-
-check_service() {
-    systemctl is-active --quiet "$1" && { echo -e "${GREEN}$1 active${NC}"; return 0; }
-    return 1
+    echo -e "\n${BOLD}=== $1 ===${NC}"
 }
 
-echo -e "${BOLD}Execution Layer:${NC}"
-for base in "${EXECUTION[@]}"; do
-    check_service "$base" && FOUND_EL=true
-    for net in "${TESTNETS[@]}"; do check_service "${base}-${net}" && FOUND_EL=true; done
+# ------------------------------------------------------------
+# ROOT CHECK
+# ------------------------------------------------------------
+if [[ "$(id -u)" != "0" ]]; then
+    echo "Error: This script must be run as root. Use sudo."
+    exit 1
+fi
+
+# Logging
+exec > >(tee -a "$LOG_FILE") 2>&1
+echo "=== Verification started at $(date -Iseconds) ==="
+
+# ------------------------------------------------------------
+# OPTIONS
+# ------------------------------------------------------------
+JSON_ONLY=false
+
+while getopts "jh" opt; do
+    case ${opt} in
+        j) JSON_ONLY=true ;;
+        h)
+            echo "Ethereum on ARM - Playbook Verification v${VERSION}"
+            echo "Usage: $0 [-j] [-h]"
+            echo "  -j  JSON output only"
+            echo "  -h  Show this help"
+            exit 0
+            ;;
+        *) exit 1 ;;
+    esac
 done
 
-echo -e "\n${BOLD}Consensus Layer:${NC}"
-for base in "${CONSENSUS[@]}"; do
-    for s in beacon beacon-mev validator validator-mev; do
-        check_service "${base}-${s}" && FOUND_CL=true
-        for net in "${TESTNETS[@]}"; do check_service "${base}-${s}-${net}" && FOUND_CL=true; done
+# ============================================================================
+#  TEST FUNCTIONS
+# ============================================================================
+
+test_apt_setup() {
+    section "APT SETUP"
+    
+    # Keyrings
+    local keyrings=(
+        "/etc/apt/keyrings/ethereumonarm.gpg"
+        "/etc/apt/keyrings/grafana.gpg"
+        "/usr/share/keyrings/nginx-archive-keyring.gpg"
+    )
+    for kr in "${keyrings[@]}"; do
+        if [[ -f "$kr" ]]; then
+            pass "Keyring exists: $(basename "$kr")"
+        else
+            fail "Keyring missing: $kr"
+        fi
     done
-done
+    
+    # APT sources
+    local sources=(
+        "/etc/apt/sources.list.d/ethereum-on-arm.list"
+        "/etc/apt/sources.list.d/grafana.list"
+        "/etc/apt/sources.list.d/nginx.list"
+    )
+    for src in "${sources[@]}"; do
+        if [[ -f "$src" ]]; then
+            pass "APT source exists: $(basename "$src")"
+        else
+            fail "APT source missing: $src"
+        fi
+    done
+    
+    # Nginx pinning
+    if [[ -f "/etc/apt/preferences.d/99nginx" ]]; then
+        pass "Nginx APT pinning configured"
+    else
+        warn "Nginx APT pinning not found"
+    fi
+}
 
-$FOUND_EL || echo -e "${RED}No execution client found${NC}"
-$FOUND_CL || echo -e "${RED}No consensus client found${NC}"
+test_network_config() {
+    section "NETWORK CONFIGURATION"
+    
+    # Netplan optional interfaces
+    if [[ -f "/etc/netplan/99-optional-interfaces.yaml" ]]; then
+        pass "Netplan optional interfaces configured"
+    else
+        fail "Netplan optional interfaces missing"
+    fi
+    
+    # NTP config
+    if [[ -f "/etc/systemd/timesyncd.conf.d/custom-ntp.conf" ]]; then
+        pass "Custom NTP servers configured"
+    else
+        fail "Custom NTP config missing"
+    fi
+    
+    # NTP enabled
+    if timedatectl show 2>/dev/null | grep -q "NTP=yes"; then
+        pass "NTP synchronization enabled"
+    else
+        warn "NTP synchronization may not be enabled"
+    fi
+    
+    # Hostname format
+    local hostname
+    hostname=$(hostname)
+    if [[ "$hostname" =~ ^ethereumonarm-.+-[a-f0-9]{8}$ ]]; then
+        pass "Hostname format correct: $hostname"
+    else
+        warn "Hostname format unexpected: $hostname"
+    fi
+    
+    # /etc/hosts entry
+    if grep -q "$(hostname)" /etc/hosts; then
+        pass "Hostname in /etc/hosts"
+    else
+        fail "Hostname not in /etc/hosts"
+    fi
+}
 
-separator
-JWT="/etc/ethereum/jwtsecret"
-[ -s "$JWT" ] && echo -e "JWT ${GREEN}OK${NC}" || echo -e "${RED}JWT missing${NC}"
+test_disk_config() {
+    section "DISK CONFIGURATION"
+    
+    # /home mounted
+    if mountpoint -q /home; then
+        pass "/home is mounted"
+    else
+        fail "/home is not mounted"
+        return
+    fi
+    
+    # Check fstab entry
+    if grep -q "/home" /etc/fstab && grep "/home" /etc/fstab | grep -q "UUID="; then
+        pass "/home in fstab with UUID"
+    else
+        fail "/home not properly configured in fstab"
+    fi
+    
+    # Filesystem type
+    local fstype
+    fstype=$(findmnt -n -o FSTYPE /home 2>/dev/null || echo "unknown")
+    if [[ "$fstype" == "ext4" ]]; then
+        pass "Filesystem type is ext4"
+    else
+        fail "Filesystem type is $fstype (expected ext4)"
+    fi
+    
+    # Disk label
+    if blkid | grep -q 'LABEL="ethereum_data"'; then
+        pass "Disk labeled ethereum_data"
+    else
+        warn "Disk label not found (may be formatted differently)"
+    fi
+}
+
+test_user_setup() {
+    section "USER SETUP"
+    
+    # User exists
+    if id "$ETHEREUM_USER" &>/dev/null; then
+        pass "User '$ETHEREUM_USER' exists"
+    else
+        fail "User '$ETHEREUM_USER' does not exist"
+        return
+    fi
+    
+    # Home directory
+    if [[ -d "$ETHEREUM_HOME" ]]; then
+        pass "Home directory exists: $ETHEREUM_HOME"
+    else
+        fail "Home directory missing: $ETHEREUM_HOME"
+    fi
+    
+    # Home ownership
+    local owner
+    owner=$(stat -c '%U' "$ETHEREUM_HOME" 2>/dev/null)
+    if [[ "$owner" == "$ETHEREUM_USER" ]]; then
+        pass "Home directory owned by $ETHEREUM_USER"
+    else
+        fail "Home directory owned by $owner (expected $ETHEREUM_USER)"
+    fi
+    
+    # Groups
+    local user_groups
+    user_groups=$(groups "$ETHEREUM_USER" 2>/dev/null)
+    for grp in "${ETHEREUM_GROUPS[@]}"; do
+        if echo "$user_groups" | grep -qw "$grp"; then
+            pass "User in group: $grp"
+        else
+            fail "User not in group: $grp"
+        fi
+    done
+    
+    # Sudoers file
+    if [[ -f "/etc/sudoers.d/90-ethereum-nopasswd" ]]; then
+        pass "Sudoers file configured"
+    else
+        fail "Sudoers file missing"
+    fi
+    
+    # SSH password auth
+    if grep -E "^PasswordAuthentication\s+yes" /etc/ssh/sshd_config &>/dev/null; then
+        pass "SSH PasswordAuthentication enabled"
+    else
+        fail "SSH PasswordAuthentication not enabled"
+    fi
+}
+
+test_packages() {
+    section "PACKAGE INSTALLATION"
+    
+    local all_packages=("${BASE_PACKAGES[@]}" "${ETHEREUM_PACKAGES[@]}" "${MONITORING_PACKAGES[@]}" "${NGINX_PACKAGES[@]}")
+    local installed=0
+    local missing=()
+    
+    for pkg in "${all_packages[@]}"; do
+        if dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q "ok installed"; then
+            ((installed++))
+        else
+            missing+=("$pkg")
+        fi
+    done
+    
+    if [[ ${#missing[@]} -eq 0 ]]; then
+        pass "All ${#all_packages[@]} packages installed"
+    else
+        fail "${#missing[@]} packages missing: ${missing[*]}"
+    fi
+    
+    # Individual package group summary
+    local base_ok=0 eth_ok=0 mon_ok=0 nginx_ok=0
+    for pkg in "${BASE_PACKAGES[@]}"; do
+        dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q "ok installed" && ((base_ok++))
+    done
+    for pkg in "${ETHEREUM_PACKAGES[@]}"; do
+        dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q "ok installed" && ((eth_ok++))
+    done
+    for pkg in "${MONITORING_PACKAGES[@]}"; do
+        dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q "ok installed" && ((mon_ok++))
+    done
+    for pkg in "${NGINX_PACKAGES[@]}"; do
+        dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q "ok installed" && ((nginx_ok++))
+    done
+    
+    if [[ $base_ok -eq ${#BASE_PACKAGES[@]} ]]; then
+        pass "Base packages: $base_ok/${#BASE_PACKAGES[@]}"
+    else
+        warn "Base packages: $base_ok/${#BASE_PACKAGES[@]}"
+    fi
+    if [[ $eth_ok -eq ${#ETHEREUM_PACKAGES[@]} ]]; then
+        pass "Ethereum packages: $eth_ok/${#ETHEREUM_PACKAGES[@]}"
+    else
+        warn "Ethereum packages: $eth_ok/${#ETHEREUM_PACKAGES[@]}"
+    fi
+    if [[ $mon_ok -eq ${#MONITORING_PACKAGES[@]} ]]; then
+        pass "Monitoring packages: $mon_ok/${#MONITORING_PACKAGES[@]}"
+    else
+        warn "Monitoring packages: $mon_ok/${#MONITORING_PACKAGES[@]}"
+    fi
+    if [[ $nginx_ok -eq ${#NGINX_PACKAGES[@]} ]]; then
+        pass "Nginx packages: $nginx_ok/${#NGINX_PACKAGES[@]}"
+    else
+        warn "Nginx packages: $nginx_ok/${#NGINX_PACKAGES[@]}"
+    fi
+}
+
+test_ethereum_config() {
+    section "ETHEREUM CONFIGURATION"
+    
+    # Data directories
+    for dir in "${ETHEREUM_DIRS[@]}"; do
+        local full_path="$ETHEREUM_HOME/$dir"
+        if [[ -d "$full_path" ]]; then
+            local owner
+            owner=$(stat -c '%U' "$full_path" 2>/dev/null)
+            if [[ "$owner" == "$ETHEREUM_USER" ]]; then
+                pass "Directory exists with correct ownership: $dir"
+            else
+                fail "Directory wrong ownership: $dir (owner: $owner)"
+            fi
+        else
+            fail "Directory missing: $dir"
+        fi
+    done
+    
+    # EOA release file
+    if [[ -f "/etc/eoa-release" ]]; then
+        local release
+        release=$(cat /etc/eoa-release)
+        pass "EOA release file exists: $release"
+    else
+        fail "EOA release file missing"
+    fi
+    
+    # JWT secret
+    if [[ -f "/etc/ethereum/jwtsecret" ]]; then
+        pass "JWT secret file exists"
+    else
+        warn "JWT secret file not found (may be created by client)"
+    fi
+    
+    # update-ethereum alias
+    if grep -q "alias update-ethereum" /etc/bash.bashrc 2>/dev/null; then
+        pass "update-ethereum alias configured"
+    else
+        fail "update-ethereum alias missing"
+    fi
+    
+    # Swap config
+    if [[ -f "/etc/dphys-swapfile" ]]; then
+        if grep -q "CONF_SWAPFILE=$ETHEREUM_HOME/swapfile" /etc/dphys-swapfile; then
+            pass "Swap file location configured"
+        else
+            warn "Swap file location may differ"
+        fi
+    else
+        fail "dphys-swapfile config missing"
+    fi
+    
+    # Swap service
+    if systemctl is-enabled dphys-swapfile &>/dev/null; then
+        pass "Swap service enabled"
+    else
+        fail "Swap service not enabled"
+    fi
+}
+
+test_monitoring_setup() {
+    section "MONITORING SETUP"
+    
+    # Prometheus user
+    if id prometheus &>/dev/null; then
+        pass "Prometheus user exists"
+    else
+        fail "Prometheus user missing"
+    fi
+    
+    # Prometheus directories
+    for dir in metrics2 node-exporter; do
+        if [[ -d "/home/prometheus/$dir" ]]; then
+            pass "Prometheus directory exists: $dir"
+        else
+            warn "Prometheus directory missing: $dir"
+        fi
+    done
+    
+    # Services enabled
+    local services=(prometheus prometheus-node-exporter grafana-server)
+    for svc in "${services[@]}"; do
+        if systemctl is-enabled "$svc" &>/dev/null; then
+            pass "Service enabled: $svc"
+        else
+            fail "Service not enabled: $svc"
+        fi
+    done
+}
+
+test_security() {
+    section "SECURITY"
+    
+    # Root locked
+    local root_status
+    root_status=$(passwd -S root 2>/dev/null | awk '{print $2}')
+    if [[ "$root_status" == "L" ]]; then
+        pass "Root account is locked"
+    else
+        warn "Root account may not be locked (status: $root_status)"
+    fi
+    
+    # SSH config
+    local ssh_checks=(
+        "PasswordAuthentication yes"
+        "KbdInteractiveAuthentication yes"
+        "UsePAM yes"
+    )
+    for check in "${ssh_checks[@]}"; do
+        local key="${check%% *}"
+        if grep -E "^$key\s+" /etc/ssh/sshd_config | grep -q "${check#* }"; then
+            pass "SSH config: $check"
+        else
+            warn "SSH config may differ: $key"
+        fi
+    done
+    
+    # Nginx enabled
+    if systemctl is-enabled nginx &>/dev/null; then
+        pass "Nginx service enabled"
+    else
+        warn "Nginx service not enabled"
+    fi
+}
+
+test_first_run_flag() {
+    section "FIRST-RUN FLAG"
+    
+    if [[ -f "/root/first-run.flag" ]]; then
+        pass "First-run flag exists"
+    else
+        fail "First-run flag missing (playbook may not have completed)"
+    fi
+}
 
 # ============================================================================
-#  SECTION 5 — LOGS
+#  MAIN
 # ============================================================================
-section "LOGS"
 
-separator
-echo -e "${BOLD}Largest Log Files:${NC}"
-find /var/log -type f -exec du -h {} + | sort -hr | head -n 10
-
-if [ "$SHOW_LOGS" = true ]; then
-    separator
-    echo -e "${BOLD}Syslog (last 50)${NC}"
-    tail -n 50 /var/log/syslog
-
-    separator
-    echo -e "${BOLD}dmesg (last 50)${NC}"
-    dmesg -T | tail -n 50
+if [[ "$JSON_ONLY" == false ]]; then
+    echo -e "${BOLD}Ethereum on ARM - Playbook Verification v${VERSION}${NC}"
+    echo "Validating Ansible playbook provisioning..."
 fi
 
-echo -e "${GREEN}Check completed.${NC}"
-echo "Log saved to $LOG_FILE"
+# Run all tests
+test_apt_setup
+test_network_config
+test_disk_config
+test_user_setup
+test_packages
+test_ethereum_config
+test_monitoring_setup
+test_security
+test_first_run_flag
 
-exit 0
+# Summary
+TOTAL=$((PASSED + FAILED + WARNINGS))
+
+if [[ "$JSON_ONLY" == true ]]; then
+    echo "{\"passed\": $PASSED, \"failed\": $FAILED, \"warnings\": $WARNINGS, \"total\": $TOTAL}"
+else
+    section "SUMMARY"
+    echo -e "Passed:   ${GREEN}$PASSED${NC}"
+    echo -e "Failed:   ${RED}$FAILED${NC}"
+    echo -e "Warnings: ${YELLOW}$WARNINGS${NC}"
+    echo -e "Total:    $TOTAL"
+    echo
+    echo "{\"passed\": $PASSED, \"failed\": $FAILED, \"warnings\": $WARNINGS, \"total\": $TOTAL}"
+    echo
+    echo "Log saved to: $LOG_FILE"
+fi
+
+# Exit code
+if [[ $FAILED -gt 0 ]]; then
+    exit 1
+elif [[ $WARNINGS -gt 0 ]]; then
+    exit 2
+else
+    exit 0
+fi

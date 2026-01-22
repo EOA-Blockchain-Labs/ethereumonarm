@@ -346,6 +346,20 @@
         mode: "0440"
         validate: "visudo -cf %s"
 
+    - name: Configure SSH PasswordAuthentication
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PasswordAuthentication'
+        line: 'PasswordAuthentication yes'
+        state: present
+        validate: 'sshd -t -f %s'
+      # No notify; we restart immediately in the next task
+
+    - name: Restart ssh immediately
+      ansible.builtin.service:
+        name: ssh
+        state: restarted
+
     # =========================================================================
     # PACKAGE INSTALLATION
     # =========================================================================
@@ -528,13 +542,7 @@
         name: nginx
         enabled: true
 
-    - name: Configure SSH PasswordAuthentication
-      ansible.builtin.lineinfile:
-        path: /etc/ssh/sshd_config
-        regexp: '^#?PasswordAuthentication'
-        line: 'PasswordAuthentication yes'
-        state: present
-        validate: 'sshd -t -f %s'
+
 
     # =========================================================================
     # FINALIZE
@@ -560,4 +568,9 @@
     - name: Restart timesyncd
       ansible.builtin.systemd:
         name: systemd-timesyncd
+        state: restarted
+
+    - name: Restart ssh
+      ansible.builtin.service:
+        name: ssh
         state: restarted

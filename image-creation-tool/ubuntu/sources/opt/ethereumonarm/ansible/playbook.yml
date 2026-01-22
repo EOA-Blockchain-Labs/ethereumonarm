@@ -551,6 +551,11 @@
         update_password: always
       # Forced at the end to overwrite any package-induced changes
 
+    - name: Force password change on first login
+      ansible.builtin.command:
+        cmd: "chage -d 0 {{ ethereum_user }}"
+      changed_when: false
+
     - name: Configure SSH to guarantee password access
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config

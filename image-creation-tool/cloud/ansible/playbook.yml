@@ -1,0 +1,320 @@
+---
+# Ethereum on ARM - Cloud Provisioning Playbook
+# Runs via Packer during image build. Adapted from Ubuntu ARM playbook.
+# Key differences: No disk formatting, no device detection (handled by cloud provider)
+
+- name: Ethereum on ARM Cloud Provisioning
+  hosts: localhost
+  connection: local
+  become: true
+  gather_facts: true
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+    # =========================================================================
+    # APT SETUP
+    # =========================================================================
+    - name: Display provisioning start
+      ansible.builtin.debug:
+        msg: "Starting Ethereum on ARM cloud provisioning..."
+
+    - name: Set DEBIAN_FRONTEND to noninteractive
+      ansible.builtin.lineinfile:
+        path: /etc/environment
+        line: "DEBIAN_FRONTEND=noninteractive"
+        create: true
+        mode: "0644"
+
+    - name: Create APT keyrings directory
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: "0755"
+
+    - name: Add APT repository keys (binary format)
+      ansible.builtin.get_url:
+        url: "{{ item.key_url }}"
+        dest: "{{ item.keyring }}"
+        mode: "0644"
+      loop: "{{ apt_sources }}"
+      when: item.key_url is defined and not (item.dearmor | default(false))
+
+    - name: Add APT repository keys (dearmor ASCII keys)
+      ansible.builtin.shell:
+        cmd: 'curl -fsSL "{{ item.key_url }}" | gpg --dearmor -o "{{ item.keyring }}"'
+        creates: "{{ item.keyring }}"
+      loop: "{{ apt_sources }}"
+      when: item.key_url is defined and (item.dearmor | default(false))
+
+    - name: Add APT repositories
+      ansible.builtin.apt_repository:
+        repo: "{{ item.repo }}"
+        state: present
+        filename: "{{ item.name }}"
+      loop: "{{ apt_sources }}"
+
+    - name: Update APT cache
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install base packages
+      ansible.builtin.apt:
+        name: "{{ base_packages }}"
+        state: present
+      retries: 3
+      delay: 10
+
+    # =========================================================================
+    # NETWORK CONFIGURATION
+    # =========================================================================
+    - name: Ensure timesyncd config directory exists
+      ansible.builtin.file:
+        path: /etc/systemd/timesyncd.conf.d
+        state: directory
+        mode: "0755"
+
+    - name: Configure NTP servers
+      ansible.builtin.copy:
+        dest: /etc/systemd/timesyncd.conf.d/eoa.conf
+        content: |
+          [Time]
+          NTP={{ ntp_servers | join(' ') }}
+          PollIntervalMinSec=16
+          PollIntervalMaxSec=64
+          RootDistanceMaxSec=100
+        mode: "0644"
+
+    - name: Enable NTP synchronization
+      ansible.builtin.command:
+        cmd: timedatectl set-ntp true
+      changed_when: false
+
+    # =========================================================================
+    # USER SETUP
+    # =========================================================================
+    - name: Create ethereum user
+      ansible.builtin.user:
+        name: "{{ ethereum_user }}"
+        comment: "Ethereum Node Operator"
+        shell: /bin/bash
+        create_home: true
+        home: "{{ ethereum_home }}"
+        password: "{{ ethereum_password | password_hash('sha512') }}"
+      register: user_created
+
+    - name: Force password change on first login
+      ansible.builtin.command:
+        cmd: "chage -d 0 {{ ethereum_user }}"
+      when: user_created.changed
+      changed_when: false
+
+    - name: Add user to groups
+      ansible.builtin.user:
+        name: "{{ ethereum_user }}"
+        groups: "{{ ethereum_groups }}"
+        append: true
+
+    - name: Create sudoers file
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/90-ethereum-nopasswd
+        content: "{{ ethereum_user }} ALL=(ALL) NOPASSWD: ALL\n"
+        mode: "0440"
+        validate: "visudo -cf %s"
+
+    # =========================================================================
+    # PACKAGE INSTALLATION
+    # =========================================================================
+    - name: Update APT cache
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install Ethereum packages
+      ansible.builtin.apt:
+        name: "{{ ethereum_packages }}"
+        state: present
+      retries: 3
+      delay: 10
+
+    - name: Fix any broken dpkg packages
+      ansible.builtin.command:
+        cmd: dpkg --configure -a
+      ignore_errors: true
+      changed_when: false
+
+    - name: Install Nginx packages
+      ansible.builtin.apt:
+        name: "{{ nginx_packages }}"
+        state: present
+      retries: 3
+      delay: 10
+      ignore_errors: true
+
+    # =========================================================================
+    # MONITORING SETUP
+    # =========================================================================
+    - name: Create prometheus user
+      ansible.builtin.user:
+        name: "{{ prometheus_user }}"
+        system: true
+        create_home: true
+        home: "{{ prometheus_home }}"
+        shell: /usr/sbin/nologin
+
+    - name: Create prometheus directories
+      ansible.builtin.file:
+        path: "{{ prometheus_home }}/{{ item }}"
+        state: directory
+        owner: "{{ prometheus_user }}"
+        group: "{{ prometheus_user }}"
+        mode: "0755"
+      loop: "{{ prometheus_dirs }}"
+
+    - name: Install monitoring packages
+      ansible.builtin.apt:
+        name: "{{ monitoring_packages }}"
+        state: present
+      retries: 3
+      delay: 10
+
+    - name: Enable prometheus
+      ansible.builtin.systemd:
+        name: prometheus
+        enabled: true
+
+    - name: Enable node exporter
+      ansible.builtin.systemd:
+        name: prometheus-node-exporter
+        enabled: true
+
+    - name: Enable grafana
+      ansible.builtin.systemd:
+        name: grafana-server
+        enabled: true
+
+    - name: Enable ethereum-metrics-exporter
+      ansible.builtin.systemd:
+        name: ethereum-metrics-exporter
+        enabled: true
+      ignore_errors: true
+
+    - name: Run monitoring extras
+      ansible.builtin.command:
+        cmd: set-ethereumonarm-monitoring-extras -o
+      ignore_errors: true
+      changed_when: false
+
+    # =========================================================================
+    # ETHEREUM CONFIGURATION
+    # =========================================================================
+    - name: Create Ethereum data directories
+      ansible.builtin.file:
+        path: "{{ ethereum_home }}/{{ item }}"
+        state: directory
+        owner: "{{ ethereum_user }}"
+        group: "{{ ethereum_group }}"
+        mode: "0755"
+      loop:
+        - .ethereum
+        - .lighthouse
+        - .local/share/reth
+        - .local/share/teku
+        - .local/share/nimbus
+        - .local/share/lodestar
+        - .prysm
+
+    - name: Write EOA release file
+      ansible.builtin.copy:
+        dest: /etc/eoa-release
+        content: "Ethereum on ARM {{ ansible_date_time.year[-2:] }}.{{ ansible_date_time.month }}.{{ eoa_minor_version }}\n"
+        mode: "0644"
+
+    - name: Add update-ethereum alias
+      ansible.builtin.blockinfile:
+        path: /etc/bash.bashrc
+        block: |
+          # Shortcut to update Ethereum packages
+          alias update-ethereum='sudo apt-get update && sudo apt-get install {{ ethereum_packages | join(" ") }}'
+        marker: "# {mark} ETHEREUM ON ARM ALIAS"
+        create: true
+        mode: "0644"
+
+    - name: Ensure bash.bashrc is sourced in profile
+      ansible.builtin.lineinfile:
+        path: /etc/profile
+        line: "if [ -f /etc/bash.bashrc ]; then . /etc/bash.bashrc; fi"
+        create: true
+        mode: "0644"
+
+    # =========================================================================
+    # SWAP CONFIGURATION
+    # =========================================================================
+    - name: Calculate swap size (2x RAM, max 64GB)
+      ansible.builtin.set_fact:
+        calculated_swap_mb: "{{ [ansible_memtotal_mb * 2, swap_max_mb] | min | int }}"
+
+    - name: Configure swap location
+      ansible.builtin.lineinfile:
+        path: /etc/dphys-swapfile
+        regexp: "^#?CONF_SWAPFILE="
+        line: "CONF_SWAPFILE={{ swap_file }}"
+
+    - name: Configure swap size
+      ansible.builtin.lineinfile:
+        path: /etc/dphys-swapfile
+        regexp: "^#?CONF_SWAPSIZE="
+        line: "CONF_SWAPSIZE={{ calculated_swap_mb }}"
+
+    - name: Configure max swap
+      ansible.builtin.lineinfile:
+        path: /etc/dphys-swapfile
+        regexp: "^#?CONF_MAXSWAP="
+        line: "CONF_MAXSWAP={{ calculated_swap_mb }}"
+
+    - name: Enable swap service
+      ansible.builtin.systemd:
+        name: dphys-swapfile
+        enabled: true
+
+    # =========================================================================
+    # SECURITY & SERVICES
+    # =========================================================================
+    - name: Lock root account
+      ansible.builtin.command:
+        cmd: passwd -l root
+      changed_when: false
+
+    - name: Disable UFW firewall (cloud uses security groups)
+      ansible.builtin.command:
+        cmd: ufw --force disable
+      changed_when: false
+      ignore_errors: true
+
+    - name: Enable nginx
+      ansible.builtin.systemd:
+        name: nginx
+        enabled: true
+
+    - name: Ensure ethereum home ownership
+      ansible.builtin.file:
+        path: "{{ ethereum_home }}"
+        owner: "{{ ethereum_user }}"
+        group: "{{ ethereum_group }}"
+        recurse: true
+
+    # =========================================================================
+    # CLEANUP
+    # =========================================================================
+    - name: Clean APT cache
+      ansible.builtin.apt:
+        autoclean: true
+
+    - name: Remove APT lists
+      ansible.builtin.file:
+        path: /var/lib/apt/lists
+        state: absent
+
+    - name: Display completion
+      ansible.builtin.debug:
+        msg: "Ethereum on ARM cloud provisioning completed successfully!"

@@ -1,0 +1,137 @@
+---
+# Ethereum on ARM - Cloud Variables
+# Adapted for cloud environments (AWS, Azure, GCP)
+
+# =============================================================================
+# SYSTEM CONFIGURATION
+# =============================================================================
+timezone: "UTC"
+locale: "en_US.UTF-8"
+
+# =============================================================================
+# USER CONFIGURATION
+# =============================================================================
+ethereum_user: "ethereum"
+ethereum_group: "ethereum"
+ethereum_home: "/home/ethereum"
+ethereum_password: "ethereum"
+ethereum_groups:
+  - sudo
+  - netdev
+  - audio
+  - video
+  - dialout
+  - plugdev
+
+# =============================================================================
+# SWAP CONFIGURATION
+# =============================================================================
+swap_max_mb: 65536
+swap_file: "/home/ethereum/swapfile"
+
+# =============================================================================
+# APT REPOSITORIES
+# =============================================================================
+apt_sources:
+  - name: "ethereum-on-arm"
+    key_url: "http://apt.ethereumonarm.com/eoa.apt.keyring.gpg"
+    keyring: "/etc/apt/trusted.gpg.d/eoa.gpg"
+    repo: "deb http://apt.ethereumonarm.com noble main"
+    dearmor: false
+
+  - name: "grafana"
+    key_url: "https://apt.grafana.com/gpg.key"
+    keyring: "/etc/apt/keyrings/grafana.gpg"
+    repo: "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main"
+    dearmor: true
+
+# =============================================================================
+# PACKAGE LISTS
+# =============================================================================
+base_packages:
+  - apt-utils
+  - nginx
+  - bash-completion
+  - file
+  - gdisk
+  - gpg
+  - parted
+  - net-tools
+  - rsync
+  - software-properties-common
+  - dphys-swapfile
+  - ufw
+  - vim
+  - wget
+  - kitty-terminfo
+
+ethereum_packages:
+  - arbitrum-nitro
+  - bee
+  - besu
+  - commit-boost
+  - dvt-obol
+  - dvt-ssv
+  - erigon
+  - ethstaker-deposit-cli
+  - ethereumonarm-utils
+  - ethrex
+  - fuel-network
+  - geth
+  - grandine
+  - kubo
+  - lighthouse
+  - lodestar
+  - ls-lido
+  - mev-boost
+  - nethermind
+  - nimbus
+  - optimism-cannon
+  - optimism-op-challenger
+  - optimism-op-geth
+  - optimism-op-node
+  - optimism-op-program
+  - optimism-op-proposer
+  - optimism-op-reth
+  - prysm
+  - reth
+  - starknet-juno
+  - starknet-madara
+  - starknet-pathfinder
+  - teku
+  - vero
+  - vouch
+
+monitoring_packages:
+  - ethereumonarm-monitoring-extras
+  - grafana
+  - prometheus
+  - prometheus-node-exporter
+  - ethereum-metrics-exporter
+
+nginx_packages:
+  - ethereumonarm-config-sync
+  - ethereumonarm-nginx-proxy-extras
+
+# =============================================================================
+# NTP SERVERS
+# =============================================================================
+ntp_servers:
+  - time1.google.com
+  - time2.google.com
+  - time3.google.com
+  - time4.google.com
+
+# =============================================================================
+# MONITORING
+# =============================================================================
+prometheus_user: "prometheus"
+prometheus_home: "/home/prometheus"
+prometheus_dirs:
+  - metrics2
+  - node-exporter
+
+# =============================================================================
+# VERSION
+# =============================================================================
+eoa_minor_version: "{{ lookup('env', 'EOA_MINOR_VERSION') | default('0', true) }}"

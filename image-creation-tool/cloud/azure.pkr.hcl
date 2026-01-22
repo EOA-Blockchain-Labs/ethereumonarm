@@ -7,6 +7,10 @@ packer {
       version = ">= 1.4.0"
       source  = "github.com/hashicorp/azure"
     }
+    ansible = {
+      version = ">= 1.1.0"
+      source  = "github.com/hashicorp/ansible"
+    }
   }
 }
 
@@ -107,11 +111,19 @@ build {
     "source.azure-arm.ethereum-node"
   ]
 
-  # Provisioning
+  # Install Ansible
   provisioner "shell" {
-    script          = "scripts/provision.sh"
-    # Azure specific execute command to handle sudo properly
-    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
+    inline = [
+      "sudo apt-get update",
+      "sudo apt-get install -y ansible"
+    ]
+  }
+
+  # Run Ansible playbook
+  provisioner "ansible-local" {
+    playbook_file   = "ansible/playbook.yml"
+    playbook_dir    = "ansible"
+    extra_arguments = ["--extra-vars", "cloud_provider=azure"]
   }
 
   # Output manifest

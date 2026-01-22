@@ -7,6 +7,10 @@ packer {
       version = ">= 1.2.8"
       source  = "github.com/hashicorp/amazon"
     }
+    ansible = {
+      version = ">= 1.1.0"
+      source  = "github.com/hashicorp/ansible"
+    }
   }
 }
 
@@ -110,11 +114,19 @@ build {
     "source.amazon-ebs.ethereum-node"
   ]
 
-  # Upload and execute the provisioning script
+  # Install Ansible
   provisioner "shell" {
-    script = "scripts/provision.sh"
-    # execute_command ensures sudo variables are preserved
-    execute_command = "sudo -S sh -c '{{ .Vars }} {{ .Path }}'"
+    inline = [
+      "sudo apt-get update",
+      "sudo apt-get install -y ansible"
+    ]
+  }
+
+  # Run Ansible playbook
+  provisioner "ansible-local" {
+    playbook_file   = "ansible/playbook.yml"
+    playbook_dir    = "ansible"
+    extra_arguments = ["--extra-vars", "cloud_provider=aws"]
   }
 
   # Generate a manifest file with artifact details

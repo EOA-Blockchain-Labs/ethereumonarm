@@ -330,13 +330,8 @@
         shell: /bin/bash
         create_home: true
         home: "{{ ethereum_home }}"
-
-    - name: Set initial password
-      ansible.builtin.user:
-        name: "{{ ethereum_user }}"
         password: "{{ ethereum_password | password_hash('sha512') }}"
         update_password: on_create
-
 
     - name: Add user to groups
       ansible.builtin.user:

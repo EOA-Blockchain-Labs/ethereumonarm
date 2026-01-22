@@ -228,7 +228,10 @@
 
     - name: Determine if formatting needed
       ansible.builtin.set_fact:
-        should_format: "{{ partition_type.stdout | length == 0 or (format_flag.stat is defined and format_flag.stat.exists) }}"
+        should_format: >-
+          {{ partition_type.stdout | length == 0 or
+             partition_type.stdout != 'ext4' or
+             (format_flag.stat is defined and format_flag.stat.exists) }}
 
     - name: Unmount temp mount
       ansible.posix.mount:

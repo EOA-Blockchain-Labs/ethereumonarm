@@ -35,8 +35,7 @@ ERIGON_TARBALL := erigon_v$(ERIGON_VERSION)_linux_$(PKG_ARCH).tar.gz
 ERIGON_URL     := https://github.com/erigontech/erigon/releases/download/v$(ERIGON_VERSION)/$(ERIGON_TARBALL)
 
 # SHA256 checksum extracted from GitHub API asset digest field
-ERIGON_RELEASE_JSON := $(shell curl -sL "https://api.github.com/repos/erigontech/erigon/releases/latest")
-ERIGON_SHA256 := $(shell echo '$(ERIGON_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(ERIGON_TARBALL)") | .digest' | sed 's/sha256://')
+ERIGON_SHA256 := $(shell curl -sL "https://api.github.com/repos/erigontech/erigon/releases/latest" | jq -r '.assets[] | select(.name == "$(ERIGON_TARBALL)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(ERIGON_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(ERIGON_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm

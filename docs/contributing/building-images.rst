@@ -188,7 +188,71 @@ Understanding the file structure is key to customizing packages. Here is a break
 
 By modifying files in ``sources/`` or ``extras/``, you can customize the default configuration or service behavior of the resulting package.
 
-4. Image Creation Tool
+4. Adding a New Package
+-----------------------
+
+This section guides you through adding a new software package (Client, Tool, or Service) to the repository.
+
+4.1. Directory Setup
+^^^^^^^^^^^^^^^^^^^^
+
+Navigate to ``fpm-package-builder`` and choose the appropriate category:
+
+*   **Layer 1**: ``l1-clients/consensus-layer/`` or ``l1-clients/execution-layer/``
+*   **Layer 2**: ``l2-clients/``
+*   **Infrastructure**: ``infra/`` or ``infra/dvt/``
+*   **Tools/Web3**: ``tools/`` or ``web3/``
+
+Create your project directory:
+
+.. code-block:: bash
+
+   mkdir -p infra/my-new-tool
+   cd infra/my-new-tool
+
+4.2. Create the Makefile
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Copy the standard template:
+
+.. code-block:: bash
+
+   cp ../../tools/templates/Makefile .
+
+Update the **Required Variables** in the new Makefile:
+
+*   ``PKG_NAME``: The package name (e.g., ``my-tool``).
+*   ``PKG_DESCRIPTION``: A short summary.
+*   ``WEB_URL``: Upstream repository URL.
+*   **Source Info**: Update the ``UPSTREAM_TAG_V`` logic to fetch the latest version and the ``prepare`` target to download the binary.
+
+.. important::
+   **Binary Verification**: You MUST verify the upstream binary using SHA256 or GPG.
+   
+   *   **SHA256**: ``echo "<checksum>  <file>" | sha256sum -c -``
+   *   **GPG**: ``gpg --verify <sig> <binary>``
+
+4.3. Systemd Service
+^^^^^^^^^^^^^^^^^^^^
+
+If your package runs as a daemon, create a service file in ``extras/``:
+
+.. code-block:: bash
+
+   mkdir extras
+   cp ../../build-scripts/templates/service.service extras/my-tool.service
+
+Edit the service file to ensure:
+
+1.  It runs as the ``ethereum`` user (NOT root).
+2.  It uses ``Restart=always``.
+
+4.4. Test the Build
+^^^^^^^^^^^^^^^^^^^
+
+Run ``make`` inside your directory. If successful, the ``.deb`` will appear in the relative ``packages/`` directory.
+
+5. Image Creation Tool
 ----------------------
 
 The ``image-creation-tool`` directory contains scripts to build custom Armbian images for various Single Board Computers (SBCs).

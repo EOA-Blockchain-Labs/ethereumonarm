@@ -77,12 +77,15 @@ When reporting bugs, please include:
 
 ## 📦 Package Contributions
 
-To add or update a package:
+To add or update a package, please refer to Section 4 of our **[Development Guide](https://ethereum-on-arm-documentation.readthedocs.io/en/latest/contributing/building-images.html#adding-a-new-package)**.
 
-1. Create/update files in `fpm-package-builder/<category>/<package>/`
-2. Update `packages.json` if adding a new package
-3. Add documentation in `docs/packages/`
-4. Test the build in the Vagrant environment
+Quick Summary:
+
+1. Create a new directory in `fpm-package-builder/<category>/`.
+2. Copy the template Makefile and customize it.
+3. Test the build in the Vagrant environment.
+
+For a high-level view of how packages fit into the system, see the **[Project Architecture](https://ethereum-on-arm-documentation.readthedocs.io/en/latest/overview/architecture.html)**.
 
 ## 📚 Documentation
 

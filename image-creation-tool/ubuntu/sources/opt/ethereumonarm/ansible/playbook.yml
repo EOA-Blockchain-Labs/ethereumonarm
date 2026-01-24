@@ -122,6 +122,7 @@
             ethernets:
               all-eth-interfaces:
                 optional: true
+                dhcp4: true
         mode: "0600"
 
     - name: Ensure timesyncd config directory exists
@@ -347,19 +348,8 @@
         mode: "0440"
         validate: "visudo -cf %s"
 
-    - name: Configure SSH PasswordAuthentication
-      ansible.builtin.lineinfile:
-        path: /etc/ssh/sshd_config
-        regexp: '^#?PasswordAuthentication'
-        line: 'PasswordAuthentication yes'
-        state: present
-        validate: 'sshd -t -f %s'
-      # No notify; we restart immediately in the next task
-
-    - name: Restart ssh immediately
-      ansible.builtin.service:
-        name: ssh
-        state: restarted
+    # SSH configuration is handled in the FINAL ACCESS ENFORCEMENT section
+    # to ensure it runs after all packages are installed
 
     # =========================================================================
     # PACKAGE INSTALLATION
@@ -387,7 +377,20 @@
         state: present
       retries: 3
       delay: 10
-      ignore_errors: true  # nginx-proxy-extras has a known config issue
+      register: nginx_install
+
+    - name: Ensure Nginx is configured correctly after install
+      ansible.builtin.command:
+        cmd: nginx -t
+      register: nginx_config_test
+      failed_when: false
+      changed_when: false
+      when: nginx_install is succeeded
+
+    - name: Warn if Nginx configuration has issues
+      ansible.builtin.debug:
+        msg: "Warning: Nginx configuration test failed. Check /etc/nginx/ for issues."
+      when: nginx_config_test.rc is defined and nginx_config_test.rc != 0
 
     # =========================================================================
     # ETHEREUM CONFIGURATION
@@ -499,10 +502,17 @@
     # =========================================================================
     # SECURITY
     # =========================================================================
+    - name: Check if root account is locked
+      ansible.builtin.shell:
+        cmd: "passwd -S root | awk '{print $2}'"
+      register: root_status
+      changed_when: false
+
     - name: Lock root account
       ansible.builtin.command:
         cmd: passwd -l root
-      changed_when: false
+      when: root_status.stdout != 'L'
+      changed_when: true
 
     - name: Get UID range
       ansible.builtin.shell:

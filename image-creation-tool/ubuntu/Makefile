@@ -42,21 +42,30 @@ nanopct6_offset := 16777216
 
 # --- Canned Recipes (Functions) ---
 
-# Defines the process for downloading and decompressing an image.
+# Defines the process for downloading, verifying, and decompressing an image.
+# Downloads the .sha file from the Armbian mirror for checksum verification.
 # Skips steps if the required files already exist.
 # Argument $1: URL of the compressed image.
 define download_image
 	@if [ -f $(notdir $1) ]; then \
-	    echo "--> $(notdir $1) already exists. Skipping download."; \
+	    echo "🔎 $(notdir $1) already exists. Skipping download."; \
 	else \
-	    echo "--> Downloading $1..."; \
-	    wget -q --show-progress -O $(notdir $1) $1 || { echo "Download failed for $1"; exit 1; }; \
+	    echo "🔽 Downloading $1..."; \
+	    wget -q --show-progress -O $(notdir $1) $1 || { echo "❌ Download failed for $1"; exit 1; }; \
+	fi
+	@echo "🔐 Downloading and verifying SHA256 checksum..."
+	@EXPECTED_SHA=$$(wget -qO- "$1.sha" 2>/dev/null | awk '{print $$1}'); \
+	if [ -n "$$EXPECTED_SHA" ]; then \
+	    echo "$$EXPECTED_SHA  $(notdir $1)" | sha256sum -c - || { echo "❌ Checksum verification FAILED!"; rm -f $(notdir $1); exit 1; }; \
+	    echo "✅ Checksum verified."; \
+	else \
+	    echo "⚠️  Could not fetch .sha file. Skipping verification."; \
 	fi
 	@if [ -f $(basename $(notdir $1)) ]; then \
-	    echo "--> $(basename $(notdir $1)) already exists. Skipping decompression."; \
+	    echo "📦 $(basename $(notdir $1)) already exists. Skipping decompression."; \
 	else \
-	    echo "--> Decompressing $(notdir $1)..."; \
-	    unxz -k $(notdir $1) || { echo "Failed to decompress $1"; exit 1; }; \
+	    echo "📦 Decompressing $(notdir $1)..."; \
+	    unxz -k $(notdir $1) || { echo "❌ Failed to decompress $1"; exit 1; }; \
 	fi
 endef
 
@@ -100,7 +109,7 @@ TARGET_IMAGES := $(foreach dev,$(DEVICES),$(call ETHONARM_IMAGE,$(dev)))
 # Set the default goal to 'help' so that running 'make' without arguments shows usage.
 .DEFAULT_GOAL := help
 # Declare targets that are not files to prevent conflicts.
-.PHONY: all $(TARGET_IMAGES) clean build help
+.PHONY: all $(TARGET_IMAGES) clean build help lint
 
 # --- Main Targets ---
 
@@ -139,6 +148,18 @@ help:
 	@echo "  all                  Builds all device images."
 	@echo "  build DEVICE=<name>  Builds a single image for the specified device."
 	@echo "  clean                Removes all downloaded and generated files."
+	@echo "  lint                 Runs shellcheck on shell scripts."
 	@echo "  help                 Shows this help message."
 	@echo ""
 	@echo "Available devices: $(DEVICES)"
+
+# Target to lint shell scripts using shellcheck.
+lint:
+	@echo "🔎 Running shellcheck on shell scripts..."
+	@if command -v shellcheck >/dev/null 2>&1; then \
+	    find sources -type f -name '*.sh' -o -name 'ethereum-first-boot' -o -name 'check_install' | \
+	    xargs -r shellcheck -x -S warning && echo "✅ All scripts passed lint." || echo "❌ Lint issues found."; \
+	else \
+	    echo "❌ shellcheck not installed. Install with: apt install shellcheck"; \
+	    exit 1; \
+	fi

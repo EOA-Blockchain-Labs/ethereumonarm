@@ -31,7 +31,7 @@ INFRA     := $(shell find infra -mindepth 2 -type f -name "Makefile" $(EXCLUDES)
 SUBDIRS   := $(sort $(L1CLIENTS) $(L2CLIENTS) $(UTILS) $(WEB3) $(INFRA))
 
 # ---------- PHONY TARGETS ----------
-.PHONY: default all clean l1-clients l2-clients infra utils web3 do-run summary
+.PHONY: default all clean l1-clients l2-clients infra utils web3 do-run summary lint
 
 # ---------- DEFAULT ----------
 default: all
@@ -101,3 +101,14 @@ summary:
 	    printf "%-65s %-10b %-10s\n" "$$dir" "$$symbol $$color$$result$(RESET)" "$$time"; \
 	done < "$(RESULT_FILE)"; \
 	printf "$(BLUE)──────────────────────$(RESET)\n"
+
+# ---------- LINT ----------
+lint: ## Run shellcheck on all shell scripts
+	@echo "🔎 Running shellcheck on shell scripts..."
+	@if command -v shellcheck >/dev/null 2>&1; then \
+	    find build-scripts -type f -name '*.sh' | xargs -r shellcheck -x -S warning && \
+	    echo "✅ All scripts passed lint." || echo "❌ Lint issues found."; \
+	else \
+	    echo "❌ shellcheck not installed. Install with: apt install shellcheck"; \
+	    exit 1; \
+	fi

@@ -47,6 +47,7 @@ Documentation
 
 Select a topic to get started:
 
+*   :doc:`📋 TL;DR - Quick Summary </tldr>`: The basics in 5 minutes.
 *   :doc:`🚀 Getting Started </getting-started/introduction>`: Step-by-step installation guide.
 *   :doc:`ℹ️ Supported Hardware </overview/supported-hardware>`: List of compatible ARM boards.
 *   :doc:`⚙️ Operation Guide </running-a-node/introduction>`: How to run and manage your node.
@@ -58,6 +59,7 @@ Select a topic to get started:
    :hidden:
    :caption: 🚀 Getting Started
 
+   /tldr
    /getting-started/introduction
    /getting-started/installation
    /getting-started/starting-node

@@ -1,4 +1,6 @@
 #!/bin/bash
 # post-installation script
+set -e
+
 test ! -f /etc/ethereum/jwtsecret && openssl rand -hex 32 | tr -d "\n" > "/etc/ethereum/jwtsecret"
 exit 0

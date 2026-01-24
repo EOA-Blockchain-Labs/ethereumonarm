@@ -31,7 +31,7 @@ INFRA     := $(shell find infra -mindepth 2 -type f -name "Makefile" $(EXCLUDES)
 SUBDIRS   := $(sort $(L1CLIENTS) $(L2CLIENTS) $(UTILS) $(WEB3) $(INFRA))
 
 # ---------- PHONY TARGETS ----------
-.PHONY: default all clean l1-clients l2-clients infra utils web3 do-run summary lint
+.PHONY: default all clean l1-clients l2-clients infra utils web3 do-run summary lint test help
 
 # ---------- DEFAULT ----------
 default: all
@@ -112,3 +112,29 @@ lint: ## Run shellcheck on all shell scripts
 	    echo "❌ shellcheck not installed. Install with: apt install shellcheck"; \
 	    exit 1; \
 	fi
+
+# ---------- TEST ----------
+test: ## Run tests across all subdirectories
+	@$(MAKE) do-run DIRS_TO_RUN="$(SUBDIRS)" TARGET_TO_RUN="test" TARGET_NAME="test"
+
+# ---------- HELP ----------
+help: ## Show available targets
+	@echo ""
+	@echo "  $(BLUE)Ethereum on ARM — Package Builder$(RESET)"
+	@echo ""
+	@echo "  Usage: make <target>"
+	@echo ""
+	@echo "  $(GREEN)Targets:$(RESET)"
+	@echo "    all           Build all packages (default)"
+	@echo "    clean         Clean all build artifacts"
+	@echo "    test          Run tests for all packages"
+	@echo "    l1-clients    Build L1 clients only"
+	@echo "    l2-clients    Build L2 clients only"
+	@echo "    infra         Build infrastructure packages only"
+	@echo "    utils         Build utility packages only"
+	@echo "    web3          Build web3 packages only"
+	@echo "    lint          Run shellcheck on shell scripts"
+	@echo "    help          Show this help message"
+	@echo ""
+	@echo "  $(YELLOW)Subdirectories:$(RESET) $(words $(SUBDIRS)) packages found"
+	@echo ""

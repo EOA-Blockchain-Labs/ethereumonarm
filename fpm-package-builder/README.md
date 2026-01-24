@@ -281,10 +281,10 @@ All packages with binary downloads are verified cryptographically before packagi
 2. Copy the template Makefile:
 
    ```bash
-   cp ../../tools/templates/Makefile .
+   cp ../../build-scripts/templates/Makefile .
    ```
 
-   (Or copy from `fpm-package-builder/tools/templates/Makefile` if you are elsewhere)
+   (Or copy from `fpm-package-builder/build-scripts/templates/Makefile` if you are elsewhere)
 3. Update all `CHANGEME` variables in the new `Makefile`, paying close attention to:
    - `PKG_NAME`
    - `PKG_DESCRIPTION`

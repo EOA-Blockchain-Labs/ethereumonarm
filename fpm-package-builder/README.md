@@ -26,8 +26,8 @@ The builder creates reproducible `.deb` packages for:
 | `infra` | Infrastructure and staking tools (MEV-Boost, SSV, Obol) |
 | `web3` | IPFS, Swarm, and other Web3 protocols |
 | `utils` | Monitoring and management utilities |
-| `tools` | Helper scripts and standard Makefile templates |
-| `extras` | Systemd service files and other platform-specific configs |
+| `tools` | Additional staking tools (ethstaker-deposit, merge-config, stakewise-operator) |
+| `build-scripts` | Makefile templates, helper scripts, and documentation generators |
 
 ---
 

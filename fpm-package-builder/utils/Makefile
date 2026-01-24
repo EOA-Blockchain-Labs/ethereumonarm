@@ -32,20 +32,20 @@ all clean:
 do-run:
 	@RESULT_FILE=$$(mktemp /tmp/make_results_XXXXXX.txt); \
 	echo "$$RESULT_FILE" > /tmp/current_results_file; \
-	printf "\n➜ $(BLUE)Running target '$(GREEN)$(TARGET)$(BLUE)' in all subdirs...$(RESET)\n\n"; \
+	printf "\n🔎 $(BLUE)Running target '$(GREEN)$(TARGET)$(BLUE)' in all subdirs...$(RESET)\n\n"; \
 	total_start=$$(date +%s.%N); \
 	for dir in $(SUBDIRS); do \
 	    start=$$(date +%s.%N); \
-	    printf "➜ $(BLUE)Entering$(RESET) %s\n" "$$dir"; \
+	    printf "📦 $(BLUE)Entering$(RESET) %s\n" "$$dir"; \
 	    if $(MAKE) -s -C "$$dir" $(TARGET); then \
 	        end=$$(date +%s.%N); \
 	        elapsed=$$(printf "%.2f" $$(echo "$$end - $$start" | bc)); \
-	        printf "   $(GREEN)✔ Success$(RESET) (%s) — $(YELLOW)%ss$(RESET)\n\n" "$$dir" "$$elapsed"; \
+	        printf "   ✅ $(GREEN)Success$(RESET) (%s) — $(YELLOW)%ss$(RESET)\n\n" "$$dir" "$$elapsed"; \
 	        echo "$$dir|SUCCESS|$$elapsed" >> "$$RESULT_FILE"; \
 	    else \
 	        end=$$(date +%s.%N); \
 	        elapsed=$$(printf "%.2f" $$(echo "$$end - $$start" | bc)); \
-	        printf "   $(RED)✖ Error$(RESET) (%s) — $(YELLOW)%ss$(RESET)\n\n" "$$dir" "$$elapsed"; \
+	        printf "   ❌ $(RED)Error$(RESET) (%s) — $(YELLOW)%ss$(RESET)\n\n" "$$dir" "$$elapsed"; \
 	        echo "$$dir|ERROR|$$elapsed" >> "$$RESULT_FILE"; \
 	    fi; \
 	done; \
@@ -62,7 +62,7 @@ summary:
 	printf "%-40s %-10s %-10s\n" "Directory" "Result" "Time(s)"; \
 	printf "%-40s %-10s %-10s\n" "----------------------------------------" "--------" "--------"; \
 	while IFS="|" read -r dir result time; do \
-	    if [ "$$result" = "SUCCESS" ]; then color="$(GREEN)"; else color="$(RED)"; fi; \
-	    printf "%-40s %-10b %-10s\n" "$$dir" "$$color$$result$(RESET)" "$$time"; \
+	    if [ "$$result" = "SUCCESS" ]; then color="$(GREEN)"; symbol="✅"; else color="$(RED)"; symbol="❌"; fi; \
+	    printf "%-40s %-10b %-10s\n" "$$dir" "$$symbol $$color$$result$(RESET)" "$$time"; \
 	done < "$$RESULT_FILE"; \
 	printf "$(BLUE)──────────────────────$(RESET)\n"

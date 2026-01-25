@@ -212,6 +212,7 @@ Advanced Features
 
 * **IPFS (Kubo)** - Decentralized storage
 * **Swarm (Bee)** - Distributed storage and communication
+* **Status (statusd)** - Decentralized messaging and dApp browser
 
 **Testnet Support**
 

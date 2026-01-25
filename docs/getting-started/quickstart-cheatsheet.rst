@@ -154,13 +154,23 @@ Standard service names for common clients:
 +----------------+--------------------------+-----------------------------+
 | **Besu**       | ``besu``                 | ``/etc/ethereum/besu.conf`` |
 +----------------+--------------------------+-----------------------------+
-| **Lighthouse** | ``lighthouse-beacon``    | ``/etc/ethereum/lighthouse.conf`` |
+| **Erigon**     | ``erigon``               | ``/etc/ethereum/erigon.conf`` |
 +----------------+--------------------------+-----------------------------+
-| **Prysm**      | ``prysm-beacon``         | ``/etc/ethereum/prysm.conf``|
+| **Reth**       | ``reth``                 | ``/etc/ethereum/reth.conf`` |
 +----------------+--------------------------+-----------------------------+
-| **Nimbus**     | ``nimbus-beacon``        | ``/etc/ethereum/nimbus.conf``|
+| **EthRex**     | ``ethrex``               | ``/etc/ethereum/ethrex.conf`` |
 +----------------+--------------------------+-----------------------------+
-| **Teku**       | ``teku``                 | ``/etc/ethereum/teku.conf`` |
+| **Lighthouse** | ``lighthouse-beacon``    | ``/etc/ethereum/lighthouse-beacon.conf`` |
++----------------+--------------------------+-----------------------------+
+| **Prysm**      | ``prysm-beacon``         | ``/etc/ethereum/prysm-beacon.conf`` |
++----------------+--------------------------+-----------------------------+
+| **Nimbus**     | ``nimbus-beacon``        | ``/etc/ethereum/nimbus-beacon.conf`` |
++----------------+--------------------------+-----------------------------+
+| **Teku**       | ``teku-beacon``          | ``/etc/ethereum/teku-beacon.conf`` |
++----------------+--------------------------+-----------------------------+
+| **Lodestar**   | ``lodestar-beacon``      | ``/etc/ethereum/lodestar-beacon.conf`` |
++----------------+--------------------------+-----------------------------+
+| **Grandine**   | ``grandine-beacon``      | ``/etc/ethereum/grandine-beacon.conf`` |
 +----------------+--------------------------+-----------------------------+
 
 Need More Help?

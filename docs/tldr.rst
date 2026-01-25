@@ -144,8 +144,9 @@ Common questions
 
 **How long does sync take?**
 
-- Full sync with checkpoint: 4-12 hours
-- Archive node: Several days
+- Snap sync clients (Geth, Nethermind, Besu): 12-24 hours
+- Execution sync clients (Reth, Erigon): 3-6 days
+- Archive node: Several days to weeks
 
 **Can I stake?**
 

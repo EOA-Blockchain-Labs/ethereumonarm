@@ -92,8 +92,7 @@ A `manifest.txt` file is generated with SHA256 checksums for verification.
 ### Adding a New Device
 
 1. Find the Armbian minimal image URL from [sbcmirror.org](https://es.sbcmirror.org/)
-2. Determine the root partition offset using `fdisk -l <image.img>`
-3. Add the device to the `Makefile`:
+2. Add the device to the `Makefile`:
 
 ```makefile
 # Add to DEVICES list
@@ -102,7 +101,6 @@ DEVICES = rpi5 rock5b rock5t orangepi5-plus nanopct6 newdevice
 # Add device configuration
 newdevice_url := https://es.sbcmirror.org/dl/newdevice/...
 newdevice_iso := Armbian_XX.XX.X_Newdevice_noble_...img
-newdevice_offset := <offset_in_bytes>
 ```
 
 ## Troubleshooting

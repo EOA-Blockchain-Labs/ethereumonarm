@@ -1,5 +1,5 @@
 # Makefile for building custom Armbian images
-# Version: 2.0
+# Version: 2.1
 #
 # This script automates the download, customization, and packaging
 # of Armbian images for various single-board computers (SBCs).
@@ -21,23 +21,19 @@ DEVICES = rpi5 rock5b rock5t orangepi5-plus nanopct6
 # NOTE: Armbian uses the rpi4b image for Raspberry Pi 4 & 5
 rpi5_url := https://es.sbcmirror.org/dl/rpi4b/archive/Armbian_25.11.1_Rpi4b_noble_current_6.12.58_minimal.img.xz
 rpi5_iso := Armbian_25.11.1_Rpi4b_noble_current_6.12.58_minimal.img
-rpi5_offset := 272629760 # Partition start offset in bytes
 
 rock5b_url := https://es.sbcmirror.org/dl/rock-5b/archive/Armbian_25.11.1_Rock-5b_noble_vendor_6.1.115_minimal.img.xz
 rock5b_iso := Armbian_25.11.1_Rock-5b_noble_vendor_6.1.115_minimal.img
-rock5b_offset := 16777216
 
 rock5t_url := https://es.sbcmirror.org/dl/rock-5t/archive/Armbian_25.11.1_Rock-5t_noble_vendor_6.1.115_minimal.img.xz
 rock5t_iso := Armbian_25.11.1_Rock-5t_noble_vendor_6.1.115_minimal.img
-rock5t_offset := 16777216
 
 orangepi5-plus_url := https://es.sbcmirror.org/dl/orangepi5-plus/archive/Armbian_25.11.1_Orangepi5-plus_noble_vendor_6.1.115_minimal.img.xz 
 orangepi5-plus_iso := Armbian_25.11.1_Orangepi5-plus_noble_vendor_6.1.115_minimal.img
-orangepi5-plus_offset := 16777216
 
 nanopct6_url := https://es.sbcmirror.org/dl/nanopct6-lts/archive/Armbian_25.11.1_Nanopct6-lts_noble_vendor_6.1.115_minimal.img.xz
 nanopct6_iso := Armbian_25.11.1_Nanopct6-lts_noble_vendor_6.1.115_minimal.img
-nanopct6_offset := 16777216
+
 # --- End Device Definitions ---
 
 # --- Canned Recipes (Functions) ---
@@ -71,16 +67,23 @@ endef
 
 # Defines the process for modifying the decompressed image.
 # Mounts the image, copies/removes files, then unmounts and renames it.
+# Automatically detects the start sector of the second partition (assumed root).
 # Argument $1: Name of the raw .img file.
-# Argument $2: Partition offset.
-# Argument $3: Device name (e.g., 'rpi5').
+# Argument $2: Device name (e.g., 'rpi5').
 define modify_image
 	@sudo -v || { echo "Error: Sudo privileges are required to modify the image."; exit 1; }
-	@echo "--> Modifying image $(notdir $1) for device '$3'..."
-	@mount_dir=$$(mktemp -d); \
+	@echo "--> Modifying image $(notdir $1) for device '$2'..."
+	@echo "🔍 Detecting partition offset..."
+	@START_SECTOR=$$(fdisk -l $(notdir $1) | grep "$(notdir $1)p2" | awk '{print $$2}'); \
+	if [ -z "$$START_SECTOR" ]; then \
+		echo "❌ Could not detect start sector for partition 2."; exit 1; \
+	fi; \
+	OFFSET=$$(( $$START_SECTOR * 512 )); \
+	echo "✅ Detected start sector: $$START_SECTOR (Offset: $$OFFSET bytes)"; \
+	mount_dir=$$(mktemp -d); \
 	trap 'echo "--> Caught signal, cleaning up..."; sudo umount $$mount_dir 2>/dev/null; rm -rf $$mount_dir;' INT TERM EXIT; \
 	set -e; \
-	sudo mount -o loop,offset=$(2) $(notdir $1) $$mount_dir || { echo "Mount failed"; exit 1; }; \
+	sudo mount -o loop,offset=$$OFFSET $(notdir $1) $$mount_dir || { echo "Mount failed"; exit 1; }; \
 	sudo mkdir -p $$mount_dir/opt/ethereumonarm; \
 	sudo cp -a sources/opt/ethereumonarm/ansible $$mount_dir/opt/ethereumonarm/; \
 	sudo cp -a sources/usr/local/bin/ethereum-first-boot $$mount_dir/usr/local/bin/ethereum-first-boot; \
@@ -97,9 +100,9 @@ define modify_image
 	sudo umount $$mount_dir; \
 	trap - INT TERM EXIT; \
 	rmdir $$mount_dir;
-	@mv $(notdir $1) $(call ETHONARM_IMAGE,$3)
-	@sha256sum $(call ETHONARM_IMAGE,$3) >> manifest.txt
-	@echo "✅ Created image: $(call ETHONARM_IMAGE,$3)"
+	@mv $(notdir $1) $(call ETHONARM_IMAGE,$2)
+	@sha256sum $(call ETHONARM_IMAGE,$2) >> manifest.txt
+	@echo "✅ Created image: $(call ETHONARM_IMAGE,$2)"
 endef
 # --- End Canned Recipes ---
 
@@ -131,7 +134,7 @@ $(TARGET_IMAGES): ethonarm_%_$(DATE).$(RELEASE).img:
 	$(eval DEVICE_NAME := $*)
 	@echo "--- Building for $(DEVICE_NAME) ---"
 	$(call download_image,$(value $(DEVICE_NAME)_url))
-	$(call modify_image,$(value $(DEVICE_NAME)_iso),$(value $(DEVICE_NAME)_offset),$(DEVICE_NAME))
+	$(call modify_image,$(value $(DEVICE_NAME)_iso),$(DEVICE_NAME))
 
 # Target to remove all generated and downloaded files.
 clean:

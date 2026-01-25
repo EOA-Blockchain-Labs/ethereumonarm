@@ -36,12 +36,12 @@ To run a node, you need:
 
 1. **An ARM board** with 16GB of RAM
 
-   - Rock 5B (recommended)
    - NanoPC T6 (recommended)
+   - Rock 5B (recommended)
    - Orange Pi 5 Plus
    - Raspberry Pi 5
 
-2. **A fast SSD** - 2TB NVMe drive (for storing blockchain data)
+2. **A fast SSD** - 2TB NVMe minimum, 4TB recommended (for storing blockchain data)
 
 3. **A MicroSD card** - 16GB or more (for the operating system)
 

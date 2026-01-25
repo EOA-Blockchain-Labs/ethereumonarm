@@ -250,6 +250,15 @@ test_user_setup() {
         fail "Home directory owned by $owner (expected $ETHEREUM_USER)"
     fi
     
+    # User shell
+    local shell
+    shell=$(getent passwd "$ETHEREUM_USER" | cut -d: -f7)
+    if [[ "$shell" == "/bin/bash" ]]; then
+        pass "User shell is /bin/bash"
+    else
+        warn "User shell is $shell (expected /bin/bash)"
+    fi
+    
     # Groups
     local user_groups
     user_groups=$(groups "$ETHEREUM_USER" 2>/dev/null)

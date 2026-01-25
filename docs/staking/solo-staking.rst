@@ -153,13 +153,13 @@ my mnemonic phrase"** and click **"Continue"**.
 10. It is time to send the 32 ETH deposit to the Ethereum mainnet contract. You need the 
 deposit file (located in your Board). You can, either copy and paste the 
 file content and save it as a new JSON file in your desktop computer or copy the file 
-from the Raspberry to your desktop through SSH.
+from the board to your desktop through SSH.
 
 .. tabs::
 
   .. tab:: Copy and Paste
 
-     Connected through SSH to your Raspberry Pi, type:
+     Connected through SSH to your ARM board, type:
 
      .. prompt:: bash $
 
@@ -174,9 +174,9 @@ from the Raspberry to your desktop through SSH.
 
      .. prompt:: bash $
 
-        scp ethereum@$YOUR_RASPBERRYPI_IP:/home/ethereum/validator_keys/deposit_data-$FILE_ID.json /tmp
+        scp ethereum@$YOUR_BOARD_IP:/home/ethereum/validator_keys/deposit_data-$FILE_ID.json /tmp
 
-     Replace the variables (``$YOUR_RASPBERRYPI_IP`` and ``$FILE_ID``) with your data. 
+     Replace the variables (``$YOUR_BOARD_IP`` and ``$FILE_ID``) with your data. 
      This command will copy the file to your desktop computer ``/tmp`` directory.
 
 11. Now, back to the Launchpad website, upload the ``deposit_data`` file and select 

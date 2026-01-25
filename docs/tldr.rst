@@ -137,7 +137,7 @@ View the logs:
 .. code-block:: bash
 
    sudo journalctl -u geth -f
-   sudo journalctl -u lighthouse -f
+   sudo journalctl -u lighthouse-beacon -f
 
 Common questions
 ----------------

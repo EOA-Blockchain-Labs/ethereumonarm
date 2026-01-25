@@ -53,8 +53,8 @@ You can get the client logs by running:
   sudo journalctl -u lighthouse-beacon -f
 
 .. note::
-  Ethereum on ARM supports 4 CL clients: :guilabel:`Lighthouse`, :guilabel:`Prysm`, 
-  :guilabel:`Teku` and :guilabel:`Nimbus` (all already installed in your system).
+  Ethereum on ARM supports 6 CL clients: :guilabel:`Lighthouse`, :guilabel:`Prysm`, 
+  :guilabel:`Teku`, :guilabel:`Nimbus`, :guilabel:`Lodestar` and :guilabel:`Grandine` (all already installed in your system).
 
 Execution Layer
 ---------------
@@ -82,8 +82,8 @@ For checking the client logs, run:
 You can access Grafana's Dashboard as well to get further info of the clients.
 
 .. note::
-  Ethereum on ARM supports 5 EL clients: :guilabel:`Geth`, :guilabel:`Nethermind`, 
-  :guilabel:`Erigon`, :guilabel:`Reth` and :guilabel:`Besu` (all already installed in your system).
+  Ethereum on ARM supports 6 EL clients: :guilabel:`Geth`, :guilabel:`Nethermind`, 
+  :guilabel:`Erigon`, :guilabel:`Reth`, :guilabel:`Besu` and :guilabel:`EthRex` (all already installed in your system).
 
 What's Next
 -----------

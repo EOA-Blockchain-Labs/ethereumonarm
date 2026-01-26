@@ -1,24 +1,23 @@
 # Makefile for building custom Armbian images
-# Version: 2.1
+# Version: 2.2
 #
-# This script automates the download, customization, and packaging
-# of Armbian images for various single-board computers (SBCs).
+# This script helps to download and change Armbian images for small computers (SBCs).
 
 # --- Configuration ---
 
-# Get current date (e.g., 25.10) for versioning
+# Get current date (example: 25.01)
 DATE := $(shell date +"%y.%m")
-# Manual release number for the current date
+# Release number for today
 RELEASE := 00
 
-# Function to generate the final standardized image name
+# Function to make the final image name
 ETHONARM_IMAGE = ethonarm_$(1)_$(DATE).$(RELEASE).img
 
-# --- Device Definitions ---
-# List of all target devices. Add new device names here.
+# --- Device List ---
+# List of devices we support. Add new ones here.
 DEVICES = rpi5 rock5b rock5t orangepi5-plus nanopct6
 
-# NOTE: Armbian uses the rpi4b image for Raspberry Pi 4 & 5
+# Raspberry Pi 5 uses the RPi4 image from Armbian
 rpi5_url := https://es.sbcmirror.org/dl/rpi4b/archive/Armbian_25.11.1_Rpi4b_noble_current_6.12.58_minimal.img.xz
 rpi5_iso := Armbian_25.11.1_Rpi4b_noble_current_6.12.58_minimal.img
 
@@ -34,141 +33,98 @@ orangepi5-plus_iso := Armbian_25.11.1_Orangepi5-plus_noble_vendor_6.1.115_minima
 nanopct6_url := https://es.sbcmirror.org/dl/nanopct6-lts/archive/Armbian_25.11.1_Nanopct6-lts_noble_vendor_6.1.115_minimal.img.xz
 nanopct6_iso := Armbian_25.11.1_Nanopct6-lts_noble_vendor_6.1.115_minimal.img
 
-# --- End Device Definitions ---
+# --- End Device List ---
 
-# --- Canned Recipes (Functions) ---
+# --- Functions ---
 
-# Defines the process for downloading, verifying, and decompressing an image.
-# Downloads the .sha file from the Armbian mirror for checksum verification.
-# Skips steps if the required files already exist.
-# Argument $1: URL of the compressed image.
+# Function to download the image if we don't have it.
+# It also checks if the file is correct using SHA256.
+# Argument $1: URL of the image file.
 define download_image
 	@if [ -f $(notdir $1) ]; then \
-	    echo "🔎 $(notdir $1) already exists. Skipping download."; \
+	    echo "🔎 $(notdir $1) exists. No need to download."; \
 	else \
 	    echo "🔽 Downloading $1..."; \
-	    wget -q --show-progress -O $(notdir $1) $1 || { echo "❌ Download failed for $1"; exit 1; }; \
+	    wget -q --show-progress -O $(notdir $1) $1 || { echo "❌ Download failed"; exit 1; }; \
 	fi
-	@echo "🔐 Downloading and verifying SHA256 checksum..."
+	@echo "🔐 Checking file integrity..."
 	@EXPECTED_SHA=$$(wget -qO- "$1.sha" 2>/dev/null | awk '{print $$1}'); \
 	if [ -n "$$EXPECTED_SHA" ]; then \
-	    echo "$$EXPECTED_SHA  $(notdir $1)" | sha256sum -c - || { echo "❌ Checksum verification FAILED!"; rm -f $(notdir $1); exit 1; }; \
-	    echo "✅ Checksum verified."; \
+	    echo "$$EXPECTED_SHA  $(notdir $1)" | sha256sum -c - || { echo "❌ Bad file!"; rm -f $(notdir $1); exit 1; }; \
+	    echo "✅ File is good."; \
 	else \
-	    echo "⚠️  Could not fetch .sha file. Skipping verification."; \
+	    echo "⚠️  Cannot check file integrity because .sha file is missing."; \
 	fi
 	@if [ -f $(basename $(notdir $1)) ]; then \
-	    echo "📦 $(basename $(notdir $1)) already exists. Skipping decompression."; \
+	    echo "📦 Image already unzipped."; \
 	else \
-	    echo "📦 Decompressing $(notdir $1)..."; \
-	    unxz -k $(notdir $1) || { echo "❌ Failed to decompress $1"; exit 1; }; \
+	    echo "📦 Unzipping $(notdir $1)..."; \
+	    unxz -k $(notdir $1) || { echo "❌ Unzip failed"; exit 1; }; \
 	fi
 endef
 
-# Defines the process for modifying the decompressed image.
-# Mounts the image, copies/removes files, then unmounts and renames it.
-# Automatically detects the start sector of the second partition (assumed root).
-# Argument $1: Name of the raw .img file.
-# Argument $2: Device name (e.g., 'rpi5').
+# Function to change the image.
+# It calls an external script to do the hard work.
+# Argument $1: Name of the .img file.
+# Argument $2: Name of the device (like 'rpi5').
 define modify_image
-	@sudo -v || { echo "Error: Sudo privileges are required to modify the image."; exit 1; }
-	@echo "--> Modifying image $(notdir $1) for device '$2'..."
-	@echo "🔍 Detecting partition offset..."
-	@# Detect the line for partition 2. Matches "filename" + optional "p" + "2" + whitespace
-	@PART_LINE=$$(fdisk -l $(notdir $1) | grep -E "^$(notdir $1)p?2[[:space:]]"); \
-	if [ -z "$$PART_LINE" ]; then \
-		echo "❌ Could not detect start sector for partition 2 (grep failed)."; exit 1; \
-	fi; \
-	# Extract start sector. If the second column is '*', means boot flag is set (unlikely for p2 but possible), use $3. Otherwise $2.
-	START_SECTOR=$$(echo "$$PART_LINE" | awk '{ if ($$2 == "*") print $$3; else print $$2 }'); \
-	if [ -z "$$START_SECTOR" ]; then \
-		echo "❌ Could not parse start sector from line: $$PART_LINE"; exit 1; \
-	fi; \
-	OFFSET=$$(( $$START_SECTOR * 512 )); \
-	echo "✅ Detected start sector: $$START_SECTOR (Offset: $$OFFSET bytes)"; \
-	mount_dir=$$(mktemp -d); \
-	trap 'echo "--> Caught signal, cleaning up..."; sudo umount $$mount_dir 2>/dev/null; rm -rf $$mount_dir;' INT TERM EXIT; \
-	set -e; \
-	sudo mount -o loop,offset=$$OFFSET $(notdir $1) $$mount_dir || { echo "Mount failed"; exit 1; }; \
-	sudo mkdir -p $$mount_dir/opt/ethereumonarm; \
-	sudo cp -a sources/opt/ethereumonarm/ansible $$mount_dir/opt/ethereumonarm/; \
-	sudo cp -a sources/usr/local/bin/ethereum-first-boot $$mount_dir/usr/local/bin/ethereum-first-boot; \
-	sudo chmod +x $$mount_dir/usr/local/bin/ethereum-first-boot; \
-	sudo cp -a sources/etc/systemd/system/ethereum-first-boot.service $$mount_dir/etc/systemd/system/; \
-	sudo ln -sf /etc/systemd/system/ethereum-first-boot.service $$mount_dir/etc/systemd/system/multi-user.target.wants/ethereum-first-boot.service; \
-	sudo cp -a sources/usr/local/sbin/check_install $$mount_dir/usr/local/sbin/; \
-	sudo rm -f $$mount_dir/etc/systemd/system/getty@.service.d/override.conf || true; \
-	sudo rm -f $$mount_dir/etc/systemd/system/serial-getty@.service.d/override.conf || true; \
-	sudo rm -f $$mount_dir/root/.not_logged_in_yet || true; \
-	sudo ln -sf /dev/null $$mount_dir/etc/systemd/system/systemd-networkd-wait-online.service; \
-	sudo ln -sf /dev/null $$mount_dir/etc/systemd/system/NetworkManager-wait-online.service; \
-	sync; \
-	sudo umount $$mount_dir; \
-	trap - INT TERM EXIT; \
-	rmdir $$mount_dir;
-	@mv $(notdir $1) $(call ETHONARM_IMAGE,$2)
-	@sha256sum $(call ETHONARM_IMAGE,$2) >> manifest.txt
-	@echo "✅ Created image: $(call ETHONARM_IMAGE,$2)"
+	@sudo ./modify_image.sh $(notdir $1) $2
 endef
-# --- End Canned Recipes ---
+# --- End Functions ---
 
-# Generate the list of all final target image filenames.
+# List of all images we want to build
 TARGET_IMAGES := $(foreach dev,$(DEVICES),$(call ETHONARM_IMAGE,$(dev)))
 
-# Set the default goal to 'help' so that running 'make' without arguments shows usage.
 .DEFAULT_GOAL := help
-# Declare targets that are not files to prevent conflicts.
 .PHONY: all $(TARGET_IMAGES) clean build help lint
 
-# --- Main Targets ---
+# --- Main Commands ---
 
-# Target to build all device images defined in the DEVICES list.
+# Build all images
 all: $(TARGET_IMAGES)
 
-# Convenience target to build a single device image.
-# Usage: make build DEVICE=rock5b
+# Build only one image
+# Example: make build DEVICE=rock5b
 build:
 ifndef DEVICE
-	$(error Please specify a DEVICE. Available devices: $(DEVICES))
+	$(error Please choose a DEVICE. Example: make build DEVICE=rock5b)
 endif
 	$(MAKE) $(call ETHONARM_IMAGE,$(DEVICE))
 
-# Static Pattern Rule to build any device image. This single rule
-# replaces the need for separate rules for each device.
-# The '*' (stem) captures the device name from the target filename.
+# Rule to build any image
 $(TARGET_IMAGES): ethonarm_%_$(DATE).$(RELEASE).img:
 	$(eval DEVICE_NAME := $*)
 	@echo "--- Building for $(DEVICE_NAME) ---"
 	$(call download_image,$(value $(DEVICE_NAME)_url))
 	$(call modify_image,$(value $(DEVICE_NAME)_iso),$(DEVICE_NAME))
 
-# Target to remove all generated and downloaded files.
+# Clean up files
 clean:
-	@echo "Cleaning generated images and downloads..."
+	@echo "Cleaning up..."
 	rm -f $(TARGET_IMAGES)
 	rm -f *_minimal.img.xz *.img manifest.txt
-	@echo "Clean complete."
+	@echo "Done."
 
-# Target to display help information.
+# Show help
 help:
-	@echo "Usage: make <target>"
+	@echo "Usage: make <command>"
 	@echo ""
-	@echo "Targets:"
-	@echo "  all                  Builds all device images."
-	@echo "  build DEVICE=<name>  Builds a single image for the specified device."
-	@echo "  clean                Removes all downloaded and generated files."
-	@echo "  lint                 Runs shellcheck on shell scripts."
-	@echo "  help                 Shows this help message."
+	@echo "Commands:"
+	@echo "  all                  Build all images."
+	@echo "  build DEVICE=<name>  Build one image."
+	@echo "  clean                Remove all files."
+	@echo "  lint                 Check scripts for errors."
+	@echo "  help                 Show this help."
 	@echo ""
-	@echo "Available devices: $(DEVICES)"
+	@echo "Devices: $(DEVICES)"
 
-# Target to lint shell scripts using shellcheck.
+# Check scripts
 lint:
-	@echo "🔎 Running shellcheck on shell scripts..."
+	@echo "🔎 Checking scripts..."
 	@if command -v shellcheck >/dev/null 2>&1; then \
 	    find sources -type f -name '*.sh' -o -name 'ethereum-first-boot' -o -name 'check_install' | \
-	    xargs -r shellcheck -x -S warning && echo "✅ All scripts passed lint." || echo "❌ Lint issues found."; \
+	    xargs -r shellcheck -x -S warning && echo "✅ Scripts are good." || echo "❌ Found errors."; \
 	else \
-	    echo "❌ shellcheck not installed. Install with: apt install shellcheck"; \
+	    echo "❌ shellcheck is missing. Install it with: apt install shellcheck"; \
 	    exit 1; \
 	fi

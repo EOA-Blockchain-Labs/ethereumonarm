@@ -74,9 +74,9 @@ A `manifest.txt` file is generated with SHA256 checksums for verification.
 
 1. **Download** — Fetches the compressed Armbian minimal image from the official mirror
 2. **Decompress** — Extracts the `.img` file from the `.xz` archive
-3. **Mount** — Loop-mounts the root partition using the device-specific offset
+3. **Mount** — `modify_image.sh` detects the root partition using `fdisk` and loop-mounts it
 4. **Inject Scripts** — Copies the `ethereum-first-boot` script and systemd service
-5. **Cleanup** — Removes Armbian's interactive first-login prompts
+5. **Cleanup** — Removes Armbian's interactive first-login prompts using `modify_image.sh`
 6. **Finalize** — Unmounts, renames to the final format, and generates checksums
 
 ## Source Files

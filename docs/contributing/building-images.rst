@@ -269,7 +269,7 @@ Navigate to the ``image-creation-tool/ubuntu`` directory:
 4.2. Building Images
 ^^^^^^^^^^^^^^^^^^^^
 
-The ``Makefile`` in this directory automates the download, customization, and packaging of Armbian images.
+The ``Makefile`` in this directory automates the download, customization, and packaging of Armbian images. It uses a standalone script ``modify_image.sh`` to robustly detect partitions and inject the necessary files.
 
 * **Build all images:**
 

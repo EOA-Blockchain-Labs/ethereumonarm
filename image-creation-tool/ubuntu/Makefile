@@ -74,9 +74,15 @@ define modify_image
 	@sudo -v || { echo "Error: Sudo privileges are required to modify the image."; exit 1; }
 	@echo "--> Modifying image $(notdir $1) for device '$2'..."
 	@echo "🔍 Detecting partition offset..."
-	@START_SECTOR=$$(fdisk -l $(notdir $1) | grep "$(notdir $1)p2" | awk '{print $$2}'); \
+	@# Detect the line for partition 2. Matches "filename" + optional "p" + "2" + whitespace
+	@PART_LINE=$$(fdisk -l $(notdir $1) | grep -E "^$(notdir $1)p?2[[:space:]]"); \
+	if [ -z "$$PART_LINE" ]; then \
+		echo "❌ Could not detect start sector for partition 2 (grep failed)."; exit 1; \
+	fi; \
+	# Extract start sector. If the second column is '*', means boot flag is set (unlikely for p2 but possible), use $3. Otherwise $2.
+	START_SECTOR=$$(echo "$$PART_LINE" | awk '{ if ($$2 == "*") print $$3; else print $$2 }'); \
 	if [ -z "$$START_SECTOR" ]; then \
-		echo "❌ Could not detect start sector for partition 2."; exit 1; \
+		echo "❌ Could not parse start sector from line: $$PART_LINE"; exit 1; \
 	fi; \
 	OFFSET=$$(( $$START_SECTOR * 512 )); \
 	echo "✅ Detected start sector: $$START_SECTOR (Offset: $$OFFSET bytes)"; \

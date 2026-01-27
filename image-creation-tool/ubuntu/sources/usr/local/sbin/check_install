@@ -12,6 +12,10 @@ set -uo pipefail
 VERSION="1.0.0"
 LOG_FILE="/var/log/eoa_verify.log"
 
+# ------------------------------------------------------------
+# NOTE: This list is duplicated from ansible/vars.yml
+# Please ensure they are kept in sync!
+# ------------------------------------------------------------
 # Package lists (from vars.yml)
 BASE_PACKAGES=(apt-utils bash-completion file gdisk gpg parted net-tools rsync software-properties-common dphys-swapfile ufw vim wget kitty-terminfo)
 ETHEREUM_PACKAGES=(arbitrum-nitro bee besu commit-boost dvt-obol dvt-ssv erigon ethstaker-deposit-cli ethereumonarm-utils ethrex fuel-network geth grandine kubo lighthouse lodestar ls-lido mev-boost nethermind nimbus optimism-cannon optimism-op-challenger optimism-op-geth optimism-op-node optimism-op-program optimism-op-proposer optimism-op-reth prysm reth starknet-juno starknet-madara starknet-pathfinder teku vero vouch)

@@ -10,6 +10,10 @@ set -e
 export DEBIAN_FRONTEND=noninteractive
 
 # --- Configuration ---
+# ------------------------------------------------------------
+# NOTE: This list is duplicated from ansible/vars.yml
+# Please ensure they are kept in sync!
+# ------------------------------------------------------------
 # Packages
 BASE_PACKAGES=(
   "apt-utils"

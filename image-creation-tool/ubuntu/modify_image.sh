@@ -27,16 +27,31 @@ fi
 # Extract start sector (handle boot flag '*' in 2nd column)
 START_SECTOR=$(echo "$PART_LINE" | awk '{ if ($2 == "*") print $3; else print $2 }')
 
+if ! [[ "$START_SECTOR" =~ ^[0-9]+$ ]]; then
+    echo "❌ Error: Could not extract a valid start sector from fdisk output."
+    exit 1
+fi
+
 # Mount
 OFFSET=$(( START_SECTOR * 512 ))
-echo "✅ Partition starts at sector $START_SECTOR"
+echo "✅ Partition starts at sector $START_SECTOR (Offset: $OFFSET)"
 
 MOUNT_DIR=$(mktemp -d)
 trap 'umount "$MOUNT_DIR" 2>/dev/null || true; rmdir "$MOUNT_DIR" || true' EXIT INT TERM
 
-mount -o loop,offset=$OFFSET "$IMAGE" "$MOUNT_DIR"
+if ! mount -o loop,offset=$OFFSET "$IMAGE" "$MOUNT_DIR"; then
+    echo "❌ Failed to mount image."
+    exit 1
+fi
 
 echo "📂 Copying files..."
+
+# Check source existence
+if [ ! -d "sources/opt/ethereumonarm/ansible" ]; then
+    echo "❌ Source directory 'sources/opt/ethereumonarm/ansible' not found."
+    exit 1
+fi
+
 mkdir -p "$MOUNT_DIR/opt/ethereumonarm"
 cp -a sources/opt/ethereumonarm/ansible "$MOUNT_DIR/opt/ethereumonarm/"
 cp -a sources/usr/local/bin/ethereum-first-boot "$MOUNT_DIR/usr/local/bin/ethereum-first-boot"

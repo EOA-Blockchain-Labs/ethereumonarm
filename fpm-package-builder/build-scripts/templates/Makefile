@@ -75,7 +75,7 @@ PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(UPSTREAM_VERSION)-$(PKG_RELEASE).$(PK
 # Example from merge-config, ssv, obol, etc.
 # ----------------------------------------------------------------------
 # PKG_AFTER_INSTALL ?= extras/postinst
-# PKG_BEFPRE_REMOVE ?= extras/prerm
+# PKG_BEFORE_REMOVE ?= extras/prerm
 # PKG_AFTER_REMOVE  ?= extras/postrm
 
 # ----------------------------------------------------------------------

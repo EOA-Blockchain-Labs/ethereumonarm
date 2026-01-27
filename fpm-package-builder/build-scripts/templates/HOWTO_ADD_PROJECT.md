@@ -15,11 +15,15 @@ Navigate to `fpm-package-builder` and choose the appropriate category for your p
 - **Tools**: `tools/<project-name>`
 - **Web3**: `web3/<project-name>`
 
-Create the directory structure:
-
 ```bash
-mkdir -p fpm-package-builder/<category>/<project-name>
-cd fpm-package-builder/<category>/<project-name>
+# Example: Adding a new Consensus Client "super-client"
+cp -r fpm-package-builder/build-scripts/templates/ fpm-package-builder/l1-clients/consensus-layer/super-client
+cd fpm-package-builder/l1-clients/consensus-layer/super-client
+
+# The template already includes the correct structure:
+# - Makefile
+# - extras/ (service files, postinst)
+# - sources/ (configuration files)
 ```
 
 ## 2. Package Build Configuration (Makefile)
@@ -81,35 +85,29 @@ prepare:
  gpg --verify binary.asc binary || { echo "❌ GPG FAILED!"; exit 1; };
 ```
 
-## 3. System Integration
+### 3. System Integration
 
-If the package runs as a service (daemon), you need to provide a systemd service file.
+The `extras/` directory already contains a template `service.service` and `postinst`.
 
-1. Create an `extras` directory:
+1. **Service File**:
+    - Rename `extras/service.service` to `extras/<project-name>.service`.
+    - Edit the file to update `Description`, `EnvironmentFile`, and `ExecStart`.
 
-    ```bash
-    mkdir extras
-    ```
-
-2. Add your service file (e.g., `my-project.service`) to `extras/`.
-3. Ensure your `Makefile` includes the systemd flags (most templates already do):
-
-    ```makefile
-    $(shell test -d extras && find extras -name '*.service' | sed 's/^/--deb-systemd /')
-    ```
-
-### Post-Install Scripts (Optional)
-
-If you need to run commands after installation (e.g., creating a user, setting permissions), add a `postinst` script in `extras/` and reference it in the `Makefile` with `--after-install extras/postinst`.
+2. **Post-Install Script**:
+    - Edit `extras/postinst` if you need to run commands after installation (e.g., specific permission fixes).
+    - Update the `Makefile` to uncomment `PKG_AFTER_INSTALL ?= extras/postinst`.
 
 ### Configuration Files
 
 Most services require a configuration file (EnvironmentFile) to set runtime arguments.
 
-1. Create the directory structure `sources/etc/ethereum/`.
-2. Copy `templates/config.conf` to `sources/etc/ethereum/<your-service>.conf`.
-3. Customize the `ARGS` variable in the file.
-4. Update your `.service` file to point to this configuration file:
+### Configuration Files
+
+The `sources/etc/ethereum/` directory contains a template `config.conf`.
+
+1. Rename `sources/etc/ethereum/config.conf` to `sources/etc/ethereum/<project-name>.conf`.
+2. Customize the `ARGS` variable in the file.
+3. Update your `.service` file to point to this configuration file:
     `EnvironmentFile=/etc/ethereum/<your-service>.conf`
 
 ## 4. Documentation (RST & README.Debian)

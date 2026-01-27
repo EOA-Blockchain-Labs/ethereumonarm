@@ -40,8 +40,7 @@ JUNO_BIN_FILE := juno-$(JUNO_TAG_V)-linux-$(PKG_ARCH)
 JUNO_URL      := https://github.com/NethermindEth/juno/releases/download/$(JUNO_TAG_V)/$(JUNO_ZIP_FILE)
 
 # SHA256 checksum extracted from GitHub API asset digest field
-JUNO_RELEASE_JSON := $(shell curl -s "https://api.github.com/repos/NethermindEth/juno/releases/latest")
-JUNO_SHA256 := $(shell echo '$(JUNO_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(JUNO_ZIP_FILE)") | .digest' | sed 's/sha256://')
+JUNO_SHA256 := $(shell curl -s "https://api.github.com/repos/NethermindEth/juno/releases/latest" | jq -r '.assets[] | select(.name == "$(JUNO_ZIP_FILE)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(JUNO_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(JUNO_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm

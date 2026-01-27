@@ -4,7 +4,7 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-# CHANGEME: Update the path to the config file
+# CHANGEME: Update the path to the config file (e.g. /etc/ethereum/my-service.conf)
 EnvironmentFile=/etc/ethereum/CHANGEME-config.conf
 # CHANGEME: Update the binary path and arguments
 ExecStart=/usr/bin/CHANGEME-binary $ARGS

@@ -102,6 +102,16 @@ If the package runs as a service (daemon), you need to provide a systemd service
 
 If you need to run commands after installation (e.g., creating a user, setting permissions), add a `postinst` script in `extras/` and reference it in the `Makefile` with `--after-install extras/postinst`.
 
+### Configuration Files
+
+Most services require a configuration file (EnvironmentFile) to set runtime arguments.
+
+1. Create the directory structure `sources/etc/ethereum/`.
+2. Copy `templates/config.conf` to `sources/etc/ethereum/<your-service>.conf`.
+3. Customize the `ARGS` variable in the file.
+4. Update your `.service` file to point to this configuration file:
+    `EnvironmentFile=/etc/ethereum/<your-service>.conf`
+
 ## 4. Documentation (RST & README.Debian)
 
 We use **ReStructuredText (RST)** in the `docs/` directory as the source of truth. This documentation is automatically synced to the package's `README.Debian`.

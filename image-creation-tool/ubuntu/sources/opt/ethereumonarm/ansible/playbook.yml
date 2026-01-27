@@ -395,22 +395,6 @@
     # =========================================================================
     # ETHEREUM CONFIGURATION
     # =========================================================================
-    - name: Create Ethereum data directories
-      ansible.builtin.file:
-        path: "{{ ethereum_home }}/{{ item }}"
-        state: directory
-        owner: "{{ ethereum_user }}"
-        group: "{{ ethereum_group }}"
-        mode: "0755"
-      loop:
-        - .ethereum
-        - .lighthouse
-        - .local/share/reth
-        - .local/share/teku
-        - .local/share/nimbus
-        - .local/share/lodestar
-        - .prysm
-
     - name: Write EOA release file
       ansible.builtin.copy:
         dest: /etc/eoa-release

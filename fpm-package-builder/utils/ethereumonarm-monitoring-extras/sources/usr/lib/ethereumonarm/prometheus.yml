@@ -79,7 +79,7 @@ scrape_configs:
   - job_name: "lighthouse_beacon"
     metrics_path: "/metrics"
     static_configs:
-      - targets: ["127.0.0.1:5052"]
+      - targets: ["127.0.0.1:5054"]
         labels:
           client_type: "consensus"
           client_name: "lighthouse"
@@ -89,7 +89,7 @@ scrape_configs:
   - job_name: "lighthouse_validator"
     metrics_path: "/metrics"
     static_configs:
-      - targets: ["127.0.0.1:5054"]
+      - targets: ["127.0.0.1:5064"]
         labels:
           client_type: "consensus"
           client_name: "lighthouse"
@@ -131,10 +131,21 @@ scrape_configs:
   - job_name: "teku"
     metrics_path: "/metrics"
     static_configs:
-      - targets: ["127.0.0.1:8008"]
+      - targets: ["127.0.0.1:8009"]
         labels:
           client_type: "consensus"
           client_name: "teku"
+          component: "beacon"
+          layer: "l1"
+
+  - job_name: "teku_validator"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["127.0.0.1:8010"]
+        labels:
+          client_type: "consensus"
+          client_name: "teku"
+          component: "validator"
           layer: "l1"
 
   - job_name: "teku_dev"
@@ -171,7 +182,7 @@ scrape_configs:
   - job_name: "lodestar_validator"
     metrics_path: "/metrics"
     static_configs:
-      - targets: ["127.0.0.1:5064"]
+      - targets: ["127.0.0.1:4041"]
         labels:
           client_type: "consensus"
           client_name: "lodestar"

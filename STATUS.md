@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-01-27 04:11:24 UTC_
+_Last updated: 2026-01-28 04:09:51 UTC_
 
  **What this report compares**
 
@@ -27,7 +27,7 @@ _Last updated: 2026-01-27 04:11:24 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 |:--------|:-------------------|:------------------------|:------:|
-| `commit-boost` | `0.9.2` ([Commit-Boost/commit-boost-client](https://github.com/Commit-Boost/commit-boost-client)) | `0.9.2` | ✅ Up-to-date |
+| `commit-boost` | `0.9.3` ([Commit-Boost/commit-boost-client](https://github.com/Commit-Boost/commit-boost-client)) | `0.9.3` | ✅ Up-to-date |
 | `dvt-anchor` | `1.2.0` ([sigp/anchor](https://github.com/sigp/anchor)) | `1.2.0` | ✅ Up-to-date |
 | `dvt-obol` | `1.8.1` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.8.1` | ✅ Up-to-date |
 | `dvt-ssv` | `2.3.9` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.3.9` | ✅ Up-to-date |
@@ -86,7 +86,7 @@ _Last updated: 2026-01-27 04:11:24 UTC_
 | `optimism-op-geth` | `1.101605.0` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101605.0` | ✅ Up-to-date |
 | `optimism-op-node` | `1.16.5` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.16.5` | ✅ Up-to-date |
 | `optimism-op-reth` | `1.10.2` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ✅ Up-to-date |
-| `starknet-juno` | `0.15.16` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.16` | ✅ Up-to-date |
+| `starknet-juno` | `0.15.17` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.17` | ✅ Up-to-date |
 | `starknet-madara` | `0.10.1` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.1` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.21.5` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.5` | ✅ Up-to-date |
 

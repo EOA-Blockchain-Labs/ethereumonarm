@@ -461,12 +461,12 @@ compare_group() {
 
       if [[ "$repo" == *"#"* && "$repo_clean" == "ethereum-optimism/optimism" ]]; then
         # Use the suffix as the component name (e.g. op-challenger)
-        gh_ver="$(fetch_optimism_component_version "$component_suffix")"
+        gh_ver="$(fetch_optimism_component_version "$component_suffix" || echo "N/A")"
       # Legacy fallback for existing op-node entry if not updated to new syntax yet, or strictly for op-node special handling
       elif [[ "$repo" == "ethereum-optimism/optimism" && "$pkg" == "optimism-op-node" ]]; then
-        gh_ver="$(fetch_optimism_component_version "op-node")"
+        gh_ver="$(fetch_optimism_component_version "op-node" || echo "N/A")"
       else
-        gh_ver="$(fetch_github_release "$repo_clean")"
+        gh_ver="$(fetch_github_release "$repo_clean" || echo "N/A")"
       fi
 
       repo_ver="$(get_latest_repo_version "$pkg")"
@@ -524,18 +524,16 @@ generate_markdown() {
     echo
     echo "_Last updated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')_"
     echo
-    echo " **What this report compares**"
+    echo "## What this report compares"
     echo ""
     echo "- **GitHub Version**: latest upstream release (or highest tag if no release)."
     echo "- **Repo Version**: latest version published in the **Ethereum on ARM APT repository**."
-    echo
     echo
     echo "## Legend"
     echo
     echo "- ✅ **Up-to-date** — Repo version matches or is newer than GitHub."
     echo "- ❌ **Outdated** — Repo lags behind GitHub."
     echo "- ❓ **N/A** — Could not determine."
-    echo
     echo
     echo "## Summary"
     echo
@@ -557,11 +555,10 @@ generate_markdown() {
     if grep -q "^${group_name};" "$RESULTS_TMP_FILE"; then
       {
         echo
-        echo
         echo "## $group_name"
         echo
         echo "| Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |"
-        echo "|:--------|:-------------------|:------------------------|:------:|"
+        echo "| :------- | :------------------ | :----------------------- | :------: |"
       } >>"$MARKDOWN_FILE"
 
       # Filter results for this group and sort by package name
@@ -589,7 +586,7 @@ generate_markdown() {
         printf '| `%s` | %s | `%s` | %s |%s' \
           "$pkg" "$gh_cell" "${repo_ver:-N/A}" "$status" $'\n' >>"$MARKDOWN_FILE"
       done
-      echo >>"$MARKDOWN_FILE"
+
     fi
   done
   unset IFS

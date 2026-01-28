@@ -1,7 +1,10 @@
 global:
-  scrape_interval: 15s  # Default interval for scraping metrics
-  evaluation_interval: 15s  # Default interval for evaluating rules
-  scrape_timeout: 10s  # Timeout for scraping metrics
+  scrape_interval: 15s # Default interval for scraping metrics
+  evaluation_interval: 15s # Default interval for evaluating rules
+  scrape_timeout: 10s # Timeout for scraping metrics
+
+rule_files:
+  - "/etc/prometheus/alerts.yml"
 
 scrape_configs:
   # ============================================================================

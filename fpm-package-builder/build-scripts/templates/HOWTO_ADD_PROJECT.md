@@ -101,7 +101,7 @@ The `extras/` directory already contains a template `service.service` and `posti
 
 Most services require a configuration file (EnvironmentFile) to set runtime arguments.
 
-### Configuration Files
+#### Template Configuration
 
 The `sources/etc/ethereum/` directory contains a template `config.conf`.
 

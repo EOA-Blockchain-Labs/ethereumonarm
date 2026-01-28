@@ -32,6 +32,7 @@ check_files() {
         "/usr/lib/ethereumonarm/prometheus"
         "/usr/lib/ethereumonarm/prometheus-node-exporter"
         "/usr/lib/ethereumonarm/prometheus.yml"
+        "/usr/lib/ethereumonarm/alerts.yml"
     )
 
     for file in "${files[@]}"; do
@@ -56,6 +57,7 @@ override() {
     cp /usr/lib/ethereumonarm/prometheus /etc/default/
     cp /usr/lib/ethereumonarm/prometheus-node-exporter /etc/default/
     cp /usr/lib/ethereumonarm/prometheus.yml /etc/prometheus/
+    cp /usr/lib/ethereumonarm/alerts.yml /etc/prometheus/
 
     log_info "Starting monitoring services..."
     systemctl start grafana-server prometheus prometheus-node-exporter || true

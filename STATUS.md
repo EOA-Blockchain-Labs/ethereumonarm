@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-01-28 10:52:01 UTC_
+_Last updated: 2026-01-29 04:43:51 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-01-28 10:52:01 UTC_
 ## Summary
 
 - Total packages checked: **36**
-- ✅ Up-to-date: **34** (94.4%)
-- ❌ Outdated: **2** (5.6%)
+- ✅ Up-to-date: **35** (97.2%)
+- ❌ Outdated: **1** (2.8%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -32,7 +32,7 @@ _Last updated: 2026-01-28 10:52:01 UTC_
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |
 | `ethstaker-deposit-cli` | `1.2.2` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.2.2` | ✅ Up-to-date |
 | `mev-boost` | `1.10.1` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.10.1` | ✅ Up-to-date |
-| `stakewise-operator` | `4.1.5` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.1.4` | ❌ Outdated |
+| `stakewise-operator` | `4.1.5` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.1.5` | ✅ Up-to-date |
 | `vero` | `1.3.1` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.3.1` | ✅ Up-to-date |
 | `vouch` | `1.12.0` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.12.0` | ✅ Up-to-date |
 
@@ -42,7 +42,7 @@ _Last updated: 2026-01-28 10:52:01 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `grandine` | `2.0.1` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.1` | ✅ Up-to-date |
 | `lighthouse` | `8.0.1` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.0.1` | ✅ Up-to-date |
-| `lodestar` | `1.38.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.38.0` | ✅ Up-to-date |
+| `lodestar` | `1.39.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.39.0` | ✅ Up-to-date |
 | `nimbus` | `25.12.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `25.12.0` | ✅ Up-to-date |
 | `prysm` | `7.1.2` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.2` | ✅ Up-to-date |
 | `teku` | `25.12.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.12.0` | ✅ Up-to-date |

@@ -187,7 +187,20 @@ curl -fsSL https://get.pnpm.io/install.sh | sh -
 make
 ```
 
-### Build a specific package
+### Build a specific package directly
+
+You can build any package from the root directory by using its directory name:
+
+```bash
+make geth
+make prysm
+make lighthouse
+make ethereum-metrics-exporter
+```
+
+This is equivalent to `cd`ing into the directory and running `make`.
+
+### Build a specific package (Manual Navigation)
 
 ```bash
 cd l1-clients/execution-layer/geth

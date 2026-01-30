@@ -140,7 +140,14 @@ Once your environment is set up (either manually or with Vagrant), you can creat
 
      make
 
-* Alternatively, to create only a specific package, navigate to the desired client or package directory (e.g., ``geth``) and type ``make``:
+* **New:** To create a specific package directly from the root (e.g., ``geth``, ``prysm``), type:
+
+  .. code-block:: bash
+
+     make geth
+     make prysm
+
+* Alternatively, you can still navigate to the desired client or package directory (e.g., ``geth``) and type ``make``:
 
   .. code-block:: bash
 

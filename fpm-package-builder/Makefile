@@ -136,12 +136,12 @@ test: ## Run tests across all subdirectories
 
 # ---------- HELP ----------
 help: ## Show available targets
-	@echo ""
-	@echo "  $(BLUE)Ethereum on ARM — Package Builder$(RESET)"
-	@echo ""
-	@echo "  Usage: make <target>"
-	@echo ""
-	@echo "  $(GREEN)Targets:$(RESET)"
+	@printf "\n"
+	@printf "  $(BLUE)Ethereum on ARM — Package Builder$(RESET)\n"
+	@printf "\n"
+	@printf "  Usage: make <target>\n"
+	@printf "\n"
+	@printf "  $(GREEN)Targets:$(RESET)\n"
 	@echo "    all           Build all packages (default)"
 	@echo "    clean         Clean all build artifacts"
 	@echo "    test          Run tests for all packages"
@@ -152,6 +152,9 @@ help: ## Show available targets
 	@echo "    web3          Build web3 packages only"
 	@echo "    lint          Run shellcheck on shell scripts"
 	@echo "    help          Show this help message"
-	@echo ""
-	@echo "  $(YELLOW)Subdirectories:$(RESET) $(words $(SUBDIRS)) packages found"
-	@echo ""
+	@printf "\n"
+	@printf "  $(GREEN)Package Targets:$(RESET)\n"
+	@echo "    $(TARGETS)" | fold -s -w 70 | sed 's/^/    /'
+	@printf "\n"
+	@printf "  $(YELLOW)Subdirectories:$(RESET) $(words $(SUBDIRS)) packages found\n"
+	@printf "\n"

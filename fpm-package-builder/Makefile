@@ -30,8 +30,15 @@ INFRA     := $(shell find infra -mindepth 2 -type f -name "Makefile" $(EXCLUDES)
 # and only runs 'make' in the actual sub-project directories.
 SUBDIRS   := $(sort $(L1CLIENTS) $(L2CLIENTS) $(UTILS) $(WEB3) $(INFRA))
 
+# ---------- DOCKER CONFIGURATION ----------
+DOCKER_IMAGE := eoa-builder
+DOCKER_PLATFORM := linux/arm64
+PWD := $(shell pwd)
+
+
 # ---------- PHONY TARGETS ----------
 .PHONY: default all clean l1-clients l2-clients infra utils web3 do-run summary lint test help
+.PHONY: docker-image docker-run docker-shell
 
 # ---------- DEFAULT ----------
 default: all
@@ -57,6 +64,7 @@ l2-clients:
 web3:
 	@$(MAKE) do-run DIRS_TO_RUN="$(WEB3)" TARGET_TO_RUN="all" TARGET_NAME="web3 (all)"
 
+
 infra:
 	@$(MAKE) do-run DIRS_TO_RUN="$(INFRA)" TARGET_TO_RUN="all" TARGET_NAME="infra (all)"
 
@@ -64,7 +72,22 @@ utils:
 	@$(MAKE) do-run DIRS_TO_RUN="$(UTILS)" TARGET_TO_RUN="all" TARGET_NAME="utils (all)"
 
 
-# ---------- DYNAMIC TARGETS ----------
+# ---------- DOCKER TARGETS ----------
+# Build the docker builder image
+docker-image:
+	@echo "🐳 Building Docker image $(DOCKER_IMAGE) for $(DOCKER_PLATFORM)..."
+	docker build --platform $(DOCKER_PLATFORM) -t $(DOCKER_IMAGE) .
+
+# Run a make command inside the docker container
+# Usage: make docker-run cmd="make geth"
+docker-run:
+	@echo "🐳 Running command in Docker: $(cmd)"
+	docker run --rm --platform $(DOCKER_PLATFORM) -v "$(PWD)":/workspace $(DOCKER_IMAGE) $(cmd)
+
+# Enter an interactive shell inside the builder container
+docker-shell:
+	@echo "🐳 Entering Docker shell..."
+	docker run --rm -it --platform $(DOCKER_PLATFORM) -v "$(PWD)":/workspace $(DOCKER_IMAGE) bash# ---------- DYNAMIC TARGETS ----------
 # Allows running 'make <package_name>' (e.g., 'make geth', 'make prysm')
 # directly by matching the directory name.
 TARGETS := $(notdir $(SUBDIRS))
@@ -151,6 +174,8 @@ help: ## Show available targets
 	@echo "    utils         Build utility packages only"
 	@echo "    web3          Build web3 packages only"
 	@echo "    lint          Run shellcheck on shell scripts"
+	@echo "    docker-image  Build the Docker builder image"
+	@echo "    docker-shell  Enter interactive Docker shell"
 	@echo "    help          Show this help message"
 	@printf "\n"
 	@printf "  $(GREEN)Package Targets:$(RESET)\n"

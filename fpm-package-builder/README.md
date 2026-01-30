@@ -42,47 +42,55 @@ This project isn't just a collection of scripts; it's a standardized build syste
 
 ---
 
-## 1️⃣ Recommended: Use the Provided Vagrantfile
+## 1️⃣ Recommended: Use Docker (Reproducible Builds)
 
-The **only supported way** to create a fully configured build environment is to use the included Vagrantfile.
-It automatically sets up an Ubuntu 24.04 virtual machine with all required dependencies, cross-compilers for ARM64, and toolchains correctly configured.
-
-> [!IMPORTANT]
-> The Makefiles in this project are optimized for this Vagrant environment (Linux/Ubuntu 24.04).
-> Building directly on macOS or other systems is **not supported** and will likely fail due to missing cross-compilation tools or incorrect LLVM paths.
+The **only supported way** to create a fully configured, reproducible build environment is to use the included Docker setup.
+This ensures that you are using the exact same toolchain (Go, Rust, LLVM, etc.) as the official builds, regardless of your host OS.
 
 ### 📋 Requirements
 
-- [Vagrant](https://www.vagrantup.com/docs/installation)  
-- [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+- [Docker](https://docs.docker.com/get-docker/)
 
 ### 🚀 Steps
 
+1. **Build the builder image** (only needed once):
+
+   ```bash
+   make docker-image
+   ```
+
+2. **Run a build**:
+
+   To build all packages:
+
+   ```bash
+   make docker-run cmd="make all"
+   ```
+
+   To build a specific package (e.g., Geth):
+
+   ```bash
+   make docker-run cmd="make geth"
+   ```
+
+   This will compile the package inside the container and save the resulting `.deb` file to your local `packages/` directory.
+
+### 🛠️ Shell Access
+
+If you need to debug or run multiple commands, you can enter an interactive shell inside the builder:
+
 ```bash
-git clone https://github.com/EOA-Blockchain-Labs/ethereumonarm.git
-cd ethereumonarm/fpm-package-builder
-vagrant up
-vagrant ssh
-cd ethereumonarm/
+make docker-shell
 ```
-
-The VM comes with:
-
-- ✅ All dependencies and cross-compilers installed  
-- 🐳 Docker configured for the `vagrant` user  
-- 🦀 Rust, Go, and Node environments ready to use  
-- 🔧 LLVM 19 and MLIR for Starknet client builds
-
-Once inside the VM, you can immediately build packages (see section 3).
 
 ---
 
 ## 2️⃣ Manual Setup (Ubuntu 24.04 LTS)
 
 > [!WARNING]
-> **Advanced Linux Users Only**: Use this method only if you cannot use Vagrant (e.g., inside a CI pipeline).
-> These steps replicate the `provision.sh` environment on a fresh Ubuntu 24.04 machine.
-> **Building explicitly on macOS is NOT supported.**
+> **Advanced Linux Users Only**: Use this method only if you cannot use Docker.
+> These steps replicate the `Dockerfile` environment on a fresh Ubuntu 24.04 machine.
+> **Building explicitly on macOS is NOT supported (use Docker instead).**
 
 ### 2.1 Prepare apt repositories
 

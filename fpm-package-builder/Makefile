@@ -64,6 +64,23 @@ utils:
 	@$(MAKE) do-run DIRS_TO_RUN="$(UTILS)" TARGET_TO_RUN="all" TARGET_NAME="utils (all)"
 
 
+# ---------- DYNAMIC TARGETS ----------
+# Allows running 'make <package_name>' (e.g., 'make geth', 'make prysm')
+# directly by matching the directory name.
+TARGETS := $(notdir $(SUBDIRS))
+.PHONY: $(TARGETS)
+
+$(TARGETS):
+	@# Find the specific directory ending with the target name
+	@DIR=$$(echo "$(SUBDIRS)" | tr ' ' '\n' | grep "/$@$$" | head -n 1); \
+	if [ -n "$$DIR" ]; then \
+	    $(MAKE) do-run DIRS_TO_RUN="$$DIR" TARGET_TO_RUN="all" TARGET_NAME="$@"; \
+	else \
+	    echo "$(RED)❌ Error: Could not resolve target '$@' to a directory.$(RESET)"; \
+	    exit 1; \
+	fi
+
+
 # ---------- MAIN EXECUTION ----------
 do-run:
 	@RESULT_FILE=$$(mktemp /tmp/make_results_XXXXXX.txt); \

@@ -28,9 +28,53 @@ Navigate to the ``fpm-package-builder`` directory within the cloned repository:
 
    cd ethereumonarm/fpm-package-builder
 
-From here, you have two options for setting up the development environment: installing dependencies manually or using a Vagrant machine.
+From here, you have **three** options for setting up the development environment: using Docker (recommended), installing dependencies manually, or using a Vagrant machine.
 
-2.1 Install Dependencies Manually (Ubuntu 24.04)
+2.1 Use Docker (Recommended)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The **only supported way** to create a fully configured, reproducible build environment is to use the included Docker setup.
+This ensures that you are using the exact same toolchain as the official builds.
+
+**Steps:**
+
+1. **Build the builder image** (only needed once):
+
+   .. code-block:: bash
+
+      make docker-image
+
+   .. warning::
+
+      **Cross-Compilation on x86_64 / AMD64 hosts**
+
+      If you are building on an Intel/AMD machine (x86_64), you **must** install QEMU user-static emulation to build the ARM64 Docker image. Run this command once before building:
+
+      .. code-block:: bash
+
+         docker run --privileged --rm tonistiigi/binfmt --install all
+
+2. **Run a build**:
+
+   To build all packages:
+
+   .. code-block:: bash
+
+      make docker-run cmd="make all"
+
+   To build a specific package (e.g., Geth):
+
+   .. code-block:: bash
+
+      make docker-run cmd="make geth"
+
+   If you need to debug or run multiple commands, you can enter an interactive shell inside the builder:
+
+   .. code-block:: bash
+
+      make docker-shell
+
+2.2 Install Dependencies Manually (Ubuntu 24.04)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you prefer to install dependencies directly on an Ubuntu 24.04 system, follow these steps:
@@ -117,7 +161,7 @@ If you prefer to install dependencies directly on an Ubuntu 24.04 system, follow
      export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && nvm install 20
      export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm install -g yarn
 
-2.2. Alternatively, use the Provided Vagrantfile (Recommended)
+2.3. Alternatively, use the Provided Vagrantfile (Recommended)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For an easier and recommended setup, use the provided Vagrantfile to create an Ubuntu 24.04 VM with all necessary dependencies. You will need `Vagrant <https://www.vagrantup.com/docs/installation>`_ and `VirtualBox <https://www.virtualbox.org/wiki/Downloads>`_ installed.
@@ -129,7 +173,7 @@ For an easier and recommended setup, use the provided Vagrantfile to create an U
    vagrant ssh
    cd ethereumonarm/
 
-2.3. Create .deb Packages
+2.4. Create .deb Packages
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Once your environment is set up (either manually or with Vagrant), you can create ``.deb`` packages.

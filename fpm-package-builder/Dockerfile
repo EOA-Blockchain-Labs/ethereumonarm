@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y \
     gcc-aarch64-linux-gnu \
     g++-aarch64-linux-gnu \
     libssl-dev \
+    bc \
     && rm -rf /var/lib/apt/lists/*
 
 # 2. Install FPM (Ruby gem)

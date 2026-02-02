@@ -59,6 +59,13 @@ This ensures that you are using the exact same toolchain (Go, Rust, LLVM, etc.) 
    make docker-image
    ```
 
+   > [!IMPORTANT]
+   > **Cross-Compilation on x86_64 / AMD64 hosts**:
+   > If you are building on an Intel/AMD machine (x86_64), you **must** install QEMU user-static emulation to build the ARM64 Docker image. Run this command once before building:
+   > ```bash
+   > docker run --privileged --rm tonistiigi/binfmt --install all
+   > ```
+
 2. **Run a build**:
 
    To build all packages:

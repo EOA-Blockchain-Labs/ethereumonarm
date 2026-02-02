@@ -72,9 +72,20 @@ utils:
 	@$(MAKE) do-run DIRS_TO_RUN="$(UTILS)" TARGET_TO_RUN="all" TARGET_NAME="utils (all)"
 
 
+# ---------- CHECKS ----------
+check-qemu:
+	@if [ "$$(uname -m)" = "x86_64" ]; then \
+		if [ ! -f /proc/sys/fs/binfmt_misc/qemu-aarch64 ] && [ ! -f /proc/sys/fs/binfmt_misc/aarch64 ]; then \
+			echo "$(YELLOW)⚠️  Warning: Host is x86_64 but qemu-aarch64 binfmt seems missing.$(RESET)"; \
+			echo "   Required for building ARM64 images. If the build fails, run:"; \
+			echo "   $(GREEN)docker run --privileged --rm tonistiigi/binfmt --install all$(RESET)"; \
+			echo ""; \
+		fi \
+	fi
+
 # ---------- DOCKER TARGETS ----------
 # Build the docker builder image
-docker-image:
+docker-image: check-qemu
 	@echo "🐳 Building Docker image $(DOCKER_IMAGE) for $(DOCKER_PLATFORM)..."
 	docker build --platform $(DOCKER_PLATFORM) -t $(DOCKER_IMAGE) .
 

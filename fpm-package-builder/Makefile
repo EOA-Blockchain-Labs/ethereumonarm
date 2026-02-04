@@ -98,7 +98,9 @@ docker-run:
 # Enter an interactive shell inside the builder container
 docker-shell:
 	@echo "🐳 Entering Docker shell..."
-	docker run --rm -it --platform $(DOCKER_PLATFORM) -v "$(PWD)":/workspace $(DOCKER_IMAGE) bash# ---------- DYNAMIC TARGETS ----------
+	docker run --rm -it --platform $(DOCKER_PLATFORM) -v "$(PWD)":/workspace $(DOCKER_IMAGE) bash
+
+# ---------- DYNAMIC TARGETS ----------
 # Allows running 'make <package_name>' (e.g., 'make geth', 'make prysm')
 # directly by matching the directory name.
 TARGETS := $(notdir $(SUBDIRS))

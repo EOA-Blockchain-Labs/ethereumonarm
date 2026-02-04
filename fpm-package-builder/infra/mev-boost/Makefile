@@ -39,8 +39,7 @@ MEV_TARBALL := mev-boost_$(MEV_VERSION)_linux_$(PKG_ARCH).tar.gz
 MEV_URL     := https://github.com/flashbots/mev-boost/releases/download/$(MEV_TAG_V)/$(MEV_TARBALL)
 
 # SHA256 checksum extracted from GitHub API asset digest field
-MEV_RELEASE_JSON := $(shell curl -s https://api.github.com/repos/flashbots/mev-boost/releases/latest)
-MEV_SHA256 := $(shell echo '$(MEV_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(MEV_TARBALL)") | .digest' | sed 's/sha256://')
+MEV_SHA256 := $(shell curl -s https://api.github.com/repos/flashbots/mev-boost/releases/latest | jq -r '.assets[] | select(.name == "$(MEV_TARBALL)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(MEV_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(MEV_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm

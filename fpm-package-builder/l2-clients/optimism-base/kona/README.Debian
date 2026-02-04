@@ -1,0 +1,16 @@
+kona for Debian
+=======================
+
+This package provides kona, the portable implementation of the OP Stack's fault proof verification logic (kona-host) as a standalone binary.
+
+Usage
+-----
+
+The binary is installed at `/usr/bin/kona-host`.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
+- **Upstream URL**: https://github.com/ethereum-optimism/optimism/tree/develop/kona
+

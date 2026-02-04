@@ -36,6 +36,15 @@ The ``--trace-type`` flag determines which fault proof VMs are used:
 
         TRACE_TYPE="cannon"
 
+    To use Kona (cannon-kona), ensure the ``kona`` package is installed:
+
+    .. code-block:: bash
+
+        sudo apt install kona
+        # In /etc/ethereum/op-challenger.conf:
+        TRACE_TYPE="cannon-kona"
+        CANNON_KONA_SERVER="/usr/bin/kona-host"
+
 Service Management
 ------------------
 

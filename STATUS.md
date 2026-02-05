@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-02-04 04:45:19 UTC_
+_Last updated: 2026-02-05 04:53:30 UTC_
 
 ## What this report compares
 
@@ -15,10 +15,10 @@ _Last updated: 2026-02-04 04:45:19 UTC_
 
 ## Summary
 
-- Total packages checked: **36**
-- ✅ Up-to-date: **34** (94.4%)
-- ❌ Outdated: **2** (5.6%)
-- ❓ N/A: **0** (0.0%)
+- Total packages checked: **37**
+- ✅ Up-to-date: **35** (94.6%)
+- ❌ Outdated: **1** (2.7%)
+- ❓ N/A: **1** (2.7%)
 
 ## Infra
 
@@ -31,7 +31,7 @@ _Last updated: 2026-02-04 04:45:19 UTC_
 | `ethereum-metrics-exporter` | `0.29.1` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.29.1` | ✅ Up-to-date |
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |
 | `ethstaker-deposit-cli` | `1.2.2` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.2.2` | ✅ Up-to-date |
-| `mev-boost` | `1.11` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.10.1` | ❌ Outdated |
+| `mev-boost` | `1.11` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.11` | ✅ Up-to-date |
 | `stakewise-operator` | `4.1.6` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.1.6` | ✅ Up-to-date |
 | `vero` | `1.3.1` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.3.1` | ✅ Up-to-date |
 | `vouch` | `1.12.0` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.12.0` | ✅ Up-to-date |
@@ -71,6 +71,7 @@ _Last updated: 2026-02-04 04:45:19 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `arbitrum-nitro` | `3.9.5` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.9.5` | ✅ Up-to-date |
 | `fuel-network` | `0.47.1` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.47.1` | ✅ Up-to-date |
+| `optimism-kona` | `N/A` ([ethereum-optimism/optimism#kona](https://github.com/ethereum-optimism/optimism#kona)) | `N/A` | ❓ N/A |
 | `optimism-op-challenger` | `1.9.0` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.0` | ✅ Up-to-date |
 | `optimism-op-geth` | `1.101608.0` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101608.0` | ✅ Up-to-date |
 | `optimism-op-node` | `1.16.6` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.16.6` | ✅ Up-to-date |

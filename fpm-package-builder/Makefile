@@ -106,7 +106,7 @@ $(TARGETS): ensure-docker-image
 do-run:
 	@export LC_NUMERIC=C; \
 	printf "\n🐳 $(BLUE)Running target '$(GREEN)$(TARGET_NAME)$(BLUE)' via Docker...$(RESET)\n\n"; \
-	RESULT_FILE=$$(mktemp /tmp/make_results_XXXXXX.txt); \
+	RESULT_FILE=$$(mktemp); \
 	total_start=$$(date +%s.%N); \
 	for dir in $(DIRS_TO_RUN); do \
 	    start=$$(date +%s.%N); \
@@ -130,7 +130,16 @@ do-run:
 	total_end=$$(date +%s.%N); \
 	total_elapsed=$$(printf "%.2f" $$(echo "$$total_end - $$total_start" | bc)); \
 	printf "⏱  $(BLUE)Total time: $(YELLOW)%ss$(RESET)\n\n" "$$total_elapsed"; \
-	$(MAKE) summary RESULT_FILE="$$RESULT_FILE"; \
+	if [ -s "$$RESULT_FILE" ]; then \
+	    printf "$(BLUE)────── SUMMARY ──────$(RESET)\n"; \
+	    printf "%-65s %-10s %-10s\n" "Directory" "Result" "Time(s)"; \
+	    printf "%-65s %-10s %-10s\n" "-----------------------------------------------------------------" "--------" "--------"; \
+	    while IFS="|" read -r dir result time; do \
+	        if [ "$$result" = "SUCCESS" ]; then color="$(GREEN)"; symbol="✅"; else color="$(RED)"; symbol="❌"; fi; \
+	        printf "%-65s %-10b %-10s\n" "$$dir" "$$symbol $$color$$result$(RESET)" "$$time"; \
+	    done < "$$RESULT_FILE"; \
+	    printf "$(BLUE)──────────────────────$(RESET)\n"; \
+	fi; \
 	rm -f "$$RESULT_FILE"
 
 # ---------- LOCAL EXECUTION (for clean, etc.) ----------

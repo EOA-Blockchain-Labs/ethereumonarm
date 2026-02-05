@@ -40,7 +40,6 @@ GRANDINE_BINARY := grandine-$(GRANDINE_VERSION)-$(PKG_ARCH)
 GRANDINE_URL := https://github.com/grandinetech/grandine/releases/download/$(GRANDINE_TAG)/$(GRANDINE_BINARY)
 
 # SHA256 checksum extracted from GitHub API asset digest field
-# SHA256 checksum extracted from GitHub API asset digest field
 GRANDINE_SHA256 := $(shell curl -sL "https://api.github.com/repos/grandinetech/grandine/releases/latest" | jq -r '.assets[] | select(.name == "$(GRANDINE_BINARY)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(GRANDINE_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
@@ -139,8 +138,8 @@ rpm: prepare ## Build .rpm package
 # clean — remove build artifacts
 # ----------------------------------------------------------------------
 clean: ## Remove staged binaries and temp files
-	rm -rf $(SOURCESDIR)/usr/bin/$(PKG_NAME)*
-	@echo "🧹 Clean complete (staged binaries removed)."
+	rm -rf $(SOURCESDIR)/usr/bin/$(PKG_NAME)* .build
+	@echo "🧹 Clean complete (staged files and .build removed)."
 
 # ----------------------------------------------------------------------
 # test — verify build success

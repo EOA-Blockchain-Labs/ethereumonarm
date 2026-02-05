@@ -170,8 +170,8 @@ rpm: prepare ## Build .rpm package
 # clean — remove build artifacts
 # ----------------------------------------------------------------------
 clean: ## Remove staged binaries and temp files
-	rm -rf $(SOURCESDIR)/usr/bin/beacon-chain $(SOURCESDIR)/usr/bin/validator
-	@echo "🧹 Clean complete (staged binaries removed)."
+	rm -rf $(SOURCESDIR)/usr/bin/beacon-chain $(SOURCESDIR)/usr/bin/validator .build
+	@echo "🧹 Clean complete (staged files and .build removed)."
 
 # ----------------------------------------------------------------------
 # test — verify build success

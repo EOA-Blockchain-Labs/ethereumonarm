@@ -77,7 +77,8 @@ FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
 FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
     -t rpm \
     --architecture $(PKG_ARCH_RPM) \
-    $(shell test -d extras && find extras -name '$(PKG_NAME)*.service' -printf "--rpm-systemd %p " || true)
+    $(shell test -d extras && find extras -name '$(PKG_NAME)*.service' -printf "--rpm-systemd %p " || true) \
+    --depends merge-config
 
 # ----------------------------------------------------------------------
 # Targets
@@ -161,6 +162,12 @@ test: ## Check that .deb exists
 	else \
 	    echo "🧪 Test: .deb missing — ❌"; exit 1; \
 	fi
+
+# ----------------------------------------------------------------------
+# release — full CI build (includes RPM)
+# ----------------------------------------------------------------------
+release: clean prepare deb rpm test ## Clean + Prepare + Build + Test (all)
+	@echo "🎉 All packages built successfully for $(PKG_ARCH)"
 
 # ----------------------------------------------------------------------
 # help — show all available targets

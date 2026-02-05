@@ -73,7 +73,6 @@ FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
     -t deb \
     --architecture $(PKG_ARCH) \
     --deb-no-default-config-files \
-    --deb-no-default-config-files \
     --depends merge-config
 
 # ----------------------------------------------------------------------

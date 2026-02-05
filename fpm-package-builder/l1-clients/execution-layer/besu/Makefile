@@ -169,6 +169,12 @@ test: ## Check that .deb exists
 
 
 # ----------------------------------------------------------------------
+# release — full CI build (includes RPM)
+# ----------------------------------------------------------------------
+release: clean prepare deb rpm test ## Clean + Prepare + Build + Test (all)
+	@echo "🎉 All packages built successfully for $(PKG_ARCH)"
+
+# ----------------------------------------------------------------------
 # help — show all available targets
 # ----------------------------------------------------------------------
 help: ## Show available targets

@@ -176,7 +176,7 @@ help: ## Show available targets
 	echo ""
 	echo "EOA Packaging — $(PKG_NAME)"
 	echo ""
-	awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z0-9_%-]+:.*?##/ { printf "  \033[36m%-12s\033[0M %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
+	awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z0-9_%-]+:.*?##/ { printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 	echo ""
 	echo "Version resolved: $(LIGHTHOUSE_VERSION) (Tag: $(LIGHTHOUSE_TAG))"
 	echo "Sources dir     : $(SOURCESDIR)"

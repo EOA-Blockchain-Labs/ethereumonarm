@@ -264,13 +264,13 @@ release: clean prepare deb rpm test ## Clean + Prepare + Build + Test (all)
 # docker-build — build inside a Docker container
 # ----------------------------------------------------------------------
 docker-build: ## Run the build inside a Docker container
-	@echo "🐳 Starting Docker build..."
-	# CHANGEME: Update image if needed (e.g. to ubuntu:22.04 or a custom builder image)
+	# Uses the shared builder image defined in fpm-package-builder/Dockerfile
+	# Build the image first with: make docker-image (from fpm-package-builder root)
 	docker run --rm -v $(PWD):/workspace -w /workspace \
 	    -e PKG_NAME=$(PKG_NAME) \
 	    -e PKG_RELEASE=$(PKG_RELEASE) \
-	    ubuntu:20.04 \
-	    /bin/bash -c "apt-get update && apt-get install -y make curl jq wget ruby ruby-dev build-essential && gem install fpm && make release"
+	    eoa-builder \
+	    /bin/bash -c "make release"
 
 # ----------------------------------------------------------------------
 # help — show all available targets

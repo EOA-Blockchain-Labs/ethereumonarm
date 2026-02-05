@@ -154,3 +154,18 @@ help: ## Show available targets
 	echo "Sources dir     : $(SOURCESDIR)"
 	echo "Output dir      : $(OUTPUTDIR)"
 	echo ""
+
+# ----------------------------------------------------------------------
+# docker-build — build inside a Docker container
+# ----------------------------------------------------------------------
+docker-build: ## Run the build inside a Docker container
+	# Uses the shared builder image defined in fpm-package-builder/Dockerfile
+	docker run --rm -v $(PWD):/workspace -w /workspace \
+	    -e PKG_NAME=$(PKG_NAME) \
+	    -e PKG_RELEASE=$(PKG_RELEASE) \
+	    eoa-builder \
+	    /bin/bash -c "make release"
+
+# ======================================================================
+# End of file
+# ======================================================================

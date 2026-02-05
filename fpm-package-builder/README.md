@@ -44,43 +44,29 @@ This project isn't just a collection of scripts; it's a standardized build syste
 
 ## 1️⃣ Recommended: Use Docker (Reproducible Builds)
 
-The **only supported way** to create a fully configured, reproducible build environment is to use the included Docker setup.
-This ensures that you are using the exact same toolchain (Go, Rust, LLVM, etc.) as the official builds, regardless of your host OS.
+**All builds run inside Docker automatically.** The Docker image is built on first use if needed. This ensures reproducible builds using the same toolchain (Go, Rust, LLVM, etc.) as the official packages, regardless of your host OS.
 
 ### 📋 Requirements
 
 - [Docker](https://docs.docker.com/get-docker/)
 
-### 🚀 Steps
+### 🚀 Build Packages
 
-1. **Build the builder image** (only needed once):
+To build all packages:
 
-   ```bash
-   make docker-image
-   ```
+```bash
+make all
+```
 
-   > [!IMPORTANT]
-   > **Cross-Compilation on x86_64 / AMD64 hosts**:
-   > If you are building on an Intel/AMD machine (x86_64), you **must** install QEMU user-static emulation to build the ARM64 Docker image. Run this command once before building:
-   > ```bash
-   > docker run --privileged --rm tonistiigi/binfmt --install all
-   > ```
+To build a specific package (e.g., Geth):
 
-2. **Run a build**:
+```bash
+make geth
+```
 
-   To build all packages:
+The Docker image will be automatically built on first use. On x86_64 hosts, QEMU binfmt will also be installed automatically for ARM64 emulation.
 
-   ```bash
-   make docker-run cmd="make all"
-   ```
-
-   To build a specific package (e.g., Geth):
-
-   ```bash
-   make docker-run cmd="make geth"
-   ```
-
-   This will compile the package inside the container and save the resulting `.deb` file to your local `packages/` directory.
+Built `.deb` packages will be saved to the `packages/` directory.
 
 ### 🛠️ Shell Access
 
@@ -88,6 +74,14 @@ If you need to debug or run multiple commands, you can enter an interactive shel
 
 ```bash
 make docker-shell
+```
+
+### 🔧 Rebuild Docker Image
+
+To force a rebuild of the Docker builder image:
+
+```bash
+make docker-image
 ```
 
 ---

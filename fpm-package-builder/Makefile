@@ -8,7 +8,6 @@ YELLOW := \033[1;33m
 RESET  := \033[0m
 
 # ---------- EXCLUSIONS ----------
-# Excludes common directories from the search process
 EXCLUDES := -not -path "./.git/*" \
             -not -path "*/.cache/*" \
             -not -path "*/.build/*" \
@@ -16,18 +15,11 @@ EXCLUDES := -not -path "./.git/*" \
             -not -path "./packages/*"
 
 # ---------- FIND SUB-MAKEFILES ----------
-# Define all directory groups. The 'find' commands start inside each
-# group folder (e.g., 'find l1-clients ...') and use 'mindepth 2',
-# which correctly skips the parent wrapper Makefiles (like 'l1-clients/Makefile').
 L1CLIENTS := $(shell find l1-clients -mindepth 2 -type f -name "Makefile" $(EXCLUDES) -exec dirname {} \; | sort)
 L2CLIENTS := $(shell find l2-clients -mindepth 2 -type f -name "Makefile" $(EXCLUDES) -exec dirname {} \; | sort)
 UTILS     := $(shell find utils -mindepth 2 -type f -name "Makefile" $(EXCLUDES) -exec dirname {} \; | sort)
 WEB3      := $(shell find web3 -mindepth 2 -type f -name "Makefile" $(EXCLUDES) -exec dirname {} \; | sort)
 INFRA     := $(shell find infra -mindepth 2 -type f -name "Makefile" $(EXCLUDES) -exec dirname {} \; | sort)
-
-# SUBDIRS is now the unique, sorted combination of all component groups.
-# This avoids running 'make' in parent directories (like 'l1-clients')
-# and only runs 'make' in the actual sub-project directories.
 SUBDIRS   := $(sort $(L1CLIENTS) $(L2CLIENTS) $(UTILS) $(WEB3) $(INFRA))
 
 # ---------- DOCKER CONFIGURATION ----------
@@ -35,79 +27,73 @@ DOCKER_IMAGE := eoa-builder
 DOCKER_PLATFORM := linux/arm64
 PWD := $(shell pwd)
 
+# Check if Docker image exists (returns non-empty if exists)
+DOCKER_IMAGE_EXISTS := $(shell docker images -q $(DOCKER_IMAGE) 2>/dev/null)
 
 # ---------- PHONY TARGETS ----------
 .PHONY: default all clean l1-clients l2-clients infra utils web3 do-run summary lint test help
-.PHONY: docker-image docker-run docker-shell
+.PHONY: docker-image docker-shell ensure-docker-image check-qemu
 
 # ---------- DEFAULT ----------
 default: all
 
-# ---------- WRAPPER TARGETS ----------
-# These are the main targets you call.
-#   DIRS_TO_RUN:   The list of directories to operate on.
-#   TARGET_TO_RUN: The make target (e.g., 'all', 'clean') to execute.
-#   TARGET_NAME:   A friendly name for the console output.
-
-all:
-	@$(MAKE) do-run DIRS_TO_RUN="$(SUBDIRS)" TARGET_TO_RUN="all" TARGET_NAME="all"
-
-clean:
-	@$(MAKE) do-run DIRS_TO_RUN="$(SUBDIRS)" TARGET_TO_RUN="clean" TARGET_NAME="clean"
-
-l1-clients:
-	@$(MAKE) do-run DIRS_TO_RUN="$(L1CLIENTS)" TARGET_TO_RUN="all" TARGET_NAME="l1-clients (all)"
-
-l2-clients:
-	@$(MAKE) do-run DIRS_TO_RUN="$(L2CLIENTS)" TARGET_TO_RUN="all" TARGET_NAME="l2-clients (all)"
-
-web3:
-	@$(MAKE) do-run DIRS_TO_RUN="$(WEB3)" TARGET_TO_RUN="all" TARGET_NAME="web3 (all)"
-
-
-infra:
-	@$(MAKE) do-run DIRS_TO_RUN="$(INFRA)" TARGET_TO_RUN="all" TARGET_NAME="infra (all)"
-
-utils:
-	@$(MAKE) do-run DIRS_TO_RUN="$(UTILS)" TARGET_TO_RUN="all" TARGET_NAME="utils (all)"
-
-
-# ---------- CHECKS ----------
+# ---------- DOCKER MANAGEMENT ----------
+# Check for QEMU (needed for x86_64 hosts building ARM64)
 check-qemu:
 	@if [ "$$(uname -m)" = "x86_64" ]; then \
 		if [ ! -f /proc/sys/fs/binfmt_misc/qemu-aarch64 ] && [ ! -f /proc/sys/fs/binfmt_misc/aarch64 ]; then \
 			echo "$(YELLOW)⚠️  Warning: Host is x86_64 but qemu-aarch64 binfmt seems missing.$(RESET)"; \
-			echo "   Required for building ARM64 images. If the build fails, run:"; \
-			echo "   $(GREEN)docker run --privileged --rm tonistiigi/binfmt --install all$(RESET)"; \
-			echo ""; \
+			echo "   Installing QEMU binfmt for ARM64 emulation..."; \
+			docker run --privileged --rm tonistiigi/binfmt --install all || true; \
 		fi \
 	fi
 
-# ---------- DOCKER TARGETS ----------
-# Build the docker builder image
+# Build the Docker image
 docker-image: check-qemu
 	@echo "🐳 Building Docker image $(DOCKER_IMAGE) for $(DOCKER_PLATFORM)..."
 	docker build --platform $(DOCKER_PLATFORM) -t $(DOCKER_IMAGE) .
+	@echo "✅ Docker image $(DOCKER_IMAGE) built successfully."
 
-# Run a make command inside the docker container
-# Usage: make docker-run cmd="make geth"
-docker-run:
-	@echo "🐳 Running command in Docker: $(cmd)"
-	docker run --rm --platform $(DOCKER_PLATFORM) -v "$(PWD)":/workspace $(DOCKER_IMAGE) $(cmd)
+# Ensure Docker image exists, build if not
+ensure-docker-image:
+	@if [ -z "$$(docker images -q $(DOCKER_IMAGE) 2>/dev/null)" ]; then \
+		echo "$(YELLOW)🐳 Docker image '$(DOCKER_IMAGE)' not found. Building it now...$(RESET)"; \
+		$(MAKE) docker-image; \
+	fi
 
-# Enter an interactive shell inside the builder container
-docker-shell:
+# Interactive shell inside the builder container
+docker-shell: ensure-docker-image
 	@echo "🐳 Entering Docker shell..."
 	docker run --rm -it --platform $(DOCKER_PLATFORM) -v "$(PWD)":/workspace $(DOCKER_IMAGE) bash
 
+# ---------- WRAPPER TARGETS ----------
+all: ensure-docker-image
+	@$(MAKE) do-run DIRS_TO_RUN="$(SUBDIRS)" TARGET_TO_RUN="all" TARGET_NAME="all"
+
+clean:
+	@$(MAKE) do-run-local DIRS_TO_RUN="$(SUBDIRS)" TARGET_TO_RUN="clean" TARGET_NAME="clean"
+
+l1-clients: ensure-docker-image
+	@$(MAKE) do-run DIRS_TO_RUN="$(L1CLIENTS)" TARGET_TO_RUN="all" TARGET_NAME="l1-clients (all)"
+
+l2-clients: ensure-docker-image
+	@$(MAKE) do-run DIRS_TO_RUN="$(L2CLIENTS)" TARGET_TO_RUN="all" TARGET_NAME="l2-clients (all)"
+
+web3: ensure-docker-image
+	@$(MAKE) do-run DIRS_TO_RUN="$(WEB3)" TARGET_TO_RUN="all" TARGET_NAME="web3 (all)"
+
+infra: ensure-docker-image
+	@$(MAKE) do-run DIRS_TO_RUN="$(INFRA)" TARGET_TO_RUN="all" TARGET_NAME="infra (all)"
+
+utils: ensure-docker-image
+	@$(MAKE) do-run DIRS_TO_RUN="$(UTILS)" TARGET_TO_RUN="all" TARGET_NAME="utils (all)"
+
 # ---------- DYNAMIC TARGETS ----------
 # Allows running 'make <package_name>' (e.g., 'make geth', 'make prysm')
-# directly by matching the directory name.
 TARGETS := $(notdir $(SUBDIRS))
 .PHONY: $(TARGETS)
 
-$(TARGETS):
-	@# Find the specific directory ending with the target name
+$(TARGETS): ensure-docker-image
 	@DIR=$$(echo "$(SUBDIRS)" | tr ' ' '\n' | grep "/$@$$" | head -n 1); \
 	if [ -n "$$DIR" ]; then \
 	    $(MAKE) do-run DIRS_TO_RUN="$$DIR" TARGET_TO_RUN="all" TARGET_NAME="$@"; \
@@ -116,16 +102,18 @@ $(TARGETS):
 	    exit 1; \
 	fi
 
-
-# ---------- MAIN EXECUTION ----------
+# ---------- MAIN EXECUTION (DOCKER) ----------
 do-run:
-	@RESULT_FILE=$$(mktemp /tmp/make_results_XXXXXX.txt); \
-	printf "\n🔎 $(BLUE)Running target '$(GREEN)$(TARGET_NAME)$(BLUE)' in selected subdirs...$(RESET)\n\n"; \
+	@printf "\n🐳 $(BLUE)Running target '$(GREEN)$(TARGET_NAME)$(BLUE)' via Docker...$(RESET)\n\n"; \
+	RESULT_FILE=$$(mktemp /tmp/make_results_XXXXXX.txt); \
 	total_start=$$(date +%s.%N); \
 	for dir in $(DIRS_TO_RUN); do \
 	    start=$$(date +%s.%N); \
-	    printf "📦 $(BLUE)Entering$(RESET) %s (Target: $(GREEN)$(TARGET_TO_RUN)$(RESET))\n" "$$dir"; \
-	    if $(MAKE) -s -C "$$dir" $(TARGET_TO_RUN); then \
+	    printf "📦 $(BLUE)Building$(RESET) %s (Target: $(GREEN)$(TARGET_TO_RUN)$(RESET))\n" "$$dir"; \
+	    if docker run --rm --platform $(DOCKER_PLATFORM) \
+	        -v "$(PWD)":/workspace -w /workspace \
+	        $(DOCKER_IMAGE) \
+	        make -s -C "$$dir" $(TARGET_TO_RUN); then \
 	        end=$$(date +%s.%N); \
 	        elapsed=$$(printf "%.2f" $$(echo "$$end - $$start" | bc)); \
 	        printf "   ✅ $(GREEN)Success$(RESET) (%s) — $(YELLOW)%ss$(RESET)\n\n" "$$dir" "$$elapsed"; \
@@ -141,7 +129,19 @@ do-run:
 	total_elapsed=$$(printf "%.2f" $$(echo "$$total_end - $$total_start" | bc)); \
 	printf "⏱  $(BLUE)Total time: $(YELLOW)%ss$(RESET)\n\n" "$$total_elapsed"; \
 	$(MAKE) summary RESULT_FILE="$$RESULT_FILE"; \
-	rm -f "$$RESULT_FILE"; # Clean up the temporary file
+	rm -f "$$RESULT_FILE"
+
+# ---------- LOCAL EXECUTION (for clean, etc.) ----------
+do-run-local:
+	@printf "\n� $(BLUE)Running target '$(GREEN)$(TARGET_NAME)$(BLUE)' locally...$(RESET)\n\n"; \
+	for dir in $(DIRS_TO_RUN); do \
+	    printf "📦 $(BLUE)Entering$(RESET) %s (Target: $(GREEN)$(TARGET_TO_RUN)$(RESET))\n" "$$dir"; \
+	    if $(MAKE) -s -C "$$dir" $(TARGET_TO_RUN); then \
+	        printf "   ✅ $(GREEN)Success$(RESET) (%s)\n\n" "$$dir"; \
+	    else \
+	        printf "   ❌ $(RED)Error$(RESET) (%s)\n\n" "$$dir"; \
+	    fi; \
+	done
 
 # ---------- SUMMARY ----------
 summary:
@@ -156,7 +156,7 @@ summary:
 	printf "$(BLUE)──────────────────────$(RESET)\n"
 
 # ---------- LINT ----------
-lint: ## Run shellcheck on all shell scripts
+lint:
 	@echo "🔎 Running shellcheck on shell scripts..."
 	@if command -v shellcheck >/dev/null 2>&1; then \
 	    find build-scripts -type f -name '*.sh' | xargs -r shellcheck -x -S warning && \
@@ -167,15 +167,18 @@ lint: ## Run shellcheck on all shell scripts
 	fi
 
 # ---------- TEST ----------
-test: ## Run tests across all subdirectories
+test: ensure-docker-image
 	@$(MAKE) do-run DIRS_TO_RUN="$(SUBDIRS)" TARGET_TO_RUN="test" TARGET_NAME="test"
 
 # ---------- HELP ----------
-help: ## Show available targets
+help:
 	@printf "\n"
 	@printf "  $(BLUE)Ethereum on ARM — Package Builder$(RESET)\n"
 	@printf "\n"
 	@printf "  Usage: make <target>\n"
+	@printf "\n"
+	@printf "  $(YELLOW)Note:$(RESET) All builds run inside Docker automatically.\n"
+	@printf "         The Docker image will be built on first use if needed.\n"
 	@printf "\n"
 	@printf "  $(GREEN)Targets:$(RESET)\n"
 	@echo "    all           Build all packages (default)"
@@ -187,7 +190,7 @@ help: ## Show available targets
 	@echo "    utils         Build utility packages only"
 	@echo "    web3          Build web3 packages only"
 	@echo "    lint          Run shellcheck on shell scripts"
-	@echo "    docker-image  Build the Docker builder image"
+	@echo "    docker-image  Rebuild the Docker builder image"
 	@echo "    docker-shell  Enter interactive Docker shell"
 	@echo "    help          Show this help message"
 	@printf "\n"

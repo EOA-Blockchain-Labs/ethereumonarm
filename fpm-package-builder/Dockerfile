@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
     software-properties-common \
     ruby-full \
     python3-pip \
+    python3-venv \
     rpm \
     jq \
     file \
@@ -28,6 +29,9 @@ RUN apt-get update && apt-get install -y \
 
 # 2. Install FPM (Ruby gem)
 RUN gem install --no-document fpm
+
+# 2.1 Install Docker CLI (for packages that need Docker-in-Docker, e.g., SSV)
+RUN curl -fsSL https://get.docker.com | sh
 
 # 3. Install Go (Golang)
 # Using the PPA as done in provision.sh

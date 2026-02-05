@@ -104,7 +104,8 @@ $(TARGETS): ensure-docker-image
 
 # ---------- MAIN EXECUTION (DOCKER) ----------
 do-run:
-	@printf "\n🐳 $(BLUE)Running target '$(GREEN)$(TARGET_NAME)$(BLUE)' via Docker...$(RESET)\n\n"; \
+	@export LC_NUMERIC=C; \
+	printf "\n🐳 $(BLUE)Running target '$(GREEN)$(TARGET_NAME)$(BLUE)' via Docker...$(RESET)\n\n"; \
 	RESULT_FILE=$$(mktemp /tmp/make_results_XXXXXX.txt); \
 	total_start=$$(date +%s.%N); \
 	for dir in $(DIRS_TO_RUN); do \
@@ -112,6 +113,7 @@ do-run:
 	    printf "📦 $(BLUE)Building$(RESET) %s (Target: $(GREEN)$(TARGET_TO_RUN)$(RESET))\n" "$$dir"; \
 	    if docker run --rm --platform $(DOCKER_PLATFORM) \
 	        -v "$(PWD)":/workspace -w /workspace \
+	        -v /var/run/docker.sock:/var/run/docker.sock \
 	        $(DOCKER_IMAGE) \
 	        make -s -C "$$dir" $(TARGET_TO_RUN); then \
 	        end=$$(date +%s.%N); \

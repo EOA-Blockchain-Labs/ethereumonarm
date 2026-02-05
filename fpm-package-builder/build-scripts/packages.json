@@ -26,7 +26,6 @@
         "ethereum-optimism/optimism#op-node": "optimism-op-node",
         "ethereum-optimism/optimism#op-challenger": "optimism-op-challenger",
         "paradigmxyz/reth": "optimism-op-reth",
-        "ethereum-optimism/optimism#kona": "optimism-kona",
         "NethermindEth/juno": "starknet-juno",
         "madara-alliance/madara": "starknet-madara",
         "eqlabs/pathfinder": "starknet-pathfinder"

@@ -76,11 +76,12 @@ FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
 
 # ----------------------------------------------------------------------
 # RPM-specific options
+# Note: FPM does not have --rpm-systemd. Systemd files are staged to
+#       sources/usr/lib/systemd/system/ in the prepare-systemd target.
 # ----------------------------------------------------------------------
 FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
     -t rpm \
     --architecture $(PKG_ARCH_RPM) \
-    $(shell test -d extras && find extras -name '*.service' -printf "--rpm-systemd %p ") \
     --depends merge-config
 
 # ----------------------------------------------------------------------
@@ -121,7 +122,11 @@ deb: prepare ## Build .deb package
 	fi
 
 rpm: prepare ## Build .rpm package
-	mkdir -p $(OUTPUTDIR)
+	mkdir -p $(OUTPUTDIR) $(SOURCESDIR)/usr/lib/systemd/system
+	# Stage systemd service files for RPM (FPM has no --rpm-systemd option)
+	@if [ -d extras ]; then \
+	    find extras -name '*.service' -exec cp {} $(SOURCESDIR)/usr/lib/systemd/system/ \; ; \
+	fi
 	@echo "📦 Building RPM package..."
 	fpm $(FPM_RPM_OPTS) -p "$(PKG_RPM)" .
 	if [[ -f "$(PKG_RPM)" ]]; then \
@@ -131,7 +136,7 @@ rpm: prepare ## Build .rpm package
 	fi
 
 clean: ## Remove staged binaries and temp files
-	rm -rf $(SOURCESDIR)/usr/bin/$(PKG_NAME)* .build
+	rm -rf $(SOURCESDIR)/usr/bin/$(PKG_NAME)* $(SOURCESDIR)/usr/lib/systemd .build
 	@echo "🧹 Clean complete (staged files and .build removed)."
 
 test: ## Check that .deb exists

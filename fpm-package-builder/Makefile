@@ -62,7 +62,7 @@ ensure-docker-image:
 	fi
 
 # Interactive shell inside the builder container
-docker-shell: ensure-docker-image
+docker-shell: ensure-docker-image check-qemu
 	@echo "🐳 Entering Docker shell..."
 	docker run --rm -it --platform $(DOCKER_PLATFORM) -v "$(PWD)":/workspace $(DOCKER_IMAGE) bash
 
@@ -103,7 +103,7 @@ $(TARGETS): ensure-docker-image
 	fi
 
 # ---------- MAIN EXECUTION (DOCKER) ----------
-do-run:
+do-run: check-qemu
 	@export LC_NUMERIC=C; \
 	printf "\n🐳 $(BLUE)Running target '$(GREEN)$(TARGET_NAME)$(BLUE)' via Docker...$(RESET)\n\n"; \
 	RESULT_FILE=$$(mktemp); \

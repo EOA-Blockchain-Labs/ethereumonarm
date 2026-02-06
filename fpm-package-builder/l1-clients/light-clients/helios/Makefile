@@ -158,13 +158,25 @@ help: ## Show available targets
 # ----------------------------------------------------------------------
 # docker-build — build inside a Docker container
 # ----------------------------------------------------------------------
-docker-build: ## Run the build inside a Docker container
+docker-build: check-qemu ## Run the build inside a Docker container
 	# Uses the shared builder image defined in fpm-package-builder/Dockerfile
 	docker run --rm -v $(PWD):/workspace -w /workspace \
 	    -e PKG_NAME=$(PKG_NAME) \
 	    -e PKG_RELEASE=$(PKG_RELEASE) \
 	    eoa-builder \
 	    /bin/bash -c "make release"
+
+# ----------------------------------------------------------------------
+# QEMU check
+# ----------------------------------------------------------------------
+check-qemu:
+	@if [ "$$(uname -m)" = "x86_64" ]; then \
+		if [ ! -f /proc/sys/fs/binfmt_misc/qemu-aarch64 ] && [ ! -f /proc/sys/fs/binfmt_misc/aarch64 ]; then \
+			echo "⚠️  Warning: Host is x86_64 but qemu-aarch64 binfmt seems missing."; \
+			echo "   Installing QEMU binfmt for ARM64 emulation..."; \
+			docker run --privileged --rm tonistiigi/binfmt --install all || true; \
+		fi \
+	fi
 
 # ======================================================================
 # End of file

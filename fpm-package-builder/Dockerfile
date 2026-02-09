@@ -4,6 +4,9 @@ FROM ubuntu:24.04
 # Prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Marker to detect when running inside the builder container
+ENV EOA_BUILDER=1
+
 # 1. Base Setup & Common Tools
 RUN apt-get update && apt-get install -y \
     ca-certificates \

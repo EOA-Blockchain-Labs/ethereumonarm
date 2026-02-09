@@ -12,6 +12,34 @@ SHELL := /bin/bash
 .DEFAULT_GOAL := all
 
 # ----------------------------------------------------------------------
+# Docker enforcement: Auto-invoke inside eoa-builder if not already there
+# ----------------------------------------------------------------------
+ifndef EOA_BUILDER
+# Find project root (where Dockerfile lives)
+PROJECT_ROOT := $(shell d=$$(pwd); while [ "$$d" != "/" ]; do [ -f "$$d/Dockerfile" ] && echo "$$d" && break; d=$$(dirname "$$d"); done)
+RELATIVE_DIR := $(shell pwd | sed "s|^$(PROJECT_ROOT)/||")
+DOCKER_IMAGE := eoa-builder
+DOCKER_PLATFORM := linux/arm64
+
+.PHONY: all clean test release deb rpm prepare help
+all clean test release deb rpm prepare help:
+	@cd $(PROJECT_ROOT) && \
+	if [ -z "$$(docker images -q $(DOCKER_IMAGE) 2>/dev/null)" ]; then \
+	    echo "🐳 Building Docker image $(DOCKER_IMAGE)..."; \
+	    docker build --platform $(DOCKER_PLATFORM) -t $(DOCKER_IMAGE) . ; \
+	fi && \
+	echo "🐳 Running build inside Docker container..." && \
+	docker run --rm --platform $(DOCKER_PLATFORM) \
+	    -v "$(PROJECT_ROOT)":/workspace -w /workspace \
+	    $(DOCKER_IMAGE) \
+	    make -C "$(RELATIVE_DIR)" $@
+
+else
+# Running inside Docker container - proceed with actual build
+
+
+
+# ----------------------------------------------------------------------
 # Package metadata
 # ----------------------------------------------------------------------
 PKG_NAME        ?= maru
@@ -168,29 +196,7 @@ help: ## Show available targets
 	echo ""
 	awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z0-9_%-]+:.*?##/ { printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 	echo ""
-# ----------------------------------------------------------------------
-# docker-build — build inside a Docker container
-# ----------------------------------------------------------------------
-docker-build: check-qemu ## Run the build inside a Docker container
-	# Uses the shared builder image defined in fpm-package-builder/Dockerfile
-	docker run --rm -v $(PWD):/workspace -w /workspace \
-	    -e PKG_NAME=$(PKG_NAME) \
-	    -e PKG_RELEASE=$(PKG_RELEASE) \
-	    eoa-builder \
-	    /bin/bash -c "make release"
-
-# ----------------------------------------------------------------------
-# QEMU check
-# ----------------------------------------------------------------------
-check-qemu:
-	@if [ "$$(uname -m)" = "x86_64" ]; then \
-		if [ ! -f /proc/sys/fs/binfmt_misc/qemu-aarch64 ] && [ ! -f /proc/sys/fs/binfmt_misc/aarch64 ]; then \
-			echo "⚠️  Warning: Host is x86_64 but qemu-aarch64 binfmt seems missing."; \
-			echo "   Installing QEMU binfmt for ARM64 emulation..."; \
-			docker run --privileged --rm tonistiigi/binfmt --install all || true; \
-		fi \
-	fi
-
 # ======================================================================
 # End of file
 # ======================================================================
+endif

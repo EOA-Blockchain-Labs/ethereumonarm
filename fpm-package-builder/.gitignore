@@ -1,0 +1,22 @@
+# Build artifacts - never version control these
+packages/
+*.deb
+*.rpm
+
+# Staged binaries - downloaded during build
+**/sources/usr/bin/*
+!**/sources/usr/bin/.gitkeep
+
+# Build cache
+.build/
+.cache/
+
+# Node modules (for lodestar, etc.)
+node_modules/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/

@@ -68,7 +68,7 @@ scrape_configs:
   - job_name: "nimbus_execution"
     metrics_path: "/metrics"
     static_configs:
-      - targets: ["127.0.0.1:8008"]
+      - targets: ["127.0.0.1:8018"]
         labels:
           client_type: "execution"
           client_name: "nimbus-ec"
@@ -151,16 +151,6 @@ scrape_configs:
           component: "validator"
           layer: "l1"
 
-  - job_name: "teku_dev"
-    metrics_path: "/metrics"
-    static_configs:
-      - targets: ["127.0.0.1:8009"]
-        labels:
-          client_type: "consensus"
-          client_name: "teku"
-          environment: "development"
-          layer: "l1"
-
   # Nimbus
   - job_name: "nimbus"
     metrics_path: "/metrics"
@@ -222,26 +212,9 @@ scrape_configs:
   - job_name: "charon_cluster"
     metrics_path: "/metrics"
     static_configs:
-      - targets: ["node0:3620"]
+      - targets: ["127.0.0.1:3620"]
         labels:
           dvt_provider: "obol"
-          node_id: "0"
-      - targets: ["node1:3620"]
-        labels:
-          dvt_provider: "obol"
-          node_id: "1"
-      - targets: ["node2:3620"]
-        labels:
-          dvt_provider: "obol"
-          node_id: "2"
-      - targets: ["node3:3620"]
-        labels:
-          dvt_provider: "obol"
-          node_id: "3"
-      - targets: ["node4:3620"]
-        labels:
-          dvt_provider: "obol"
-          node_id: "4"
 
   # Option 2: DNS service discovery (uncomment if using Docker Swarm/K8s)
   # - job_name: "charon_dns_sd"
@@ -256,15 +229,33 @@ scrape_configs:
   #     - target_label: dvt_provider
   #       replacement: "obol"
 
+  - job_name: "ssv_node"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["127.0.0.1:15000"]
+        labels:
+          dvt_provider: "ssv"
+          client_name: "ssv"
+
   # ============================================================================
   # Layer 2 Solutions
   # ============================================================================
 
   # Optimism
-  - job_name: "optimism_execution"
+
+  - job_name: "optimism_op_node"
     metrics_path: "/metrics"
     static_configs:
       - targets: ["127.0.0.1:7300"]
+        labels:
+          client_type: "rollup_node"
+          layer: "l2"
+          l2_network: "optimism"
+
+  - job_name: "optimism_op_geth"
+    metrics_path: "/debug/metrics/prometheus"
+    static_configs:
+      - targets: ["127.0.0.1:7301"]
         labels:
           client_type: "execution"
           layer: "l2"

@@ -20,7 +20,8 @@ L2CLIENTS := $(shell find l2-clients -mindepth 2 -type f -name "Makefile" $(EXCL
 UTILS     := $(shell find utils -mindepth 2 -type f -name "Makefile" $(EXCLUDES) -exec dirname {} \; | sort)
 WEB3      := $(shell find web3 -mindepth 2 -type f -name "Makefile" $(EXCLUDES) -exec dirname {} \; | sort)
 INFRA     := $(shell find infra -mindepth 2 -type f -name "Makefile" $(EXCLUDES) -exec dirname {} \; | sort)
-SUBDIRS   := $(sort $(L1CLIENTS) $(L2CLIENTS) $(UTILS) $(WEB3) $(INFRA))
+TOOLS     := $(shell find tools -mindepth 2 -type f -name "Makefile" $(EXCLUDES) -exec dirname {} \; | sort)
+SUBDIRS   := $(sort $(L1CLIENTS) $(L2CLIENTS) $(UTILS) $(WEB3) $(INFRA) $(TOOLS))
 
 # ---------- DOCKER CONFIGURATION ----------
 DOCKER_IMAGE := eoa-builder
@@ -31,7 +32,7 @@ PWD := $(shell pwd)
 DOCKER_IMAGE_EXISTS := $(shell docker images -q $(DOCKER_IMAGE) 2>/dev/null)
 
 # ---------- PHONY TARGETS ----------
-.PHONY: default all clean l1-clients l2-clients infra utils web3 do-run summary lint test help
+.PHONY: default all clean l1-clients l2-clients infra utils web3 tools do-run summary lint test help
 .PHONY: docker-image docker-shell ensure-docker-image check-qemu
 
 # ---------- DEFAULT ----------
@@ -87,6 +88,9 @@ infra: ensure-docker-image
 
 utils: ensure-docker-image
 	@$(MAKE) do-run DIRS_TO_RUN="$(UTILS)" TARGET_TO_RUN="all" TARGET_NAME="utils (all)"
+
+tools: ensure-docker-image
+	@$(MAKE) do-run DIRS_TO_RUN="$(TOOLS)" TARGET_TO_RUN="all" TARGET_NAME="tools (all)"
 
 # ---------- DYNAMIC TARGETS ----------
 # Allows running 'make <package_name>' (e.g., 'make geth', 'make prysm')
@@ -200,6 +204,7 @@ help:
 	@echo "    infra         Build infrastructure packages only"
 	@echo "    utils         Build utility packages only"
 	@echo "    web3          Build web3 packages only"
+	@echo "    tools         Build tools packages only"
 	@echo "    lint          Run shellcheck on shell scripts"
 	@echo "    docker-image  Rebuild the Docker builder image"
 	@echo "    docker-shell  Enter interactive Docker shell"

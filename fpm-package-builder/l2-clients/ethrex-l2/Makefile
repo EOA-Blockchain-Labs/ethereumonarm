@@ -53,7 +53,7 @@ PKG_MAINTAINER  ?= Ethereum on ARM <info@ethereumonarm.com>
 CATEGORY        ?= science
 WEB_URL         ?= https://github.com/lambdaclass/ethrex
 SOURCESDIR      ?= sources
-OUTPUTDIR       ?= ../../../packages
+OUTPUTDIR       ?= ../../packages
 
 # ----------------------------------------------------------------------
 # Upstream version and source info

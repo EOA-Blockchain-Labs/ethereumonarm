@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-02-11 05:08:00 UTC_
+_Last updated: 2026-02-12 05:04:02 UTC_
 
 ## What this report compares
 
@@ -42,10 +42,10 @@ _Last updated: 2026-02-11 05:08:00 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `grandine` | `2.0.1` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.1` | ✅ Up-to-date |
 | `lighthouse` | `8.1.0` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.1.0` | ✅ Up-to-date |
-| `lodestar` | `1.39.1` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.39.1` | ✅ Up-to-date |
+| `lodestar` | `1.40.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.40.0` | ✅ Up-to-date |
 | `nimbus` | `26.1.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.1.0` | ✅ Up-to-date |
 | `prysm` | `7.1.2` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.2` | ✅ Up-to-date |
-| `teku` | `25.12.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `25.12.0` | ✅ Up-to-date |
+| `teku` | `26.2.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.2.0` | ✅ Up-to-date |
 
 ## Layer 1 Execution
 

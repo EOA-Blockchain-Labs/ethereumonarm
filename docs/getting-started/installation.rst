@@ -189,7 +189,9 @@ The system will boot up quickly, but the **initial setup script** will run in th
 
 
 .. warning::
-   **Data Loss Warning**: If the script does not detect an existing Ethereum installation on the NVMe drive, **it will format the disk**. Ensure you have backed up any data on the NVMe drive before the first boot.
+   **Data Loss Warning**: The installation script will **format the NVMe drive** if it detects a filesystem other than ``ext4`` or if explicitly requested via a flag file. 
+
+   If the drive is already formatted as ``ext4``, the script **will preserve existing data** and simply mount it. However, we always recommend backing up important data before the first boot.
 
 .. note::
    Please wait approximately **10-15 minutes** for the installation script to complete. The board **will reboot automatically** once finished. Do not interrupt the power supply.

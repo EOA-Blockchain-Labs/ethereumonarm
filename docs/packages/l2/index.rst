@@ -5,7 +5,7 @@ Layer 2 Packages
    :maxdepth: 1
 
    nitro
-   cannon
+   optimism/index
    linea
    maru
    fuel
@@ -13,8 +13,3 @@ Layer 2 Packages
    juno
    madara
    pathfinder
-   op-node
-   op-geth
-   op-reth
-   op-challenger
-   op-program

@@ -108,43 +108,7 @@ $(TARGETS): ensure-docker-image
 
 # ---------- MAIN EXECUTION (DOCKER) ----------
 do-run: check-qemu
-	@export LC_NUMERIC=C; \
-	printf "\n🐳 $(BLUE)Running target '$(GREEN)$(TARGET_NAME)$(BLUE)' via Docker...$(RESET)\n\n"; \
-	RESULT_FILE=$$(mktemp); \
-	total_start=$$(date +%s.%N); \
-	for dir in $(DIRS_TO_RUN); do \
-	    start=$$(date +%s.%N); \
-	    printf "📦 $(BLUE)Building$(RESET) %s (Target: $(GREEN)$(TARGET_TO_RUN)$(RESET))\n" "$$dir"; \
-	    if docker run --rm --platform $(DOCKER_PLATFORM) \
-	        -v "$(PWD)":/workspace -w /workspace \
-	        -v /var/run/docker.sock:/var/run/docker.sock \
-	        $(DOCKER_IMAGE) \
-	        make -s -C "$$dir" $(TARGET_TO_RUN); then \
-	        end=$$(date +%s.%N); \
-	        elapsed=$$(printf "%.2f" $$(echo "$$end - $$start" | bc)); \
-	        printf "   ✅ $(GREEN)Success$(RESET) (%s) — $(YELLOW)%ss$(RESET)\n\n" "$$dir" "$$elapsed"; \
-	        echo "$$dir|SUCCESS|$$elapsed" >> "$$RESULT_FILE"; \
-	    else \
-	        end=$$(date +%s.%N); \
-	        elapsed=$$(printf "%.2f" $$(echo "$$end - $$start" | bc)); \
-	        printf "   ❌ $(RED)Error$(RESET) (%s) — $(YELLOW)%ss$(RESET)\n\n" "$$dir" "$$elapsed"; \
-	        echo "$$dir|ERROR|$$elapsed" >> "$$RESULT_FILE"; \
-	    fi; \
-	done; \
-	total_end=$$(date +%s.%N); \
-	total_elapsed=$$(printf "%.2f" $$(echo "$$total_end - $$total_start" | bc)); \
-	printf "⏱  $(BLUE)Total time: $(YELLOW)%ss$(RESET)\n\n" "$$total_elapsed"; \
-	if [ -s "$$RESULT_FILE" ]; then \
-	    printf "$(BLUE)────── SUMMARY ──────$(RESET)\n"; \
-	    printf "%-65s %-10s %-10s\n" "Directory" "Result" "Time(s)"; \
-	    printf "%-65s %-10s %-10s\n" "-----------------------------------------------------------------" "--------" "--------"; \
-	    while IFS="|" read -r dir result time; do \
-	        if [ "$$result" = "SUCCESS" ]; then color="$(GREEN)"; symbol="✅"; else color="$(RED)"; symbol="❌"; fi; \
-	        printf "%-65s %-10b %-10s\n" "$$dir" "$$symbol $$color$$result$(RESET)" "$$time"; \
-	    done < "$$RESULT_FILE"; \
-	    printf "$(BLUE)──────────────────────$(RESET)\n"; \
-	fi; \
-	rm -f "$$RESULT_FILE"
+	@./build-scripts/run_targets.sh "$(DOCKER_IMAGE)" "$(DOCKER_PLATFORM)" "$(DIRS_TO_RUN)" "$(TARGET_TO_RUN)" "$(TARGET_NAME)"
 
 # ---------- LOCAL EXECUTION (for clean, etc.) ----------
 do-run-local:

@@ -73,6 +73,8 @@ We support a wide range of Ethereum software, all packaged as standard `.deb` fi
 | **Linea Besu** | [Consensys/linea-monorepo](https://github.com/Consensys/linea-monorepo) |
 | **Maru** | [Consensys/maru](https://github.com/Consensys/maru) |
 | **Optimism** (Components) | [ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism) |
+| **Optimism Cannon** | [ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism/tree/develop/cannon) |
+| **Optimism Kona** | [ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism/tree/develop/kona) |
 | **Optimism** (op-geth) | [ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth) |
 | **Optimism** (op-reth) | [paradigmxyz/reth](https://github.com/paradigmxyz/reth) |
 | **Starknet Juno** | [NethermindEth/juno](https://github.com/NethermindEth/juno) |
@@ -89,6 +91,7 @@ We support a wide range of Ethereum software, all packaged as standard `.deb` fi
 | **Obol Charon** | [ObolNetwork/charon](https://github.com/ObolNetwork/charon) |
 | **SSV Node** | [ssvlabs/ssv](https://github.com/ssvlabs/ssv) |
 | **MEV-Boost** | [flashbots/mev-boost](https://github.com/flashbots/mev-boost) |
+| **Lido Liquid Staking** | [lido.fi](https://lido.fi) |
 | **Vouch** | [attestantio/vouch](https://github.com/attestantio/vouch) |
 | **Vero** | [serenita-org/vero](https://github.com/serenita-org/vero) |
 | **Eth. Metrics Exporter** | [ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter) |
@@ -108,6 +111,7 @@ We support a wide range of Ethereum software, all packaged as standard `.deb` fi
 
 - NanoPC-T6
 - Rock 5B
+- Rock 5T (Rock 5 ITX)
 - Orange Pi 5 Plus
 - Raspberry Pi 5
 
@@ -115,7 +119,7 @@ We support a wide range of Ethereum software, all packaged as standard `.deb` fi
 
 This repository is organized into several key components:
 
-- **[fpm-package-builder](fpm-package-builder/)**: Contains the tooling, Makefiles, and scripts used to build Debian (`.deb`) and RPM packages for all supported Ethereum clients and utilities. This is the core of our package distribution system.
+- **[fpm-package-builder](fpm-package-builder/)**: Contains the tooling, Makefiles, and scripts used to build Debian (`.deb`) and RPM packages for all supported Ethereum clients and utilities. This system uses a **Docker-based workflow** to ensure reproducible builds across different environments.
 - **[image-creation-tool](image-creation-tool/)**: Scripts and configurations for generating the custom Ubuntu and Armbian images that come pre-configured with our optimizations.
 - **[docs](docs/)**: Source files for our official documentation.
 

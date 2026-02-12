@@ -27,7 +27,7 @@ The builder creates reproducible `.deb` packages for:
 | `web3` | IPFS, Swarm, and other Web3 protocols |
 | `utils` | Monitoring and management utilities |
 | `tools` | Additional staking tools (ethstaker-deposit, merge-config, stakewise-operator) |
-| `build-scripts` | Makefile templates, helper scripts, and documentation generators |
+| `build-scripts` | Makefile templates, `run_targets.sh` build runner, helper scripts, and documentation generators |
 
 ---
 

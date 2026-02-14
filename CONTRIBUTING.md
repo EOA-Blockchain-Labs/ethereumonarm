@@ -15,18 +15,24 @@ Thank you for your interest in contributing to Ethereum on ARM! This document pr
 
 2. **Set up the build environment** (for package building):
 
+   We recommend using our **Docker-based workflow** for reproducible builds.
+
    ```bash
    cd fpm-package-builder
-   vagrant up
-   vagrant ssh
+   # Build the builder image (only needed once)
+   make docker-image
+   # Build all packages
+   make docker-run cmd="make all"
    ```
 
 3. **Set up documentation** (for docs contributions):
 
+   We use Docker Compose to build and preview documentation locally.
+
    ```bash
    cd docs
-   pip install -r requirements.txt
-   make html
+   docker compose up
+   # Open http://localhost:8000 in your browser
    ```
 
 ## 📝 Code Style

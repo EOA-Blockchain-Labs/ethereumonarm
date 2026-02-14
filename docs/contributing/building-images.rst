@@ -28,7 +28,7 @@ Navigate to the ``fpm-package-builder`` directory within the cloned repository:
 
    cd ethereumonarm/fpm-package-builder
 
-From here, you have **three** options for setting up the development environment: using Docker (recommended), installing dependencies manually, or using a Vagrant machine.
+From here, you have **two** options for setting up the development environment: using Docker (recommended) or installing dependencies manually.
 
 2.1 Use Docker (Recommended)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -131,11 +131,7 @@ If you prefer to install dependencies directly on an Ubuntu 24.04 system, follow
      apt-get update -y
      apt-get -y install golang-go
 
-* **Add `vagrant` user to `docker` group:**
 
-  .. code-block:: bash
-
-     usermod -aG docker $USER
 
 * **Install Rustup and add aarch64 target:**
 
@@ -161,22 +157,12 @@ If you prefer to install dependencies directly on an Ubuntu 24.04 system, follow
      export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && nvm install 20
      export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && npm install -g yarn
 
-2.3. Alternatively, use the Provided Vagrantfile (Recommended)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-For an easier and recommended setup, use the provided Vagrantfile to create an Ubuntu 24.04 VM with all necessary dependencies. You will need `Vagrant <https://www.vagrantup.com/docs/installation>`_ and `VirtualBox <https://www.virtualbox.org/wiki/Downloads>`_ installed.
-
-.. code-block:: bash
-
-   cd ethereumonarm/fpm-package-builder
-   vagrant up
-   vagrant ssh
-   cd ethereumonarm/
 
 2.4. Create .deb Packages
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Once your environment is set up (either manually or with Vagrant), you can create ``.deb`` packages.
+Once your environment is set up (either manually or with Docker), you can create ``.deb`` packages.
 
 * To create all ``.deb`` packages, simply type ``make``:
 

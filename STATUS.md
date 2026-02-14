@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-02-13 04:58:37 UTC_
+_Last updated: 2026-02-14 04:46:24 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-02-13 04:58:37 UTC_
 ## Summary
 
 - Total packages checked: **36**
-- ✅ Up-to-date: **35** (97.2%)
-- ❌ Outdated: **1** (2.8%)
+- ✅ Up-to-date: **34** (94.4%)
+- ❌ Outdated: **2** (5.6%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -34,7 +34,7 @@ _Last updated: 2026-02-13 04:58:37 UTC_
 | `mev-boost` | `1.11` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.11` | ✅ Up-to-date |
 | `stakewise-operator` | `4.1.6` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.1.6` | ✅ Up-to-date |
 | `vero` | `1.3.1` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.3.1` | ✅ Up-to-date |
-| `vouch` | `1.12.0` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.12.0` | ✅ Up-to-date |
+| `vouch` | `1.12.1` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.12.1` | ✅ Up-to-date |
 
 ## Layer 1 Consensus
 
@@ -43,7 +43,7 @@ _Last updated: 2026-02-13 04:58:37 UTC_
 | `grandine` | `2.0.1` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.1` | ✅ Up-to-date |
 | `lighthouse` | `8.1.0` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.1.0` | ✅ Up-to-date |
 | `lodestar` | `1.40.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.40.0` | ✅ Up-to-date |
-| `nimbus` | `26.1.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.1.0` | ✅ Up-to-date |
+| `nimbus` | `26.2.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.1.0` | ❌ Outdated |
 | `prysm` | `7.1.2` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.2` | ✅ Up-to-date |
 | `teku` | `26.2.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.2.0` | ✅ Up-to-date |
 

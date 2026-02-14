@@ -58,13 +58,15 @@ OUTPUTDIR       ?= ../../../packages
 # ----------------------------------------------------------------------
 # Upstream version and source info
 # ----------------------------------------------------------------------
-# Make one API call to get all assets, then extract info
-NIMBUS_LATEST_JSON := $(shell curl -sL https://api.github.com/repos/status-im/nimbus-eth2/releases/latest)
-NIMBUS_TAG         := $(shell echo '$(NIMBUS_LATEST_JSON)' | jq -r '.tag_name')
+# Make one API call to get all assets, but ONLY extract the relevant metadata (tag + arm64 asset)
+# This prevents storing the massive "body" (release notes) which causes shell syntax errors
+NIMBUS_METADATA_JSON := $(shell curl -sL https://api.github.com/repos/status-im/nimbus-eth2/releases/latest | jq -c '{tag_name: .tag_name, asset: (.assets[] | select(.name | (contains("arm64v8") and endswith(".tar.gz"))))}')
+
+# Extract values from our clean, filtered JSON variable
+NIMBUS_TAG         := $(shell echo '$(NIMBUS_METADATA_JSON)' | jq -r '.tag_name')
 NIMBUS_VERSION     := $(shell echo '$(NIMBUS_TAG)' | tr -d 'v')
 
-# Find the asset JSON that matches our specific tarball (arm64v8 and .tar.gz)
-NIMBUS_ASSET_JSON  := $(shell echo '$(NIMBUS_LATEST_JSON)' | jq -r ".assets[] | select(.name | (contains(\"arm64v8\") and endswith(\".tar.gz\")))")
+NIMBUS_ASSET_JSON  := $(shell echo '$(NIMBUS_METADATA_JSON)' | jq -c '.asset')
 NIMBUS_TARBALL     := $(shell echo '$(NIMBUS_ASSET_JSON)' | jq -r '.name')
 NIMBUS_URL         := $(shell echo '$(NIMBUS_ASSET_JSON)' | jq -r '.browser_download_url')
 
@@ -79,6 +81,7 @@ PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(NIMBUS_VERSION)-$(PKG_RELEASE).$(PKG_
 # ----------------------------------------------------------------------
 FPM_COMMON_OPTS = \
     -s dir \
+    -f \
     -n $(PKG_NAME) \
     -v $(NIMBUS_VERSION) \
     --iteration $(PKG_RELEASE) \

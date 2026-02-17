@@ -69,9 +69,11 @@ Record the results. You will need them for all subsequent steps.
 
 ---
 
-## Step 2 — Create Your SKILL.md
+## Step 2 — Review and Update SKILL.md
 
-Create the file `~/.openclaw/workspace/skills/valkyrie/SKILL.md` with:
+A pre-populated `SKILL.md` already exists in this workspace. Review it and
+update it with the **actual** environment data discovered in Step 1. Ensure
+it contains:
 
 - Your identity as Valkyrie, Ethereum on ARM node manager
 - The exact list of installed clients discovered in Step 1
@@ -85,19 +87,21 @@ Create the file `~/.openclaw/workspace/skills/valkyrie/SKILL.md` with:
 - APT update workflow (`sudo apt update` → review available → confirm with user → stop services → `sudo apt install --only-upgrade <pkg>` → restart → verify sync)
 - Safety rules (see Guardrails below)
 
-Also create the references directory and write:
+Also review the references directory and update as needed:
 
-- `~/.openclaw/workspace/skills/valkyrie/references/execution-clients.md` — flags, ports, data dirs, log patterns for each installed EL client
-- `~/.openclaw/workspace/skills/valkyrie/references/consensus-clients.md` — flags, ports, API endpoints, log patterns, MEV-Boost integration for each installed CL client
+- `references/execution-clients.md` — flags, ports, data dirs, log patterns for each installed EL client
+- `references/consensus-clients.md` — flags, ports, API endpoints, log patterns, MEV-Boost integration for each installed CL client
 
 > [!IMPORTANT]
-> Use the reference files in this skill directory (`references/execution-clients.md` and `references/consensus-clients.md`) as your source of truth for exact ports, flags, and data directories. These are derived from the actual config files in the ethereumonarm repository.
+> Use the reference files (`references/execution-clients.md` and `references/consensus-clients.md`) as your source of truth for exact ports, flags, and data directories. These are derived from the actual config files in the ethereumonarm repository.
 
 ---
 
-## Step 3 — Create HEARTBEAT.md
+## Step 3 — Verify HEARTBEAT.md
 
-Create `~/.openclaw/workspace/skills/valkyrie/HEARTBEAT.md` using the template in this skill's `HEARTBEAT.md` file. The heartbeat procedure must:
+A pre-populated `HEARTBEAT.md` already exists in this workspace. Verify it
+matches the running environment discovered in Step 1. The heartbeat procedure
+must:
 
 1. Auto-detect which EL + CL service pair is currently active
 2. Check all running Ethereum services with `systemctl is-active`
@@ -119,10 +123,10 @@ Register the following monitoring jobs using `openclaw cron add`:
 
 | Job Name                | Schedule        | Session    | Model       | Description                                                         |
 | :---------------------- | :-------------- | :--------- | :---------- | :------------------------------------------------------------------ |
-| `valkyrie-health`       | Every 15 min    | isolated   | GPT-5 Nano  | Check services + EL/CL sync status, alert if degraded              |
-| `valkyrie-disk`         | Every 30 min    | isolated   | GPT-5 Nano  | Check `/home` disk usage, alert if > 80%                           |
-| `valkyrie-cpu-temp`     | Every 10 min    | isolated   | GPT-5 Nano  | Check CPU load + ARM board temperature, alert on threshold breach  |
-| `valkyrie-attestations` | Every 5 min     | isolated   | GPT-5 Nano  | Scan validator logs for missed attestations (skip if no validator)  |
+| `valkyrie-health`       | Every 15 min    | isolated   | lightweight  | Check services + EL/CL sync status, alert if degraded              |
+| `valkyrie-disk`         | Every 30 min    | isolated   | lightweight  | Check `/home` disk usage, alert if > 80%                           |
+| `valkyrie-cpu-temp`     | Every 10 min    | isolated   | lightweight  | Check CPU load + ARM board temperature, alert on threshold breach  |
+| `valkyrie-attestations` | Every 5 min     | isolated   | lightweight  | Scan validator logs for missed attestations (skip if no validator)  |
 | `valkyrie-daily`        | Daily at 08:00  | isolated   | —           | Full status digest: services, sync, peers, disk, memory, CPU, temp, 24h errors, finality |
 | `valkyrie-updates`      | Mon at 09:00    | isolated   | —           | Check APT updates for Ethereum packages, notify user, never auto-install |
 
@@ -194,8 +198,8 @@ Run these checks to confirm the setup is complete:
 
 ```bash
 # Skills directory created
-ls -la ~/.openclaw/workspace/skills/valkyrie/
-ls -la ~/.openclaw/workspace/skills/valkyrie/references/
+ls -la .
+ls -la references/
 
 # Cron jobs registered
 openclaw cron list
@@ -266,7 +270,7 @@ Ready to manage your node. Ask me anything or wait for my scheduled checks.
 > - Do **NOT** start or stop any Ethereum services during bootstrap
 > - Do **NOT** edit any `/etc/ethereum/*.conf` files during bootstrap
 > - Do **NOT** install any APT packages during bootstrap
-> - Create files only within `~/.openclaw/workspace/`
+> - Create files only within this workspace directory
 > - If any step fails, report the error clearly and continue with the next step
 > - The sudoers file must be **presented to the user**, not written autonomously
 > - Never touch validator keys under any circumstances

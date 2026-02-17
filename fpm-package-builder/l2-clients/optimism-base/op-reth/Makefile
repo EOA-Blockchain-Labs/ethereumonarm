@@ -58,16 +58,24 @@ OUTPUTDIR       ?= ../../../packages
 # ----------------------------------------------------------------------
 # Upstream version and source info
 # ----------------------------------------------------------------------
-# Get the tag once (e.g., "v0.1.0-alpha.10")
-LATEST_TAG := $(shell curl -s "https://api.github.com/repos/paradigmxyz/reth/releases/latest" | jq -r '.tag_name')
+# NOTE: Starting with v1.11.0, paradigmxyz/reth no longer ships op-reth
+# binaries (PR #21532 — op-reth moved to its own repo). We scan the last
+# 10 releases and pick the newest one that still contains an op-reth asset.
+# When a new upstream repo begins publishing op-reth releases, update
+# OP_RETH_REPO accordingly.
+OP_RETH_REPO ?= paradigmxyz/reth
 
-# RETH_TAG_V is used for the download URL (e.g., "v0.1.0-alpha.10")
+LATEST_TAG := $(shell \
+    curl -s "https://api.github.com/repos/$(OP_RETH_REPO)/releases?per_page=10" \
+    | jq -r '[.[] | select(.assets[]?.name | test("^op-reth-"))][0].tag_name // empty')
+
+# RETH_TAG_V is used for the download URL (e.g., "v1.10.2")
 RETH_TAG_V   := $(LATEST_TAG)
-# RETH_VERSION is for the package version (e.g., "0.1.0-alpha10")
+# RETH_VERSION is for the package version (e.g., "1.10.2")
 RETH_VERSION := $(shell echo "$(LATEST_TAG)" | tr -d "v" | sed -E 's/([a-z]+)\.([0-9]+)/\1\2/')
 
 RETH_TARBALL := op-reth-$(RETH_TAG_V)-$(PKG_ARCH_RPM)-unknown-linux-gnu.tar.gz
-RETH_URL     := https://github.com/paradigmxyz/reth/releases/download/$(RETH_TAG_V)/$(RETH_TARBALL)
+RETH_URL     := https://github.com/$(OP_RETH_REPO)/releases/download/$(RETH_TAG_V)/$(RETH_TARBALL)
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(RETH_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(RETH_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm

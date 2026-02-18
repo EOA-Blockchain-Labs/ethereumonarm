@@ -28,7 +28,12 @@ cat /sys/class/thermal/thermal_zone*/temp 2>/dev/null | awk '{print $1/1000"°C"
 sudo smartctl -a /dev/nvme0n1 2>/dev/null | head -20 || echo "No smartctl"
 
 # Monitoring
+# Monitoring
 systemctl is-active prometheus.service prometheus-node-exporter.service grafana-server.service
+
+# Check permissions
+groups | grep -q 'systemd-journal' && echo "Log access: OK" || echo "Log access: MISSING (Run: sudo usermod -aG systemd-journal $USER)"
+curl -v http://127.0.0.1:8545 2>&1 | grep -q "Connection refused" && echo "Nethermind RPC: REFUSED (Check config)" || echo "Nethermind RPC: OK"
 ```
 
 Record results — needed for all subsequent steps.
@@ -70,7 +75,7 @@ Validator client = **never auto-restart**, always escalate.
 Register via `openclaw cron add`:
 
 | Job | Schedule | Description |
-|:----|:---------|:------------|
+| :--- | :--- | :--- |
 | `valkyrie-health` | Every 15 min | Service + EL/CL sync check |
 | `valkyrie-disk` | Every 30 min | `/home` disk usage |
 | `valkyrie-cpu-temp` | Every 10 min | CPU load + temperature |

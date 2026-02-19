@@ -256,6 +256,12 @@ sudo journalctl -u lodestar-beacon-mev --since "1 hour ago" | grep -iE 'error|cr
 
 ## Grandine
 
+> [!WARNING]
+> **Port conflicts:** Grandine beacon metrics (`5054`) collides with Lighthouse
+> beacon, and Grandine validator metrics (`8009`) collides with Teku beacon.
+> Only one CL client should run at a time. When switching to/from Grandine,
+> disable the conflicting Prometheus scrape jobs to avoid mis-labeled metrics.
+
 | Property           | Value                                        |
 | :----------------- | :------------------------------------------- |
 | **Package**        | `grandine`                                    |
@@ -266,7 +272,7 @@ sudo journalctl -u lodestar-beacon-mev --since "1 hour ago" | grep -iE 'error|cr
 | **Beacon API**     | `http://127.0.0.1:5052` (default)              |
 | **Auth-RPC EL**    | `http://localhost:8551`                        |
 | **JWT**            | `--jwt-secret /etc/ethereum/jwtsecret`         |
-| **Metrics port**   | `5054` (beacon), `8009` (validator)            |
+| **Metrics port**   | `5054` (beacon) ⚠️, `8009` (validator) ⚠️      |
 | **Metrics path**   | `/metrics`                                    |
 | **P2P port**       | `9000` TCP/UDP                                |
 | **MEV-Boost**      | `--builder-url http://localhost:18550`          |

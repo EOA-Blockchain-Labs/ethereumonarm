@@ -1,4 +1,5 @@
 # User: [User Name]
+<!-- Template: replace [User Name] with the actual operator name during bootstrap -->
 
 [User Name] is the primary operator of this Ethereum on ARM node.
 

@@ -19,7 +19,7 @@ All services run as `User=ethereum` and use `EnvironmentFile=/etc/ethereum/<serv
 
 > **See Reference:**
 >
-> * [Execution Clients](references/execution-clients.md) (Geth, Nethermind, Besu, Reth, Erigon, EthRex)
+> * [Execution Clients](references/execution-clients.md) (Geth, Nethermind, Besu, Reth, Erigon)
 > * [Consensus Clients](references/consensus-clients.md) (Lighthouse, Prysm, Teku, Nimbus, Lodestar, Grandine)
 > * Infrastructure: `mev-boost`, `charon` (Obol), `ssv`, `prometheus`, `grafana-server`
 
@@ -31,7 +31,7 @@ sudo systemctl status <service>
 sudo journalctl -u <service> -n 100 -f
 
 # List active Ethereum services
-systemctl list-units --type=service | grep -E 'geth|nethermind|besu|reth|erigon|ethrex|nimbus|lighthouse|prysm|teku|lodestar|grandine|mev-boost'
+systemctl list-units --type=service | grep -E 'geth|nethermind|besu|reth|erigon|nimbus|lighthouse|prysm|teku|lodestar|grandine|mev-boost'
 ```
 
 ### 2. Configuration Management

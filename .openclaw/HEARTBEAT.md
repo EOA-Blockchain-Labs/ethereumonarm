@@ -8,9 +8,14 @@ Step-by-step health checklist. Report results using the Standard Alert Format.
 
 Identify running EL, CL, Validator, and MEV-Boost services.
 
+> [!NOTE]
+> Most CL clients use P2P port `9000` TCP/UDP. **Prysm** is the exception:
+> it uses `13000/TCP` and `12000/UDP`. Keep this in mind when troubleshooting
+> peer connectivity.
+
 ```bash
 # Detect EL
-systemctl list-units --type=service --state=active | grep -E 'geth|nethermind|besu|reth|erigon|ethrex|nimbus-ec'
+systemctl list-units --type=service --state=active | grep -E 'geth|nethermind|besu|reth|erigon'
 # Detect CL/Validator
 systemctl list-units --type=service --state=active | grep -E 'lighthouse|prysm|teku|nimbus|lodestar|grandine'
 ```
@@ -45,6 +50,8 @@ curl -s http://127.0.0.1:5052/eth/v1/beacon/states/head/finality_checkpoints
 * `curl http://127.0.0.1:18550/eth/v1/builder/status` returns 200 OK.
 
 ## Check 5: Resources
+
+> **See:** [Metrics Reference](references/metrics.md) for per-client port details.
 
 * **Disk:** `df -h /home` (Alert if > 90%)
 * **Memory:** `free -h` (Alert if < 10% free)

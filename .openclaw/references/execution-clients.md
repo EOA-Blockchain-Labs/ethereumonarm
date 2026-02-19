@@ -233,44 +233,6 @@ sudo journalctl -u erigon --since "1 hour ago" | grep -iE 'error|fatal|panic'
 
 ---
 
-## EthRex
-
-| Property          | Value                                        |
-| :---------------- | :------------------------------------------- |
-| **Package**       | `ethrex`                                      |
-| **Binary**        | `/usr/bin/ethrex`                              |
-| **Service**       | `ethrex.service`                               |
-| **Config**        | `/etc/ethereum/ethrex.conf`                    |
-| **Metrics port**  | `3701`                                        |
-| **Metrics path**  | `/metrics`                                    |
-
-### Key Log Patterns
-
-```bash
-sudo journalctl -u ethrex --since "1 hour ago" | grep -iE 'error|fatal'
-```
-
----
-
-## Nimbus Execution Layer
-
-| Property          | Value                                        |
-| :---------------- | :------------------------------------------- |
-| **Package**       | `nimbus` (shared)                              |
-| **Binary**        | `/usr/bin/nimbus`                              |
-| **Service**       | `nimbus-ec.service`                            |
-| **Config**        | `/etc/ethereum/nimbus-ec.conf`                 |
-| **Metrics port**  | `8018`                                        |
-| **Metrics path**  | `/metrics`                                    |
-
-### Key Log Patterns
-
-```bash
-sudo journalctl -u nimbus-ec --since "1 hour ago" | grep -iE 'error|fatal'
-```
-
----
-
 ## Common API Commands (Any EL Client)
 
 ```bash

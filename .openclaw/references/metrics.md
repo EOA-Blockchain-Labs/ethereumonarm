@@ -9,8 +9,6 @@ The monitoring stack scrapes these endpoints every 15s (see `prometheus.yml`):
 | Nethermind                         | 7070         | `/metrics`                            |
 | Besu                               | 9545         | `/metrics`                            |
 | Reth                               | 9001         | `/`                                   |
-| EthRex                             | 3701         | `/metrics`                            |
-| Nimbus EC                          | 8018         | `/metrics`                            |
 | Lighthouse (beacon)                | 5054         | `/metrics`                            |
 | Lighthouse (validator)             | 5064         | `/metrics`                            |
 | Prysm (beacon)                     | 8080         | `/metrics`                            |
@@ -20,12 +18,15 @@ The monitoring stack scrapes these endpoints every 15s (see `prometheus.yml`):
 | Nimbus CL                          | 8008         | `/metrics`                            |
 | Lodestar (beacon)                  | 4040         | `/metrics`                            |
 | Lodestar (validator)               | 4041         | `/metrics`                            |
-| Grandine (beacon)                  | 5054         | `/metrics`                            |
-| Grandine (validator)               | 8009         | `/metrics`                            |
+| Grandine (beacon) ⚠️               | 5054         | `/metrics`                            |
+| Grandine (validator) ⚠️            | 8009         | `/metrics`                            |
+
+> [!WARNING]
+> Grandine beacon shares port `5054` with Lighthouse beacon, and Grandine
+> validator shares port `8009` with Teku beacon. Disable conflicting Prometheus
+> scrape jobs when switching between these clients.
 | Obol Charon                        | 3620         | `/metrics`                            |
 | SSV                                | 15000        | `/metrics`                            |
-| Optimism op-node                   | 7300         | `/metrics`                            |
-| Optimism op-geth                   | 7301         | `/debug/metrics/prometheus`           |
 | Node Exporter                      | 9100         | `/metrics`                            |
 | Prometheus                         | 9090         | `/metrics`                            |
 | Ethereum Metrics Exporter          | 9095         | `/metrics`                            |

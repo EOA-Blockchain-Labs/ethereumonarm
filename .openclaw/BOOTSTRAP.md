@@ -14,8 +14,8 @@ cat /etc/eoa-release 2>/dev/null || echo "No EOA release"
 cat /sys/firmware/devicetree/base/model 2>/dev/null || echo "Model unknown"
 
 # Installed packages & services
-dpkg -l | grep -E 'geth|nethermind|besu|reth|erigon|ethrex|nimbus|lighthouse|teku|prysm|lodestar|grandine|mev-boost|dvt-obol|dvt-ssv|commit-boost|vero|vouch'
-systemctl list-units --type=service --state=running | grep -E 'geth|nethermind|besu|reth|erigon|ethrex|nimbus|lighthouse|teku|prysm|lodestar|grandine|mev-boost|charon|ssv|anchor|commit-boost|vero|vouch'
+dpkg -l | grep -E 'geth|nethermind|besu|reth|erigon|nimbus|lighthouse|teku|prysm|lodestar|grandine|mev-boost|dvt-obol|dvt-ssv|commit-boost'
+systemctl list-units --type=service --state=running | grep -E 'geth|nethermind|besu|reth|erigon|nimbus|lighthouse|teku|prysm|lodestar|grandine|mev-boost|charon|ssv|anchor|commit-boost'
 
 # Config, JWT, data
 ls /etc/ethereum/ && ls /etc/ethereum/dvt/ 2>/dev/null
@@ -28,12 +28,11 @@ cat /sys/class/thermal/thermal_zone*/temp 2>/dev/null | awk '{print $1/1000"°C"
 sudo smartctl -a /dev/nvme0n1 2>/dev/null | head -20 || echo "No smartctl"
 
 # Monitoring
-# Monitoring
 systemctl is-active prometheus.service prometheus-node-exporter.service grafana-server.service
 
 # Check permissions
 groups | grep -q 'systemd-journal' && echo "Log access: OK" || echo "Log access: MISSING (Run: sudo usermod -aG systemd-journal $USER)"
-curl -v http://127.0.0.1:8545 2>&1 | grep -q "Connection refused" && echo "Nethermind RPC: REFUSED (Check config)" || echo "Nethermind RPC: OK"
+curl -v http://127.0.0.1:8545 2>&1 | grep -q "Connection refused" && echo "EL RPC: REFUSED (Check config)" || echo "EL RPC: OK"
 ```
 
 Record results — needed for all subsequent steps.
@@ -104,12 +103,12 @@ YOUR_USER ALL=(ALL) NOPASSWD: /usr/bin/systemctl {start,stop,restart,status} lig
 # Validator: STATUS ONLY
 YOUR_USER ALL=(ALL) NOPASSWD: /usr/bin/systemctl status *-validator*
 # Infrastructure: mev-boost variants, charon, ssv
-# Diagnostics:
-YOUR_USER ALL=(ALL) NOPASSWD: /usr/bin/journalctl *
+# Diagnostics (restricted flags to limit sudo surface):
+YOUR_USER ALL=(ALL) NOPASSWD: /usr/bin/journalctl -u *
 YOUR_USER ALL=(ALL) NOPASSWD: /usr/bin/apt update
-YOUR_USER ALL=(ALL) NOPASSWD: /usr/bin/apt install --only-upgrade *
+YOUR_USER ALL=(ALL) NOPASSWD: /usr/bin/apt install --only-upgrade geth nethermind besu reth erigon nimbus lighthouse prysm teku lodestar grandine mev-boost charon ssv anchor commit-boost
 YOUR_USER ALL=(ALL) NOPASSWD: /usr/bin/dmesg
-YOUR_USER ALL=(ALL) NOPASSWD: /usr/sbin/smartctl *
+YOUR_USER ALL=(ALL) NOPASSWD: /usr/sbin/smartctl -a /dev/nvme[0-9]*, /usr/sbin/smartctl -a /dev/sd[a-z]*
 ```
 
 ---

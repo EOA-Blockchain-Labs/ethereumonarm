@@ -13,23 +13,23 @@ All clients run as `User=ethereum` via systemd, sourcing their config from
 
 ## Lighthouse
 
-| Property           | Value                                        |
-| :----------------- | :------------------------------------------- |
-| **Package**        | `lighthouse`                                  |
-| **Binary**         | `/usr/bin/lighthouse`                          |
-| **Beacon service** | `lighthouse-beacon[-<network>][-mev].service`  |
+| Property           | Value                                            |
+| :----------------- | :----------------------------------------------- |
+| **Package**        | `lighthouse`                                     |
+| **Binary**         | `/usr/bin/lighthouse`                            |
+| **Beacon service** | `lighthouse-beacon[-<network>][-mev].service`    |
 | **Validator**      | `lighthouse-validator[-<network>][-mev].service` |
-| **Config dir**     | `/etc/ethereum/`                               |
-| **Data dir**       | Default (`/home/ethereum/.lighthouse`)         |
-| **Beacon API**     | `http://127.0.0.1:5052` (default)              |
-| **Auth-RPC EL**    | `http://127.0.0.1:8551`                       |
-| **JWT**            | `--execution-jwt /etc/ethereum/jwtsecret`      |
-| **Metrics port**   | `5054` (beacon), `5064` (validator)            |
-| **Metrics path**   | `/metrics`                                    |
-| **P2P port**       | `9000` TCP/UDP                                |
-| **MEV-Boost**      | `--builder http://localhost:18550`             |
+| **Config dir**     | `/etc/ethereum/`                                 |
+| **Data dir**       | Default (`/home/ethereum/.lighthouse`)           |
+| **Beacon API**     | `http://127.0.0.1:5052` (default)                |
+| **Auth-RPC EL**    | `http://127.0.0.1:8551`                          |
+| **JWT**            | `--execution-jwt /etc/ethereum/jwtsecret`        |
+| **Metrics port**   | `5054` (beacon), `5064` (validator)              |
+| **Metrics path**   | `/metrics`                                       |
+| **P2P port**       | `9000` TCP/UDP                                   |
+| **MEV-Boost**      | `--builder http://localhost:18550`               |
 
-### Default Config (Mainnet + MEV)
+### Lighthouse Default Config (Mainnet + MEV)
 
 ```bash
 ARGS="beacon \
@@ -42,21 +42,21 @@ ARGS="beacon \
     --builder http://localhost:18550"
 ```
 
-### Service Variants
+### Lighthouse Service Variants
 
-| Variant                          | Network  | MEV   |
-| :------------------------------- | :------- | :---- |
-| `lighthouse-beacon`              | Mainnet  | No    |
-| `lighthouse-beacon-mev`          | Mainnet  | Yes   |
-| `lighthouse-beacon-sepolia`      | Sepolia  | No    |
-| `lighthouse-beacon-sepolia-mev`  | Sepolia  | Yes   |
-| `lighthouse-beacon-hoodi`        | Hoodi    | No    |
-| `lighthouse-beacon-hoodi-mev`    | Hoodi    | Yes   |
-| `lighthouse-beacon-gnosis`       | Gnosis   | No    |
+| Variant                         | Network | MEV |
+| :------------------------------ | :------ | :-- |
+| `lighthouse-beacon`             | Mainnet | No  |
+| `lighthouse-beacon-mev`         | Mainnet | Yes |
+| `lighthouse-beacon-sepolia`     | Sepolia | No  |
+| `lighthouse-beacon-sepolia-mev` | Sepolia | Yes |
+| `lighthouse-beacon-hoodi`       | Hoodi   | No  |
+| `lighthouse-beacon-hoodi-mev`   | Hoodi   | Yes |
+| `lighthouse-beacon-gnosis`      | Gnosis  | No  |
 
 Corresponding `lighthouse-validator-*` services exist for each variant.
 
-### Key Log Patterns
+### Lighthouse Key Log Patterns
 
 ```bash
 # Sync progress
@@ -73,22 +73,22 @@ sudo journalctl -u lighthouse-beacon-mev --since "1 hour ago" | grep -i 'builder
 
 ## Nimbus
 
-| Property           | Value                                        |
-| :----------------- | :------------------------------------------- |
-| **Package**        | `nimbus`                                      |
-| **Binary**         | `/usr/bin/nimbus_beacon_node`                  |
-| **Beacon service** | `nimbus-beacon[-<network>][-mev].service`      |
-| **Validator**      | `nimbus-validator[-<network>][-mev].service`   |
-| **Data dir**       | `/home/ethereum/.nimbus-beacon`                |
-| **Beacon API**     | `http://127.0.0.1:5052` (`--rest`)             |
-| **Auth-RPC EL**    | `http://127.0.0.1:8551`                       |
-| **JWT**            | `--jwt-secret=/etc/ethereum/jwtsecret`         |
-| **Metrics port**   | `8008`                                        |
-| **Metrics path**   | `/metrics`                                    |
-| **P2P port**       | `9000` TCP/UDP                                |
+| Property           | Value                                                                 |
+| :----------------- | :-------------------------------------------------------------------- |
+| **Package**        | `nimbus`                                                              |
+| **Binary**         | `/usr/bin/nimbus_beacon_node`                                         |
+| **Beacon service** | `nimbus-beacon[-<network>][-mev].service`                             |
+| **Validator**      | `nimbus-validator[-<network>][-mev].service`                          |
+| **Data dir**       | `/home/ethereum/.nimbus-beacon`                                       |
+| **Beacon API**     | `http://127.0.0.1:5052` (`--rest`)                                    |
+| **Auth-RPC EL**    | `http://127.0.0.1:8551`                                               |
+| **JWT**            | `--jwt-secret=/etc/ethereum/jwtsecret`                                |
+| **Metrics port**   | `8008`                                                                |
+| **Metrics path**   | `/metrics`                                                            |
+| **P2P port**       | `9000` TCP/UDP                                                        |
 | **MEV-Boost**      | `--payload-builder=true --payload-builder-url=http://localhost:18550` |
 
-### Default Config (Mainnet + MEV)
+### Nimbus Default Config (Mainnet + MEV)
 
 ```bash
 ARGS="--network=mainnet \
@@ -101,7 +101,7 @@ ARGS="--network=mainnet \
 --metrics"
 ```
 
-### Key Log Patterns
+### Nimbus Key Log Patterns
 
 ```bash
 # Sync
@@ -120,22 +120,22 @@ sudo journalctl -u nimbus-beacon-mev --since "1 hour ago" | grep -iE 'error|crit
 
 ## Teku
 
-| Property           | Value                                        |
-| :----------------- | :------------------------------------------- |
-| **Package**        | `teku`                                        |
-| **Binary**         | `/usr/bin/teku`                                |
-| **Beacon service** | `teku-beacon[-<network>][-mev].service`        |
-| **Validator**      | `teku-validator[-<network>][-mev].service`     |
-| **Data dir**       | `/home/ethereum/.teku`                         |
+| Property           | Value                                            |
+| :----------------- | :----------------------------------------------- |
+| **Package**        | `teku`                                           |
+| **Binary**         | `/usr/bin/teku`                                  |
+| **Beacon service** | `teku-beacon[-<network>][-mev].service`          |
+| **Validator**      | `teku-validator[-<network>][-mev].service`       |
+| **Data dir**       | `/home/ethereum/.teku`                           |
 | **Beacon API**     | `http://127.0.0.1:5052` (`--rest-api-port=5052`) |
-| **Auth-RPC EL**    | `http://127.0.0.1:8551`                       |
-| **JWT**            | `--ee-jwt-secret-file=/etc/ethereum/jwtsecret` |
-| **Metrics port**   | `8009` (beacon), `8010` (validator)            |
-| **Metrics path**   | `/metrics`                                    |
-| **P2P port**       | `9000` TCP/UDP                                |
-| **MEV-Boost**      | `--builder-endpoint=http://localhost:18550`     |
+| **Auth-RPC EL**    | `http://127.0.0.1:8551`                          |
+| **JWT**            | `--ee-jwt-secret-file=/etc/ethereum/jwtsecret`   |
+| **Metrics port**   | `8009` (beacon), `8010` (validator)              |
+| **Metrics path**   | `/metrics`                                       |
+| **P2P port**       | `9000` TCP/UDP                                   |
+| **MEV-Boost**      | `--builder-endpoint=http://localhost:18550`      |
 
-### Default Config (Mainnet + MEV)
+### Teku Default Config (Mainnet + MEV)
 
 ```bash
 ARGS="--network=mainnet \
@@ -150,7 +150,7 @@ ARGS="--network=mainnet \
 --builder-endpoint=http://localhost:18550"
 ```
 
-### Key Log Patterns
+### Teku Key Log Patterns
 
 ```bash
 # Sync
@@ -165,23 +165,23 @@ sudo journalctl -u teku-beacon-mev --since "1 hour ago" | grep -iE 'error|warn|e
 
 ## Prysm
 
-| Property           | Value                                        |
-| :----------------- | :------------------------------------------- |
-| **Package**        | `prysm`                                       |
-| **Binary**         | `/usr/bin/beacon-chain` / `/usr/bin/validator`  |
-| **Beacon service** | `prysm-beacon[-<network>][-mev].service`       |
-| **Validator**      | `prysm-validator[-<network>][-mev].service`    |
-| **Data dir**       | `/home/ethereum/.prysm-beacon`                 |
-| **Beacon API**     | `http://127.0.0.1:5052` (`--grpc-gateway-port=5052`) |
-| **gRPC port**      | `4000`                                        |
-| **Auth-RPC EL**    | `http://127.0.0.1:8551`                       |
-| **JWT**            | `--jwt-secret=/etc/ethereum/jwtsecret`         |
+| Property           | Value                                                 |
+| :----------------- | :---------------------------------------------------- |
+| **Package**        | `prysm`                                               |
+| **Binary**         | `/usr/bin/beacon-chain` / `/usr/bin/validator`        |
+| **Beacon service** | `prysm-beacon[-<network>][-mev].service`              |
+| **Validator**      | `prysm-validator[-<network>][-mev].service`           |
+| **Data dir**       | `/home/ethereum/.prysm-beacon`                        |
+| **Beacon API**     | `http://127.0.0.1:5052` (`--grpc-gateway-port=5052`)  |
+| **gRPC port**      | `4000`                                                |
+| **Auth-RPC EL**    | `http://127.0.0.1:8551`                               |
+| **JWT**            | `--jwt-secret=/etc/ethereum/jwtsecret`                |
 | **Metrics port**   | `8080` (beacon), `8081` (validator), `8082` (slasher) |
-| **Metrics path**   | `/metrics`                                    |
-| **P2P port**       | `13000` TCP, `12000` UDP                      |
-| **MEV-Boost**      | `--http-mev-relay=http://localhost:18550`       |
+| **Metrics path**   | `/metrics`                                            |
+| **P2P port**       | `13000` TCP, `12000` UDP                              |
+| **MEV-Boost**      | `--http-mev-relay=http://localhost:18550`             |
 
-### Default Config (Mainnet + MEV)
+### Prysm Default Config (Mainnet + MEV)
 
 ```bash
 ARGS="--datadir=/home/ethereum/.prysm-beacon \
@@ -194,7 +194,7 @@ ARGS="--datadir=/home/ethereum/.prysm-beacon \
 --http-mev-relay=http://localhost:18550"
 ```
 
-### Key Log Patterns
+### Prysm Key Log Patterns
 
 ```bash
 # Sync
@@ -209,22 +209,22 @@ sudo journalctl -u prysm-beacon-mev --since "1 hour ago" | grep -iE 'error|crit|
 
 ## Lodestar
 
-| Property           | Value                                        |
-| :----------------- | :------------------------------------------- |
-| **Package**        | `lodestar`                                    |
-| **Binary**         | `/usr/bin/lodestar`                            |
-| **Beacon service** | `lodestar-beacon[-<network>][-mev].service`    |
-| **Validator**      | `lodestar-validator[-<network>][-mev].service`  |
-| **Data dir**       | `/home/ethereum/.lodestar-beacon`              |
-| **Beacon API**     | `http://127.0.0.1:5052` (`--rest.port 5052`)   |
-| **Auth-RPC EL**    | `http://127.0.0.1:8551`                       |
-| **JWT**            | `--jwt-secret /etc/ethereum/jwtsecret`         |
-| **Metrics port**   | `4040` (beacon), `4041` (validator)            |
-| **Metrics path**   | `/metrics`                                    |
-| **P2P port**       | `9000` TCP/UDP                                |
+| Property           | Value                                            |
+| :----------------- | :----------------------------------------------- |
+| **Package**        | `lodestar`                                       |
+| **Binary**         | `/usr/bin/lodestar`                              |
+| **Beacon service** | `lodestar-beacon[-<network>][-mev].service`      |
+| **Validator**      | `lodestar-validator[-<network>][-mev].service`   |
+| **Data dir**       | `/home/ethereum/.lodestar-beacon`                |
+| **Beacon API**     | `http://127.0.0.1:5052` (`--rest.port 5052`)     |
+| **Auth-RPC EL**    | `http://127.0.0.1:8551`                          |
+| **JWT**            | `--jwt-secret /etc/ethereum/jwtsecret`           |
+| **Metrics port**   | `4040` (beacon), `4041` (validator)              |
+| **Metrics path**   | `/metrics`                                       |
+| **P2P port**       | `9000` TCP/UDP                                   |
 | **MEV-Boost**      | `--builder --builder.url http://localhost:18550` |
 
-### Default Config (Mainnet + MEV)
+### Lodestar Default Config (Mainnet + MEV)
 
 ```bash
 ARGS="beacon \
@@ -241,7 +241,7 @@ ARGS="beacon \
     --builder.url http://localhost:18550"
 ```
 
-### Key Log Patterns
+### Lodestar Key Log Patterns
 
 ```bash
 # Sync
@@ -262,22 +262,22 @@ sudo journalctl -u lodestar-beacon-mev --since "1 hour ago" | grep -iE 'error|cr
 > Only one CL client should run at a time. When switching to/from Grandine,
 > disable the conflicting Prometheus scrape jobs to avoid mis-labeled metrics.
 
-| Property           | Value                                        |
-| :----------------- | :------------------------------------------- |
-| **Package**        | `grandine`                                    |
+| Property           | Value                                          |
+| :----------------- | :--------------------------------------------- |
+| **Package**        | `grandine`                                     |
 | **Binary**         | `/usr/bin/grandine`                            |
 | **Beacon service** | `grandine-beacon[-<network>][-mev].service`    |
-| **Validator**      | `grandine-validator[-<network>][-mev].service`  |
+| **Validator**      | `grandine-validator[-<network>][-mev].service` |
 | **Data dir**       | `/home/ethereum/.grandine-beacon`              |
 | **Beacon API**     | `http://127.0.0.1:5052` (default)              |
 | **Auth-RPC EL**    | `http://localhost:8551`                        |
 | **JWT**            | `--jwt-secret /etc/ethereum/jwtsecret`         |
 | **Metrics port**   | `5054` (beacon) ⚠️, `8009` (validator) ⚠️      |
-| **Metrics path**   | `/metrics`                                    |
-| **P2P port**       | `9000` TCP/UDP                                |
-| **MEV-Boost**      | `--builder-url http://localhost:18550`          |
+| **Metrics path**   | `/metrics`                                     |
+| **P2P port**       | `9000` TCP/UDP                                 |
+| **MEV-Boost**      | `--builder-url http://localhost:18550`         |
 
-### Default Config (Mainnet + MEV)
+### Grandine Default Config (Mainnet + MEV)
 
 ```bash
 ARGS="--data-dir /home/ethereum/.grandine-beacon \
@@ -288,7 +288,7 @@ ARGS="--data-dir /home/ethereum/.grandine-beacon \
 --metrics"
 ```
 
-### Key Log Patterns
+### Grandine Key Log Patterns
 
 ```bash
 # Sync
@@ -301,22 +301,22 @@ sudo journalctl -u grandine-beacon-mev --since "1 hour ago" | grep -iE 'error|cr
 
 ## MEV-Boost
 
-| Property           | Value                                        |
-| :----------------- | :------------------------------------------- |
-| **Package**        | `mev-boost`                                   |
-| **Binary**         | `/usr/bin/mev-boost`                           |
-| **Service**        | `mev-boost.service`                            |
-| **Config**         | `/etc/ethereum/mev-boost.conf`                 |
-| **Listen port**    | `18550`                                       |
-| **Status check**   | `curl http://127.0.0.1:18550/eth/v1/builder/status` |
+| Property         | Value                                               |
+| :--------------- | :-------------------------------------------------- |
+| **Package**      | `mev-boost`                                         |
+| **Binary**       | `/usr/bin/mev-boost`                                |
+| **Service**      | `mev-boost.service`                                 |
+| **Config**       | `/etc/ethereum/mev-boost.conf`                      |
+| **Listen port**  | `18550`                                             |
+| **Status check** | `curl http://127.0.0.1:18550/eth/v1/builder/status` |
 
-### Service Variants
+### MEV-Boost Service Variants
 
-| Variant                | Config                       |
-| :--------------------- | :--------------------------- |
-| `mev-boost`            | `mev-boost.conf` (mainnet)   |
-| `mev-boost-sepolia`    | `mev-boost-sepolia.conf`     |
-| `mev-boost-hoodi`      | `mev-boost-hoodi.conf`       |
+| Variant             | Config                     |
+| :------------------ | :------------------------- |
+| `mev-boost`         | `mev-boost.conf` (mainnet) |
+| `mev-boost-sepolia` | `mev-boost-sepolia.conf`   |
+| `mev-boost-hoodi`   | `mev-boost-hoodi.conf`     |
 
 All CL clients connect to MEV-Boost on `http://localhost:18550`.
 
@@ -357,27 +357,27 @@ echo "Current epoch: ${EPOCH}"
 
 ### Obol Charon
 
-| Property        | Value                                |
-| :-------------- | :----------------------------------- |
-| **Service**     | `charon.service`                      |
-| **Config**      | `/etc/ethereum/dvt/charon.conf`       |
-| **Metrics port**| `3620`                               |
-| **Metrics path**| `/metrics`                           |
+| Property         | Value                           |
+| :--------------- | :------------------------------ |
+| **Service**      | `charon.service`                |
+| **Config**       | `/etc/ethereum/dvt/charon.conf` |
+| **Metrics port** | `3620`                          |
+| **Metrics path** | `/metrics`                      |
 
 Obol validator service variants: `<client>-validator[-<network>]-obol[-lido].service`
 
 ### SSV
 
-| Property        | Value                                |
-| :-------------- | :----------------------------------- |
-| **Service**     | `ssv.service`                         |
-| **Config**      | `/etc/ethereum/ssv.conf`              |
-| **Metrics port**| `15000`                              |
-| **Metrics path**| `/metrics`                           |
+| Property         | Value                    |
+| :--------------- | :----------------------- |
+| **Service**      | `ssv.service`            |
+| **Config**       | `/etc/ethereum/ssv.conf` |
+| **Metrics port** | `15000`                  |
+| **Metrics path** | `/metrics`               |
 
 ### Anchor (Sigp)
 
-| Property        | Value                                |
-| :-------------- | :----------------------------------- |
-| **Service**     | `anchor.service`                      |
-| **Config**      | `/etc/ethereum/anchor.conf`           |
+| Property    | Value                       |
+| :---------- | :-------------------------- |
+| **Service** | `anchor.service`            |
+| **Config**  | `/etc/ethereum/anchor.conf` |

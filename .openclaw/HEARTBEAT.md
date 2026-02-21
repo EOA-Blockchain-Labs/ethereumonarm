@@ -73,7 +73,7 @@ Scan for `error`, `fatal`, `panic`, `corrupt`, `db.corruption`.
 
 ## Alert Format
 
-```
+```text
 🛡️ Valkyrie Alert — [SEVERITY]
 Issue:       [Brief description]
 Service:     [Service]

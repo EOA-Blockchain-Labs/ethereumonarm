@@ -95,7 +95,7 @@ Print instructions: `sudo visudo -f /etc/sudoers.d/openclaw-valkyrie`
 
 Generate rules for **only installed clients** from Step 1, following this pattern:
 
-```
+```sudoers
 # EL: start/stop/restart/status per installed client
 YOUR_USER ALL=(ALL) NOPASSWD: /usr/bin/systemctl {start,stop,restart,status} geth
 # CL: same for each beacon variant found
@@ -129,7 +129,7 @@ curl -s http://127.0.0.1:18550/eth/v1/builder/status 2>/dev/null || echo "No MEV
 
 ## Step 7 — Report to User
 
-```
+```text
 🛡️ Valkyrie is online.
 
 Board:       [model + arch]     EL: [client + version]

@@ -8,21 +8,21 @@ All clients run as `User=ethereum` via systemd, sourcing their config from
 
 ## Geth
 
-| Property          | Value                                        |
-| :---------------- | :------------------------------------------- |
-| **Package**       | `geth`                                       |
-| **Binary**        | `/usr/bin/geth`                               |
-| **Service**       | `geth.service`                                |
-| **Config**        | `/etc/ethereum/geth.conf`                     |
-| **Data dir**      | Default (`/home/ethereum/.ethereum`)          |
-| **JSON-RPC**      | `http://127.0.0.1:8545` (`--http`)            |
-| **Auth-RPC**      | `http://127.0.0.1:8551`                       |
-| **JWT**           | `--authrpc.jwtsecret=/etc/ethereum/jwtsecret` |
-| **Metrics port**  | `6060` (pprof)                                |
-| **Metrics path**  | `/debug/metrics/prometheus`                   |
-| **P2P port**      | `30303` TCP/UDP                               |
+| Property         | Value                                         |
+| :--------------- | :-------------------------------------------- |
+| **Package**      | `geth`                                        |
+| **Binary**       | `/usr/bin/geth`                               |
+| **Service**      | `geth.service`                                |
+| **Config**       | `/etc/ethereum/geth.conf`                     |
+| **Data dir**     | Default (`/home/ethereum/.ethereum`)          |
+| **JSON-RPC**     | `http://127.0.0.1:8545` (`--http`)            |
+| **Auth-RPC**     | `http://127.0.0.1:8551`                       |
+| **JWT**          | `--authrpc.jwtsecret=/etc/ethereum/jwtsecret` |
+| **Metrics port** | `6060` (pprof)                                |
+| **Metrics path** | `/debug/metrics/prometheus`                   |
+| **P2P port**     | `30303` TCP/UDP                               |
 
-### Default Config
+### Geth Default Config
 
 ```bash
 ARGS="--metrics \
@@ -32,7 +32,7 @@ ARGS="--metrics \
 --authrpc.jwtsecret=/etc/ethereum/jwtsecret"
 ```
 
-### Key Log Patterns
+### Geth Key Log Patterns
 
 ```bash
 # Sync progress
@@ -45,33 +45,33 @@ sudo journalctl -u geth --since "1 hour ago" | grep -iE 'error|fatal|panic'
 sudo journalctl -u geth --since "1 hour ago" | grep -i 'prune'
 ```
 
-### Network Variants
+### Geth Network Variants
 
-| Network  | Service       | Config                  |
-| :------- | :------------ | :---------------------- |
-| Mainnet  | `geth`        | `geth.conf`             |
-| Sepolia  | `geth-sepolia`| `geth-sepolia.conf`     |
-| Hoodi    | `geth-hoodi`  | `geth-hoodi.conf`       |
+| Network | Service        | Config              |
+| :------ | :------------- | :------------------ |
+| Mainnet | `geth`         | `geth.conf`         |
+| Sepolia | `geth-sepolia` | `geth-sepolia.conf` |
+| Hoodi   | `geth-hoodi`   | `geth-hoodi.conf`   |
 
 ---
 
 ## Nethermind
 
-| Property          | Value                                        |
-| :---------------- | :------------------------------------------- |
-| **Package**       | `nethermind`                                  |
-| **Binary**        | `/usr/bin/nethermind`                          |
-| **Service**       | `nethermind.service`                           |
-| **Config**        | `/etc/ethereum/nethermind.conf`                |
-| **Data dir**      | `/home/ethereum/.nethermind`                   |
-| **JSON-RPC**      | `http://127.0.0.1:8545`                       |
-| **Auth-RPC**      | `http://127.0.0.1:8551`                       |
-| **JWT**           | `--JsonRpc.JwtSecretFile /etc/ethereum/jwtsecret` |
-| **Metrics port**  | `7070`                                        |
-| **Metrics path**  | `/metrics`                                    |
-| **P2P port**      | `30303` TCP/UDP                               |
+| Property         | Value                                             |
+| :--------------- | :------------------------------------------------ |
+| **Package**      | `nethermind`                                      |
+| **Binary**       | `/usr/bin/nethermind`                             |
+| **Service**      | `nethermind.service`                              |
+| **Config**       | `/etc/ethereum/nethermind.conf`                   |
+| **Data dir**     | `/home/ethereum/.nethermind`                      |
+| **JSON-RPC**     | `http://127.0.0.1:8545`                           |
+| **Auth-RPC**     | `http://127.0.0.1:8551`                           |
+| **JWT**          | `--JsonRpc.JwtSecretFile /etc/ethereum/jwtsecret` |
+| **Metrics port** | `7070`                                            |
+| **Metrics path** | `/metrics`                                        |
+| **P2P port**     | `30303` TCP/UDP                                   |
 
-### Default Config
+### Nethermind Default Config
 
 ```bash
 ARGS="--config mainnet \
@@ -82,7 +82,7 @@ ARGS="--config mainnet \
 --Metrics.ExposePort 7070"
 ```
 
-### Key Log Patterns
+### Nethermind Key Log Patterns
 
 ```bash
 # Sync progress
@@ -99,23 +99,23 @@ sudo journalctl -u nethermind --since "1 hour ago" | grep -i 'rocksdb'
 
 ## Besu
 
-| Property          | Value                                        |
-| :---------------- | :------------------------------------------- |
-| **Package**       | `besu`                                        |
-| **Binary**        | `/usr/bin/besu`                                |
-| **Service**       | `besu.service`                                 |
-| **Config**        | `/etc/ethereum/besu.conf`                      |
-| **Data dir**      | `/home/ethereum/.besu`                         |
-| **JSON-RPC**      | `http://127.0.0.1:8545` (`--rpc-http-enabled`) |
-| **Auth-RPC**      | `http://127.0.0.1:8551`                       |
-| **JWT**           | `--engine-jwt-secret=/etc/ethereum/jwtsecret`  |
-| **Metrics port**  | `9545`                                        |
-| **Metrics path**  | `/metrics`                                    |
-| **P2P port**      | `30303` TCP/UDP                               |
-| **Sync mode**     | `SNAP`                                        |
-| **Storage**       | `BONSAI`                                      |
+| Property         | Value                                          |
+| :--------------- | :--------------------------------------------- |
+| **Package**      | `besu`                                         |
+| **Binary**       | `/usr/bin/besu`                                |
+| **Service**      | `besu.service`                                 |
+| **Config**       | `/etc/ethereum/besu.conf`                      |
+| **Data dir**     | `/home/ethereum/.besu`                         |
+| **JSON-RPC**     | `http://127.0.0.1:8545` (`--rpc-http-enabled`) |
+| **Auth-RPC**     | `http://127.0.0.1:8551`                        |
+| **JWT**          | `--engine-jwt-secret=/etc/ethereum/jwtsecret`  |
+| **Metrics port** | `9545`                                         |
+| **Metrics path** | `/metrics`                                     |
+| **P2P port**     | `30303` TCP/UDP                                |
+| **Sync mode**    | `SNAP`                                         |
+| **Storage**      | `BONSAI`                                       |
 
-### Default Config
+### Besu Default Config
 
 ```bash
 ARGS="--network=mainnet \
@@ -127,7 +127,7 @@ ARGS="--network=mainnet \
 --metrics-enabled"
 ```
 
-### Key Log Patterns
+### Besu Key Log Patterns
 
 ```bash
 # Sync progress
@@ -142,21 +142,21 @@ sudo journalctl -u besu --since "1 hour ago" | grep -i 'bonsai'
 
 ## Reth
 
-| Property          | Value                                        |
-| :---------------- | :------------------------------------------- |
-| **Package**       | `reth`                                        |
-| **Binary**        | `/usr/bin/reth`                                |
-| **Service**       | `reth.service`                                 |
-| **Config**        | `/etc/ethereum/reth.conf`                      |
-| **Data dir**      | `/home/ethereum/.reth`                         |
-| **JSON-RPC**      | `http://127.0.0.1:8545` (`--http`)             |
-| **Auth-RPC**      | `http://127.0.0.1:8551`                       |
-| **JWT**           | `--authrpc.jwtsecret /etc/ethereum/jwtsecret`  |
-| **Metrics port**  | `9001`                                        |
-| **Metrics path**  | `/`                                           |
-| **P2P port**      | `30303` TCP/UDP                               |
+| Property         | Value                                         |
+| :--------------- | :-------------------------------------------- |
+| **Package**      | `reth`                                        |
+| **Binary**       | `/usr/bin/reth`                               |
+| **Service**      | `reth.service`                                |
+| **Config**       | `/etc/ethereum/reth.conf`                     |
+| **Data dir**     | `/home/ethereum/.reth`                        |
+| **JSON-RPC**     | `http://127.0.0.1:8545` (`--http`)            |
+| **Auth-RPC**     | `http://127.0.0.1:8551`                       |
+| **JWT**          | `--authrpc.jwtsecret /etc/ethereum/jwtsecret` |
+| **Metrics port** | `9001`                                        |
+| **Metrics path** | `/`                                           |
+| **P2P port**     | `30303` TCP/UDP                               |
 
-### Default Config
+### Reth Default Config
 
 ```bash
 ARGS="node \
@@ -167,7 +167,7 @@ ARGS="node \
 --ws"
 ```
 
-### Key Log Patterns
+### Reth Key Log Patterns
 
 ```bash
 # Sync progress
@@ -182,23 +182,23 @@ sudo journalctl -u reth --since "1 hour ago" | grep -iE 'error|fatal|panic'
 
 ## Erigon
 
-| Property          | Value                                        |
-| :---------------- | :------------------------------------------- |
-| **Package**       | `erigon`                                      |
-| **Binary**        | `/usr/bin/erigon`                              |
-| **Service**       | `erigon.service`                               |
-| **Config**        | `/etc/ethereum/erigon.conf`                    |
-| **Data dir**      | `/home/ethereum/.erigon`                       |
-| **JSON-RPC**      | `http://0.0.0.0:8545` (`--http --http.addr=0.0.0.0`) |
-| **Auth-RPC**      | `http://0.0.0.0:8551` (`--authrpc.addr=0.0.0.0`) |
-| **JWT**           | `--authrpc.jwtsecret=/etc/ethereum/jwtsecret`  |
-| **Metrics port**  | `5050`                                        |
-| **Metrics path**  | `/debug/metrics/prometheus`                   |
-| **P2P port**      | `30303` TCP/UDP                               |
-| **WebSocket**     | `ws://0.0.0.0:8546`                           |
-| **Private API**   | `localhost:8092`                               |
+| Property         | Value                                                |
+| :--------------- | :--------------------------------------------------- |
+| **Package**      | `erigon`                                             |
+| **Binary**       | `/usr/bin/erigon`                                    |
+| **Service**      | `erigon.service`                                     |
+| **Config**       | `/etc/ethereum/erigon.conf`                          |
+| **Data dir**     | `/home/ethereum/.erigon`                             |
+| **JSON-RPC**     | `http://0.0.0.0:8545` (`--http --http.addr=0.0.0.0`) |
+| **Auth-RPC**     | `http://0.0.0.0:8551` (`--authrpc.addr=0.0.0.0`)     |
+| **JWT**          | `--authrpc.jwtsecret=/etc/ethereum/jwtsecret`        |
+| **Metrics port** | `5050`                                               |
+| **Metrics path** | `/debug/metrics/prometheus`                          |
+| **P2P port**     | `30303` TCP/UDP                                      |
+| **WebSocket**    | `ws://0.0.0.0:8546`                                  |
+| **Private API**  | `localhost:8092`                                     |
 
-### Default Config
+### Erigon Default Config
 
 ```bash
 ARGS="--chain=mainnet \
@@ -220,7 +220,7 @@ ARGS="--chain=mainnet \
 --torrent.upload.rate=4mb"
 ```
 
-### Key Log Patterns
+### Erigon Key Log Patterns
 
 ```bash
 # Sync stages

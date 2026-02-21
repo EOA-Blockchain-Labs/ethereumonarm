@@ -19,7 +19,7 @@ YELLOW="\033[1;33m"
 RESET="\033[0m"
 
 export LC_NUMERIC=C
-printf "\n🐳 ${BLUE}Running target '${GREEN}${TARGET_NAME}${BLUE}' via Docker...${RESET}\n\n"
+printf "\n🐳 %b\n\n" "${BLUE}Running target '${GREEN}${TARGET_NAME}${BLUE}' via Docker...${RESET}"
 
 RESULT_FILE=$(mktemp)
 total_start=$(date +%s.%N)
@@ -52,7 +52,7 @@ total_elapsed=$(printf "%.2f" "$(echo "$total_end - $total_start" | bc)")
 printf "⏱  ${BLUE}Total time: ${YELLOW}%ss${RESET}\n\n" "$total_elapsed"
 
 if [ -s "$RESULT_FILE" ]; then
-    printf "${BLUE}────── SUMMARY ──────${RESET}\n"
+    printf "%b\n" "${BLUE}────── SUMMARY ──────${RESET}"
     printf "%-65s %-10s %-10s\n" "Directory" "Result" "Time(s)"
     printf "%-65s %-10s %-10s\n" "-----------------------------------------------------------------" "--------" "--------"
     while IFS="|" read -r dir result time; do
@@ -65,7 +65,7 @@ if [ -s "$RESULT_FILE" ]; then
         fi
         printf "%-65s %-10b %-10s\n" "$dir" "$symbol $color$result${RESET}" "$time"
     done < "$RESULT_FILE"
-    printf "${BLUE}──────────────────────${RESET}\n"
+    printf "%b\n" "${BLUE}──────────────────────${RESET}"
 fi
 
 rm -f "$RESULT_FILE"

@@ -4,11 +4,11 @@
 
 Identify issues via any of these signals:
 
-* Service in `inactive`/`failed` state: `systemctl is-active <service>`
-* Extended `syncing: true` on EL or CL
-* Beacon health returning `503`: `curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5052/eth/v1/node/health`
-* Prometheus alert firing (`InstanceDown`, `HostHighDiskUsage`, `HostHighCpuLoad`, `HostOutOfMemory`)
-* Peer count at zero: `curl -s http://127.0.0.1:5052/eth/v1/node/peer_count | jq`
+- Service in `inactive`/`failed` state: `systemctl is-active <service>`
+- Extended `syncing: true` on EL or CL
+- Beacon health returning `503`: `curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5052/eth/v1/node/health`
+- Prometheus alert firing (`InstanceDown`, `HostHighDiskUsage`, `HostHighCpuLoad`, `HostOutOfMemory`)
+- Peer count at zero: `curl -s http://127.0.0.1:5052/eth/v1/node/peer_count | jq`
 
 ## Step 2: Analysis
 
@@ -27,21 +27,21 @@ top -bn1 | head -20
 
 Determine root cause category:
 
-* **External:** Network issues, upstream chain problems
-* **Local Hardware:** NVMe failure, memory exhaustion, CPU thermal throttling
-* **Local Software:** Config error, client bug, stale database
+- **External:** Network issues, upstream chain problems
+- **Local Hardware:** NVMe failure, memory exhaustion, CPU thermal throttling
+- **Local Software:** Config error, client bug, stale database
 
 ## Step 3: Progressive Action
 
-| Level | Condition                              | Action                                                     |
-| :---- | :------------------------------------- | :--------------------------------------------------------- |
-| **1** | Service crashed, no error pattern match | `sudo systemctl restart <service>` — wait 2 min, verify    |
-| **2** | JWT auth failures between EL↔CL       | Re-generate JWT secret, restart **both** EL and CL         |
-| **2** | Stale cache / pruning issues           | Clear local cache dirs, restart service                    |
-| **3** | Known client consensus bug             | Client failover (e.g., Geth → Nethermind or Lighthouse → Nimbus). Update config, restart |
-| **3** | Persistent DB corruption               | **Stop service, escalate to human operator**                |
+| Level | Condition                               | Action                                                                                   |
+| :---- | :-------------------------------------- | :--------------------------------------------------------------------------------------- |
+| **1** | Service crashed, no error pattern match | `sudo systemctl restart <service>` — wait 2 min, verify                                  |
+| **2** | JWT auth failures between EL↔CL         | Re-generate JWT secret, restart **both** EL and CL                                       |
+| **2** | Stale cache / pruning issues            | Clear local cache dirs, restart service                                                  |
+| **3** | Known client consensus bug              | Client failover (e.g., Geth → Nethermind or Lighthouse → Nimbus). Update config, restart |
+| **3** | Persistent DB corruption                | **Stop service, escalate to human operator**                                             |
 
-#### JWT Re-authentication Procedure
+### JWT Re-authentication Procedure
 
 ```bash
 # 1. Stop both layers
@@ -56,7 +56,7 @@ sudo systemctl start <el-service>
 sudo systemctl start <cl-service>
 ```
 
-#### Client Failover Procedure (EL Example: Geth → Nethermind)
+### Client Failover Procedure (EL Example: Geth → Nethermind)
 
 ```bash
 # 1. Verify disk space for new client data

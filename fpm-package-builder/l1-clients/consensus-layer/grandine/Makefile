@@ -64,7 +64,7 @@ GRANDINE_TAG := $(shell curl -sL "https://api.github.com/repos/grandinetech/gran
 GRANDINE_VERSION := $(shell echo "$(GRANDINE_TAG)" | tr -d "v")
 
 # The binary name for this architecture
-GRANDINE_BINARY := grandine-$(GRANDINE_VERSION)-$(PKG_ARCH)
+GRANDINE_BINARY := grandine-$(GRANDINE_VERSION)-linux-$(PKG_ARCH)
 GRANDINE_URL := https://github.com/grandinetech/grandine/releases/download/$(GRANDINE_TAG)/$(GRANDINE_BINARY)
 
 # SHA256 checksum extracted from GitHub API asset digest field

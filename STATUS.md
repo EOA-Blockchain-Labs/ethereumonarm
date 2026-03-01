@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-02-28 04:19:18 UTC_
+_Last updated: 2026-03-01 04:59:42 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-02-28 04:19:18 UTC_
 ## Summary
 
 - Total packages checked: **36**
-- ✅ Up-to-date: **32** (88.9%)
-- ❌ Outdated: **4** (11.1%)
+- ✅ Up-to-date: **34** (94.4%)
+- ❌ Outdated: **2** (5.6%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -40,7 +40,7 @@ _Last updated: 2026-02-28 04:19:18 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `grandine` | `2.0.1` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.1` | ✅ Up-to-date |
+| `grandine` | `2.0.2` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.2` | ✅ Up-to-date |
 | `lighthouse` | `8.1.1` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.1.1` | ✅ Up-to-date |
 | `lodestar` | `1.40.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.40.0` | ✅ Up-to-date |
 | `nimbus` | `26.2.1` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.2.1` | ✅ Up-to-date |
@@ -63,7 +63,7 @@ _Last updated: 2026-02-28 04:19:18 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `helios` | `0.11.1` ([a16z/helios](https://github.com/a16z/helios)) | `0.11.0` | ❌ Outdated |
+| `helios` | `0.11.1` ([a16z/helios](https://github.com/a16z/helios)) | `0.11.1` | ✅ Up-to-date |
 
 ## Layer 2
 
@@ -84,4 +84,4 @@ _Last updated: 2026-02-28 04:19:18 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
 | `bee` | `2.7.0` ([ethersphere/bee](https://github.com/ethersphere/bee)) | `2.7.0` | ✅ Up-to-date |
-| `kubo` | `0.40.1` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.40.0` | ❌ Outdated |
+| `kubo` | `0.40.1` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.40.1` | ✅ Up-to-date |

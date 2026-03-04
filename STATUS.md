@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-03-03 04:52:23 UTC_
+_Last updated: 2026-03-04 04:45:49 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-03-03 04:52:23 UTC_
 ## Summary
 
 - Total packages checked: **36**
-- ✅ Up-to-date: **32** (88.9%)
-- ❌ Outdated: **4** (11.1%)
+- ✅ Up-to-date: **30** (83.3%)
+- ❌ Outdated: **6** (16.7%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -54,9 +54,9 @@ _Last updated: 2026-03-03 04:52:23 UTC_
 | `besu` | `26.1.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.1.0` | ✅ Up-to-date |
 | `erigon` | `3.3.8` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.3.8` | ✅ Up-to-date |
 | `ethrex` | `9.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `9.0.0` | ✅ Up-to-date |
-| `geth` | `1.17.0` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.0` | ✅ Up-to-date |
+| `geth` | `1.17.1` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.0` | ❌ Outdated |
 | `nethermind` | `1.36.0` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.36.0` | ✅ Up-to-date |
-| `nimbus-ec` | `0.3.0` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.2.2` | ❌ Outdated |
+| `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.2.2` | ❌ Outdated |
 | `reth` | `1.11.1` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.11.1` | ✅ Up-to-date |
 
 ## Layer 1 Light Clients
@@ -75,7 +75,7 @@ _Last updated: 2026-03-03 04:52:23 UTC_
 | `optimism-op-geth` | `1.101609.1` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101609.0` | ❌ Outdated |
 | `optimism-op-node` | `1.16.7` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.16.7` | ✅ Up-to-date |
 | `optimism-op-reth` | `1.11.1` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |
-| `starknet-juno` | `0.15.18` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.18` | ✅ Up-to-date |
+| `starknet-juno` | `0.15.19` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.18` | ❌ Outdated |
 | `starknet-madara` | `0.10.1` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.1` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.21.5` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.5` | ✅ Up-to-date |
 

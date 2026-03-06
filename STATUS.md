@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-03-05 04:50:06 UTC_
+_Last updated: 2026-03-06 04:47:15 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-03-05 04:50:06 UTC_
 ## Summary
 
 - Total packages checked: **36**
-- ✅ Up-to-date: **33** (91.7%)
-- ❌ Outdated: **3** (8.3%)
+- ✅ Up-to-date: **29** (80.6%)
+- ❌ Outdated: **7** (19.4%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -32,7 +32,7 @@ _Last updated: 2026-03-05 04:50:06 UTC_
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |
 | `ethstaker-deposit-cli` | `1.2.2` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.2.2` | ✅ Up-to-date |
 | `mev-boost` | `1.12` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.12` | ✅ Up-to-date |
-| `stakewise-operator` | `4.1.9` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.1.9` | ✅ Up-to-date |
+| `stakewise-operator` | `4.1.10` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.1.9` | ❌ Outdated |
 | `vero` | `1.3.1` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.3.1` | ✅ Up-to-date |
 | `vouch` | `1.12.1` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.12.1` | ✅ Up-to-date |
 
@@ -45,7 +45,7 @@ _Last updated: 2026-03-05 04:50:06 UTC_
 | `lodestar` | `1.40.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.40.0` | ✅ Up-to-date |
 | `nimbus` | `26.3.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.3.0` | ✅ Up-to-date |
 | `prysm` | `7.1.2` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.2` | ✅ Up-to-date |
-| `teku` | `26.2.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.2.0` | ✅ Up-to-date |
+| `teku` | `26.3.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.2.0` | ❌ Outdated |
 
 ## Layer 1 Execution
 
@@ -69,8 +69,8 @@ _Last updated: 2026-03-05 04:50:06 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `arbitrum-nitro` | `3.9.6` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.9.6` | ✅ Up-to-date |
-| `fuel-network` | `0.47.1` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.47.1` | ✅ Up-to-date |
+| `arbitrum-nitro` | `3.9.7` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.9.6` | ❌ Outdated |
+| `fuel-network` | `0.47.2` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.47.1` | ❌ Outdated |
 | `optimism-op-challenger` | `1.9.0` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.0` | ✅ Up-to-date |
 | `optimism-op-geth` | `1.101609.1` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101609.1` | ✅ Up-to-date |
 | `optimism-op-node` | `1.16.7` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.16.7` | ✅ Up-to-date |

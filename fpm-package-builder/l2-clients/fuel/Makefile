@@ -67,8 +67,7 @@ FUEL_TARBALL := fuel-core-$(FUEL_VERSION)-$(PKG_ARCH_RPM)-unknown-linux-gnu.tar.
 FUEL_URL     := https://github.com/FuelLabs/fuel-core/releases/download/$(FUEL_TAG_V)/$(FUEL_TARBALL)
 
 # SHA256 checksum extracted from GitHub API asset digest field
-FUEL_RELEASE_JSON := $(shell curl -s "https://api.github.com/repos/FuelLabs/fuel-core/releases/latest")
-FUEL_SHA256 := $(shell echo '$(FUEL_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(FUEL_TARBALL)") | .digest' | sed 's/sha256://')
+FUEL_SHA256 := $(shell curl -s "https://api.github.com/repos/FuelLabs/fuel-core/releases/latest" | jq -r '.assets[] | select(.name == "$(FUEL_TARBALL)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(FUEL_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(FUEL_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm

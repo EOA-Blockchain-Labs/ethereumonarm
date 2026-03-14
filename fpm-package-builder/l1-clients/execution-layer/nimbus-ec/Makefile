@@ -61,17 +61,17 @@ OUTPUTDIR       ?= ../../../packages
 # NOTE: The "latest" release on this repo is a "nightly" build.
 # We must hardcode the desired version tag to get a stable release.
 # This can be overridden from CI/CLI (e.g., make NIMBUS_VERSION=0.2.3)
-NIMBUS_VERSION      ?= 0.2.2
+NIMBUS_VERSION      ?= 0.3.0
 
 # Make one API call to the specific version tag to get all assets
 NIMBUS_RELEASE_JSON := $(shell curl -sL https://api.github.com/repos/status-im/nimbus-eth1/releases/tags/v$(NIMBUS_VERSION))
-NIMBUS_ASSETS_JSON  := $(shell echo '$(NIMBUS_RELEASE_JSON)' | jq -r '.assets[]')
-NIMBUS_CLIENT_URL   := $(shell echo '$(NIMBUS_ASSETS_JSON)' | jq -r 'select(.name | contains("client-linux-arm64")).browser_download_url')
+NIMBUS_ASSETS_JSON  := $(shell echo "$(subst ",\",$(NIMBUS_RELEASE_JSON))" | jq -c '.assets[]' 2>/dev/null || echo "")
+NIMBUS_CLIENT_URL   := $(shell echo '$(NIMBUS_ASSETS_JSON)' | jq -r 'select(.name | contains("nimbus-linux-arm64")).browser_download_url')
 NIMBUS_PROXY_URL    := $(shell echo '$(NIMBUS_ASSETS_JSON)' | jq -r 'select(.name | contains("proxy-linux-arm64")).browser_download_url')
 NIMBUS_DOWNLOADER_URL := https://raw.githubusercontent.com/status-im/nimbus-eth1/refs/heads/master/scripts/era_downloader.sh
 
 # SHA256 checksums from API digest field
-NIMBUS_CLIENT_SHA256 := $(shell echo '$(NIMBUS_ASSETS_JSON)' | jq -r 'select(.name | contains("client-linux-arm64")).digest' | sed 's/sha256://')
+NIMBUS_CLIENT_SHA256 := $(shell echo '$(NIMBUS_ASSETS_JSON)' | jq -r 'select(.name | contains("nimbus-linux-arm64")).digest' | sed 's/sha256://')
 NIMBUS_PROXY_SHA256  := $(shell echo '$(NIMBUS_ASSETS_JSON)' | jq -r 'select(.name | contains("proxy-linux-arm64")).digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(NIMBUS_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
@@ -153,8 +153,15 @@ prepare: ## Download latest Nimbus and stage into $(SOURCESDIR)/usr/bin
 	@echo "$(NIMBUS_PROXY_SHA256)  .build/proxy.tar.gz" | sha256sum -c - || { echo "❌ Proxy SHA256 verification FAILED!"; rm -f ".build/proxy.tar.gz"; exit 1; };
 	
 	@echo "Extracting binaries..."
-	tar -xzf ".build/client.tar.gz" -C $(SOURCESDIR)/usr/bin/ --wildcards --absolute-names --no-anchored --strip-components 2 '*/nimbus_*'
-	tar -xzf ".build/proxy.tar.gz" -C $(SOURCESDIR)/usr/bin/ --wildcards --absolute-names --no-anchored --strip-components 2 '*/nimbus_*'
+	# Extraction for client (extracted as 'nimbus')
+	tar -xzf ".build/client.tar.gz" -C $(SOURCESDIR)/usr/bin/ --wildcards --no-anchored --strip-components 2 '*/nimbus'
+	mv $(SOURCESDIR)/usr/bin/nimbus $(SOURCESDIR)/usr/bin/nimbus_client
+	
+	# Extraction for proxy (extracted as 'nimbus_verified_proxy' or similar)
+	# Note: Current upstream ARM64 proxy archive is skeleton-only. 
+	# We attempt extraction but won't fail if it's missing for now to allow core client build.
+	tar -xzf ".build/proxy.tar.gz" -C $(SOURCESDIR)/usr/bin/ --wildcards --no-anchored --strip-components 2 '*/nimbus*' || true
+	[ -f $(SOURCESDIR)/usr/bin/nimbus ] && mv $(SOURCESDIR)/usr/bin/nimbus $(SOURCESDIR)/usr/bin/nimbus_verified_proxy || true
 	
 	chmod 0755 $(SOURCESDIR)/usr/bin/era_downloader.sh
 	rm -f $(SOURCESDIR)/usr/bin/nimbus*.sha512sum

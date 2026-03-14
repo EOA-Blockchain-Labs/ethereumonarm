@@ -147,6 +147,8 @@ prepare: ## Download latest Nethermind and stage into $(SOURCESDIR)/opt
 	@echo "$(NETHERMIND_SHA256)  .build/$(NETHERMIND_ZIP)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(NETHERMIND_ZIP)"; exit 1; };
 	@echo "📦 Extracting files..."
 	unzip -o ".build/$(NETHERMIND_ZIP)" -d "$(SOURCESDIR)/opt/nethermind"
+	mkdir -p $(SOURCESDIR)/usr/bin
+	ln -sf /opt/nethermind/nethermind $(SOURCESDIR)/usr/bin/nethermind
 	@echo "✅ Files downloaded and verified in $(SOURCESDIR)/opt/nethermind"
 
 # ----------------------------------------------------------------------

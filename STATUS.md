@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-03-18 05:02:28 UTC_
+_Last updated: 2026-03-19 04:59:59 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-03-18 05:02:28 UTC_
 ## Summary
 
 - Total packages checked: **36**
-- ✅ Up-to-date: **34** (94.4%)
-- ❌ Outdated: **2** (5.6%)
+- ✅ Up-to-date: **33** (91.7%)
+- ❌ Outdated: **3** (8.3%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -44,7 +44,7 @@ _Last updated: 2026-03-18 05:02:28 UTC_
 | `lighthouse` | `8.1.2` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.1.2` | ✅ Up-to-date |
 | `lodestar` | `1.40.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.40.0` | ✅ Up-to-date |
 | `nimbus` | `26.3.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.3.0` | ✅ Up-to-date |
-| `prysm` | `7.1.2` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.2` | ✅ Up-to-date |
+| `prysm` | `7.1.3` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.2` | ❌ Outdated |
 | `teku` | `26.3.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.3.0` | ✅ Up-to-date |
 
 ## Layer 1 Execution

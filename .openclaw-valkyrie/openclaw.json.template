@@ -1,0 +1,89 @@
+{
+  "auth": {
+    "profiles": {
+      "openrouter:default": {
+        "provider": "openrouter",
+        "mode": "api_key"
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openrouter/minimax/minimax-m2.7"
+      },
+      "models": {
+        "openrouter/minimax/minimax-m2.7": {
+          "alias": "MiniMax-M2.7"
+        }
+      },
+      "workspace": "/home/ethereum/.openclaw/workspace",
+      "heartbeat": {
+        "every": "24h"
+      }
+    },
+    "list": [
+      {
+        "id": "ethereum-node",
+        "model": {
+          "primary": "openrouter/minimax/minimax-m2.7"
+        },
+        "workspace": "/home/ethereum/.openclaw/workspace",
+        "heartbeat": {
+          "every": "24h"
+        },
+        "tools": {
+          "exec": {
+            "ask": "on-miss"
+          },
+          "elevated": {
+            "enabled": true,
+            "allowFrom": {
+              "telegram": ["YOUR_TELEGRAM_USER_ID"]
+            }
+          }
+        }
+      }
+    ]
+  },
+  "tools": {},
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "session": {
+    "dmScope": "per-channel-peer"
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "dmPolicy": "pairing",
+      "botToken": "YOUR_TELEGRAM_BOT_TOKEN",
+      "groupPolicy": "allowlist",
+      "groupAllowFrom": ["YOUR_TELEGRAM_USER_ID"],
+      "streaming": "partial"
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "auth": {
+      "mode": "token",
+      "token": "YOUR_GATEWAY_TOKEN"
+    },
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    }
+  },
+  "plugins": {
+    "entries": {
+      "telegram": {
+        "enabled": true
+      }
+    }
+  }
+}

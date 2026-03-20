@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-03-19 04:59:59 UTC_
+_Last updated: 2026-03-20 04:52:43 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-03-19 04:59:59 UTC_
 ## Summary
 
 - Total packages checked: **36**
-- ✅ Up-to-date: **33** (91.7%)
-- ❌ Outdated: **3** (8.3%)
+- ✅ Up-to-date: **31** (86.1%)
+- ❌ Outdated: **5** (13.9%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -42,7 +42,7 @@ _Last updated: 2026-03-19 04:59:59 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `grandine` | `2.0.3` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.3` | ✅ Up-to-date |
 | `lighthouse` | `8.1.2` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.1.2` | ✅ Up-to-date |
-| `lodestar` | `1.40.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.40.0` | ✅ Up-to-date |
+| `lodestar` | `1.41.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.40.0` | ❌ Outdated |
 | `nimbus` | `26.3.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.3.0` | ✅ Up-to-date |
 | `prysm` | `7.1.3` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.2` | ❌ Outdated |
 | `teku` | `26.3.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.3.0` | ✅ Up-to-date |
@@ -77,7 +77,7 @@ _Last updated: 2026-03-19 04:59:59 UTC_
 | `optimism-op-reth` | `1.11.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |
 | `starknet-juno` | `0.15.19` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.19` | ✅ Up-to-date |
 | `starknet-madara` | `0.10.1` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.1` | ✅ Up-to-date |
-| `starknet-pathfinder` | `0.21.5` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.5` | ✅ Up-to-date |
+| `starknet-pathfinder` | `0.22.0` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.5` | ❌ Outdated |
 
 ## Web3
 

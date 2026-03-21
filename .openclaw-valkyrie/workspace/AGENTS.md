@@ -45,12 +45,9 @@ Read the EOA_CHECK line from session-start.sh output.
 Read the STATUS line from the NODE STATUS section of session-start.sh
 output:
 
-- STATUS RUNNING → note which client pair is active and on which
-  network, then immediately run:
-
-      bash /home/ethereum/.openclaw/workspace/skills/eoa-node/scripts/synced-clients.sh
-
-  Note the sync status for the summary in Step 8.
+- STATUS RUNNING → note which client pair is active, on which network,
+  and whether MEV Boost is enabled. Note the SYNC_STATUS line for the
+  summary in Step 8.
 
 - STATUS INCOMPLETE → note which client is running and which is
   missing. Report in Step 8.
@@ -89,8 +86,10 @@ Read the DISK_CHECK line from session-start.sh output.
 
 Write to `/home/ethereum/.openclaw/workspace/memory/node-state.md`:
 - Session started: (current timestamp)
-- Client pair running: (from session-start.sh output, or none)
-- Sync status: (from synced-clients.sh if run, otherwise unknown)
+- Client pair running: (from node-status.sh output, or none)
+- Network: (from node-status.sh output)
+- MEV Boost: (from node-status.sh output)
+- Sync status: (from SYNC_STATUS line, or unknown if stopped)
 - RAM: (from RAM_CHECK)
 - Disk total / available: (from DISK_CHECK)
 - Notes: session started
@@ -104,6 +103,7 @@ Do not pause, immediately continue to Step 8.
 Give the user a single concise summary of everything found in Steps 3
 to 6:
 - Node status (running, stopped, or incomplete)
+- Client pair and network if running
 - Sync status if running
 - RAM status
 - Disk status and any warnings including old client data found
@@ -229,7 +229,7 @@ All tasks are defined in `skills/eoa-node/SKILL.md`.
   switch command.
 - Never run two execution clients or two consensus clients simultaneously.
 - Always start the consensus client first, then the execution client.
-- Always run running-clients.sh before starting any client to check
+- Always run node-status.sh before starting any client to check
   current state.
 - For Nimbus, always run trustedNodeSync before starting nimbus-beacon.
 - Never touch validator keystores or keys — that is a separate domain.
@@ -270,7 +270,7 @@ Write to `/home/ethereum/.openclaw/workspace/memory/node-state.md`
 immediately after completing the session start sequence — before
 responding to the user — with what you know so far:
 - Session started: (current timestamp)
-- Client pair running: (from session-start.sh output, or none)
+- Client pair running: (from node-status.sh output, or none)
 - Sync status: unknown (not yet checked)
 - Notes: session started, pre-greeting snapshot
 

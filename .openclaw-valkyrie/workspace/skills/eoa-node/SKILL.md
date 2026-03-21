@@ -13,7 +13,7 @@ version: 1.0.0
 
 ## Before Any Action
 
-1. Run `scripts/running-clients.sh` to know current state.
+1. Run `scripts/node-status.sh` to know current state.
 2. Load `references/execution-clients.md` and `references/consensus-clients.md`
    to resolve the exact systemd service name and APT package name for any
    client the user mentions. Always use these files as the source of truth
@@ -204,7 +204,7 @@ A node requires exactly 1 consensus client + 1 execution client.
 1. Run the Pre-Start Resource Check above. Do not proceed until
    sufficient disk space is confirmed.
 
-2. Run `scripts/running-clients.sh` — if a pair is already running,
+2. Run `scripts/node-status.sh` — if a pair is already running,
    inform the user and ask if they want to stop it first. Never stop
    a running client without explicit user confirmation.
 
@@ -237,7 +237,223 @@ A node requires exactly 1 consensus client + 1 execution client.
         sudo systemctl is-active <CONSENSUS_SERVICE>
         sudo systemctl is-active <EXECUTION_SERVICE>
 
-9. Run both status check scripts and report to user:
+9. Run node-status.sh and health-check.sh and report to user:
 
-        bash /home/ethereum/.openclaw/workspace/skills/eoa-node/scripts/synced-clients.sh
-        bash
+        bash /home/ethereum/.openclaw/workspace/skills/eoa-node/scripts/node-status.sh
+        bash /home/ethereum/.openclaw/workspace/skills/eoa-node/scripts/health-check.sh
+
+---
+
+## Stop a Node
+
+Always ask the user for confirmation before stopping any service.
+Tell the user exactly which services you are about to stop and wait
+for confirmation:
+"I'm going to stop <EXECUTION_SERVICE> and <CONSENSUS_SERVICE>.
+Shall I proceed?"
+
+After confirmation, stop execution first, then consensus:
+
+    sudo systemctl stop <EXECUTION_SERVICE>
+    sudo systemctl stop <CONSENSUS_SERVICE>
+
+If MEV Boost is running, stop it last:
+
+    sudo systemctl stop <MEV_BOOST_SERVICE>
+
+---
+
+## Restart a Client
+
+Always ask the user for confirmation before restarting any service.
+Tell the user exactly which service you are about to restart and wait
+for confirmation.
+
+Resolve the correct service name first, then:
+
+    sudo systemctl restart <CONSENSUS_SERVICE>
+
+or
+
+    sudo systemctl restart <EXECUTION_SERVICE>
+
+---
+
+## Check Service Status
+
+Resolve the correct service name first, then:
+
+    sudo systemctl status <EXECUTION_SERVICE>
+    sudo systemctl status <CONSENSUS_SERVICE>
+    sudo systemctl status <MEV_BOOST_SERVICE>
+
+The status output includes:
+- Whether the service is active, inactive, or failed
+- How long the service has been running (uptime)
+- The last few log lines
+- Whether the service is enabled (starts on boot) or disabled
+
+Report all of this to the user in a clear human-readable summary.
+
+---
+
+## Enable or Disable a Service (start on boot)
+
+By default services on Ethereum on ARM are not enabled — they do not
+start automatically after a reboot. The user must explicitly ask to
+enable a service.
+
+Enable a service to start automatically on boot:
+
+    sudo systemctl enable <SERVICE_NAME>
+
+Disable a service from starting automatically on boot:
+
+    sudo systemctl disable <SERVICE_NAME>
+
+**Important:** enabling a service does not start it immediately, and
+disabling does not stop it. These commands only affect boot behaviour.
+If the user wants to both enable AND start, run both commands:
+
+    sudo systemctl enable <SERVICE_NAME>
+    sudo systemctl start <SERVICE_NAME>
+
+Always confirm with the user which services they want enabled. If the
+user asks to enable the node, enable both the execution and consensus
+client services for the currently running pair.
+
+Never enable MEV Boost services unless the user has explicitly
+confirmed they are staking ETH as a validator.
+
+---
+
+## Get Logs
+
+Default: last 30 lines. User can request more.
+Resolve the correct service name first, then:
+
+    sudo journalctl -u <CONSENSUS_SERVICE> -n 30
+    sudo journalctl -u <EXECUTION_SERVICE> -n 30
+    sudo journalctl -u <MEV_BOOST_SERVICE> -n 30
+
+For live streaming:
+
+    sudo journalctl -u <CONSENSUS_SERVICE> -f
+    sudo journalctl -u <EXECUTION_SERVICE> -f
+
+---
+
+## Update a Client
+
+Ethereum on ARM provides a custom APT repository.
+Look up the APT package name in the reference files before running.
+The APT package name is the same regardless of network or MEV variant.
+
+Update a single client:
+
+    sudo apt-get update
+    sudo apt-get install <PACKAGE_NAME>
+
+**Important: never restart a service after updating.** On Ethereum on
+ARM, systemd is configured to automatically restart running services
+when their package is updated. If the agent manually restarts a service
+after an update it may restart clients that were intentionally stopped,
+which can cause conflicts or unexpected syncing on multiple networks.
+
+If the user asks whether the update was applied, check the running
+service status instead:
+
+    sudo systemctl status <SERVICE_NAME>
+
+Update all clients at once:
+
+    sudo apt-get update && sudo apt-get install \
+      geth nethermind erigon besu reth \
+      lighthouse prysm nimbus teku lodestar grandine \
+      mev-boost
+
+---
+
+## Check Node Status and Sync
+
+When the user asks about the node in any form — "how is the node?",
+"node status", "is it synced?", "what is the node doing?", "check the
+node", "clients report", "sync report", "clients status", "sync status",
+or any similar question — ALWAYS run both scripts regardless of whether
+the node is synced or not:
+
+    bash /home/ethereum/.openclaw/workspace/skills/eoa-node/scripts/node-status.sh
+    bash /home/ethereum/.openclaw/workspace/skills/eoa-node/scripts/health-check.sh
+
+Never skip either script based on assumptions about the node state.
+Always run both and report the full picture to the user.
+
+The node-status.sh script reports:
+- Which clients are running and their service names
+- Network and MEV Boost status
+- Overall STATUS (RUNNING, STOPPED, INCOMPLETE)
+- If RUNNING: whether EL and CL are synced or syncing
+- If syncing: how far behind and current block/slot
+- EL peer count
+
+The health-check.sh script reports:
+- CPU load, RAM, swap, disk usage with warnings
+- All active and failed service states
+- Recent error log entries (last 15 min)
+- System uptime
+
+Read the full output of both scripts and give the user a clear
+human-readable summary. Highlight any WARN lines. If there are no
+issues, tell the user everything looks healthy.
+
+---
+
+## Switch Client Pair
+
+If the user wants to change the running client pair:
+
+1. Run `scripts/node-status.sh` to identify currently running
+   services.
+
+2. Check disk usage of the old client database using
+   `references/client-data.md` to resolve the correct database path:
+
+        du -sh <old client database path>
+
+3. Check free disk space:
+
+        df -h /home/ethereum
+
+4. Before stopping the current pair, ask the user explicitly:
+   "Would you like me to delete the old client data after stopping?
+   Leftover data from [old client] may consume significant disk space
+   and could prevent [new client] from syncing properly."
+   Wait for confirmation before proceeding. Note the answer and act
+   on it in Step 7.
+
+5. Tell the user exactly which services you are about to stop and
+   wait for confirmation before stopping anything:
+   "I'm going to stop <EXECUTION_SERVICE> and <CONSENSUS_SERVICE>.
+   Shall I proceed?"
+
+6. Stop the current pair following the Stop a Node procedure above.
+
+7. If the user confirmed deletion, remove only the database path of
+   the old client (not the entire home directory unless explicitly
+   asked):
+
+        rm -rf <old client database path>
+
+8. Resolve the new service names using the Service Name Resolution
+   rules.
+
+9. Start the new pair following the Start a Full Node procedure above.
+
+10. Run both scripts and report to user:
+
+        bash /home/ethereum/.openclaw/workspace/skills/eoa-node/scripts/node-status.sh
+        bash /home/ethereum/.openclaw/workspace/skills/eoa-node/scripts/health-check.sh
+
+Always take the network into account — use the correct database path
+for the network being switched, never delete data for a different
+network.

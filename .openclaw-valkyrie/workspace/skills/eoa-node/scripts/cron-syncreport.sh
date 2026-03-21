@@ -27,21 +27,21 @@ if [ -f "$LOCK_FILE" ]; then
     exit 0
 fi
 
-# ── Check if a complete node is running ───────────────────────────────────────
-RUNNING=$(bash "$(dirname "$0")/running-clients.sh" 2>/dev/null)
-STATUS=$(echo "$RUNNING" | awk -F': ' '/^STATUS/ {print $2}' | xargs)
+# ── Run node-status.sh and parse output ──────────────────────────────────────
+STATUS_OUTPUT=$(bash "$(dirname "$0")/node-status.sh" 2>/dev/null)
+STATUS=$(echo "$STATUS_OUTPUT" | awk -F': ' '/^STATUS/ {print $2}' | xargs | cut -d' ' -f1)
+CL_SERVICE=$(echo "$STATUS_OUTPUT" | awk -F'[()]' '/^Consensus client/ {print $2}')
 
 if [ "$STATUS" != "RUNNING" ]; then
     exit 0
 fi
 
 # ── Check if the node has been running for at least 24 hours ─────────────────
-svc=$(echo "$RUNNING" | awk -F': ' '/^Consensus client/ {print $2}' | xargs)
-if [ -z "$svc" ]; then
+if [ -z "$CL_SERVICE" ]; then
     exit 0
 fi
 
-started=$(systemctl show "$svc" --property=ActiveEnterTimestamp --value 2>/dev/null)
+started=$(systemctl show "$CL_SERVICE" --property=ActiveEnterTimestamp --value 2>/dev/null)
 if [ -z "$started" ]; then
     exit 0
 fi
@@ -50,7 +50,6 @@ started_epoch=$(date -d "$started" +%s 2>/dev/null || echo 0)
 now_epoch=$(date +%s)
 uptime=$(( now_epoch - started_epoch ))
 
-# 86400 seconds = 24 hours
 if [ "$uptime" -lt 86400 ]; then
     exit 0
 fi
@@ -60,7 +59,7 @@ touch "$LOCK_FILE"
 
 openclaw agent \
     --agent ethereum-node \
-    --message "📊 The node has been running for 24 hours. Please run a full health check using health-check.sh and scripts/synced-clients.sh, then send the user a complete status report covering sync progress, peer counts, disk usage, CPU and memory." \
+    --message "📊 The node has been running for 24 hours. Please run node-status.sh and health-check.sh, then send the user a complete status report covering sync progress, peer counts, disk usage, CPU and memory." \
     --deliver \
     --channel telegram \
     --reply-channel telegram \

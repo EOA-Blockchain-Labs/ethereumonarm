@@ -59,8 +59,7 @@ df -h /home/ethereum | awk 'NR==2 {print "Total: " $2 "  Used: " $3 "  Available
 if [ "$DISK_TOTAL_GB" -lt 1700 ]; then
     echo "DISK_CHECK : FAIL — total disk is ${DISK_TOTAL_GB}GB, minimum required is 1.7TB."
 else
-    # Check if an execution client is currently running
-    EL_RUNNING=$(bash "$(dirname "$0")/running-clients.sh" 2>/dev/null | awk -F': ' '/^Execution client/ {print $2}' | xargs)
+    EL_RUNNING=$(bash "$(dirname "$0")/node-status.sh" 2>/dev/null | awk -F'[()]' '/^Execution client/ {print $2}')
     if [ -n "$EL_RUNNING" ] && [ "$EL_RUNNING" != "none" ]; then
         echo "DISK_CHECK : OK — total ${DISK_TOTAL_GB}GB, available ${DISK_AVAIL_GB}GB, used ${DISK_USED_GB}GB (${DISK_USE_PCT}). Disk usage includes running execution client ($EL_RUNNING) — available space is expected to be lower while the node is syncing."
     elif [ "$DISK_AVAIL_GB" -lt 1500 ]; then
@@ -83,13 +82,13 @@ if [ ! -f "$BOARD_INFO" ]; then
 BOARDEOF
 fi
 
-# --- Running clients — AGENT MUST READ THIS AND ACT ON IT ---
+# --- Node status — AGENT MUST READ THIS AND ACT ON IT ---
 echo ""
 echo "======================================================="
 echo "=== NODE STATUS — READ THIS AND ACT ON IT          ==="
 echo "======================================================="
 echo ""
-bash "$(dirname "$0")/running-clients.sh"
+bash "$(dirname "$0")/node-status.sh"
 echo ""
 echo "======================================================="
 echo "IMPORTANT: Based on the STATUS line above:"
@@ -98,8 +97,8 @@ echo "    and encourage them to start one for Ethereum"
 echo "    decentralization."
 echo "  - STATUS INCOMPLETE → one client is missing its pair."
 echo "    Tell the user and offer to fix it."
-echo "  - STATUS RUNNING   → report the active pair and check"
-echo "    sync status with synced-clients.sh."
+echo "  - STATUS RUNNING   → report the active pair, network,"
+echo "    and sync status from SYNC_STATUS line."
 echo "  - DISK_CHECK WARN  → available disk is below 1.5TB and"
 echo "    no node is running. This is likely caused by old"
 echo "    client data remaining on disk from a previous node"
@@ -108,3 +107,20 @@ echo "    Pre-Start Resource Check from SKILL.md to find and"
 echo "    report old client databases before attempting to"
 echo "    start any node."
 echo "======================================================="
+```
+
+---
+
+Now update `AGENTS.md` and `SKILL.md` to replace all references to `running-clients.sh` and `synced-clients.sh` with `node-status.sh`:
+
+**`AGENTS.md`** — replace all occurrences of:
+```
+scripts/running-clients.sh
+scripts/synced-clients.sh
+synced-clients.sh
+running-clients.sh
+```
+with:
+```
+scripts/node-status.sh
+node-status.sh

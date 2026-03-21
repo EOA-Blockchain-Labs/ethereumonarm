@@ -16,16 +16,16 @@ if [ -z "$TELEGRAM_ID" ]; then
     exit 1
 fi
 
-CONSENSUS_API="http://localhost:5052/eth/v1/node/syncing"
-EXECUTION_RPC="http://localhost:8545"
-INITIAL_SYNC_GRACE=64800
 LOCK_DIR="/home/ethereum/.openclaw/locks"
+INITIAL_SYNC_GRACE=64800
 
 [ ! -d "$LOCK_DIR" ] && mkdir -p "$LOCK_DIR"
 
-# ── Check if a complete node is running — exit if not ────────────────────────
-RUNNING=$(bash "$(dirname "$0")/running-clients.sh" 2>/dev/null)
-STATUS=$(echo "$RUNNING" | awk -F': ' '/^STATUS/ {print $2}' | xargs)
+# ── Run node-status.sh and parse output ──────────────────────────────────────
+STATUS_OUTPUT=$(bash "$(dirname "$0")/node-status.sh" 2>/dev/null)
+STATUS=$(echo "$STATUS_OUTPUT" | awk -F': ' '/^STATUS/ {print $2}' | xargs | cut -d' ' -f1)
+SYNC_STATUS=$(echo "$STATUS_OUTPUT" | awk -F': ' '/^SYNC_STATUS/ {print $2}' | xargs | cut -d' ' -f1)
+CL_SERVICE=$(echo "$STATUS_OUTPUT" | awk -F'[()]' '/^Consensus client/ {print $2}')
 
 if [ "$STATUS" = "STOPPED" ]; then
     rm -f "$LOCK_DIR/sync-incomplete.lock"
@@ -37,7 +37,13 @@ fi
 
 if [ "$STATUS" = "INCOMPLETE" ]; then
     if [ ! -f "$LOCK_DIR/sync-incomplete.lock" ]; then
-        openclaw message send --channel telegram --target "$TELEGRAM_ID" --message "⚠️ Node alert on $(hostname): node setup is incomplete — one client is running without its pair."
+        openclaw agent \
+            --agent ethereum-node \
+            --message "⚠️ Node alert on $(hostname): node setup is incomplete — one client is running without its pair." \
+            --deliver \
+            --channel telegram \
+            --reply-channel telegram \
+            --reply-to "$TELEGRAM_ID"
         touch "$LOCK_DIR/sync-incomplete.lock"
     fi
     exit 0
@@ -47,54 +53,22 @@ fi
 
 # ── Only runs from here if STATUS = RUNNING ───────────────────────────────────
 
-el_syncing() {
-    local result
-    result=$(curl -s -X POST "$EXECUTION_RPC" -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":1}' 2>/dev/null | python3 -c "
-import sys, json
-try:
-    r = json.load(sys.stdin).get('result', True)
-    print('false' if r is False else 'true')
-except:
-    print('true')
-")
+# Both synced — clear all sync locks
+if [ "$SYNC_STATUS" = "SYNCED" ]; then
+    rm -f "$LOCK_DIR/sync-cl-behind.lock"
+    rm -f "$LOCK_DIR/sync-both-stuck.lock"
+    rm -f "$LOCK_DIR/sync-el-stuck.lock"
+    exit 0
+fi
 
-    if [ "$result" = "false" ]; then
-        BLOCK=$(curl -s -X POST "$EXECUTION_RPC" -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' 2>/dev/null | python3 -c "
-import sys, json
-try:
-    print(int(json.load(sys.stdin)['result'], 16))
-except:
-    print(0)
-")
-        if [ "$BLOCK" -lt 1000 ] 2>/dev/null; then
-            echo "true"
-            return
-        fi
-    fi
-
-    echo "$result"
-}
-
-cl_syncing() {
-    curl -s "$CONSENSUS_API" 2>/dev/null | python3 -c "
-import sys, json
-try:
-    data = json.load(sys.stdin)
-    print(str(data['data']['is_syncing']).lower())
-except:
-    print('true')
-"
-}
-
+# Get uptime of consensus service
 service_uptime_seconds() {
-    local svc
-    svc=$(echo "$RUNNING" | awk -F': ' '/^Consensus client/ {print $2}' | xargs)
-    if [ -z "$svc" ]; then
+    if [ -z "$CL_SERVICE" ]; then
         echo 0
         return
     fi
     local started
-    started=$(systemctl show "$svc" --property=ActiveEnterTimestamp --value 2>/dev/null)
+    started=$(systemctl show "$CL_SERVICE" --property=ActiveEnterTimestamp --value 2>/dev/null)
     if [ -n "$started" ]; then
         local started_epoch now_epoch
         started_epoch=$(date -d "$started" +%s 2>/dev/null || echo 0)
@@ -105,18 +79,10 @@ service_uptime_seconds() {
     echo 0
 }
 
-EL_SYNC=$(el_syncing)
-CL_SYNC=$(cl_syncing)
-
-# Both synced — clear all sync locks
-if [ "$EL_SYNC" = "false" ] && [ "$CL_SYNC" = "false" ]; then
-    rm -f "$LOCK_DIR/sync-cl-behind.lock"
-    rm -f "$LOCK_DIR/sync-both-stuck.lock"
-    rm -f "$LOCK_DIR/sync-el-stuck.lock"
-    exit 0
-fi
-
 UPTIME=$(service_uptime_seconds)
+
+EL_SYNC=$(echo "$STATUS_OUTPUT" | awk '/^Execution client/ {print ($3 == "SYNCED") ? "false" : "true"}')
+CL_SYNC=$(echo "$STATUS_OUTPUT" | awk '/^Consensus client/ {print ($3 == "SYNCED") ? "false" : "true"}')
 
 # Both syncing within grace period — normal initial sync
 if [ "$EL_SYNC" = "true" ] && [ "$CL_SYNC" = "true" ]; then
@@ -135,7 +101,13 @@ fi
 # EL synced but CL behind — always alert
 if [ "$EL_SYNC" = "false" ] && [ "$CL_SYNC" = "true" ]; then
     if [ ! -f "$LOCK_DIR/sync-cl-behind.lock" ]; then
-        openclaw message send --channel telegram --target "$TELEGRAM_ID" --message "⚠️ Sync alert on $(hostname): EL is synced but CL is behind — check consensus client logs."
+        openclaw agent \
+            --agent ethereum-node \
+            --message "⚠️ Sync alert on $(hostname): EL is synced but CL is behind — check consensus client logs." \
+            --deliver \
+            --channel telegram \
+            --reply-channel telegram \
+            --reply-to "$TELEGRAM_ID"
         touch "$LOCK_DIR/sync-cl-behind.lock"
     fi
     exit 0
@@ -146,7 +118,13 @@ fi
 # Both still syncing past grace period
 if [ "$EL_SYNC" = "true" ] && [ "$CL_SYNC" = "true" ]; then
     if [ ! -f "$LOCK_DIR/sync-both-stuck.lock" ]; then
-        openclaw message send --channel telegram --target "$TELEGRAM_ID" --message "⚠️ Sync alert on $(hostname): Both clients still syncing after 18 hours — may indicate a stuck sync."
+        openclaw agent \
+            --agent ethereum-node \
+            --message "⚠️ Sync alert on $(hostname): Both clients still syncing after 18 hours — may indicate a stuck sync." \
+            --deliver \
+            --channel telegram \
+            --reply-channel telegram \
+            --reply-to "$TELEGRAM_ID"
         touch "$LOCK_DIR/sync-both-stuck.lock"
     fi
 fi
@@ -154,7 +132,13 @@ fi
 # EL still catching up past grace period
 if [ "$EL_SYNC" = "true" ] && [ "$CL_SYNC" = "false" ]; then
     if [ ! -f "$LOCK_DIR/sync-el-stuck.lock" ]; then
-        openclaw message send --channel telegram --target "$TELEGRAM_ID" --message "⚠️ Sync alert on $(hostname): EL still catching up after 18 hours — may indicate a stuck sync."
+        openclaw agent \
+            --agent ethereum-node \
+            --message "⚠️ Sync alert on $(hostname): EL still catching up after 18 hours — may indicate a stuck sync." \
+            --deliver \
+            --channel telegram \
+            --reply-channel telegram \
+            --reply-to "$TELEGRAM_ID"
         touch "$LOCK_DIR/sync-el-stuck.lock"
     fi
 else

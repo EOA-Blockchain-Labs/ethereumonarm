@@ -91,14 +91,17 @@ echo ""
 bash "$(dirname "$0")/node-status.sh"
 echo ""
 echo "======================================================="
-echo "IMPORTANT: Based on the STATUS line above:"
+echo "IMPORTANT: Based on the STATUS and SYNC_STATUS lines:"
 echo "  - STATUS STOPPED   → no node is running. Tell the user"
 echo "    and encourage them to start one for Ethereum"
 echo "    decentralization."
 echo "  - STATUS INCOMPLETE → one client is missing its pair."
 echo "    Tell the user and offer to fix it."
 echo "  - STATUS RUNNING   → report the active pair, network,"
-echo "    and sync status from SYNC_STATUS line."
+echo "    MEV Boost status, and SYNC_STATUS to the user."
+echo "  - SYNC_STATUS SYNCED   → both clients are fully synced."
+echo "  - SYNC_STATUS SYNCING  → report which client is behind"
+echo "    and how far."
 echo "  - DISK_CHECK WARN  → available disk is below 1.5TB and"
 echo "    no node is running. This is likely caused by old"
 echo "    client data remaining on disk from a previous node"
@@ -107,20 +110,3 @@ echo "    Pre-Start Resource Check from SKILL.md to find and"
 echo "    report old client databases before attempting to"
 echo "    start any node."
 echo "======================================================="
-```
-
----
-
-Now update `AGENTS.md` and `SKILL.md` to replace all references to `running-clients.sh` and `synced-clients.sh` with `node-status.sh`:
-
-**`AGENTS.md`** — replace all occurrences of:
-```
-scripts/running-clients.sh
-scripts/synced-clients.sh
-synced-clients.sh
-running-clients.sh
-```
-with:
-```
-scripts/node-status.sh
-node-status.sh

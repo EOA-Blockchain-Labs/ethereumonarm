@@ -22,7 +22,7 @@ LOCK_FILE="$LOCK_DIR/syncreport.lock"
 
 [ ! -d "$LOCK_DIR" ] && mkdir -p "$LOCK_DIR"
 
-# ── Only fire once ────────────────────────────────────────────────────────────
+# ── Only fire once — lock file is permanent for this script ──────────────────
 if [ -f "$LOCK_FILE" ]; then
     exit 0
 fi
@@ -54,12 +54,12 @@ if [ "$uptime" -lt 86400 ]; then
     exit 0
 fi
 
-# ── Node has been running 24+ hours — send report and lock ───────────────────
+# ── Node has been running 24+ hours — send report and permanently lock ────────
 touch "$LOCK_FILE"
 
 openclaw agent \
     --agent ethereum-node \
-    --message "📊 The node has been running for 24 hours. Please run node-status.sh and health-check.sh, then send the user a complete status report covering sync progress, peer counts, disk usage, CPU and memory." \
+    --message "📊 The node has been running for 24 hours. Please run node-status.sh and health-check.sh, then send the user a complete status report covering sync progress, peer counts, disk usage, CPU and memory. This is a one-time 24-hour report." \
     --deliver \
     --channel telegram \
     --reply-channel telegram \

@@ -18,8 +18,19 @@ fi
 
 LOCK_DIR="/home/ethereum/.openclaw/locks"
 INITIAL_SYNC_GRACE=64800
+LOCK_EXPIRY=86400
 
 [ ! -d "$LOCK_DIR" ] && mkdir -p "$LOCK_DIR"
+
+# ── Expire locks older than 24 hours ─────────────────────────────────────────
+for lock in "$LOCK_DIR"/sync-*.lock; do
+    if [ -f "$lock" ]; then
+        lock_age=$(( $(date +%s) - $(date -r "$lock" +%s 2>/dev/null || echo 0) ))
+        if [ "$lock_age" -gt "$LOCK_EXPIRY" ]; then
+            rm -f "$lock"
+        fi
+    fi
+done
 
 # ── Run node-status.sh and parse output ──────────────────────────────────────
 STATUS_OUTPUT=$(bash "$(dirname "$0")/node-status.sh" 2>/dev/null)

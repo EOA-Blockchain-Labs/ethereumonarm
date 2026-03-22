@@ -19,17 +19,28 @@ fi
 EXECUTION_RPC="http://localhost:8545"
 LOCK_DIR="/home/ethereum/.openclaw/locks"
 ALERTS=""
+LOCK_EXPIRY=86400
 
 [ ! -d "$LOCK_DIR" ] && mkdir -p "$LOCK_DIR"
 
+# ── Expire locks older than 24 hours ─────────────────────────────────────────
+for lock in "$LOCK_DIR"/health-*.lock; do
+    if [ -f "$lock" ]; then
+        lock_age=$(( $(date +%s) - $(date -r "$lock" +%s 2>/dev/null || echo 0) ))
+        if [ "$lock_age" -gt "$LOCK_EXPIRY" ]; then
+            rm -f "$lock"
+        fi
+    fi
+done
+
 # ── Check if any node is running — skip peer check if not ────────────────────
-RUNNING=$(bash "$(dirname "$0")/running-clients.sh" 2>/dev/null)
-STATUS=$(echo "$RUNNING" | awk -F': ' '/^STATUS/ {print $2}' | xargs)
+STATUS_OUTPUT=$(bash "$(dirname "$0")/node-status.sh" 2>/dev/null)
+STATUS=$(echo "$STATUS_OUTPUT" | awk -F': ' '/^STATUS/ {print $2}' | xargs | cut -d' ' -f1)
 
 # ── Disk free at /home/ethereum ───────────────────────────────────────────────
-DISK_FREE_GB=$(df -BG /home/ethereum | awk 'NR==2 {gsub("G","",$4); print $4}')
+DISK_FREE_GB=$(df -BG /home/ethereum | awk 'NR==2 {gsub("G",""); print $4}')
 if [ "$DISK_FREE_GB" -lt 50 ]; then
-    ALERTS="$ALERTS\n• DISK: only ${DISK_FREE_GB} GB free on /home/ethereum"
+    ALERTS="$ALERTS\nDISK"
 else
     rm -f "$LOCK_DIR/health-disk.lock"
 fi
@@ -38,7 +49,7 @@ fi
 LOAD1=$(cat /proc/loadavg | awk '{print $1}' | cut -d. -f1)
 if [ "$LOAD1" -gt 4 ]; then
     LOAD=$(cat /proc/loadavg | awk '{print $1, $2, $3}')
-    ALERTS="$ALERTS\n• CPU: load average is high ($LOAD)"
+    ALERTS="$ALERTS\nCPU"
 else
     rm -f "$LOCK_DIR/health-cpu.lock"
 fi
@@ -47,7 +58,7 @@ fi
 SWAP_USED_KB=$(free -k | awk '/^Swap:/ {print $3}')
 if [ "$SWAP_USED_KB" -gt 5242880 ]; then
     SWAP_USED_GB=$(echo "scale=1; $SWAP_USED_KB / 1048576" | bc 2>/dev/null || echo "?")
-    ALERTS="$ALERTS\n• SWAP: usage is high (${SWAP_USED_GB} GB)"
+    ALERTS="$ALERTS\nSWAP"
 else
     rm -f "$LOCK_DIR/health-swap.lock"
 fi
@@ -62,43 +73,87 @@ except:
     print(-1)
 ")
     if [ "$EL_PEERS" != "-1" ] && [ "$EL_PEERS" -lt 3 ] 2>/dev/null; then
-        ALERTS="$ALERTS\n• PEERS: EL peer count is very low ($EL_PEERS) — possible network issue"
+        ALERTS="$ALERTS\nPEERS"
     else
         rm -f "$LOCK_DIR/health-peers.lock"
     fi
 fi
 
 # ── Notify agent respecting lock files ───────────────────────────────────────
-ALERTS_TO_SEND=""
+send_alert() {
+    local lock="$1"
+    local message="$2"
+    if [ ! -f "$LOCK_DIR/${lock}.lock" ]; then
+        openclaw agent \
+            --agent ethereum-node \
+            --message "$message" \
+            --deliver \
+            --channel telegram \
+            --reply-channel telegram \
+            --reply-to "$TELEGRAM_ID"
+        touch "$LOCK_DIR/${lock}.lock"
+    fi
+}
 
 if echo "$ALERTS" | grep -q "DISK"; then
-    if [ ! -f "$LOCK_DIR/health-disk.lock" ]; then
-        ALERTS_TO_SEND="$ALERTS_TO_SEND\n• DISK: only ${DISK_FREE_GB} GB free on /home/ethereum"
-        touch "$LOCK_DIR/health-disk.lock"
-    fi
+    send_alert "health-disk" "🚨 Health alert on $(hostname): disk space is critically low — only ${DISK_FREE_GB}GB free on /home/ethereum.
+
+Possible causes:
+- Ethereum client blockchain data is growing normally — this is expected over time
+- Old client data from a previous node run was not cleaned up
+- Log files or other data accumulating unexpectedly
+
+Suggested actions:
+- Run the Pre-Start Resource Check from SKILL.md to find old client databases
+- Check which client is running and how much space its data is using
+- Offer the user to delete old unused client data
+- Check for large files: du -sh /home/ethereum/*"
 fi
 
 if echo "$ALERTS" | grep -q "CPU"; then
-    if [ ! -f "$LOCK_DIR/health-cpu.lock" ]; then
-        ALERTS_TO_SEND="$ALERTS_TO_SEND\n• CPU: load average is high ($LOAD)"
-        touch "$LOCK_DIR/health-cpu.lock"
-    fi
+    send_alert "health-cpu" "🚨 Health alert on $(hostname): CPU load is high — load average is $LOAD.
+
+Possible causes:
+- Node is actively syncing — high CPU during initial sync is normal
+- Client is processing a large number of transactions or blocks
+- Another process is consuming CPU unexpectedly
+
+Suggested actions:
+- Check which process is consuming CPU: top -bn1 | head -20
+- Check if the node is syncing: run node-status.sh
+- If the node has been synced for a while and CPU is still high, check client logs for errors
+- If load persists above 8, consider restarting the affected client"
 fi
 
 if echo "$ALERTS" | grep -q "SWAP"; then
-    if [ ! -f "$LOCK_DIR/health-swap.lock" ]; then
-        ALERTS_TO_SEND="$ALERTS_TO_SEND\n• SWAP: usage is high (${SWAP_USED_GB} GB)"
-        touch "$LOCK_DIR/health-swap.lock"
-    fi
+    send_alert "health-swap" "🚨 Health alert on $(hostname): swap usage is high — ${SWAP_USED_GB}GB of swap in use.
+
+Possible causes:
+- Ethereum clients are consuming more RAM than available — common during initial sync
+- Multiple processes competing for memory
+- Memory leak in one of the clients
+
+Suggested actions:
+- Check memory usage: free -h
+- Check which process is using the most memory: ps aux --sort=-%mem | head -10
+- Check client logs for out-of-memory errors
+- Consider restarting the client with highest memory usage if it has been running for a long time
+- If RAM is consistently insufficient, the board may not meet the minimum 15GB requirement"
 fi
 
 if echo "$ALERTS" | grep -q "PEERS"; then
-    if [ ! -f "$LOCK_DIR/health-peers.lock" ]; then
-        ALERTS_TO_SEND="$ALERTS_TO_SEND\n• PEERS: EL peer count is very low ($EL_PEERS) — possible network issue"
-        touch "$LOCK_DIR/health-peers.lock"
-    fi
-fi
+    send_alert "health-peers" "🚨 Health alert on $(hostname): execution client has very few peers — only $EL_PEERS peer(s) connected.
 
-if [ -n "$ALERTS_TO_SEND" ]; then
-    openclaw message send --channel telegram --target "$TELEGRAM_ID" --message "🚨 Health alert on $(hostname):$(echo -e "$ALERTS_TO_SEND")"
+Possible causes:
+- Node just started and is still discovering peers — this is normal in the first few minutes
+- Network connectivity issue on the board
+- Firewall blocking P2P ports (default: 30303 TCP/UDP for most EL clients)
+- ISP or router blocking peer-to-peer traffic
+
+Suggested actions:
+- Check if the issue is recent: run node-status.sh to see current peer count
+- Verify network connectivity: ping google.com
+- Check if P2P port is reachable from outside
+- Check client logs for connection errors
+- If the node has been running for more than 30 minutes with no peers, consider restarting the execution client"
 fi

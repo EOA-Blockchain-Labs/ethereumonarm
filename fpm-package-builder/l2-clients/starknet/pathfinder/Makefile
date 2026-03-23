@@ -67,8 +67,7 @@ PATHFINDER_TARBALL := pathfinder-$(PKG_ARCH_RPM)-unknown-linux-gnu.tar.gz
 PATHFINDER_URL     := https://github.com/eqlabs/pathfinder/releases/download/$(PATHFINDER_TAG_V)/$(PATHFINDER_TARBALL)
 
 # SHA256 checksum extracted from GitHub API asset digest field
-PATHFINDER_RELEASE_JSON := $(shell curl -s "https://api.github.com/repos/eqlabs/pathfinder/releases/latest")
-PATHFINDER_SHA256 := $(shell echo '$(PATHFINDER_RELEASE_JSON)' | jq -r '.assets[] | select(.name == "$(PATHFINDER_TARBALL)") | .digest' | sed 's/sha256://')
+PATHFINDER_SHA256 := $(shell curl -s "https://api.github.com/repos/eqlabs/pathfinder/releases/latest" | jq -r '.assets[] | select(.name == "$(PATHFINDER_TARBALL)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(PATHFINDER_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(PATHFINDER_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm

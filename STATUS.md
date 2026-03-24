@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-03-23 05:09:15 UTC_
+_Last updated: 2026-03-24 04:59:43 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-03-23 05:09:15 UTC_
 ## Summary
 
 - Total packages checked: **36**
-- ✅ Up-to-date: **30** (83.3%)
-- ❌ Outdated: **6** (16.7%)
+- ✅ Up-to-date: **33** (91.7%)
+- ❌ Outdated: **3** (8.3%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -70,18 +70,18 @@ _Last updated: 2026-03-23 05:09:15 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
 | `arbitrum-nitro` | `3.9.7` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.9.7` | ✅ Up-to-date |
-| `fuel-network` | `0.47.2` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.47.2` | ✅ Up-to-date |
+| `fuel-network` | `0.47.3` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.47.2` | ❌ Outdated |
 | `optimism-op-challenger` | `1.9.0` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.0` | ✅ Up-to-date |
-| `optimism-op-geth` | `1.101701.0` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101609.2` | ❌ Outdated |
-| `optimism-op-node` | `1.16.9` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.16.8` | ❌ Outdated |
+| `optimism-op-geth` | `1.101701.0` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101701.0` | ✅ Up-to-date |
+| `optimism-op-node` | `1.16.9` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.16.9` | ✅ Up-to-date |
 | `optimism-op-reth` | `1.11.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |
-| `starknet-juno` | `0.15.20` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.19` | ❌ Outdated |
+| `starknet-juno` | `0.15.20` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.20` | ✅ Up-to-date |
 | `starknet-madara` | `0.10.1` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.1` | ✅ Up-to-date |
-| `starknet-pathfinder` | `0.22.0` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.21.5` | ❌ Outdated |
+| `starknet-pathfinder` | `0.22.0` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.22.0` | ✅ Up-to-date |
 
 ## Web3
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `bee` | `2.7.0` ([ethersphere/bee](https://github.com/ethersphere/bee)) | `2.7.0` | ✅ Up-to-date |
+| `bee` | `2.7.1` ([ethersphere/bee](https://github.com/ethersphere/bee)) | `2.7.1` | ✅ Up-to-date |
 | `kubo` | `0.40.1` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.40.1` | ✅ Up-to-date |

@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-03-27 05:13:49 UTC_
+_Last updated: 2026-03-28 04:59:04 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-03-27 05:13:49 UTC_
 ## Summary
 
 - Total packages checked: **36**
-- ✅ Up-to-date: **33** (91.7%)
-- ❌ Outdated: **3** (8.3%)
+- ✅ Up-to-date: **34** (94.4%)
+- ❌ Outdated: **2** (5.6%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -25,7 +25,7 @@ _Last updated: 2026-03-27 05:13:49 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
 | `commit-boost` | `0.9.3` ([Commit-Boost/commit-boost-client](https://github.com/Commit-Boost/commit-boost-client)) | `0.9.3` | ✅ Up-to-date |
-| `dvt-anchor` | `1.2.3` ([sigp/anchor](https://github.com/sigp/anchor)) | `1.2.2` | ❌ Outdated |
+| `dvt-anchor` | `1.2.3` ([sigp/anchor](https://github.com/sigp/anchor)) | `1.2.3` | ✅ Up-to-date |
 | `dvt-obol` | `1.9.2` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.9.2` | ✅ Up-to-date |
 | `dvt-ssv` | `2.4.2` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.4.2` | ✅ Up-to-date |
 | `ethereum-metrics-exporter` | `0.29.2` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.29.2` | ✅ Up-to-date |
@@ -33,7 +33,7 @@ _Last updated: 2026-03-27 05:13:49 UTC_
 | `ethstaker-deposit-cli` | `1.2.2` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.2.2` | ✅ Up-to-date |
 | `mev-boost` | `1.12` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.12` | ✅ Up-to-date |
 | `stakewise-operator` | `4.1.10` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.1.10` | ✅ Up-to-date |
-| `vero` | `1.3.2` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.3.2` | ✅ Up-to-date |
+| `vero` | `1.3.3` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.3.3` | ✅ Up-to-date |
 | `vouch` | `1.12.1` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.12.1` | ✅ Up-to-date |
 
 ## Layer 1 Consensus
@@ -52,7 +52,7 @@ _Last updated: 2026-03-27 05:13:49 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
 | `besu` | `26.2.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.2.0` | ✅ Up-to-date |
-| `erigon` | `3.3.9` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.3.9` | ✅ Up-to-date |
+| `erigon` | `3.3.10` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.3.10` | ✅ Up-to-date |
 | `ethrex` | `9.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `9.0.0` | ✅ Up-to-date |
 | `geth` | `1.17.1` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.1` | ✅ Up-to-date |
 | `nethermind` | `1.36.2` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.36.2` | ✅ Up-to-date |
@@ -75,7 +75,7 @@ _Last updated: 2026-03-27 05:13:49 UTC_
 | `optimism-op-geth` | `1.101701.0` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101701.0` | ✅ Up-to-date |
 | `optimism-op-node` | `1.16.9` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.16.9` | ✅ Up-to-date |
 | `optimism-op-reth` | `1.11.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |
-| `starknet-juno` | `0.15.20` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.20` | ✅ Up-to-date |
+| `starknet-juno` | `0.15.21` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.21` | ✅ Up-to-date |
 | `starknet-madara` | `0.10.1` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.1` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.22.0` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.22.0` | ✅ Up-to-date |
 

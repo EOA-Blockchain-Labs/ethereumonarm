@@ -15,23 +15,26 @@ ETHONARM_IMAGE = ethonarm_$(1)_$(DATE).$(RELEASE).img
 
 # --- Device List ---
 # List of devices we support. Add new ones here.
-DEVICES = rpi5 rock5b rock5t orangepi5-plus nanopct6
+DEVICES = rpi5 rock5b rock5b-plus rock5t orangepi5-plus nanopct6
 
 # Raspberry Pi 5 uses the RPi4 image from Armbian
 rpi5_url := https://es.sbcmirror.org/dl/rpi4b/archive/Armbian_25.11.1_Rpi4b_noble_current_6.12.58_minimal.img.xz
 rpi5_iso := Armbian_25.11.1_Rpi4b_noble_current_6.12.58_minimal.img
 
-rock5b_url := https://es.sbcmirror.org/dl/rock-5b/archive/Armbian_25.11.1_Rock-5b_noble_vendor_6.1.115_minimal.img.xz
-rock5b_iso := Armbian_25.11.1_Rock-5b_noble_vendor_6.1.115_minimal.img
+rock5b_url := https://es.sbcmirror.org/dl/rock-5b/archive/Armbian_26.2.1_Rock-5b_noble_current_6.18.8_minimal.img.xz
+rock5b_iso := Armbian_26.2.1_Rock-5b_noble_current_6.18.8_minimal.img
 
-rock5t_url := https://es.sbcmirror.org/dl/rock-5t/archive/Armbian_25.11.1_Rock-5t_noble_vendor_6.1.115_minimal.img.xz
-rock5t_iso := Armbian_25.11.1_Rock-5t_noble_vendor_6.1.115_minimal.img
+rock5b-plus_url := https://es.sbcmirror.org/dl/rock-5b-plus/archive/Armbian_26.2.1_Rock-5b-plus_noble_current_6.18.15_minimal.img.xz
+rock5b-plus_iso := Armbian_26.2.1_Rock-5b-plus_noble_current_6.18.15_minimal.img
+
+rock5t_url := https://es.sbcmirror.org/dl/rock-5t/archive/Armbian_26.2.1_Rock-5t_noble_current_6.18.15_minimal.img.xz
+rock5t_iso := Armbian_26.2.1_Rock-5t_noble_current_6.18.15_minimal.img
 
 orangepi5-plus_url := https://es.sbcmirror.org/dl/orangepi5-plus/archive/Armbian_25.11.1_Orangepi5-plus_noble_vendor_6.1.115_minimal.img.xz 
 orangepi5-plus_iso := Armbian_25.11.1_Orangepi5-plus_noble_vendor_6.1.115_minimal.img
 
-nanopct6_url := https://es.sbcmirror.org/dl/nanopct6-lts/archive/Armbian_25.11.1_Nanopct6-lts_noble_vendor_6.1.115_minimal.img.xz
-nanopct6_iso := Armbian_25.11.1_Nanopct6-lts_noble_vendor_6.1.115_minimal.img
+nanopct6_url := https://es.sbcmirror.org/dl/nanopct6/archive/Armbian_26.2.1_Nanopct6_noble_vendor_6.1.115_minimal.img.xz
+nanopct6_iso := Armbian_26.2.1_Nanopct6_noble_vendor_6.1.115_minimal.img
 
 # --- End Device List ---
 

@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-04-08 05:18:23 UTC_
+_Last updated: 2026-04-09 05:18:23 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-04-08 05:18:23 UTC_
 ## Summary
 
 - Total packages checked: **36**
-- ✅ Up-to-date: **33** (91.7%)
-- ❌ Outdated: **3** (8.3%)
+- ✅ Up-to-date: **32** (88.9%)
+- ❌ Outdated: **4** (11.1%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -57,7 +57,7 @@ _Last updated: 2026-04-08 05:18:23 UTC_
 | `geth` | `1.17.2` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.2` | ✅ Up-to-date |
 | `nethermind` | `1.36.2` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.36.2` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
-| `reth` | `1.11.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.11.3` | ✅ Up-to-date |
+| `reth` | `2.0.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.11.3` | ❌ Outdated |
 
 ## Layer 1 Light Clients
 
@@ -74,7 +74,7 @@ _Last updated: 2026-04-08 05:18:23 UTC_
 | `optimism-op-challenger` | `1.9.0` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.0` | ✅ Up-to-date |
 | `optimism-op-geth` | `1.101701.0` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101701.0` | ✅ Up-to-date |
 | `optimism-op-node` | `1.16.11` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.16.11` | ✅ Up-to-date |
-| `optimism-op-reth` | `1.11.3` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |
+| `optimism-op-reth` | `2.0.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |
 | `starknet-juno` | `0.15.22` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.22` | ✅ Up-to-date |
 | `starknet-madara` | `0.10.1` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.1` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.22.2` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.22.1` | ❌ Outdated |

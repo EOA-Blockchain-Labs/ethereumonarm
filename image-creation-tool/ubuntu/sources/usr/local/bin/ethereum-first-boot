@@ -52,6 +52,9 @@ case "${DEVICE_MODEL}" in
   *"ROCK 5B"*)
     DEVICE_TYPE="rock5b"
     ;;
+  *"ROCK 5B+"*)
+    DEVICE_TYPE="rock5b-plus"
+    ;;
   *"ROCK 5T"*)
     DEVICE_TYPE="rock5t"
     ;;

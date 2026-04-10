@@ -55,6 +55,12 @@ devices:
     partition_suffix: "p1"
     hostname_seed: "rock5b"
 
+  rock5b+:
+    pattern: "ROCK 5B+"
+    target_disk: "/dev/nvme0n1"
+    partition_suffix: "p1"
+    hostname_seed: "rock5b-plus"
+
   rpi5:
     pattern: "Raspberry Pi 5"
     target_disk: "/dev/nvme0n1"

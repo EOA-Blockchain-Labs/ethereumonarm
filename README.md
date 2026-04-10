@@ -79,7 +79,7 @@ We support a wide range of Ethereum software, all packaged as standard `.deb` fi
 | **Optimism** (op-reth) | [paradigmxyz/reth](https://github.com/paradigmxyz/reth) |
 | **Starknet Juno** | [NethermindEth/juno](https://github.com/NethermindEth/juno) |
 | **Starknet Madara** | [madara-alliance/madara](https://github.com/madara-alliance/madara) |
-| **Starknet Pathfinder** | [eqlabs/pathfinder](https://github.com/eqlabs/pathfinder) |
+| **Starknet Pathfinder** | [equilibriumco/pathfinder](https://github.com/equilibriumco/pathfinder) |
 | **zkSync Era** | [matter-labs/zksync-era](https://github.com/matter-labs/zksync-era) |
 
 ### Infrastructure & Tools

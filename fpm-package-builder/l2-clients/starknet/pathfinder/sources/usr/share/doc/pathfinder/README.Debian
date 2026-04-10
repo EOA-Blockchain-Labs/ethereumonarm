@@ -38,4 +38,4 @@ Package Details
 ---------------
 
 - **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
-- **Upstream URL**: https://github.com/eqlabs/pathfinder
+- **Upstream URL**: https://github.com/equilibriumco/pathfinder

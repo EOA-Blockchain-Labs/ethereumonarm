@@ -77,7 +77,7 @@ _Last updated: 2026-04-10 05:30:01 UTC_
 | `optimism-op-reth` | `2.0.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |
 | `starknet-juno` | `0.15.22` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.22` | ✅ Up-to-date |
 | `starknet-madara` | `0.10.1` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.1` | ✅ Up-to-date |
-| `starknet-pathfinder` | `0.22.2` ([eqlabs/pathfinder](https://github.com/eqlabs/pathfinder)) | `0.22.1` | ❌ Outdated |
+| `starknet-pathfinder` | `0.22.2` ([equilibriumco/pathfinder](https://github.com/equilibriumco/pathfinder)) | `0.22.1` | ❌ Outdated |
 
 ## Web3
 

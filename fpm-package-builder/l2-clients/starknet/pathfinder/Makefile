@@ -51,7 +51,7 @@ PKG_LICENSE     ?= Apache 2.0
 PKG_DESCRIPTION ?= Pathfinder is a Rust implementation of a Starknet full node
 PKG_MAINTAINER  ?= Ethereum on ARM <info@ethereumonarm.com>
 CATEGORY        ?= science
-WEB_URL         ?= https://github.com/eqlabs/pathfinder
+WEB_URL         ?= https://github.com/equilibriumco/pathfinder
 SOURCESDIR      ?= sources
 OUTPUTDIR       ?= ../../../packages
 
@@ -59,15 +59,15 @@ OUTPUTDIR       ?= ../../../packages
 # Upstream version and source info
 # ----------------------------------------------------------------------
 # Get the tag with "v" (e.g., v0.12.0)
-PATHFINDER_TAG_V := $(shell curl -s "https://api.github.com/repos/eqlabs/pathfinder/releases/latest" | jq -r '.tag_name')
+PATHFINDER_TAG_V := $(shell curl -s "https://api.github.com/repos/equilibriumco/pathfinder/releases/latest" | jq -r '.tag_name')
 # Get the version without "v" (e.g., 0.12.0)
 PATHFINDER_VERSION := $(shell echo "$(PATHFINDER_TAG_V)" | tr -d "v")
 
 PATHFINDER_TARBALL := pathfinder-$(PKG_ARCH_RPM)-unknown-linux-gnu.tar.gz
-PATHFINDER_URL     := https://github.com/eqlabs/pathfinder/releases/download/$(PATHFINDER_TAG_V)/$(PATHFINDER_TARBALL)
+PATHFINDER_URL     := https://github.com/equilibriumco/pathfinder/releases/download/$(PATHFINDER_TAG_V)/$(PATHFINDER_TARBALL)
 
 # SHA256 checksum extracted from GitHub API asset digest field
-PATHFINDER_SHA256 := $(shell curl -s "https://api.github.com/repos/eqlabs/pathfinder/releases/latest" | jq -r '.assets[] | select(.name == "$(PATHFINDER_TARBALL)") | .digest' | sed 's/sha256://')
+PATHFINDER_SHA256 := $(shell curl -s "https://api.github.com/repos/equilibriumco/pathfinder/releases/latest" | jq -r '.assets[] | select(.name == "$(PATHFINDER_TARBALL)") | .digest' | sed 's/sha256://')
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(PATHFINDER_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(PATHFINDER_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm

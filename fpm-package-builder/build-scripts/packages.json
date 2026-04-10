@@ -28,7 +28,7 @@
         "paradigmxyz/reth": "optimism-op-reth",
         "NethermindEth/juno": "starknet-juno",
         "madara-alliance/madara": "starknet-madara",
-        "eqlabs/pathfinder": "starknet-pathfinder"
+        "equilibriumco/pathfinder": "starknet-pathfinder"
     },
     "Infra": {
         "sigp/anchor": "dvt-anchor",

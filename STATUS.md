@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-04-10 05:30:01 UTC_
+_Last updated: 2026-04-11 05:01:12 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-04-10 05:30:01 UTC_
 ## Summary
 
 - Total packages checked: **36**
-- ✅ Up-to-date: **32** (88.9%)
-- ❌ Outdated: **4** (11.1%)
+- ✅ Up-to-date: **34** (94.4%)
+- ❌ Outdated: **2** (5.6%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -57,7 +57,7 @@ _Last updated: 2026-04-10 05:30:01 UTC_
 | `geth` | `1.17.2` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.2` | ✅ Up-to-date |
 | `nethermind` | `1.36.2` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.36.2` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
-| `reth` | `2.0.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.11.3` | ❌ Outdated |
+| `reth` | `2.0.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `2.0.0` | ✅ Up-to-date |
 
 ## Layer 1 Light Clients
 
@@ -77,7 +77,7 @@ _Last updated: 2026-04-10 05:30:01 UTC_
 | `optimism-op-reth` | `2.0.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |
 | `starknet-juno` | `0.15.22` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.15.22` | ✅ Up-to-date |
 | `starknet-madara` | `0.10.1` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.1` | ✅ Up-to-date |
-| `starknet-pathfinder` | `0.22.2` ([equilibriumco/pathfinder](https://github.com/equilibriumco/pathfinder)) | `0.22.1` | ❌ Outdated |
+| `starknet-pathfinder` | `0.22.2` ([equilibriumco/pathfinder](https://github.com/equilibriumco/pathfinder)) | `0.22.2` | ✅ Up-to-date |
 
 ## Web3
 

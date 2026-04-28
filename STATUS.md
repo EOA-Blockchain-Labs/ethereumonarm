@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-04-27 06:06:36 UTC_
+_Last updated: 2026-04-28 06:10:42 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-04-27 06:06:36 UTC_
 ## Summary
 
 - Total packages checked: **36**
-- ✅ Up-to-date: **28** (77.8%)
-- ❌ Outdated: **8** (22.2%)
+- ✅ Up-to-date: **27** (75.0%)
+- ❌ Outdated: **9** (25.0%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -26,7 +26,7 @@ _Last updated: 2026-04-27 06:06:36 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `commit-boost` | `0.9.6` ([Commit-Boost/commit-boost-client](https://github.com/Commit-Boost/commit-boost-client)) | `0.9.3` | ❌ Outdated |
 | `dvt-anchor` | `1.2.3` ([sigp/anchor](https://github.com/sigp/anchor)) | `1.2.3` | ✅ Up-to-date |
-| `dvt-obol` | `1.9.4` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.9.4` | ✅ Up-to-date |
+| `dvt-obol` | `1.10.0` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.9.4` | ❌ Outdated |
 | `dvt-ssv` | `2.4.2` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.4.2` | ✅ Up-to-date |
 | `ethereum-metrics-exporter` | `0.29.2` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.29.2` | ✅ Up-to-date |
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |

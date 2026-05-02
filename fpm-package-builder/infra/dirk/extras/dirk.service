@@ -1,0 +1,16 @@
+[Unit]
+Description=Dirk Distributed Remote Key Manager
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/bin/dirk --base-dir /etc/ethereum/dirk
+Restart=on-failure
+RestartSec=5
+User=ethereum
+SyslogIdentifier=dirk
+LimitNOFILE=65536
+LimitNPROC=65536
+
+[Install]
+WantedBy=multi-user.target

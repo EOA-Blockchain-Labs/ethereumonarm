@@ -100,6 +100,7 @@ declare -a PACKAGE_MAPPINGS=(
 
   # Infra
   "infra/commit-boost.rst|infra/commit-boost/sources/usr/share/doc/commit-boost/README.Debian"
+  "infra/dirk.rst|infra/dirk/sources/usr/share/doc/dirk/README.Debian"
   "infra/mev-boost.rst|infra/mev-boost/sources/usr/share/doc/mev-boost/README.Debian"
   "l1/vero.rst|infra/vero/sources/usr/share/doc/vero/README.Debian"
   "l1/vouch.rst|infra/vouch/sources/usr/share/doc/vouch/README.Debian"

@@ -173,6 +173,10 @@ The below table lists the verification method used for each package in our build
      - Infra
      - SHA256
      - GitHub API digest
+   * - **Dirk**
+     - Infra
+     - SHA256
+     - GitHub API digest
    * - **DVT-Obol**
      - Infra
      - SHA256

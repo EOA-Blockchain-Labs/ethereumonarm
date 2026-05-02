@@ -1,0 +1,41 @@
+Dirk
+================
+
+This package provides Dirk, a distributed remote key manager for Ethereum, packaged for Ethereum on ARM.
+
+Services
+--------
+
+This package installs a single systemd service. The service is disabled by default.
+
+- ``dirk.service``
+
+To enable the service, run:
+    sudo systemctl enable --now dirk.service
+
+Configuration
+-------------
+
+Configuration files are located in ``/etc/ethereum/dirk/``.
+
+- ``/etc/ethereum/dirk/dirk.yml`` (Main configuration file)
+
+The service runs with ``--base-dir /etc/ethereum/dirk``, so it looks for configuration in this directory. You can create and edit this file to customize the Dirk configuration.
+
+Data Directories
+----------------
+
+By default, this package stores data in:
+
+- ``/etc/ethereum/dirk``
+
+User and Group
+--------------
+
+The service runs as the ``ethereum`` user and group.
+
+Package Details
+---------------
+
+- **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
+- **Upstream URL**: https://github.com/attestantio/dirk

@@ -1,43 +1,49 @@
-maru for Debian
-===============
+Maru
+====
 
-This package provides the ConsenSys Maru Client (Validium/Prover Helper), packaged for Ethereum on ARM.
+Description
+-----------
 
-Services
---------
+ConsenSys Maru Client (Validium/Prover Helper), packaged for Ethereum on ARM.
 
-This package installs a systemd service, disabled by default:
+Installation
+------------
 
-- `maru.service`
-- `maru-sepolia.service`
+.. code-block:: bash
 
-To enable the service, run:
-    sudo systemctl enable --now maru.service
+    sudo apt install maru
+
+Service Management
+------------------
+
+The service is disabled by default.
+
+.. code-block:: bash
+
+    sudo systemctl enable --now maru
+    
     # Or for Sepolia:
-    sudo systemctl enable --now maru-sepolia.service
+    sudo systemctl enable --now maru-sepolia
 
 Configuration
 -------------
 
-Configuration arguments are defined in the environment file:
+Configuration file is located at `/etc/ethereum/maru.conf`.
 
-- `/etc/ethereum/maru.conf`
-- `/etc/ethereum/maru-sepolia.conf`
+.. code-block:: bash
 
-You can edit this file to customize the `ARGS` variable passed to the binary.
+    # /etc/ethereum/maru.conf (Mainnet)
+    ARGS="--network=linea-mainnet ..."
+    
+    # /etc/ethereum/maru-sepolia.conf (Sepolia)
+    ARGS="--network=linea-sepolia ..."
 
 Data Directories
 ----------------
 
 By default, data is stored in the `ethereum` user's home directory.
 
-User and Group
---------------
+Upstream References
+-------------------
 
-The service runs as the `ethereum` user and group.
-
-Package Details
----------------
-
-- **Maintainer**: Ethereum on ARM <info@ethereumonarm.com>
-- **Upstream URL**: https://github.com/Consensys/maru
+- `Maru GitHub <https://github.com/Consensys/maru>`_

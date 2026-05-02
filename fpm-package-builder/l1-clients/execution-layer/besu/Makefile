@@ -136,9 +136,9 @@ prepare: ## Download latest Besu and stage into $(SOURCESDIR)
 	mkdir -p .build $(SOURCESDIR)/usr/bin $(SOURCESDIR)/usr/share/besu/lib
 	wget -q -O ".build/$(BESU_ZIP)" "$(BESU_URL)" || { echo "❌ Download failed: $(BESU_URL)"; exit 1; };
 	
-	@echo "🔎 Extracting checksum from release notes..."
-	CHECKSUM=$$(curl -sL https://api.github.com/repos/hyperledger/besu/releases/latest | jq -r '.body' | grep "$(BESU_ZIP)" | awk '{print $$1}'); \
-	if [[ -z "$$CHECKSUM" ]]; then echo "❌ Failed to extract checksum from release notes"; exit 1; fi; \
+	@echo "🔎 Extracting checksum from GitHub API..."
+	CHECKSUM=$$(curl -sL https://api.github.com/repos/hyperledger/besu/releases/latest | jq -r '.assets[] | select(.name == "$(BESU_ZIP)") | .digest' | sed 's/sha256://'); \
+	if [[ -z "$$CHECKSUM" || "$$CHECKSUM" == "null" ]]; then echo "❌ Failed to extract checksum from GitHub API"; exit 1; fi; \
 	echo "🔐 Verifying SHA256 (Hash: $$CHECKSUM)..."; \
 	echo "$$CHECKSUM  .build/$(BESU_ZIP)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(BESU_ZIP)"; exit 1; };
 	@echo "📦 Extracting files..."

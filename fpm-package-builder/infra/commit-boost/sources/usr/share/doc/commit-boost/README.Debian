@@ -3,6 +3,8 @@ Commit-Boost
 
 This package provides Commit-Boost, a sidecar for Ethereum validators to manage commitments, packaged for Ethereum on ARM.
 
+For a complete guide on configuring clients to use Commit-Boost, see :doc:`/advanced/commit-boost`.
+
 Services
 --------
 

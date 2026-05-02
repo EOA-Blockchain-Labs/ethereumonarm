@@ -1,5 +1,9 @@
-helios for Debian
-=======================
+Helios
+======
+
+.. meta::
+   :description: Helios Ethereum Light Client package documentation.
+   :keywords: helios, ethereum, light client, arm, aarch64
 
 This package provides Helios Ethereum Light Client, packaged for Ethereum on ARM.
 
@@ -10,7 +14,8 @@ This package installs systemd services. The services are disabled by default.
 
 - `helios.service`
 
-To enable a service, run:
+To enable a service, run::
+
     sudo systemctl enable --now helios.service
 
 Configuration

@@ -147,10 +147,10 @@ prepare: ## Build Madara from source using Docker
 	        echo "🖥️  Host is x86_64, cross-compiling for aarch64..."; \
 	        export CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc; \
 	        export CXX_aarch64_unknown_linux_gnu=aarch64-linux-gnu-g++; \
-	        cargo build --release --target aarch64-unknown-linux-gnu --manifest-path madara/node/Cargo.toml; \
+	        cargo build --release --target aarch64-unknown-linux-gnu --manifest-path Cargo.toml -p madara; \
 	    else \
 	        echo "🖥️  Host is aarch64, building natively..."; \
-	        cargo build --release --manifest-path madara/node/Cargo.toml; \
+	        cargo build --release --manifest-path Cargo.toml -p madara; \
 	    fi \
 	else \
 	    echo "⏭️  Skipping build (SKIP_BUILD is set)..."; \
@@ -158,9 +158,9 @@ prepare: ## Build Madara from source using Docker
 	
 	# Determine binary path
 	if [ "$$(uname -m)" = "x86_64" ]; then \
-	    BINARY_PATH="madara/target/aarch64-unknown-linux-gnu/release/madara"; \
+	    BINARY_PATH="target/aarch64-unknown-linux-gnu/release/madara"; \
 	else \
-	    BINARY_PATH="madara/target/release/madara"; \
+	    BINARY_PATH="target/release/madara"; \
 	fi && \
 	echo "📦 Staging binary..." && \
 	mkdir -p $(CURDIR)/$(SOURCESDIR)/usr/bin && \

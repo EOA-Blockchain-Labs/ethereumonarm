@@ -423,6 +423,7 @@ Browse all available packages organized by category. Click any package to view i
             * :doc:`stakewise-operator </packages/tools/stakewise-operator>`
             * :doc:`vero </packages/l1/vero>`
             * :doc:`vouch </packages/l1/vouch>`
+            * :doc:`dirk </packages/infra/dirk>`
          
          .. grid-item-card:: 📊 Monitoring
             :class-header: sd-bg-info sd-text-white

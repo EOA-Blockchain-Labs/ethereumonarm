@@ -207,6 +207,7 @@ Advanced Features
 * **StakeWise Operator** - Liquid staking infrastructure  
 * **Vero** - Remote signing for validators
 * **Vouch** - Multi-node validator client
+* **Dirk** - Distributed remote key manager
 
 **Web3 Stack**
 

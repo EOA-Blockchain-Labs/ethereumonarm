@@ -52,6 +52,7 @@ CATEGORY        ?= science
 WEB_URL         ?= https://github.com/attestantio/dirk
 SOURCESDIR      ?= sources
 OUTPUTDIR       ?= ../../packages
+PKG_AFTER_INSTALL ?= extras/postinst
 
 # ----------------------------------------------------------------------
 # Upstream version and source info
@@ -99,6 +100,7 @@ FPM_COMMON_OPTS = \
 FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
     -t deb \
     --architecture $(PKG_ARCH) \
+    --after-install $(PKG_AFTER_INSTALL) \
     --deb-no-default-config-files \
     $(shell test -d extras && find extras -name 'dirk.service' -printf "--deb-systemd %p ") \
     $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true)
@@ -109,6 +111,7 @@ FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
 FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
     -t rpm \
     --architecture $(PKG_ARCH_RPM) \
+    --after-install $(PKG_AFTER_INSTALL) \
     $(shell test -d extras && find extras -name 'dirk.service' -printf "--rpm-systemd %p ")
 
 # ----------------------------------------------------------------------

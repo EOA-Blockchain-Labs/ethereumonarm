@@ -1,0 +1,131 @@
+# ============================================================================
+# Dirk — Distributed Remote Key Manager
+# Example configuration.
+#
+# Source:        https://github.com/attestantio/dirk
+# Documentation: https://github.com/attestantio/dirk/tree/master/docs
+#
+# Quick start (single-node, file-based):
+#   1. Generate certificates and place them under security/ (see docs)
+#   2. Place wallet files under wallets/
+#   3. Write passphrase file(s) under security/ (chmod 600, owned by ethereum)
+#   4. systemctl enable --now dirk.service
+#
+# All file paths must be readable by the user dirk runs as (ethereum).
+# Files containing passphrases or private keys MUST be chmod 600.
+# ============================================================================
+
+# Logging verbosity: trace | debug | info | warn | error | fatal
+log-level: info
+
+# ----------------------------------------------------------------------------
+# Server identity and listening address
+# ----------------------------------------------------------------------------
+server:
+  # Numeric ID — must be unique across all dirk peers in this cluster.
+  # In a single-node setup, use 1.
+  id: 1
+
+  # Friendly hostname identifier. In a multi-node cluster this MUST match:
+  #   - the Common Name (CN) on this server's TLS certificate
+  #   - what other peers list for this node in their `peers:` block
+  name: dirk-1
+
+  # Address dirk's gRPC server listens on.
+  #   0.0.0.0:13141  → all interfaces (use this for multi-node clusters)
+  #   127.0.0.1:13141 → local-only (use this if vouch runs on the same host)
+  listen-address: 0.0.0.0:13141
+
+# ----------------------------------------------------------------------------
+# TLS certificates
+#
+# Dirk uses mutual TLS for ALL connections (peer-to-peer and client-to-server).
+# You need:
+#   - A CA certificate that signed everything below
+#   - A server certificate + key for THIS dirk node
+# Clients (e.g. vouch) authenticate using their own certs signed by the same CA.
+#
+# Path scheme `file://` reads from local disk. Other supported schemes:
+#   asm:///path  → AWS Secrets Manager
+#   gsm://...    → Google Secret Manager
+#   See docs for setup of remote secret backends.
+# ----------------------------------------------------------------------------
+certificates:
+  ca-cert:     file:///etc/ethereum/dirk/security/ca.crt
+  server-cert: file:///etc/ethereum/dirk/security/dirk-1.crt
+  server-key:  file:///etc/ethereum/dirk/security/dirk-1.key
+
+# ----------------------------------------------------------------------------
+# Internal storage
+#
+# Dirk persists its slashing-protection database and other internal state here.
+# This directory must be writable by the dirk user.
+# ----------------------------------------------------------------------------
+storage-path: /etc/ethereum/dirk/storage
+
+# ----------------------------------------------------------------------------
+# Wallet stores
+#
+# Where the validator key material lives. Multiple stores can be defined
+# (e.g. one filesystem store and one HSM-backed store) — dirk searches all
+# of them when serving signing requests.
+# ----------------------------------------------------------------------------
+stores:
+  - name: Local
+    type: filesystem
+    location: /etc/ethereum/dirk/wallets
+
+# ----------------------------------------------------------------------------
+# Cluster peers
+#
+# For distributed (threshold) signing, list every dirk node in the cluster
+# including this one. Format: <peer-id>: <hostname>:<port>
+# Hostnames must resolve and certificates must be valid for them.
+#
+# For a single-node setup, list only this node.
+# ----------------------------------------------------------------------------
+peers:
+  1: dirk-1:13141
+  # Uncomment and adapt for a multi-node setup:
+  # 2: dirk-2:13141
+  # 3: dirk-3:13141
+  # 4: dirk-4:13141
+  # 5: dirk-5:13141
+
+# ----------------------------------------------------------------------------
+# Account unlocking
+#
+# Dirk needs the passphrase(s) to decrypt validator keys at startup.
+# Each entry is a path to a file containing one passphrase.
+# Files MUST be chmod 600 and owned by the ethereum user.
+# ----------------------------------------------------------------------------
+unlocker:
+  account-passphrases:
+    - file:///etc/ethereum/dirk/security/account-passphrase.txt
+
+# ----------------------------------------------------------------------------
+# Distributed key generation (DKG)
+#
+# Only relevant for multi-node clusters that generate new distributed keys
+# via dirk itself (rather than importing pre-generated key shares).
+# Safe to leave as-is for single-node or import-only setups.
+# ----------------------------------------------------------------------------
+process:
+  generation-passphrase: file:///etc/ethereum/dirk/security/generation-passphrase.txt
+  generation-timeout: 120s
+
+# ----------------------------------------------------------------------------
+# Permissions
+#
+# Access control: which client(s) can request signatures, and for which
+# wallets. The client name must match the Common Name (CN) on the client's
+# TLS certificate (typically a vouch instance).
+#
+#   Wallet: All        → permit signing for every account in this wallet
+#   Wallet: [a, b, c]  → permit only specific account paths
+#
+# Multiple wallets and multiple clients can be listed.
+# ----------------------------------------------------------------------------
+permissions:
+  vouch-client-1:
+    Wallet: All

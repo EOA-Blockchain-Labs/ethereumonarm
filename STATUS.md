@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-05-05 05:47:11 UTC_
+_Last updated: 2026-05-06 06:09:36 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-05-05 05:47:11 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **34** (91.9%)
-- ❌ Outdated: **3** (8.1%)
+- ✅ Up-to-date: **31** (83.8%)
+- ❌ Outdated: **6** (16.2%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -33,7 +33,7 @@ _Last updated: 2026-05-05 05:47:11 UTC_
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |
 | `ethstaker-deposit-cli` | `1.3.0` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.3.0` | ✅ Up-to-date |
 | `mev-boost` | `1.12` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.12` | ✅ Up-to-date |
-| `stakewise-operator` | `4.1.10` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.1.10` | ✅ Up-to-date |
+| `stakewise-operator` | `4.1.11` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.1.10` | ❌ Outdated |
 | `vero` | `1.4.0` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.3.3` | ❌ Outdated |
 | `vouch` | `1.12.1` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.12.1` | ✅ Up-to-date |
 
@@ -54,9 +54,9 @@ _Last updated: 2026-05-05 05:47:11 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `besu` | `26.4.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.4.0` | ✅ Up-to-date |
 | `erigon` | `3.4.0` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.4.0` | ✅ Up-to-date |
-| `ethrex` | `10.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `10.0.0` | ✅ Up-to-date |
+| `ethrex` | `11.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `10.0.0` | ❌ Outdated |
 | `geth` | `1.17.2` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.2` | ✅ Up-to-date |
-| `nethermind` | `1.37.1` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.37.1` | ✅ Up-to-date |
+| `nethermind` | `1.37.2` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.37.1` | ❌ Outdated |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
 | `reth` | `2.2.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `2.2.0` | ✅ Up-to-date |
 

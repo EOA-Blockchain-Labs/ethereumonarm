@@ -143,10 +143,10 @@ prepare: ## Download latest Vero and install into virtualenv
 	python3 -m venv $(SOURCESDIR)/opt/vero
 	
 	@echo "💿 Installing Vero dependencies and package..."
-	# Upgrade setuptools and wheel in venv (skip pip self-upgrade to avoid FS locking issues)
-	$(SOURCESDIR)/opt/vero/bin/python3 -m pip install --upgrade setuptools wheel
-	# Install from source directory (deps only, code will be run from src)
-	$(SOURCESDIR)/opt/vero/bin/python3 -m pip install .build/src
+	# Upgrade setuptools, wheel, and install uv in venv
+	$(SOURCESDIR)/opt/vero/bin/python3 -m pip install --upgrade setuptools wheel uv
+	# Install from source directory using uv (deps only, code will be run from src)
+	$(SOURCESDIR)/opt/vero/bin/python3 -m uv pip install .build/src
 	
 	@echo "📂 Deploying source code..."
 	mkdir -p $(SOURCESDIR)/opt/vero/src

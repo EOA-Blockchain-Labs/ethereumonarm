@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-05-08 05:32:41 UTC_
+_Last updated: 2026-05-09 05:51:41 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-05-08 05:32:41 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **30** (81.1%)
-- ❌ Outdated: **7** (18.9%)
+- ✅ Up-to-date: **34** (91.9%)
+- ❌ Outdated: **3** (8.1%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -34,7 +34,7 @@ _Last updated: 2026-05-08 05:32:41 UTC_
 | `ethstaker-deposit-cli` | `1.3.0` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.3.0` | ✅ Up-to-date |
 | `mev-boost` | `1.12` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.12` | ✅ Up-to-date |
 | `stakewise-operator` | `4.1.11` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.1.10` | ❌ Outdated |
-| `vero` | `1.4.0` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.3.3` | ❌ Outdated |
+| `vero` | `1.4.0` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.4.0` | ✅ Up-to-date |
 | `vouch` | `1.12.1` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.12.1` | ✅ Up-to-date |
 
 ## Layer 1 Consensus
@@ -54,9 +54,9 @@ _Last updated: 2026-05-08 05:32:41 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `besu` | `26.4.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.4.0` | ✅ Up-to-date |
 | `erigon` | `3.4.0` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.4.0` | ✅ Up-to-date |
-| `ethrex` | `11.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `10.0.0` | ❌ Outdated |
+| `ethrex` | `11.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `11.0.0` | ✅ Up-to-date |
 | `geth` | `1.17.2` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.2` | ✅ Up-to-date |
-| `nethermind` | `1.37.2` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.37.1` | ❌ Outdated |
+| `nethermind` | `1.37.2` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.37.2` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
 | `reth` | `2.2.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `2.2.0` | ✅ Up-to-date |
 
@@ -70,7 +70,7 @@ _Last updated: 2026-05-08 05:32:41 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `arbitrum-nitro` | `3.9.9` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.9.8` | ❌ Outdated |
+| `arbitrum-nitro` | `3.9.9` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.9.9` | ✅ Up-to-date |
 | `fuel-network` | `0.48.1` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.48.1` | ✅ Up-to-date |
 | `optimism-op-challenger` | `1.9.1` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.1` | ✅ Up-to-date |
 | `optimism-op-geth` | `1.101702.1` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101702.1` | ✅ Up-to-date |

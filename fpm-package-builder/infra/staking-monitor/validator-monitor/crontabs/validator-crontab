@@ -1,0 +1,34 @@
+# =============================================================================
+# validator-monitor crontab
+#
+# Install with:
+#   sudo -u ethereum crontab /home/ethereum/.validator-monitor/crontabs/validator-crontab
+#
+# Or append to existing crontab:
+#   sudo -u ethereum crontab -e
+# =============================================================================
+
+SHELL=/bin/bash
+PATH=/home/ethereum/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOME=/home/ethereum
+USER=ethereum
+
+# ---------------------------------------------------------------------------
+# Missed attestation + missed proposal check — every 7 minutes.
+# One Ethereum epoch = 32 slots × 12 seconds = 6 minutes 24 seconds.
+# ---------------------------------------------------------------------------
+*/7 * * * * /home/ethereum/.validator-monitor/scripts/validator-duties.sh >> /home/ethereum/.validator-monitor/logs/validator-duties.log 2>&1
+
+# ---------------------------------------------------------------------------
+# Refresh validator index cache — once per day at 04:00.
+# Re-runs sync-indices.sh to pick up newly activated validators or status
+# changes (pending → active, active → exited).
+# Run manually any time you add or remove validator keys:
+#   bash /home/ethereum/.validator-monitor/scripts/sync-indices.sh
+# ---------------------------------------------------------------------------
+0 4 * * * /home/ethereum/.validator-monitor/scripts/sync-indices.sh >> /home/ethereum/.validator-monitor/logs/sync-indices.log 2>&1
+
+# ---------------------------------------------------------------------------
+# Log rotation — keep last 30 days of logs
+# ---------------------------------------------------------------------------
+0 3 * * * find /home/ethereum/.validator-monitor/logs -name "*.log" -mtime +30 -delete 2>/dev/null

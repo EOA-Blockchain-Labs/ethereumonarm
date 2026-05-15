@@ -1,0 +1,30 @@
+# =============================================================================
+# Control node crontab — install with:
+#   sudo -u ethereum crontab /home/ethereum/.obol-monitor/crontabs/control-crontab
+# =============================================================================
+
+SHELL=/bin/bash
+PATH=/home/ethereum/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOME=/home/ethereum
+USER=ethereum
+
+# Full cluster health check — every 5 minutes
+# Skipped automatically if peer control node is reachable (primary/backup logic)
+*/5 * * * * /home/ethereum/.obol-monitor/scripts/control-health.sh >> /home/ethereum/.obol-monitor/logs/control-health.log 2>&1
+
+# Weekly cluster status report — every Monday at 08:00
+# Skipped automatically if peer control node is reachable (primary/backup logic)
+0 8 * * 1 /home/ethereum/.obol-monitor/scripts/control-status.sh >> /home/ethereum/.obol-monitor/logs/control-status.log 2>&1
+
+# Validator missed attestation + missed proposal check — every 7 minutes
+# Skipped automatically if peer control node is reachable (primary/backup logic)
+*/7 * * * * /home/ethereum/.obol-monitor/scripts/validator-duties.sh >> /home/ethereum/.obol-monitor/logs/validator-duties.log 2>&1
+
+# Refresh validator index cache — once per day at 04:00
+# Picks up newly activated validators or status changes (pending → active)
+# Run manually any time you add or remove validator keys:
+#   bash /home/ethereum/.obol-monitor/scripts/sync-indices.sh
+0 4 * * * /home/ethereum/.obol-monitor/scripts/sync-indices.sh >> /home/ethereum/.obol-monitor/logs/sync-indices.log 2>&1
+
+# Rotate logs weekly — keep last 4 weeks
+0 3 * * 0 find /home/ethereum/.obol-monitor/logs -name "*.log" -mtime +28 -delete 2>/dev/null

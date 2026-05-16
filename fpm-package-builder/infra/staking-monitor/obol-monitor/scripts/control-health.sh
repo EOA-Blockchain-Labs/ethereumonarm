@@ -358,7 +358,8 @@ check_local_svc() {
     local label="$2"
     local lock="ctrl-local-svc-${svc}"
     if service_active "$svc"; then
-        clear_lock "$lock"
+        recovery_alert "$lock" "$(node_label)
+✅ <b>Local service RESTORED</b>: <code>${svc}</code> (${label}) is running again on <b>${NODE_NAME}</b>."
     else
         lock_alert "$lock" "$(node_label)
 🚨 <b>Local service DOWN</b>: <code>${svc}</code> (${label}) is not running on <b>${NODE_NAME}</b>.
@@ -502,7 +503,8 @@ if [ "${SWAP_KB:-0}" -gt "$SWAP_THRESH_KB" ] 2>/dev/null; then
 • <code>free -h</code>
 • <code>ps aux --sort=-%mem | head -10</code>"
 else
-    clear_lock "ctrl-local-swap"
+    recovery_alert "ctrl-local-swap" "$(node_label)
+✅ <b>Swap resolved</b>: swap usage is back below ${SWAP_ALERT_GB:-10} GB on <b>${NODE_NAME}</b>."
 fi
 
 # /home/ethereum disk
@@ -511,7 +513,8 @@ if [ "${ETH_FREE:-999}" -lt "${DISK_ETH_ALERT_GB:-150}" ] 2>/dev/null; then
     lock_alert "ctrl-local-disk-eth" "$(node_label)
 🚨 <b>${NODE_NAME}</b> (control): Low disk on <code>/home/ethereum</code> — only <b>${ETH_FREE} GB</b> free (threshold: ${DISK_ETH_ALERT_GB} GB)."
 else
-    clear_lock "ctrl-local-disk-eth"
+    recovery_alert "ctrl-local-disk-eth" "$(node_label)
+✅ <b>Disk space restored</b>: /home/ethereum has more than ${DISK_ETH_ALERT_GB:-150} GB free on <b>${NODE_NAME}</b>."
 fi
 
 # / disk
@@ -522,7 +525,8 @@ if [ "${ROOT_PCT:-0}" -gt "${DISK_ROOT_ALERT_PCT:-85}" ] 2>/dev/null; then
 • <code>sudo journalctl --vacuum-size=500M</code>
 • <code>sudo apt-get clean</code>"
 else
-    clear_lock "ctrl-local-disk-root"
+    recovery_alert "ctrl-local-disk-root" "$(node_label)
+✅ <b>Root disk resolved</b>: / usage is back below ${DISK_ROOT_ALERT_PCT:-85}% on <b>${NODE_NAME}</b>."
 fi
 
 # CPU temperature
@@ -531,7 +535,8 @@ if [ "${CPU_TEMP:-0}" -gt "${CPU_TEMP_ALERT_C:-80}" ] 2>/dev/null; then
     lock_alert "ctrl-local-cpu-temp" "$(node_label)
 🌡 <b>${NODE_NAME}</b> (control): CPU temperature <b>${CPU_TEMP}°C</b> (threshold: ${CPU_TEMP_ALERT_C}°C)."
 else
-    clear_lock "ctrl-local-cpu-temp"
+    recovery_alert "ctrl-local-cpu-temp" "$(node_label)
+✅ <b>CPU temperature normalized</b>: back below ${CPU_TEMP_ALERT_C:-80}°C on <b>${NODE_NAME}</b>."
 fi
 
 # Local EL sync
@@ -542,7 +547,8 @@ if service_active "$EL_SERVICE"; then
 ⚠️ <b>${NODE_NAME}</b> (control): backup EL client is not synced.
 • <code>sudo journalctl -u ${EL_SERVICE} -n 30</code>"
     else
-        clear_lock "ctrl-local-el-sync"
+        recovery_alert "ctrl-local-el-sync" "$(node_label)
+✅ <b>Backup EL client synced</b>: <code>${EL_SERVICE}</code> is now synced on <b>${NODE_NAME}</b>."
     fi
 fi
 
@@ -554,7 +560,8 @@ if service_active "$CL_SERVICE"; then
 ⚠️ <b>${NODE_NAME}</b> (control): backup CL client is not synced.
 • <code>sudo journalctl -u ${CL_SERVICE} -n 30</code>"
     else
-        clear_lock "ctrl-local-cl-sync"
+        recovery_alert "ctrl-local-cl-sync" "$(node_label)
+✅ <b>Backup CL client synced</b>: <code>${CL_SERVICE}</code> is now synced on <b>${NODE_NAME}</b>."
     fi
 fi
 

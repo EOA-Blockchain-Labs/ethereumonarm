@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-05-19 06:52:23 UTC_
+_Last updated: 2026-05-20 06:52:42 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-05-19 06:52:23 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **30** (81.1%)
-- ❌ Outdated: **7** (18.9%)
+- ✅ Up-to-date: **29** (78.4%)
+- ❌ Outdated: **8** (21.6%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -33,7 +33,7 @@ _Last updated: 2026-05-19 06:52:23 UTC_
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |
 | `ethstaker-deposit-cli` | `1.3.0` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.3.0` | ✅ Up-to-date |
 | `mev-boost` | `1.12` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.12` | ✅ Up-to-date |
-| `stakewise-operator` | `4.1.11` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.1.10` | ❌ Outdated |
+| `stakewise-operator` | `4.1.12` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.1.10` | ❌ Outdated |
 | `vero` | `1.4.0` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.4.0` | ✅ Up-to-date |
 | `vouch` | `1.12.1` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.12.1` | ✅ Up-to-date |
 
@@ -54,7 +54,7 @@ _Last updated: 2026-05-19 06:52:23 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `besu` | `26.5.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.4.0` | ❌ Outdated |
 | `erigon` | `3.4.1` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.4.1` | ✅ Up-to-date |
-| `ethrex` | `12.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `12.0.0` | ✅ Up-to-date |
+| `ethrex` | `13.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `12.0.0` | ❌ Outdated |
 | `geth` | `1.17.3` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.3` | ✅ Up-to-date |
 | `nethermind` | `1.37.2` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.37.2` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
@@ -74,7 +74,7 @@ _Last updated: 2026-05-19 06:52:23 UTC_
 | `fuel-network` | `0.48.2` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.48.1` | ❌ Outdated |
 | `optimism-op-challenger` | `1.9.1` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.1` | ✅ Up-to-date |
 | `optimism-op-geth` | `1.101702.2` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101702.2` | ✅ Up-to-date |
-| `optimism-op-node` | `1.18.1` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.18.0` | ❌ Outdated |
+| `optimism-op-node` | `1.18.2` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.18.0` | ❌ Outdated |
 | `optimism-op-reth` | `2.2.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |
 | `starknet-juno` | `0.16.0` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.16.0` | ✅ Up-to-date |
 | `starknet-madara` | `0.10.2` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.2` | ✅ Up-to-date |

@@ -1,17 +1,18 @@
 #!/bin/bash
 # =============================================================================
-# check-updates.sh — Alert when Ethereum on ARM APT packages have new versions.
+# check-updates.sh — Alert when APT packages for RUNNING clients have updates.
 #
-# Checks ALL consensus and execution clients available in the repo, plus MEV-Boost
-# and Charon (obol nodes only). An alert fires once per available version and
-# clears naturally when the package is installed (old lock key becomes stale).
+# Only checks clients actually running on this node, determined from node.env:
+#   EL_CLIENT  → execution client package (geth | nethermind | erigon | besu | reth | ethrex)
+#   CL_CLIENT  → consensus client package (lighthouse | prysm | nimbus | teku | lodestar | grandine)
+#   MEV_SERVICE → mev-boost (checked if set)
+#   obol nodes  → dvt-obol (charon)
 #
 # Package names confirmed from https://repo.ethereumonarm.com/pool/main/
 #
-# Consensus : lighthouse prysm nimbus teku lodestar grandine
-# Execution : geth nethermind erigon besu reth ethrex
-# MEV       : mev-boost
-# DVT       : dvt-obol  (obol nodes only)
+# Lock key: pkg-update-<package>-<new_version>
+#   Fires once per available version. Clears naturally when package is installed
+#   (old lock key never written again, expires after LOCK_EXPIRY).
 #
 # Deploy to : /home/ethereum/.obol-monitor/scripts/check-updates.sh
 # Crontab   : 0 9 * * * (daily at 09:00)
@@ -30,17 +31,13 @@ fi
 
 TS="$(date '+%Y-%m-%d %H:%M:%S')"
 echo "=== check-updates — ${TS} ==="
-echo "Node type : ${NODE_TYPE:-unknown}"
+echo "Node type  : ${NODE_TYPE:-unknown}"
+echo "EL client  : ${EL_CLIENT:-unknown}"
+echo "CL client  : ${CL_CLIENT:-unknown}"
 echo ""
 
 # =============================================================================
 # check_package <package_name> <label> <icon>
-#
-# Uses apt-cache policy to compare installed vs candidate version.
-# Fires a lock_alert keyed by package + new version — fires once per available
-# version, and clears naturally when the package is installed (the candidate
-# version changes so the old lock key is never written again).
-# No sudo required: apt-cache policy reads the cached APT index.
 # =============================================================================
 check_package() {
     local pkg="$1"
@@ -76,15 +73,14 @@ check_package() {
         return 0
     fi
 
-    # Verify candidate is actually newer (guard against downgrades)
+    # Verify candidate is actually newer
     local newer
     newer=$(printf '%s\n%s\n' "$installed" "$candidate" | sort -V | tail -n1)
     if [ "$newer" != "$candidate" ]; then
-        echo "  ✅ $pkg — installed (${installed}) >= candidate (${candidate}), skipping"
+        echo "  ✅ $pkg — installed (${installed}) >= candidate (${candidate})"
         return 0
     fi
 
-    # New version available — lock key is version-specific
     lock_alert "pkg-update-${pkg}-${candidate}" "$(node_label)
 📦 <b>${label} update available</b>
 
@@ -101,9 +97,7 @@ To update:
 }
 
 # =============================================================================
-# Update APT index first so candidates reflect the latest repo state.
-# Requires sudo — if this fails (e.g. not in sudoers without password),
-# the script falls back to the cached index which is usually recent enough.
+# Refresh APT index
 # =============================================================================
 echo "--- Refreshing APT index ---"
 if sudo apt-get update -qq 2>/dev/null; then
@@ -114,40 +108,32 @@ fi
 echo ""
 
 # =============================================================================
-# Consensus Layer clients — check all, regardless of which is active.
-# Alerts only fire for installed packages (apt-cache policy skips not-installed).
+# Check only the clients running on this node
 # =============================================================================
-echo "--- Consensus Layer clients ---"
-check_package "lighthouse" "Lighthouse (Consensus Layer)" "🔦"
-check_package "prysm"      "Prysm (Consensus Layer)"      "🔷"
-check_package "nimbus"     "Nimbus (Consensus Layer)"      "🐢"
-check_package "teku"       "Teku (Consensus Layer)"        "☕"
-check_package "lodestar"   "Lodestar (Consensus Layer)"    "⭐"
-check_package "grandine"   "Grandine (Consensus Layer)"    "🦀"
+echo "--- Execution Layer: ${EL_CLIENT:-not set} ---"
+if [ -n "${EL_CLIENT:-}" ]; then
+    check_package "${EL_CLIENT}" "${EL_CLIENT} (Execution Layer)" "⚙️"
+else
+    echo "  [SKIP] EL_CLIENT not set in node.env"
+fi
 echo ""
 
-# =============================================================================
-# Execution Layer clients — check all installed ones.
-# =============================================================================
-echo "--- Execution Layer clients ---"
-check_package "geth"        "Geth (Execution Layer)"        "🐹"
-check_package "nethermind"  "Nethermind (Execution Layer)"  "💠"
-check_package "erigon"      "Erigon (Execution Layer)"      "🌀"
-check_package "besu"        "Besu (Execution Layer)"        "☕"
-check_package "reth"        "Reth (Execution Layer)"        "🦀"
-check_package "ethrex"      "Ethrex (Execution Layer)"      "🔶"
+echo "--- Consensus Layer: ${CL_CLIENT:-not set} ---"
+if [ -n "${CL_CLIENT:-}" ]; then
+    check_package "${CL_CLIENT}" "${CL_CLIENT} (Consensus Layer)" "🔦"
+else
+    echo "  [SKIP] CL_CLIENT not set in node.env"
+fi
 echo ""
 
-# =============================================================================
-# MEV-Boost — all node types
-# =============================================================================
 echo "--- MEV-Boost ---"
-check_package "mev-boost" "MEV-Boost" "💰"
+if [ -n "${MEV_SERVICE:-}" ]; then
+    check_package "mev-boost" "MEV-Boost" "💰"
+else
+    echo "  [SKIP] MEV_SERVICE not set in node.env"
+fi
 echo ""
 
-# =============================================================================
-# Charon / DVT — obol nodes only
-# =============================================================================
 if [ "${NODE_TYPE:-}" = "obol" ]; then
     echo "--- Charon DVT ---"
     check_package "dvt-obol" "Charon DVT (dvt-obol)" "🔗"

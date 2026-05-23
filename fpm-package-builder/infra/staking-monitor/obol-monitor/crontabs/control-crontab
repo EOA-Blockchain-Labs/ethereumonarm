@@ -28,3 +28,6 @@ USER=ethereum
 
 # Rotate logs weekly — keep last 4 weeks
 0 3 * * 0 find /home/ethereum/.obol-monitor/logs -name "*.log" -mtime +28 -delete 2>/dev/null
+
+# Package update check — daily at 09:00
+0 9 * * * /home/ethereum/.obol-monitor/scripts/check-updates.sh >> /home/ethereum/.obol-monitor/logs/check-updates.log 2>&1

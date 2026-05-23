@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-05-22 06:53:22 UTC_
+_Last updated: 2026-05-23 06:15:57 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-05-22 06:53:22 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **27** (73.0%)
-- ❌ Outdated: **10** (27.0%)
+- ✅ Up-to-date: **29** (78.4%)
+- ❌ Outdated: **8** (21.6%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -27,7 +27,7 @@ _Last updated: 2026-05-22 06:53:22 UTC_
 | `commit-boost` | `0.9.6` ([Commit-Boost/commit-boost-client](https://github.com/Commit-Boost/commit-boost-client)) | `0.9.6` | ✅ Up-to-date |
 | `dirk` | `1.2.1` ([attestantio/dirk](https://github.com/attestantio/dirk)) | `1.2.1` | ✅ Up-to-date |
 | `dvt-anchor` | `1.2.3` ([sigp/anchor](https://github.com/sigp/anchor)) | `1.2.3` | ✅ Up-to-date |
-| `dvt-obol` | `1.10.1` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.10.0` | ❌ Outdated |
+| `dvt-obol` | `1.10.1` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.10.1` | ✅ Up-to-date |
 | `dvt-ssv` | `2.4.2` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.4.2` | ✅ Up-to-date |
 | `ethereum-metrics-exporter` | `0.29.2` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.29.2` | ✅ Up-to-date |
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |
@@ -43,18 +43,18 @@ _Last updated: 2026-05-22 06:53:22 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `grandine` | `2.0.4` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.4` | ✅ Up-to-date |
 | `lighthouse` | `8.1.3` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.1.3` | ✅ Up-to-date |
-| `lodestar` | `1.43.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.42.0` | ❌ Outdated |
+| `lodestar` | `1.43.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.43.0` | ✅ Up-to-date |
 | `nimbus` | `26.5.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.5.0` | ✅ Up-to-date |
-| `prysm` | `7.1.3` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.3` | ✅ Up-to-date |
+| `prysm` | `7.1.4` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.3` | ❌ Outdated |
 | `teku` | `26.4.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.4.0` | ✅ Up-to-date |
 
 ## Layer 1 Execution
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `besu` | `26.5.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.4.0` | ❌ Outdated |
-| `erigon` | `3.4.1` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.4.1` | ✅ Up-to-date |
-| `ethrex` | `13.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `12.0.0` | ❌ Outdated |
+| `besu` | `26.5.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.5.0` | ✅ Up-to-date |
+| `erigon` | `3.4.2` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.4.1` | ❌ Outdated |
+| `ethrex` | `13.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `13.0.0` | ✅ Up-to-date |
 | `geth` | `1.17.3` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.3` | ✅ Up-to-date |
 | `nethermind` | `1.37.2` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.37.2` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |

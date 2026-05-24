@@ -17,7 +17,8 @@ obol-node-3 ──┘       └─── control-node-2 (failover)
 
 Each Obol node monitors itself and sends Telegram alerts directly. It checks
 its own services, sync status, peer counts, Charon DVT connectivity, and
-system resources (swap, disk, CPU temperature).
+system resources (swap, disk, CPU temperature). It also checks daily for
+new package versions of its running clients in the Ethereum on ARM APT repository.
 
 ### Control nodes
 
@@ -65,6 +66,12 @@ cron cycle it probes the active node using three checks in sequence:
    defers. If the ping also fails, the active node is considered down and the
    failover takes over immediately.
 
+**All peer alerts require two consecutive failing cycles** to confirm the
+condition is genuine, absorbing single-cycle transients (VPN re-keying, EL
+momentarily behind). The first failure is written to a state file but produces
+no alert or action. Only a second consecutive failure triggers an alert or
+failover takeover.
+
 ### Alert locks and recovery notifications
 
 All alerts use per-condition lock files to prevent duplicate messages. Once an
@@ -95,7 +102,6 @@ only when all validators are attesting correctly again.
 obol-monitor/
 ├── install.sh                        # Installer — run this first
 ├── README.md
-├── obol-monitor-README.pdf
 ├── conf/
 │   ├── obol-node.env                 # Config template for Obol nodes
 │   └── control-node.env              # Config template for control/failover nodes
@@ -108,6 +114,7 @@ obol-monitor/
 │   ├── control-status.sh             # Control node: full cluster status report
 │   ├── sync-indices.sh               # Build validator index cache from keystores
 │   ├── validator-duties.sh           # Missed attestation + proposal checker
+│   ├── check-updates.sh              # APT package update alert (daily 09:00)
 │   └── diagnose-connectivity.sh      # Inter-node connectivity diagnostic tool
 └── crontabs/
     ├── obol-crontab                  # Crontab for Obol nodes
@@ -205,6 +212,9 @@ sudo -u ethereum bash /home/ethereum/.obol-monitor/scripts/obol-status.sh
 sudo -u ethereum bash /home/ethereum/.obol-monitor/scripts/control-health.sh
 sudo -u ethereum bash /home/ethereum/.obol-monitor/scripts/control-status.sh
 sudo -u ethereum bash /home/ethereum/.obol-monitor/scripts/validator-duties.sh
+
+# Package update check (any node)
+sudo -u ethereum bash /home/ethereum/.obol-monitor/scripts/check-updates.sh
 ```
 
 ---
@@ -216,68 +226,84 @@ sudo -u ethereum bash /home/ethereum/.obol-monitor/scripts/validator-duties.sh
 | Condition | Alert | Recovery |
 |---|---|---|
 | Any service down | 🚨 Service DOWN | ✅ Service RESTORED |
-| EL not synced | ⚠️ EL not synced | ✅ EL sync resolved |
-| CL not synced | ⚠️ CL not synced | ✅ CL sync resolved |
-| EL peer count < `EL_PEERS_MIN` | ⚠️ EL low peers | ✅ EL peers restored |
-| CL peer count < `CL_PEERS_MIN` | ⚠️ CL low peers | ✅ CL peers restored |
-| Charon DVT peers < `CHARON_PEERS_MIN` | 🚨 Charon low peers | ✅ Peers restored |
-| Charon peer latency > `CHARON_LATENCY_ALERT_MS` ms | ⚠️ High latency | ✅ Latency resolved |
-| Swap > `SWAP_ALERT_GB` GB | ⚠️ High swap | ✅ Swap resolved |
-| `/home/ethereum` free < `DISK_ETH_ALERT_GB` GB | 🚨 Low disk | ✅ Disk restored |
-| `/` used > `DISK_ROOT_ALERT_PCT` % | ⚠️ Low root disk | ✅ Root disk resolved |
-| CPU temp > `CPU_TEMP_ALERT_C` °C | 🌡 High CPU temp | ✅ Temp normalized |
+| EL not synced | ⚠️ EL not synced | ✅ Resolved |
+| CL not synced | ⚠️ CL not synced | ✅ Resolved |
+| EL peers < `EL_PEERS_MIN` | ⚠️ EL low peers | ✅ Restored |
+| CL peers < `CL_PEERS_MIN` | ⚠️ CL low peers | ✅ Restored |
+| Charon DVT peers < min | 🚨 Charon low peers | ✅ Restored |
+| Charon latency > threshold | ⚠️ High latency | ✅ Resolved |
+| Swap > `SWAP_ALERT_GB` | ⚠️ High swap | ✅ Resolved |
+| /home/ethereum low disk | 🚨 Low disk | ✅ Restored |
+| / used > `DISK_ROOT_ALERT_PCT` | ⚠️ Low root disk | ✅ Resolved |
+| CPU temp > threshold | 🌡 High CPU temp | ✅ Normalized |
+
+### Package update check (`check-updates.sh`, daily 09:00)
+
+Checks only clients actually **installed and running** on the node, identified
+from `EL_CLIENT` and `CL_CLIENT` in `node.env`.
+
+| Condition | Alert |
+|---|---|
+| New EL client version in APT repo | 📦 Execution client update available |
+| New CL client version in APT repo | 📦 Consensus client update available |
+| New `mev-boost` version in APT repo | 📦 MEV-Boost update available |
+| New `dvt-obol` version in APT repo (obol nodes only) | 📦 Charon DVT update available |
+
+Lock key is `pkg-update-<package>-<version>` — fires once per available version
+and clears naturally when the package is installed (new candidate version = new
+lock key).
 
 ### Control node (`control-health.sh`, every 5 min)
 
-All of the above checked remotely for each Obol node via HTTP, plus:
+All Obol node conditions checked remotely via HTTP, plus:
 
 | Condition | Alert | Recovery |
 |---|---|---|
-| Obol node unreachable (livez = 000) | 🚨 Node UNREACHABLE | ✅ Node back online |
-| Charon readyz 500 — VC not connected | 🚨 VC not connected | ✅ VC connected |
-| Charon readyz 500 — beacon node down | 🚨 Beacon node DOWN | ✅ Charon ready |
-| Charon readyz 500 — beacon syncing | ⚠️ Beacon syncing | ✅ Charon ready |
-| Charon readyz 500 — insufficient peers | ⚠️ Insufficient peers | ✅ Charon ready |
+| Obol node unreachable (livez = 000) | 🚨 Node UNREACHABLE | ✅ Back online |
+| Charon readyz — VC not connected | 🚨 VC not connected | ✅ VC connected |
+| Charon readyz — beacon node down | 🚨 Beacon DOWN | ✅ Charon ready |
+| Charon readyz — beacon syncing | ⚠️ Beacon syncing | ✅ Charon ready |
+| Charon readyz — insufficient peers | ⚠️ Insufficient peers | ✅ Charon ready |
 | `core_scheduler_validators_active` = 0 | 🚨 VC inactive | ✅ VC reconnected |
-| Charon peer count < minimum | 🚨 Charon low peers | ✅ Peers restored |
-| Charon peer latency > threshold | ⚠️ High latency | ✅ Latency resolved |
-| DVT threshold broken | 🚨 Cluster FAILED + status report | ✅ Cluster restored + status report |
-| Cluster failed AND backup validator not running | 🚨 NO VALIDATOR COVERAGE | — |
-| Failover EL + relay both down (ping ok) | ⚠️ Failover services down | — |
-| Failover node completely unreachable | 🚨 Failover node DOWN | — |
-| Primary EL + relay both down (ping ok) | ⚠️ Primary services down | ✅ Primary restored |
-| Local backup services down | 🚨 Service DOWN | ✅ Service RESTORED |
+| DVT threshold broken | 🚨 Cluster FAILED + status report | ✅ Cluster restored + report |
+| Cluster failed + backup VC down | 🚨 NO VALIDATOR COVERAGE | — |
+| Failover EL+relay both down (ping ok, 2 cycles) | ⚠️ Failover services down | — |
+| Failover node unreachable (2 cycles) | 🚨 Failover node DOWN | — |
+| Primary EL+relay both down (ping ok, 2 cycles) | ⚠️ Primary services down | ✅ Primary restored |
+| Primary node unreachable (2 cycles) | 🚨 Primary DOWN → failover takes over | — |
+| Local backup services down | 🚨 Service DOWN | ✅ Restored |
+
+**Two-cycle confirmation** — all peer-related alerts (primary down, failover
+down, EL+relay down) require two consecutive failing cron cycles (~10 minutes)
+before firing. A single transient failure produces no alert.
 
 **Failover node additional behaviour** — when the cluster is detected as failed,
 the failover queries its own local beacon node for validator liveness. If
-validators are attesting despite the cluster being down, the primary backup is
-already covering them and the failover stays passive. If no validators are
-attesting, a 🚨 `Cluster FAILED — validators have NO coverage` alert fires
-recommending the failover operator to start their own backup validator.
+validators are attesting, the primary backup is already covering them and the
+failover stays passive. If no validators are attesting, a
+🚨 `Cluster FAILED — validators have NO coverage` alert fires.
 
 ### Validator duties (`validator-duties.sh`, every 7 min)
 
 | Condition | Alert | Recovery |
 |---|---|---|
-| Single validator missed attestation | ❌ Missed Attestation (per validator) | ✅ Attestation restored |
-| ≥ `MASS_MISS_THRESHOLD` missed in one epoch | 🚨 Mass Missed Attestations (6h lock) | ✅ Mass issue resolved |
-| Validator missed block proposal | 🚨 Missed Block Proposal | — |
-| Validator proposed a block | 🎉 Block Proposal SUCCESS | — |
+| Single validator missed attestation | ❌ Missed Attestation | ✅ Attestation restored |
+| ≥ `MASS_MISS_THRESHOLD` missed in one epoch | 🚨 Mass Missed Attestations (6h lock) | ✅ All attesting again |
+| Missed block proposal | 🚨 Missed Block Proposal | — |
+| Successful block proposal | 🎉 Block Proposal SUCCESS | — |
 
-The validator duties check runs on the **active control node only** — the failover
-node defers this check to the primary while the primary is reachable.
+Validator duties run on the **active control node only** — the failover defers
+while the primary is reachable.
 
 ---
 
 ## Alert deduplication
 
-Each alert uses a lock file keyed by condition. Once fired it will not repeat
-for `LOCK_EXPIRY` seconds (default 24 h). Some alerts use custom expiry:
-
 | Alert | Lock key | Expiry |
 |---|---|---|
 | All standard alerts | per-condition key | 24 h (`LOCK_EXPIRY`) |
 | Mass missed attestations | `vd-att-mass-global` | 6 h |
+| Package updates | `pkg-update-<pkg>-<version>` | 24 h (auto-clears on install) |
 | Cluster status report trigger | `ctrl-status-report` | per incident |
 
 ---
@@ -286,11 +312,9 @@ for `LOCK_EXPIRY` seconds (default 24 h). Some alerts use custom expiry:
 
 A full status digest is sent every **Monday at 08:00**:
 - `obol-status.sh` on Obol nodes — single node summary
-- `control-status.sh` on control nodes — full cluster overview including a
-  cluster health line (🟢 all nodes up / 🟡 validators missing / 🔴 nodes down)
+- `control-status.sh` on control nodes — full cluster overview
 
-A status report is also sent automatically when a significant incident starts
-and again when it resolves — no need to wait for the weekly report.
+A status report is also triggered automatically on incident start and recovery.
 
 Run on demand:
 ```bash
@@ -300,117 +324,116 @@ sudo -u ethereum bash /home/ethereum/.obol-monitor/scripts/control-status.sh
 
 ---
 
+## Recommended Charon configuration
+
+Add these flags to `charon run` on all Obol nodes for optimal performance
+and safety:
+
+```bash
+# Increase beacon API timeout — gives ARM hardware more room than the 2s default
+--beacon-node-timeout=4s
+
+# Use local beacon as primary; VPN/fallback beacon only when local is unavailable
+--beacon-node-endpoints=http://localhost:5052
+--fallback-beacon-node-endpoints=http://<control-node-vpn-ip>:5052
+
+# Verify FFG votes (target/source) match local beacon view before attesting
+# Prevents signing on the wrong fork in a chain split scenario
+--feature-set-enable=chain_split_halt
+
+# Required when running Nimbus as the validator client
+--distributed    # add to nimbus_validator_client flags (not charon)
+```
+
+**Why `--beacon-node-timeout=4s`:** the default 2-second timeout is too tight
+for ARM hardware under load. The `produceAttestationData(best)` call queries
+all configured beacon endpoints and waits for all to respond — on a VPN-connected
+fallback endpoint this can exceed 2 seconds on busy slots.
+
+**Why local-only primary endpoint:** when multiple endpoints are in
+`--beacon-node-endpoints`, Charon waits for ALL of them for `(best)` strategy
+calls, adding VPN latency to every attestation slot. Using
+`--fallback-beacon-node-endpoints` instead reserves the remote beacon for
+genuine outages only.
+
+---
+
 ## Firewall / network requirements
 
 | Port | Protocol | Direction | Purpose |
 |---|---|---|---|
 | 3620 | TCP | control → obol | Charon HTTP API (livez, readyz, metrics) |
 | 3640 | TCP | failover → active control | Charon relay liveness check |
-| 80 | TCP | failover → active control | EL API liveness check (nginx proxy) |
+| 80 | TCP | failover → active control | EL API liveness (nginx proxy) |
+| 5052 | TCP | localhost / obol → control | CL Beacon API |
 | 8545 | TCP | localhost only | EL JSON-RPC |
-| 5052 | TCP | localhost only | CL Beacon API |
-
-On each Obol node, allow VPN access to port 3620 from both control nodes:
 
 ```bash
-sudo ufw allow from <active-control-vpn-ip>  to any port 3620
+# On each Obol node — allow control nodes to reach Charon metrics
+sudo ufw allow from <active-control-vpn-ip>   to any port 3620
 sudo ufw allow from <failover-control-vpn-ip> to any port 3620
+
+# On control nodes — if exposing beacon API to Obol nodes as fallback
+sudo ufw allow from <obol-node-vpn-ip> to any port 5052
 ```
 
 ---
 
 ## Thresholds reference
 
-All thresholds are in `node.env` and can be adjusted per node.
-
-### Obol node thresholds
+### Obol node
 
 | Variable | Default | Description |
 |---|---|---|
-| `EL_PEERS_MIN` | 5 | Minimum EL peers before alert |
-| `CL_PEERS_MIN` | 10 | Minimum CL peers before alert |
+| `EL_PEERS_MIN` | 5 | Minimum EL peers |
+| `CL_PEERS_MIN` | 10 | Minimum CL peers |
 | `CHARON_PEERS_MIN` | cluster_size − 1 | Minimum Charon DVT peers |
-| `CHARON_LATENCY_ALERT_MS` | 500 | Max acceptable peer avg RTT (ms) |
-| `SWAP_ALERT_GB` | 10 | Swap usage threshold (GB) |
-| `DISK_ETH_ALERT_GB` | 150 | Free space threshold on /home/ethereum (GB) |
+| `CHARON_LATENCY_ALERT_MS` | 500 | Max peer avg RTT (ms) |
+| `SWAP_ALERT_GB` | 10 | Swap threshold (GB) |
+| `DISK_ETH_ALERT_GB` | 150 | Free space threshold (GB) |
 | `DISK_ROOT_ALERT_PCT` | 85 | Root disk used % threshold |
 | `CPU_TEMP_ALERT_C` | 80 | CPU temperature threshold (°C) |
-| `LOCK_EXPIRY` | 86400 | Alert cooldown (seconds, default 24 h) |
+| `LOCK_EXPIRY` | 86400 | Alert cooldown (s, 24 h) |
 
-### Control / failover node thresholds
-
-All Obol node thresholds above, plus:
+### Control / failover node (additional)
 
 | Variable | Default | Description |
 |---|---|---|
-| `CHARON_PEERS_EXPECTED` | cluster_size − 1 | Expected Charon peers per node |
-| `PEER_CHECK_TIMEOUT` | 5 | Seconds for each peer probe (EL, relay, ping) |
-| `PEER_RETRY_DELAY` | 10 | Seconds to wait before ping after EL+relay fail |
-| `PEER_RELAY_PORT` | 3640 | Charon relay port used as secondary liveness probe |
-| `VC_INACTIVE_EPOCHS` | 2 | Epochs without duty before VC inactive alert |
+| `PEER_CHECK_TIMEOUT` | 5 | Seconds per probe (EL, relay, ping) |
+| `PEER_RETRY_DELAY` | 10 | Delay before ping after EL+relay fail |
+| `PEER_RELAY_PORT` | 3640 | Charon relay port for liveness check |
+| `VC_INACTIVE_EPOCHS` | 2 | Epochs without duty before VC alert |
 | `MISSED_ATT_THRESHOLD` | 1 | Missed attestations before per-validator alert |
-| `MASS_MISS_THRESHOLD` | 10 | Validators missing same epoch before global alert |
-| `PROPOSAL_CHECK_EPOCHS` | 3 | Past epochs to check for missed proposals |
+| `MASS_MISS_THRESHOLD` | 10 | Validators missing same epoch for global alert |
+| `PROPOSAL_CHECK_EPOCHS` | 3 | Past epochs to check for proposals |
 
 ---
 
 ## Connectivity diagnostic
 
-If you experience false alerts due to transient inter-node connectivity
-failures, run the diagnostic tool from either control node:
+Run from either control node to debug inter-node connectivity issues:
 
 ```bash
 bash /home/ethereum/.obol-monitor/scripts/diagnose-connectivity.sh
-# or with explicit peer IP:
 bash /home/ethereum/.obol-monitor/scripts/diagnose-connectivity.sh <peer-vpn-ip>
 ```
 
-It runs 8 checks: network interfaces, routing table, ping, Tailscale direct
-path, EL API response time, relay response time, concurrent probe simulation,
-and WireGuard interference detection (including custom-named interfaces). Useful
-for diagnosing VPN routing conflicts, WireGuard `AllowedIPs` overlap with the
-Tailscale CGNAT range (`100.64.0.0/10`), and DERP relay switches.
+Runs 8 checks: network interfaces, routing table, ping, Tailscale direct path,
+EL API timing, relay timing, concurrent probe simulation, and WireGuard
+interference detection (including custom-named interfaces like `nanopct6`).
 
 ---
 
 ## Standalone validator duties monitor
 
-If you run validators outside the Obol cluster context (solo staking,
-Lido CSM on a separate machine, etc.) the `vm-` scripts provide a
-self-contained validator duty monitor that works on any validator node
-with a local beacon client.
-
-**Files** (rename by removing the `vm-` prefix when deploying):
-
-| File | Deploy as |
-|---|---|
-| `vm-install.sh` | `install.sh` |
-| `vm-validator-monitor.env` | `conf/validator-monitor.env` |
-| `vm-common.sh` | `lib/common.sh` |
-| `vm-sync-indices.sh` | `scripts/sync-indices.sh` |
-| `vm-validator-duties.sh` | `scripts/validator-duties.sh` |
-| `vm-validator-crontab` | `crontabs/validator-crontab` |
-
-**Install:**
+For validators outside the Obol cluster (solo staking, Lido CSM on a separate
+machine). Located in `staking-monitor/validator-monitor/`.
 
 ```bash
+cd validator-monitor
 bash install.sh
 ```
 
-Installs to `/home/ethereum/.validator-monitor/`. The installer asks for your
-Telegram credentials, keystore directory, beacon API endpoint, and
-validator/beacon service names. It builds the initial validator index cache from
-your keystore files automatically.
-
-**What it checks (every 7 min):**
-- Missed attestations per validator via `POST /eth/v1/beacon/rewards/attestations/{epoch}`
-  using `finalized_epoch − 1` to ensure all late attestations are included.
-  Falls back to `/validator/liveness/{epoch}` for clients without historical
-  state (Nimbus, Lighthouse checkpoint sync).
-- Missed block proposals via `/validator/duties/proposer/{epoch}` +
-  `/beacon/headers/{slot}`
-- Successful block proposals (🎉 notification)
-
-Alerts include the validator index, shortened pubkey, epoch/slot, and a direct
-link to `https://beaconcha.in/validator/{index}`. Recovery notifications are
-sent when missed validators return to normal attestation.
+Installs to `/home/ethereum/.validator-monitor/`. Checks missed attestations
+(`finalized_epoch − 1`, liveness fallback for Nimbus/checkpoint-sync), missed
+proposals, and successful proposals. Recovery notifications sent automatically.

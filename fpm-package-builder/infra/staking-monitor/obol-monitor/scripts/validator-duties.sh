@@ -270,16 +270,22 @@ All validators are attesting correctly again."
             LABEL=$(get_label "$IDX")
             LOCK_KEY="vd-att-${IDX}-${CHECK_EPOCH}"
             lock_alert "$LOCK_KEY" "$(node_label)
-❌ <b>Missed Attestation</b>
+❌ <b>Missed / Late Attestation</b>
 
 Validator : <code>${IDX}</code> (<code>${LABEL}</code>)
 Epoch     : <b>${CHECK_EPOCH}</b>
 Explorer  : https://beaconcha.in/validator/${IDX}
 
-The validator did not participate in duties during this epoch —
-its attestation was not included on-chain.
+The validator either missed its attestation duty or attested
+with a high inclusion distance — its attestation reward for
+this epoch was zero or below threshold.
+
+Check beaconcha.in → <b>Attestations</b> tab to distinguish:
+• <b>Included (late)</b>: attested but with high inclusion distance
+• <b>Missing</b>: attestation was not included on-chain at all
 
 Possible causes:
+• Late block arrival causing a head vote miss (high inclusion distance)
 • Validator client offline or crashed during this epoch
 • Beacon node was not synced or unreachable
 • Network connectivity issue (P2P port blocked)

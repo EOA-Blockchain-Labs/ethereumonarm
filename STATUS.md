@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-05-25 07:19:28 UTC_
+_Last updated: 2026-05-26 06:51:20 UTC_
 
 ## What this report compares
 
@@ -33,7 +33,7 @@ _Last updated: 2026-05-25 07:19:28 UTC_
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |
 | `ethstaker-deposit-cli` | `1.3.0` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.3.0` | ✅ Up-to-date |
 | `mev-boost` | `1.12` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.12` | ✅ Up-to-date |
-| `stakewise-operator` | `4.1.12` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.1.13.de7` | ✅ Up-to-date |
+| `stakewise-operator` | `4.1.13` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.1.13.de7` | ✅ Up-to-date |
 | `vero` | `1.4.0` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.4.0` | ✅ Up-to-date |
 | `vouch` | `1.12.1` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.12.1` | ✅ Up-to-date |
 

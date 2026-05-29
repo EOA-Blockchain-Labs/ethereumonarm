@@ -25,6 +25,50 @@ fi
 . "$CONF"
 . "${SCRIPT_DIR}/../lib/common.sh"
 
+# =============================================================================
+# NETWORK GUARD — verify connectivity to at least one Obol node before running
+# remote checks. If none respond to ping, the problem is on this node's network
+# (VPN down, routing issue, etc.) — not the cluster itself.
+# Prevents false alerts when this control node loses connectivity.
+# Works with any VPN solution (Tailscale, WireGuard, OpenVPN, etc.).
+# =============================================================================
+_vpn_ok=true
+_reachable=0
+for _idx in $(seq 1 "${CLUSTER_SIZE:-3}"); do
+    _ip_var="OBOL_NODE_${_idx}_IP"
+    _ip="${!_ip_var}"
+    [ -z "$_ip" ] && continue
+    if ping -c 1 -W 3 "$_ip" > /dev/null 2>&1; then
+        _reachable=$(( _reachable + 1 ))
+    fi
+done
+
+if [ "$_reachable" -eq 0 ] && [ "${CLUSTER_SIZE:-3}" -gt 0 ]; then
+    _vpn_ok=false
+    lock_alert "ctrl-vpn-down" "$(node_label)
+⚠️ <b>Network connectivity lost on this node</b>
+
+This control node cannot reach any Obol node via ping.
+The Obol cluster is likely healthy — the problem is on this node.
+
+All remote Obol node checks are suspended this cycle.
+Only local service checks will run.
+
+Possible causes:
+• VPN client is down (Tailscale, WireGuard, OpenVPN)
+• Routing issue on this node
+• Network interface problem
+
+Check: <code>ip route show</code> and <code>ping &lt;obol-node-ip&gt;</code>"
+    echo "WARNING: Cannot reach any Obol node via ping — skipping remote checks (network issue on this node)."
+else
+    recovery_alert "ctrl-vpn-down" "$(node_label)
+✅ <b>Network connectivity restored</b>
+
+This control node can reach Obol nodes again.
+Resuming full remote cluster monitoring."
+fi
+
 # Primary node monitors failover health (only runs on NODE_TYPE=control)
 if [ "${NODE_TYPE:-}" = "control" ]; then
     check_failover
@@ -38,6 +82,11 @@ case "$IS_PRIMARY_REASON" in
         ;;
     peer_healthy)
         # Peer EL API responded — fully healthy, defer
+        recovery_alert "ctrl-peer-node-down" "$(node_label)
+✅ <b>Primary control node is back online</b>
+
+Node <code>${PEER_CONTROL_IP}</code> is responding again.
+Handing monitoring back to primary."
         echo "Primary node (${PEER_CONTROL_IP}) is healthy — deferring to primary."
         exit 0
         ;;
@@ -75,7 +124,7 @@ This node (<b>${NODE_NAME}</b>) is taking over as active monitor.
 Suggested actions:
 • Check Tailscale: <code>tailscale ping ${PEER_CONTROL_IP}</code>
 • Check Tailscale admin panel for node status
-• Physical inspection of primary node may be required"
+• Physical inspection of primary node may be required" 259200
         ;;
 esac
 
@@ -315,9 +364,12 @@ Suggested actions:
     fi
 }
 
-# Run check for each Obol node — dynamic loop over CLUSTER_SIZE
+# Run check for each Obol node — only if VPN is up
 OBOL_NODES_DOWN=0
 _STATUS_NEEDED=false
+if [ "$_vpn_ok" = "false" ]; then
+    echo "Skipping remote Obol node checks — Tailscale VPN is down."
+else
 for _idx in $(seq 1 "${CLUSTER_SIZE:-3}"); do
     _ip_var="OBOL_NODE_${_idx}_IP"
     _name_var="OBOL_NODE_${_idx}_NAME"
@@ -331,6 +383,7 @@ for _idx in $(seq 1 "${CLUSTER_SIZE:-3}"); do
     fi
     check_obol_node "$_ip" "$_name" "$_base" "$_idx"
 done
+fi  # end VPN guard for Obol node checks
 unset _idx _ip_var _name_var _base_var _ip _name _base
 
 # Determine if the Obol cluster has crossed the DVT failure threshold.

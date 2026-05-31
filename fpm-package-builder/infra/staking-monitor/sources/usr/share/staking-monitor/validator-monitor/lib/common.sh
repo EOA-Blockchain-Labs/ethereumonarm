@@ -398,8 +398,10 @@ EL API (port 80) and Charon relay (port ${_relay_port}) are not responding.
 This has been confirmed over two consecutive check cycles.
 
 Suggested actions:
-• Check EL: <code>sudo systemctl status ${EL_SERVICE}</code>
-• Check relay: <code>sudo systemctl status ${OBOL_RELAY_SERVICE}</code>"
+• SSH into the failover node and check:
+  <code>systemctl status ethrex nethermind reth erigon geth besu 2>/dev/null | grep -E "active|failed"</code>
+• Check relay: <code>sudo systemctl status charon-relay</code>
+• Check nginx: <code>sudo systemctl status nginx</code>" 259200
             else
                 # First failure — write state, no alert yet
                 echo "el_relay_down" > "$_state_file"
@@ -423,7 +425,7 @@ The cluster is running without a backup control node.
 
 Suggested actions:
 • Check VPN: <code>tailscale ping ${FAILOVER_CONTROL_IP}</code>
-• Physical inspection may be required"
+• Physical inspection may be required" 259200
             else
                 # First failure — write state, no alert yet
                 echo "down" > "$_state_file"

@@ -1,9 +1,10 @@
 # ======================================================================
-# Ethereum on ARM — Production Packaging Makefile (Besu)
+# Ethereum on ARM — Production Packaging Makefile (dvt-ssv)
 # ----------------------------------------------------------------------
 # Builds .deb and .rpm packages for ARM systems using FPM.
-# - Downloads the latest upstream Besu binary from GitHub
-# - Stages files into ./sources/usr/bin and ./sources/usr/share
+# - Extracts 'ssvnode' and 'ssv-dkg' from Docker images
+# - Builds 'ssv-keys' (Node) from source
+# - Stages files into ./sources/usr/bin
 # - Applies EOA packaging standards and metadata
 # ======================================================================
 
@@ -42,32 +43,35 @@ else
 # ----------------------------------------------------------------------
 # Package metadata
 # ----------------------------------------------------------------------
-PKG_NAME        ?= besu
-PKG_RELEASE     ?= 1
+PKG_NAME        ?= dvt-ssv
+PKG_RELEASE     ?= 0
 PKG_ARCH        ?= arm64
 PKG_ARCH_RPM    ?= aarch64
 PKG_VENDOR      ?= Ethereum on ARM
-PKG_LICENSE     ?= Apache License 2.0
-PKG_DESCRIPTION ?= Hyperledger Ethereum 1.0 java client
+PKG_LICENSE     ?= GNU Lesser General Public License v3.0
+PKG_DESCRIPTION ?= SSV DVT client
 PKG_MAINTAINER  ?= Ethereum on ARM <info@ethereumonarm.com>
 CATEGORY        ?= science
-WEB_URL         ?= https://www.hyperledger.org/use/besu
+WEB_URL         ?= https://github.com/ssvlabs/ssv
 SOURCESDIR      ?= sources
 OUTPUTDIR       ?= ../../../packages
+PKG_AFTER_INSTALL ?= extras/postinst
 
 # ----------------------------------------------------------------------
 # Upstream version and source info
 # ----------------------------------------------------------------------
-BESU_VERSION := $(shell curl -sL https://api.github.com/repos/hyperledger/besu/releases/latest | jq -r '.tag_name'| tr -d 'v')
-BESU_ZIP     := besu-$(BESU_VERSION).zip
-BESU_URL     := https://github.com/hyperledger/besu/releases/download/$(BESU_VERSION)/$(BESU_ZIP)
+SSV_TAG_V := $(shell curl -s "https://api.github.com/repos/ssvlabs/ssv/releases/latest" | jq -r '.tag_name')
+SSV_VERSION := $(shell echo "$(SSV_TAG_V)" | tr -d "v")
 
-# SHA256 checksum extracted from GitHub release changelog (body field)
-# Format in release notes: "HASH  besu-X.X.X.zip"
-# SHA256 checksum extracted from GitHub release changelog (body field) within the prepare target to ensure robustness
+SSV_KEYS_TAG_V := $(shell curl -s "https://api.github.com/repos/ssvlabs/ssv-keys/releases/latest" | jq -r '.tag_name')
+SSV_KEYS_VERSION := $(shell echo "$(SSV_KEYS_TAG_V)" | tr -d "v")
 
-PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(BESU_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
-PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(BESU_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
+# ssv-dkg version for DKG ceremony tool
+SSV_DKG_TAG_V := $(shell curl -s "https://api.github.com/repos/ssvlabs/ssv-dkg/releases/latest" | jq -r '.tag_name')
+SSV_DKG_VERSION := $(shell echo "$(SSV_DKG_TAG_V)" | tr -d "v")
+
+PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(SSV_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
+PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(SSV_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
 
 # ----------------------------------------------------------------------
 # FPM common options
@@ -75,7 +79,7 @@ PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(BESU_VERSION)-$(PKG_RELEASE).$(PKG_AR
 FPM_COMMON_OPTS = \
     -s dir \
     -n $(PKG_NAME) \
-    -v $(BESU_VERSION) \
+    -v $(SSV_VERSION) \
     --iteration $(PKG_RELEASE) \
     --vendor "$(PKG_VENDOR)" \
     --license "$(PKG_LICENSE)" \
@@ -89,17 +93,14 @@ FPM_COMMON_OPTS = \
 # ----------------------------------------------------------------------
 # Debian-specific options
 # ----------------------------------------------------------------------
-# Includes dynamic systemd unit detection and dynamic config-file tracking
 FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
     -t deb \
     --architecture $(PKG_ARCH) \
+    --after-install $(PKG_AFTER_INSTALL) \
     --deb-no-default-config-files \
-    $(shell test -d extras && find extras -name '$(PKG_NAME)*.service' -printf "--deb-systemd %p " || true) \
+    $(shell test -d extras && find extras -name 'ssv*.service' -printf "--deb-systemd %p ") \
     $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
-    --depends openjdk-25-jre-headless \
-    --depends "libsecp256k1-0|libsecp256k1-1" \
-    --depends merge-config \
-    --depends libjemalloc-dev
+    --depends merge-config
 
 # ----------------------------------------------------------------------
 # RPM-specific options
@@ -107,11 +108,9 @@ FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
 FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
     -t rpm \
     --architecture $(PKG_ARCH_RPM) \
-    $(shell test -d extras && find extras -name '$(PKG_NAME)*.service' -printf "--rpm-systemd %p " || true) \
-    --depends openjdk-21-jre-headless \
-    --depends "libsecp256k1-0 | libsecp256k1-1" \
-    --depends merge-config \
-    --depends libjemalloc-devel
+    --after-install $(PKG_AFTER_INSTALL) \
+    $(shell test -d extras && find extras -name 'ssv*.service' -printf "--rpm-systemd %p ") \
+    --depends merge-config
 
 # ----------------------------------------------------------------------
 # Targets
@@ -124,33 +123,64 @@ FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
 all: prepare deb clean test ## Default local build pipeline
 
 # ----------------------------------------------------------------------
-# prepare — download & stage Besu binary
+# prepare — Build binaries from source
 # ----------------------------------------------------------------------
-prepare: ## Download latest Besu and stage into $(SOURCESDIR)
-	@echo "🔎 Resolving latest Besu version..."
-	if [[ -z "$(BESU_VERSION)" || "$(BESU_VERSION)" == "null" ]]; then \
-	    echo "❌ Could not determine latest Besu version via GitHub API."; exit 1; \
+prepare: ## Extract ssvnode from Docker and build ssv-keys from source
+	@echo "🔎 Resolving latest SSV versions..."
+	if [[ -z "$(SSV_TAG_V)" || "$(SSV_TAG_V)" == "null" ]]; then \
+	    echo "❌ Could not determine latest ssv version via GitHub API."; exit 1; \
 	fi
-	@echo "🔽 Downloading Besu $(BESU_VERSION)..."
-	# Use a local .build dir instead of /tmp
-	mkdir -p .build $(SOURCESDIR)/usr/bin $(SOURCESDIR)/usr/share/besu/lib
-	wget -q -O ".build/$(BESU_ZIP)" "$(BESU_URL)" || { echo "❌ Download failed: $(BESU_URL)"; exit 1; };
+	if [[ -z "$(SSV_KEYS_TAG_V)" || "$(SSV_KEYS_TAG_V)" == "null" ]]; then \
+	    echo "❌ Could not determine latest ssv-keys version via GitHub API."; exit 1; \
+	fi
+	if [[ -z "$(SSV_DKG_TAG_V)" || "$(SSV_DKG_TAG_V)" == "null" ]]; then \
+	    echo "❌ Could not determine latest ssv-dkg version via GitHub API."; exit 1; \
+	fi
 	
-	@echo "🔎 Extracting checksum from GitHub API..."
-	CHECKSUM=$$(curl -sL https://api.github.com/repos/hyperledger/besu/releases/latest | jq -r '.assets[] | select(.name == "$(BESU_ZIP)") | .digest' | sed 's/sha256://'); \
-	if [[ -z "$$CHECKSUM" || "$$CHECKSUM" == "null" ]]; then echo "❌ Failed to extract checksum from GitHub API"; exit 1; fi; \
-	echo "🔐 Verifying SHA256 (Hash: $$CHECKSUM)..."; \
-	echo "$$CHECKSUM  .build/$(BESU_ZIP)" | sha256sum -c - || { echo "❌ SHA256 verification FAILED!"; rm -f ".build/$(BESU_ZIP)"; exit 1; };
-	@echo "📦 Extracting files..."
-	unzip -o ".build/$(BESU_ZIP)" "besu-$(BESU_VERSION)/bin/besu" -d .build
-	unzip -o ".build/$(BESU_ZIP)" "besu-$(BESU_VERSION)/lib/*" -d .build
-	@echo "📂 Staging files..."
-	cp ".build/besu-$(BESU_VERSION)/bin/besu" "$(SOURCESDIR)/usr/bin/"
-	cp ".build/besu-$(BESU_VERSION)/lib/"* "$(SOURCESDIR)/usr/share/besu/lib/"
-	@echo "🔧 Patching binary paths..."
-	sed -i 's/`pwd -P`/\/usr\/share\/besu\//' "$(SOURCESDIR)/usr/bin/besu"
-	chmod 0755 "$(SOURCESDIR)/usr/bin/besu"
-	@echo "✅ Binary and libs downloaded and verified in $(SOURCESDIR)"
+	@echo " Pulling ssvnode Docker image: ssvlabs/ssv-node:$(SSV_TAG_V)..."
+	mkdir -p .build/ssv_keys_src $(SOURCESDIR)/usr/bin
+	docker pull --platform linux/arm64 ssvlabs/ssv-node:$(SSV_TAG_V) || { echo "❌ Docker pull failed"; exit 1; }
+
+	@echo " Extracting ssvnode binary from container..."
+	CID=$$(docker create --platform linux/arm64 ssvlabs/ssv-node:$(SSV_TAG_V)); \
+	docker cp "$$CID:/go/bin/ssvnode" "$(SOURCESDIR)/usr/bin/ssvnode" || { echo "❌ Docker cp failed"; docker rm "$$CID"; exit 1; }; \
+	docker rm "$$CID" > /dev/null
+	chmod 0755 "$(SOURCESDIR)/usr/bin/ssvnode"
+
+	@echo "🔽 Cloning ssv-dkg $(SSV_DKG_VERSION) ($(SSV_DKG_TAG_V))..."
+	rm -rf .build/ssv_dkg_src
+	git clone --depth 1 --branch $(SSV_DKG_TAG_V) https://github.com/ssvlabs/ssv-dkg.git .build/ssv_dkg_src || { echo "❌ Git clone ssv-dkg failed"; exit 1; }
+
+	@echo "🐳 Building ssv-dkg Docker image locally (arm64)..."
+	cd .build/ssv_dkg_src && \
+	DOCKER_BUILDKIT=1 docker build --platform linux/arm64 -t ssv-dkg:$(SSV_DKG_TAG_V)-local . || { echo "❌ Docker build ssv-dkg failed"; exit 1; }
+
+	@echo " Extracting ssv-dkg binary from local container..."
+	CID=$$(docker create --platform linux/arm64 ssv-dkg:$(SSV_DKG_TAG_V)-local); \
+	docker cp "$$CID:/bin/ssv-dkg" "$(SOURCESDIR)/usr/bin/ssv-dkg" || { echo "❌ Docker cp for ssv-dkg failed"; docker rm "$$CID"; exit 1; }; \
+	docker rm "$$CID" > /dev/null
+	chmod 0755 "$(SOURCESDIR)/usr/bin/ssv-dkg"
+
+	@echo "🔽 Cloning ssv-keys $(SSV_KEYS_VERSION) ($(SSV_KEYS_TAG_V))..."
+	git clone --depth 1 --branch $(SSV_KEYS_TAG_V) https://github.com/ssvlabs/ssv-keys.git .build/ssv_keys_src || { echo "❌ Git clone ssv-keys failed"; exit 1; }
+
+	@echo "🔧 Patching ssv-keys package.json for ARM64..."
+	cd .build/ssv_keys_src && \
+	    perl -i -pe 's|("package-linux":.*",)|$$1\n    "package-linux-arm64": "pkg dist/cli-interactive.js --targets node22-linux-arm64 --output bin/linux/ssv-keys-lin-arm64 --compress GZip",|' package.json \
+	    || { echo "❌ Patching ssv-keys failed"; exit 1; }
+
+	@echo "📦 Installing ssv-keys dependencies (npm)..."
+	cd .build/ssv_keys_src && \
+	    npm install --force || { echo "❌ npm install failed"; exit 1; }
+	
+	@echo "🛠 Building ssv-keys binary..."
+	cd .build/ssv_keys_src && \
+	    npm run package-linux-arm64 || { echo "❌ npm build failed"; exit 1; }
+
+	@echo "📂 Staging ssv-keys binary..."
+	cp .build/ssv_keys_src/bin/linux/ssv-keys-lin-arm64 $(SOURCESDIR)/usr/bin/ssv-keys
+	chmod 0755 $(SOURCESDIR)/usr/bin/ssv-keys
+	@echo "✅ Binaries ready at $(SOURCESDIR)/usr/bin (ssvnode, ssv-keys, ssv-dkg)"
 
 # ----------------------------------------------------------------------
 # deb — build Debian package
@@ -181,8 +211,8 @@ rpm: prepare ## Build .rpm package
 # ----------------------------------------------------------------------
 # clean — remove build artifacts
 # ----------------------------------------------------------------------
-clean: ## Remove staged binaries, cache, and temp files
-	rm -rf $(SOURCESDIR)/usr/bin/$(PKG_NAME)* $(SOURCESDIR)/usr/share/besu/lib/* .build
+clean: ## Remove staged binaries and temp files
+	rm -rf $(SOURCESDIR)/usr/bin/ssv* .build
 	@echo "🧹 Clean complete (staged files and .build removed)."
 
 # ----------------------------------------------------------------------
@@ -194,7 +224,6 @@ test: ## Check that .deb exists
 	else \
 	    echo "🧪 Test: .deb missing — ❌"; exit 1; \
 	fi
-
 
 # ----------------------------------------------------------------------
 # release — full CI build (includes RPM)
@@ -211,7 +240,9 @@ help: ## Show available targets
 	echo ""
 	awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z0-9_%-]+:.*?##/ { printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 	echo ""
-	echo "Version resolved: $(BESU_VERSION)"
+	echo "ssvnode Version : $(SSV_VERSION) (Tag: $(SSV_TAG_V))"
+	echo "ssv-keys Version: $(SSV_KEYS_VERSION) (Tag: $(SSV_KEYS_TAG_V))"
+	echo "ssv-dkg Version : $(SSV_DKG_VERSION) (Tag: $(SSV_DKG_TAG_V))"
 	echo "Sources dir     : $(SOURCESDIR)"
 	echo "Output dir      : $(OUTPUTDIR)"
 	echo ""

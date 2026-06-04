@@ -1,0 +1,6 @@
+#!/bin/sh
+set -e
+
+[ ! -d "/home/ethereum/.ssv" ] && sudo -u ethereum mkdir -p /home/ethereum/.ssv
+
+exit 0

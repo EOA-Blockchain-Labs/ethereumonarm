@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-06-03 08:22:56 UTC_
+_Last updated: 2026-06-04 07:55:46 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-06-03 08:22:56 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **26** (70.3%)
-- ❌ Outdated: **11** (29.7%)
+- ✅ Up-to-date: **25** (67.6%)
+- ❌ Outdated: **12** (32.4%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -52,7 +52,7 @@ _Last updated: 2026-06-03 08:22:56 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `besu` | `26.5.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.5.0` | ✅ Up-to-date |
+| `besu` | `26.6.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.5.0` | ❌ Outdated |
 | `erigon` | `3.4.3` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.4.2` | ❌ Outdated |
 | `ethrex` | `15.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `13.0.0` | ❌ Outdated |
 | `geth` | `1.17.3` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.3` | ✅ Up-to-date |

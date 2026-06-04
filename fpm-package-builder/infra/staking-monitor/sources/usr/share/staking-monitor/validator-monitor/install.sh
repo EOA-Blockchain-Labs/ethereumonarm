@@ -143,7 +143,10 @@ if [ -f "$CONF" ]; then
     echo "ℹ️  Existing config backed up to: ${BACKUP}"
 fi
 
-cp "${SCRIPT_SRC}/conf/validator-monitor.env" "$CONF"
+# Support both .example (package install) and plain (development)
+_env_src="${SCRIPT_SRC}/conf/validator-monitor.env"
+[ ! -f "$_env_src" ] && _env_src="${SCRIPT_SRC}/conf/validator-monitor.env.example"
+cp "$_env_src" "$CONF"
 
 sed -i \
     -e "s|^NODE_NAME=.*|NODE_NAME=\"${Q_NODE_NAME}\"|" \

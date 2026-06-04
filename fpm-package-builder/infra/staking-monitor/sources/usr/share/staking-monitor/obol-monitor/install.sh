@@ -540,7 +540,10 @@ fi
 # control-failover uses the same env template as control
 _conf_type="$NODE_TYPE"
 [ "$_conf_type" = "control-failover" ] && _conf_type="control"
-cp "${SCRIPT_SRC}/conf/${_conf_type}-node.env" "$CONF"
+# Support both .example (package install) and plain (development)
+_env_src="${SCRIPT_SRC}/conf/${_conf_type}-node.env"
+[ ! -f "$_env_src" ] && _env_src="${SCRIPT_SRC}/conf/${_conf_type}-node.env.example"
+cp "$_env_src" "$CONF"
 
 # -- Common substitutions ---------------------------------------------------
 sed -i \

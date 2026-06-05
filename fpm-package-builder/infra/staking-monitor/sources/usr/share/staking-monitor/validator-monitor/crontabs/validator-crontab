@@ -17,16 +17,16 @@ USER=ethereum
 # Missed attestation + missed proposal check — every 7 minutes.
 # One Ethereum epoch = 32 slots × 12 seconds = 6 minutes 24 seconds.
 # ---------------------------------------------------------------------------
-*/7 * * * * /home/ethereum/.validator-monitor/scripts/validator-duties.sh >> /home/ethereum/.validator-monitor/logs/validator-duties.log 2>&1
+*/7 * * * * /usr/share/staking-monitor/validator-monitor/scripts/validator-duties.sh >> /home/ethereum/.validator-monitor/logs/validator-duties.log 2>&1
 
 # ---------------------------------------------------------------------------
 # Refresh validator index cache — once per day at 04:00.
 # Re-runs sync-indices.sh to pick up newly activated validators or status
 # changes (pending → active, active → exited).
 # Run manually any time you add or remove validator keys:
-#   bash /home/ethereum/.validator-monitor/scripts/sync-indices.sh
+#   bash /usr/share/staking-monitor/validator-monitor/scripts/sync-indices.sh
 # ---------------------------------------------------------------------------
-0 4 * * * /home/ethereum/.validator-monitor/scripts/sync-indices.sh >> /home/ethereum/.validator-monitor/logs/sync-indices.log 2>&1
+0 4 * * * /usr/share/staking-monitor/validator-monitor/scripts/sync-indices.sh >> /home/ethereum/.validator-monitor/logs/sync-indices.log 2>&1
 
 # ---------------------------------------------------------------------------
 # Log rotation — keep last 30 days of logs

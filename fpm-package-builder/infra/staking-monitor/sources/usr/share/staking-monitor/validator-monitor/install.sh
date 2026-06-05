@@ -60,9 +60,7 @@ mkdir -p "${INSTALL_DIR}/cache"
 mkdir -p "${INSTALL_DIR}/locks"
 mkdir -p "${INSTALL_DIR}/logs"
 
-cp "${SCRIPT_SRC}/lib/common.sh"             "${INSTALL_DIR}/lib/"
-cp "${SCRIPT_SRC}/scripts/sync-indices.sh"   "${INSTALL_DIR}/scripts/"
-cp "${SCRIPT_SRC}/scripts/validator-duties.sh" "${INSTALL_DIR}/scripts/"
+# Scripts and lib stay in /usr/share/ — updated by apt upgrade
 cp "${SCRIPT_SRC}/crontabs/validator-crontab"  "${INSTALL_DIR}/crontabs/"
 
 chmod 644 "${INSTALL_DIR}/lib/common.sh"

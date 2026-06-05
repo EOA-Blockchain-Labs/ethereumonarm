@@ -488,43 +488,15 @@ echo ""
 # STEP 4 — CREATE DIRECTORIES AND COPY FILES
 # =============================================================================
 
-mkdir -p "${INSTALL_DIR}/conf" "${INSTALL_DIR}/lib" "${INSTALL_DIR}/scripts" \
-         "${INSTALL_DIR}/crontabs" "${INSTALL_DIR}/locks" "${INSTALL_DIR}/logs"
-
-# Remove scripts that belong to the other node type (clean reinstall)
-if [ "$NODE_TYPE" = "obol" ]; then
-    rm -f "${INSTALL_DIR}/scripts/control-health.sh"
-    rm -f "${INSTALL_DIR}/scripts/control-status.sh"
-    rm -f "${INSTALL_DIR}/scripts/sync-indices.sh"
-    rm -f "${INSTALL_DIR}/scripts/validator-duties.sh"
-    rm -f "${INSTALL_DIR}/crontabs/control-crontab"
-else
-    rm -f "${INSTALL_DIR}/scripts/obol-health.sh"
-    rm -f "${INSTALL_DIR}/scripts/obol-status.sh"
-    rm -f "${INSTALL_DIR}/crontabs/obol-crontab"
-fi
-
-cp "${SCRIPT_SRC}/lib/common.sh" "${INSTALL_DIR}/lib/common.sh"
-chmod 644 "${INSTALL_DIR}/lib/common.sh"
+# Scripts and lib live in /usr/share/ and are updated automatically by apt.
+# Only create data directories and copy crontabs for user review.
+mkdir -p "${INSTALL_DIR}/conf"          "${INSTALL_DIR}/crontabs"          "${INSTALL_DIR}/locks"          "${INSTALL_DIR}/logs"
 
 if [ "$NODE_TYPE" = "obol" ]; then
-    cp "${SCRIPT_SRC}/scripts/obol-health.sh" "${INSTALL_DIR}/scripts/"
-    cp "${SCRIPT_SRC}/scripts/obol-status.sh" "${INSTALL_DIR}/scripts/"
     cp "${SCRIPT_SRC}/crontabs/obol-crontab"  "${INSTALL_DIR}/crontabs/"
-    chmod +x "${INSTALL_DIR}/scripts/obol-health.sh"
-    chmod +x "${INSTALL_DIR}/scripts/obol-status.sh"
 else
-    # Both control and control-failover use the same scripts and crontab
-    cp "${SCRIPT_SRC}/scripts/control-health.sh"   "${INSTALL_DIR}/scripts/"
-    cp "${SCRIPT_SRC}/scripts/control-status.sh"   "${INSTALL_DIR}/scripts/"
-    cp "${SCRIPT_SRC}/scripts/sync-indices.sh"     "${INSTALL_DIR}/scripts/"
-    cp "${SCRIPT_SRC}/scripts/validator-duties.sh" "${INSTALL_DIR}/scripts/"
-    cp "${SCRIPT_SRC}/crontabs/control-crontab"    "${INSTALL_DIR}/crontabs/"
-    chmod +x "${INSTALL_DIR}/scripts/control-health.sh"
-    chmod +x "${INSTALL_DIR}/scripts/control-status.sh"
-    chmod +x "${INSTALL_DIR}/scripts/sync-indices.sh"
-    chmod +x "${INSTALL_DIR}/scripts/validator-duties.sh"
     mkdir -p "${INSTALL_DIR}/cache"
+    cp "${SCRIPT_SRC}/crontabs/control-crontab" "${INSTALL_DIR}/crontabs/"
 fi
 
 # =============================================================================
@@ -640,12 +612,12 @@ echo "       ${CONF}"
 echo ""
 echo "  2. Test scripts:"
 if [ "$NODE_TYPE" = "obol" ]; then
-    echo "       sudo -u ethereum bash ${INSTALL_DIR}/scripts/obol-health.sh"
-    echo "       sudo -u ethereum bash ${INSTALL_DIR}/scripts/obol-status.sh"
+    echo "       sudo -u ethereum bash ${SCRIPT_SRC}/scripts/obol-health.sh"
+    echo "       sudo -u ethereum bash ${SCRIPT_SRC}/scripts/obol-status.sh"
 else
-    echo "       sudo -u ethereum bash ${INSTALL_DIR}/scripts/control-health.sh"
-    echo "       sudo -u ethereum bash ${INSTALL_DIR}/scripts/control-status.sh"
-    echo "       sudo -u ethereum bash ${INSTALL_DIR}/scripts/validator-duties.sh"
+    echo "       sudo -u ethereum bash ${SCRIPT_SRC}/scripts/control-health.sh"
+    echo "       sudo -u ethereum bash ${SCRIPT_SRC}/scripts/control-status.sh"
+    echo "       sudo -u ethereum bash ${SCRIPT_SRC}/scripts/validator-duties.sh"
 fi
 echo ""
 echo "  3. Install crontab when ready:"

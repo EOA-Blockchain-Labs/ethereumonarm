@@ -19,7 +19,7 @@
 # =============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-CONF="${SCRIPT_DIR}/../conf/node.env"
+CONF="${CONF:-/home/ethereum/.obol-monitor/conf/node.env}"
 
 if [ ! -f "$CONF" ]; then
     echo "ERROR: conf not found at $CONF" >&2

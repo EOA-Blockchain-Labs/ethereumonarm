@@ -177,7 +177,12 @@ cat "${INSTALL_DIR}/crontabs/validator-crontab"
 echo ""
 read -rp "  Install this crontab for the 'ethereum' user? [y/N] " REPLY
 if [[ "$REPLY" =~ ^[Yy]$ ]]; then
-    sudo -u ethereum crontab "${INSTALL_DIR}/crontabs/validator-crontab"
+    # Use temp file with guaranteed trailing newline
+    _tmp_cron=$(mktemp)
+    cat "${SCRIPT_SRC}/crontabs/validator-crontab" > "$_tmp_cron"
+    echo "" >> "$_tmp_cron"
+    sudo -u ethereum crontab "$_tmp_cron"
+    rm -f "$_tmp_cron"
     echo "  ✅ Crontab installed."
 else
     echo "  Skipped. Install manually when ready:"

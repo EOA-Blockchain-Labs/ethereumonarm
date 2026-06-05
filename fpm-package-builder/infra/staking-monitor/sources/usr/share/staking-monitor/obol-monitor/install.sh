@@ -35,11 +35,12 @@ CONF="${INSTALL_DIR}/conf/node.env"
 
 if [ "$SUBCOMMAND" = "crontab" ]; then
     # control-failover uses the same crontab as control
-_cron_type="$NODE_TYPE"
+    _cron_type="$NODE_TYPE"
     [ "$_cron_type" = "control-failover" ] && _cron_type="control"
-    CRONTAB_FILE="${INSTALL_DIR}/crontabs/${_cron_type}-crontab"
+    # Read directly from /usr/share/ — always up to date after apt upgrade
+    CRONTAB_FILE="${SCRIPT_SRC}/crontabs/${_cron_type}-crontab"
     if [ ! -f "$CRONTAB_FILE" ]; then
-        echo "ERROR: ${CRONTAB_FILE} not found. Run the full install first."
+        echo "ERROR: ${CRONTAB_FILE} not found."
         exit 1
     fi
     echo "=== Crontab installer (${NODE_TYPE}) ==="
@@ -49,7 +50,12 @@ _cron_type="$NODE_TYPE"
     echo ""
     read -rp "Install this crontab for the 'ethereum' user? [y/N] " REPLY
     if [[ "$REPLY" =~ ^[Yy]$ ]]; then
-        sudo -u ethereum crontab "$CRONTAB_FILE"
+        # Use temp file with guaranteed trailing newline
+        _tmp_cron=$(mktemp)
+        cat "$CRONTAB_FILE" > "$_tmp_cron"
+        echo "" >> "$_tmp_cron"
+        sudo -u ethereum crontab "$_tmp_cron"
+        rm -f "$_tmp_cron"
         echo "✅ Crontab installed."
     else
         echo "Skipped."

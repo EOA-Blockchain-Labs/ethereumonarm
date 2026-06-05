@@ -46,7 +46,7 @@ else
 # ----------------------------------------------------------------------
 # Package metadata
 # ----------------------------------------------------------------------
-PKG_NAME        ?= staking-monitor
+PKG_NAME        ?= ethereumonarm-staking-monitor
 PKG_RELEASE     ?= 0
 PKG_ARCH        ?= all
 PKG_ARCH_RPM    ?= noarch

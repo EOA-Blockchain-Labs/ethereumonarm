@@ -649,7 +649,7 @@ else
 fi
 echo ""
 echo "  3. Install crontab when ready:"
-echo "       bash install.sh ${NODE_TYPE} crontab"
+echo "       bash ${SCRIPT_SRC}/install.sh ${NODE_TYPE} crontab"
 if [ "$NODE_TYPE" = "control" ] || [ "$NODE_TYPE" = "control-failover" ]; then
     echo ""
     echo "  4. Allow Charon port 3620 from this node on each Obol node:"

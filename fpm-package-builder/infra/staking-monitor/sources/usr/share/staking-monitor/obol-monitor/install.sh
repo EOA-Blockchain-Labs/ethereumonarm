@@ -591,7 +591,7 @@ if [ "$NODE_TYPE" = "control" ] || [ "$NODE_TYPE" = "control-failover" ]; then
 if [ -n "$Q_KEYSTORE_DIR" ] && [ -d "$Q_KEYSTORE_DIR" ]; then
     echo "─── Building validator index cache ──────────"
     echo ""
-    sudo -u ethereum bash "${INSTALL_DIR}/scripts/sync-indices.sh"
+    sudo -u ethereum bash "${SCRIPT_SRC}/scripts/sync-indices.sh"
     echo ""
 fi
 fi

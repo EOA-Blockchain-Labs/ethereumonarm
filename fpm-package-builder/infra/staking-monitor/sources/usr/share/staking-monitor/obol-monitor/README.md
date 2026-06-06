@@ -72,6 +72,22 @@ momentarily behind). The first failure is written to a state file but produces
 no alert or action. Only a second consecutive failure triggers an alert or
 failover takeover.
 
+### Network connectivity guard
+
+Before running any remote Obol node checks, the control node pings all
+configured Obol node IPs. If none respond, the problem is on this node's own
+network (VPN down, routing issue) — not the cluster. In that case:
+
+- A single `⚠️ Network connectivity lost` alert is sent
+- All remote Obol node checks are skipped for that cycle
+- Local service checks (EL, CL, MEV, system resources) still run
+- A `✅ Network connectivity restored` recovery alert fires when VPN recovers
+
+This prevents the cascade of false alerts (all nodes unreachable, cluster
+failed, no validator coverage) that would otherwise fire when the control node's
+VPN connection drops temporarily. Works with any VPN solution — Tailscale,
+WireGuard, OpenVPN, or plain LAN.
+
 ### Alert locks and recovery notifications
 
 All alerts use per-condition lock files to prevent duplicate messages. Once an
@@ -98,13 +114,20 @@ only when all validators are attesting correctly again.
 
 ## Files
 
+### Package layout (installed via `apt`)
+
+Scripts and libraries are installed to `/usr/share/` and updated automatically
+by `apt upgrade staking-monitor`. User data (config, locks, logs) is stored
+separately in `/home/ethereum/.obol-monitor/` and is never touched by package
+upgrades.
+
 ```
-obol-monitor/
+/usr/share/staking-monitor/obol-monitor/
 ├── install.sh                        # Installer — run this first
 ├── README.md
 ├── conf/
-│   ├── obol-node.env                 # Config template for Obol nodes
-│   └── control-node.env              # Config template for control/failover nodes
+│   ├── obol-node.env.example         # Config template for Obol nodes
+│   └── control-node.env.example      # Config template for control/failover nodes
 ├── lib/
 │   └── common.sh                     # Shared helpers (Telegram, locks, beacon API)
 ├── scripts/
@@ -121,13 +144,13 @@ obol-monitor/
     └── control-crontab               # Crontab for control/failover nodes
 ```
 
-After installation everything lives under:
+### User data layout (created by `install.sh`, preserved across upgrades)
+
 ```
 /home/ethereum/.obol-monitor/
-├── conf/node.env
-├── lib/common.sh
-├── scripts/
-├── cache/                            # Validator index cache
+├── conf/node.env                     # Node configuration (Telegram, thresholds, etc.)
+├── crontabs/                         # Local copy for review only
+├── cache/                            # Validator index cache (control nodes)
 ├── locks/                            # Alert deduplication lock files
 └── logs/                             # Cron output logs
 ```
@@ -136,32 +159,45 @@ After installation everything lives under:
 
 ## Installation
 
-Copy the `obol-monitor` folder to the target node and run the installer.
-It detects running Ethereum clients automatically and asks for all required
-values interactively — no manual config file editing needed.
-
-### On each Obol node
+### From APT package (recommended)
 
 ```bash
-bash install.sh obol
+sudo apt install staking-monitor
 ```
 
-The installer will ask for:
+Then run the interactive installer on each node:
+
+```bash
+# On each Obol node
+bash /usr/share/staking-monitor/obol-monitor/install.sh obol
+
+# On the active control node
+bash /usr/share/staking-monitor/obol-monitor/install.sh control
+
+# On the failover control node
+bash /usr/share/staking-monitor/obol-monitor/install.sh control-failover
+```
+
+### From source (development)
+
+```bash
+git clone https://github.com/EOA-Blockchain-Labs/ethereumonarm
+cd ethereumonarm/staking-monitor/obol-monitor
+bash install.sh obol        # or control / control-failover
+```
+
+---
+
+### Installer prompts
+
+**Obol node** asks for:
 - Node number and name
 - Telegram bot token and chat ID
 - VPN IP (optional)
 - Cluster size
 - Whether you are using Lido CSM
 
----
-
-### On the active control node
-
-```bash
-bash install.sh control
-```
-
-The installer will ask for:
+**Active control node** asks for:
 - Node number and name
 - Telegram bot token and chat ID
 - Cluster size
@@ -169,15 +205,7 @@ The installer will ask for:
 - Failover control node VPN IP (to monitor it)
 - Keystore directory for validator duty monitoring
 
----
-
-### On the failover control node
-
-```bash
-bash install.sh control-failover
-```
-
-The installer will ask for:
+**Failover control node** asks for:
 - Node number and name
 - Telegram bot token and chat ID
 - Cluster size
@@ -186,17 +214,16 @@ The installer will ask for:
 - Keystore directory for validator duty monitoring
 
 The failover node is **passive by default**. It defers all checks to the active
-node as long as the active node responds to the EL API or relay probe. Both the
-validator duties check and all health checks are skipped while the primary is up.
+node as long as the active node responds to the EL API or relay probe.
 
 ---
 
 ### Install crontab (all node types, after setup)
 
 ```bash
-bash install.sh obol crontab
-bash install.sh control crontab
-bash install.sh control-failover crontab
+bash /usr/share/staking-monitor/obol-monitor/install.sh obol crontab
+bash /usr/share/staking-monitor/obol-monitor/install.sh control crontab
+bash /usr/share/staking-monitor/obol-monitor/install.sh control-failover crontab
 ```
 
 ---
@@ -205,16 +232,16 @@ bash install.sh control-failover crontab
 
 ```bash
 # Obol node
-sudo -u ethereum bash /home/ethereum/.obol-monitor/scripts/obol-health.sh
-sudo -u ethereum bash /home/ethereum/.obol-monitor/scripts/obol-status.sh
+sudo -u ethereum bash /usr/share/staking-monitor/obol-monitor/scripts/obol-health.sh
+sudo -u ethereum bash /usr/share/staking-monitor/obol-monitor/scripts/obol-status.sh
 
 # Control / failover node
-sudo -u ethereum bash /home/ethereum/.obol-monitor/scripts/control-health.sh
-sudo -u ethereum bash /home/ethereum/.obol-monitor/scripts/control-status.sh
-sudo -u ethereum bash /home/ethereum/.obol-monitor/scripts/validator-duties.sh
+sudo -u ethereum bash /usr/share/staking-monitor/obol-monitor/scripts/control-health.sh
+sudo -u ethereum bash /usr/share/staking-monitor/obol-monitor/scripts/control-status.sh
+sudo -u ethereum bash /usr/share/staking-monitor/obol-monitor/scripts/validator-duties.sh
 
 # Package update check (any node)
-sudo -u ethereum bash /home/ethereum/.obol-monitor/scripts/check-updates.sh
+sudo -u ethereum bash /usr/share/staking-monitor/obol-monitor/scripts/check-updates.sh
 ```
 
 ---
@@ -259,6 +286,7 @@ All Obol node conditions checked remotely via HTTP, plus:
 
 | Condition | Alert | Recovery |
 |---|---|---|
+| Control node VPN/network down | ⚠️ Network connectivity lost | ✅ Connectivity restored |
 | Obol node unreachable (livez = 000) | 🚨 Node UNREACHABLE | ✅ Back online |
 | Charon readyz — VC not connected | 🚨 VC not connected | ✅ VC connected |
 | Charon readyz — beacon node down | 🚨 Beacon DOWN | ✅ Charon ready |
@@ -270,7 +298,7 @@ All Obol node conditions checked remotely via HTTP, plus:
 | Failover EL+relay both down (ping ok, 2 cycles) | ⚠️ Failover services down | — |
 | Failover node unreachable (2 cycles) | 🚨 Failover node DOWN | — |
 | Primary EL+relay both down (ping ok, 2 cycles) | ⚠️ Primary services down | ✅ Primary restored |
-| Primary node unreachable (2 cycles) | 🚨 Primary DOWN → failover takes over | — |
+| Primary node unreachable (2 cycles) | 🚨 Primary DOWN → failover takes over | ✅ Primary back online |
 | Local backup services down | 🚨 Service DOWN | ✅ Restored |
 
 **Two-cycle confirmation** — all peer-related alerts (primary down, failover
@@ -287,7 +315,7 @@ failover stays passive. If no validators are attesting, a
 
 | Condition | Alert | Recovery |
 |---|---|---|
-| Single validator missed attestation | ❌ Missed Attestation | ✅ Attestation restored |
+| Single validator missed/late attestation | ❌ Missed / Late Attestation | ✅ Attestation restored |
 | ≥ `MASS_MISS_THRESHOLD` missed in one epoch | 🚨 Mass Missed Attestations (6h lock) | ✅ All attesting again |
 | Missed block proposal | 🚨 Missed Block Proposal | — |
 | Successful block proposal | 🎉 Block Proposal SUCCESS | — |
@@ -302,6 +330,9 @@ while the primary is reachable.
 | Alert | Lock key | Expiry |
 |---|---|---|
 | All standard alerts | per-condition key | 24 h (`LOCK_EXPIRY`) |
+| Network connectivity lost | `ctrl-vpn-down` | 24 h |
+| Failover relay/node down | `ctrl-failover-*` | 72 h |
+| Primary node down | `ctrl-peer-node-down` | 72 h |
 | Mass missed attestations | `vd-att-mass-global` | 6 h |
 | Package updates | `pkg-update-<pkg>-<version>` | 24 h (auto-clears on install) |
 | Cluster status report trigger | `ctrl-status-report` | per incident |
@@ -318,8 +349,8 @@ A status report is also triggered automatically on incident start and recovery.
 
 Run on demand:
 ```bash
-sudo -u ethereum bash /home/ethereum/.obol-monitor/scripts/obol-status.sh
-sudo -u ethereum bash /home/ethereum/.obol-monitor/scripts/control-status.sh
+sudo -u ethereum bash /usr/share/staking-monitor/obol-monitor/scripts/obol-status.sh
+sudo -u ethereum bash /usr/share/staking-monitor/obol-monitor/scripts/control-status.sh
 ```
 
 ---
@@ -414,8 +445,8 @@ sudo ufw allow from <obol-node-vpn-ip> to any port 5052
 Run from either control node to debug inter-node connectivity issues:
 
 ```bash
-bash /home/ethereum/.obol-monitor/scripts/diagnose-connectivity.sh
-bash /home/ethereum/.obol-monitor/scripts/diagnose-connectivity.sh <peer-vpn-ip>
+bash /usr/share/staking-monitor/obol-monitor/scripts/diagnose-connectivity.sh
+bash /usr/share/staking-monitor/obol-monitor/scripts/diagnose-connectivity.sh <peer-vpn-ip>
 ```
 
 Runs 8 checks: network interfaces, routing table, ping, Tailscale direct path,
@@ -430,8 +461,11 @@ For validators outside the Obol cluster (solo staking, Lido CSM on a separate
 machine). Located in `staking-monitor/validator-monitor/`.
 
 ```bash
-cd validator-monitor
-bash install.sh
+# From APT package
+bash /usr/share/staking-monitor/validator-monitor/install.sh
+
+# From source
+cd validator-monitor && bash install.sh
 ```
 
 Installs to `/home/ethereum/.validator-monitor/`. Checks missed attestations

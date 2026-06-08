@@ -1,5 +1,5 @@
 # ======================================================================
-# Ethereum on ARM — Production Packaging Makefile (staking-monitor)
+# Ethereum on ARM — Production Packaging Makefile (ethereumonarm-staking-stack)
 # ----------------------------------------------------------------------
 # Builds .deb and .rpm packages for ARM systems using FPM.
 # - This is a meta-package that ships bash scripts and config files
@@ -46,7 +46,7 @@ else
 # ----------------------------------------------------------------------
 # Package metadata
 # ----------------------------------------------------------------------
-PKG_NAME        ?= ethereumonarm-staking-monitor
+PKG_NAME        ?= ethereumonarm-staking-stack
 PKG_RELEASE     ?= 0
 PKG_ARCH        ?= all
 PKG_ARCH_RPM    ?= noarch
@@ -136,10 +136,10 @@ all: prepare deb clean test ## Default local build pipeline
 # ----------------------------------------------------------------------
 prepare: ## Fix permissions on scripts and config files
 	@echo "🌱 Preparing sources..."
-	find $(SOURCESDIR)/usr/share/staking-monitor -name "*.sh" -exec chmod 755 {} \;
-	find $(SOURCESDIR)/usr/share/staking-monitor -name "*.env.example" -exec chmod 644 {} \;
-	find $(SOURCESDIR)/usr/share/staking-monitor -name "*-crontab" -exec chmod 644 {} \;
-	find $(SOURCESDIR)/usr/share/staking-monitor -name "*.md" -exec chmod 644 {} \;
+	find $(SOURCESDIR)/usr/share/ethereumonarm-staking-stack -name "*.sh" -exec chmod 755 {} \;
+	find $(SOURCESDIR)/usr/share/ethereumonarm-staking-stack -name "*.env.example" -exec chmod 644 {} \;
+	find $(SOURCESDIR)/usr/share/ethereumonarm-staking-stack -name "*-crontab" -exec chmod 644 {} \;
+	find $(SOURCESDIR)/usr/share/ethereumonarm-staking-stack -name "*.md" -exec chmod 644 {} \;
 	chmod 755 $(SOURCESDIR)/extras/postinst
 	chmod 755 $(SOURCESDIR)/extras/prerm
 	@echo "🌱 Sources ready"

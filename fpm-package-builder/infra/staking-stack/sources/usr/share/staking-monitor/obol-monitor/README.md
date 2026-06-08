@@ -117,12 +117,12 @@ only when all validators are attesting correctly again.
 ### Package layout (installed via `apt`)
 
 Scripts and libraries are installed to `/usr/share/` and updated automatically
-by `apt upgrade staking-monitor`. User data (config, locks, logs) is stored
+by `apt upgrade ethereumonarm-staking-stack`. User data (config, locks, logs) is stored
 separately in `/home/ethereum/.obol-monitor/` and is never touched by package
 upgrades.
 
 ```
-/usr/share/staking-monitor/obol-monitor/
+/usr/share/ethereumonarm-staking-stack/obol-monitor/
 ├── install.sh                        # Installer — run this first
 ├── README.md
 ├── conf/
@@ -162,27 +162,27 @@ upgrades.
 ### From APT package (recommended)
 
 ```bash
-sudo apt install staking-monitor
+sudo apt install ethereumonarm-staking-stack
 ```
 
 Then run the interactive installer on each node:
 
 ```bash
 # On each Obol node
-bash /usr/share/staking-monitor/obol-monitor/install.sh obol
+bash /usr/share/ethereumonarm-staking-stack/obol-monitor/install.sh obol
 
 # On the active control node
-bash /usr/share/staking-monitor/obol-monitor/install.sh control
+bash /usr/share/ethereumonarm-staking-stack/obol-monitor/install.sh control
 
 # On the failover control node
-bash /usr/share/staking-monitor/obol-monitor/install.sh control-failover
+bash /usr/share/ethereumonarm-staking-stack/obol-monitor/install.sh control-failover
 ```
 
 ### From source (development)
 
 ```bash
 git clone https://github.com/EOA-Blockchain-Labs/ethereumonarm
-cd ethereumonarm/staking-monitor/obol-monitor
+cd ethereumonarm/ethereumonarm-staking-stack/obol-monitor
 bash install.sh obol        # or control / control-failover
 ```
 
@@ -221,9 +221,9 @@ node as long as the active node responds to the EL API or relay probe.
 ### Install crontab (all node types, after setup)
 
 ```bash
-bash /usr/share/staking-monitor/obol-monitor/install.sh obol crontab
-bash /usr/share/staking-monitor/obol-monitor/install.sh control crontab
-bash /usr/share/staking-monitor/obol-monitor/install.sh control-failover crontab
+bash /usr/share/ethereumonarm-staking-stack/obol-monitor/install.sh obol crontab
+bash /usr/share/ethereumonarm-staking-stack/obol-monitor/install.sh control crontab
+bash /usr/share/ethereumonarm-staking-stack/obol-monitor/install.sh control-failover crontab
 ```
 
 ---
@@ -232,16 +232,16 @@ bash /usr/share/staking-monitor/obol-monitor/install.sh control-failover crontab
 
 ```bash
 # Obol node
-sudo -u ethereum bash /usr/share/staking-monitor/obol-monitor/scripts/obol-health.sh
-sudo -u ethereum bash /usr/share/staking-monitor/obol-monitor/scripts/obol-status.sh
+sudo -u ethereum bash /usr/share/ethereumonarm-staking-stack/obol-monitor/scripts/obol-health.sh
+sudo -u ethereum bash /usr/share/ethereumonarm-staking-stack/obol-monitor/scripts/obol-status.sh
 
 # Control / failover node
-sudo -u ethereum bash /usr/share/staking-monitor/obol-monitor/scripts/control-health.sh
-sudo -u ethereum bash /usr/share/staking-monitor/obol-monitor/scripts/control-status.sh
-sudo -u ethereum bash /usr/share/staking-monitor/obol-monitor/scripts/validator-duties.sh
+sudo -u ethereum bash /usr/share/ethereumonarm-staking-stack/obol-monitor/scripts/control-health.sh
+sudo -u ethereum bash /usr/share/ethereumonarm-staking-stack/obol-monitor/scripts/control-status.sh
+sudo -u ethereum bash /usr/share/ethereumonarm-staking-stack/obol-monitor/scripts/validator-duties.sh
 
 # Package update check (any node)
-sudo -u ethereum bash /usr/share/staking-monitor/obol-monitor/scripts/check-updates.sh
+sudo -u ethereum bash /usr/share/ethereumonarm-staking-stack/obol-monitor/scripts/check-updates.sh
 ```
 
 ---
@@ -349,8 +349,8 @@ A status report is also triggered automatically on incident start and recovery.
 
 Run on demand:
 ```bash
-sudo -u ethereum bash /usr/share/staking-monitor/obol-monitor/scripts/obol-status.sh
-sudo -u ethereum bash /usr/share/staking-monitor/obol-monitor/scripts/control-status.sh
+sudo -u ethereum bash /usr/share/ethereumonarm-staking-stack/obol-monitor/scripts/obol-status.sh
+sudo -u ethereum bash /usr/share/ethereumonarm-staking-stack/obol-monitor/scripts/control-status.sh
 ```
 
 ---
@@ -445,8 +445,8 @@ sudo ufw allow from <obol-node-vpn-ip> to any port 5052
 Run from either control node to debug inter-node connectivity issues:
 
 ```bash
-bash /usr/share/staking-monitor/obol-monitor/scripts/diagnose-connectivity.sh
-bash /usr/share/staking-monitor/obol-monitor/scripts/diagnose-connectivity.sh <peer-vpn-ip>
+bash /usr/share/ethereumonarm-staking-stack/obol-monitor/scripts/diagnose-connectivity.sh
+bash /usr/share/ethereumonarm-staking-stack/obol-monitor/scripts/diagnose-connectivity.sh <peer-vpn-ip>
 ```
 
 Runs 8 checks: network interfaces, routing table, ping, Tailscale direct path,
@@ -458,11 +458,11 @@ interference detection (including custom-named interfaces like `nanopct6`).
 ## Standalone validator duties monitor
 
 For validators outside the Obol cluster (solo staking, Lido CSM on a separate
-machine). Located in `staking-monitor/validator-monitor/`.
+machine). Located in `ethereumonarm-staking-stack/validator-monitor/`.
 
 ```bash
 # From APT package
-bash /usr/share/staking-monitor/validator-monitor/install.sh
+bash /usr/share/ethereumonarm-staking-stack/validator-monitor/install.sh
 
 # From source
 cd validator-monitor && bash install.sh

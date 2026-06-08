@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# staking-monitor prerm
+# ethereumonarm-staking-stack prerm
 # Notes about user data preservation before removal.
 # Does NOT remove /home/ethereum/.obol-monitor or .validator-monitor
 # to preserve user configuration and lock files.
@@ -8,7 +8,7 @@
 
 set -e
 
-echo "Removing staking-monitor package files."
+echo "Removing ethereumonarm-staking-stack package files."
 echo "User data preserved in:"
 echo "  /home/ethereum/.obol-monitor"
 echo "  /home/ethereum/.validator-monitor"

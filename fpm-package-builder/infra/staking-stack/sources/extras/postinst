@@ -1,12 +1,12 @@
 #!/bin/bash
 # =============================================================================
-# staking-monitor postinst
+# ethereumonarm-staking-stack postinst
 # Sets permissions on installed scripts and prints usage instructions.
 # =============================================================================
 
 set -e
 
-SHARE_DIR="/usr/share/staking-monitor"
+SHARE_DIR="/usr/share/ethereumonarm-staking-stack"
 
 # Make all scripts executable
 find "${SHARE_DIR}" -name "*.sh" -exec chmod 755 {} \;
@@ -16,21 +16,21 @@ find "${SHARE_DIR}" -name "*-crontab" -exec chmod 644 {} \;
 
 echo ""
 echo "════════════════════════════════════════════════════════"
-echo "  staking-monitor installed successfully"
+echo "  ethereumonarm-staking-stack installed successfully"
 echo "════════════════════════════════════════════════════════"
 echo ""
 echo "  1. obol-monitor — Obol DVT cluster monitoring"
 echo "     Run the installer on each node:"
 echo ""
-echo "     bash /usr/share/staking-monitor/obol-monitor/install.sh obol"
-echo "     bash /usr/share/staking-monitor/obol-monitor/install.sh control"
-echo "     bash /usr/share/staking-monitor/obol-monitor/install.sh control-failover"
+echo "     bash /usr/share/ethereumonarm-staking-stack/obol-monitor/install.sh obol"
+echo "     bash /usr/share/ethereumonarm-staking-stack/obol-monitor/install.sh control"
+echo "     bash /usr/share/ethereumonarm-staking-stack/obol-monitor/install.sh control-failover"
 echo ""
 echo "  2. validator-monitor — Standalone validator duty monitoring"
-echo "     bash /usr/share/staking-monitor/validator-monitor/install.sh"
+echo "     bash /usr/share/ethereumonarm-staking-stack/validator-monitor/install.sh"
 echo ""
 echo "  3. Validator key import tools:"
-echo "     /usr/share/staking-monitor/tools/"
+echo "     /usr/share/ethereumonarm-staking-stack/tools/"
 echo ""
-echo "  Documentation: /usr/share/doc/staking-monitor/README.md"
+echo "  Documentation: /usr/share/doc/ethereumonarm-staking-stack/README.md"
 echo "════════════════════════════════════════════════════════"

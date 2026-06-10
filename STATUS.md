@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-06-09 06:53:56 UTC_
+_Last updated: 2026-06-10 07:12:59 UTC_
 
 ## What this report compares
 
@@ -76,7 +76,7 @@ _Last updated: 2026-06-09 06:53:56 UTC_
 | `optimism-op-geth` | `1.101702.2` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101702.2` | ✅ Up-to-date |
 | `optimism-op-node` | `1.19.0` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.19.0` | ✅ Up-to-date |
 | `optimism-op-reth` | `2.2.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |
-| `starknet-juno` | `0.16.1` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.16.0` | ❌ Outdated |
+| `starknet-juno` | `0.16.2` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.16.0` | ❌ Outdated |
 | `starknet-madara` | `0.10.2` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.2` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.22.5` ([equilibriumco/pathfinder](https://github.com/equilibriumco/pathfinder)) | `0.22.3` | ❌ Outdated |
 

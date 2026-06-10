@@ -55,7 +55,7 @@ Select a topic to get started:
 *   :doc:`💻 Contributing </contributing/guidelines>`: Help us improve the project.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :hidden:
    :caption: 🚀 Getting Started
 
@@ -66,7 +66,7 @@ Select a topic to get started:
    /getting-started/quickstart-cheatsheet
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :hidden:
    :caption: ℹ️ Overview
 
@@ -78,7 +78,7 @@ Select a topic to get started:
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :hidden:
    :caption: ⚙️ Running a Node
 
@@ -92,7 +92,7 @@ Select a topic to get started:
    /running-a-node/testnets
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :hidden:
    :caption: 🔒 Staking
 
@@ -103,7 +103,7 @@ Select a topic to get started:
    /staking/migrate-validator
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :hidden:
    :caption: 🌐 Networks
 
@@ -113,7 +113,7 @@ Select a topic to get started:
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :hidden:
    :caption: 🛠️ System Utilities
 
@@ -124,7 +124,7 @@ Select a topic to get started:
    /system/troubleshooting
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :hidden:
    :caption: ⚡ Advanced Configuration
 
@@ -135,7 +135,7 @@ Select a topic to get started:
    /advanced/manual-verification
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :hidden:
    :caption: 💻 Contributing
 
@@ -144,7 +144,7 @@ Select a topic to get started:
    /contributing/sources
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :hidden:
    :caption: 📦 Packages
 

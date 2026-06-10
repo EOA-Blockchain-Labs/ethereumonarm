@@ -1,7 +1,11 @@
 #!/bin/bash
 # =============================================================================
-# sync-indices.sh — Extract pubkeys from EIP-2335 keystore JSON files and
-# resolve them to validator indices via the local Beacon API.
+# sync-indices.sh — Extract full validator public keys and resolve them to
+# validator indices via the local Beacon API.
+#
+# Supports two cluster types:
+#   - Group cluster (Obol DKG): reads full pubkeys from cluster-lock.json
+#   - Solo cluster (single operator): reads pubkeys from EIP-2335 keystore files
 #
 # Writes a JSON cache file:
 #   { "0xpubkey": "index", ... }
@@ -30,32 +34,77 @@ echo "=== Validator Index Sync — $(date) ==="
 echo ""
 
 # =============================================================================
-# STEP 1 — Find all keystore files and extract public keys
-# =============================================================================
-echo "Scanning keystore directory: ${KEYSTORE_DIR}"
-
-if [ ! -d "$KEYSTORE_DIR" ]; then
-    echo "ERROR: KEYSTORE_DIR '${KEYSTORE_DIR}' does not exist." >&2
-    exit 1
-fi
-
-# Collect pubkeys into a temp file, one per line.
-# Keystores are EIP-2335 JSON files with a top-level "pubkey" field.
-# The pubkey is a 48-byte BLS12-381 key = 96 hex chars, with or without 0x.
-# We skip files that do not look like keystores (slashing_protection.json etc).
+# STEP 1 — Extract full validator public keys.
 #
-# NOTE: python3 -c (inline script) is used deliberately instead of a heredoc.
-# A heredoc (python3 - << EOF) inside a piped while loop causes a stdin
-# conflict: bash feeds the find|sort pipeline into "read" and the heredoc
-# into python3 at the same time, making python3 silently exit without output.
+# Two sources depending on cluster type:
+#
+#   A) GROUP CLUSTER (Obol DKG with multiple operators):
+#      Keystore files in .charon/validator_keys/ contain PARTIAL public keys
+#      (key shares from Shamir's Secret Sharing). These are NOT the validator
+#      public keys registered on the beacon chain.
+#      The FULL validator public keys are in cluster-lock.json under
+#      .distributed_validators[].distributed_public_key
+#
+#   B) SOLO CLUSTER (single operator, own keystore):
+#      Keystore files contain the FULL validator public key directly.
+#
+# Detection: if cluster-lock.json exists alongside the keystores, use it.
+# Otherwise fall back to reading pubkeys from keystore files.
+# =============================================================================
 
 PUBKEY_TMP=$(mktemp)
 
-# Use process substitution so the while loop is NOT inside a pipeline —
-# this ensures the while loop runs in the current shell, not a subshell,
-# and avoids all stdin conflicts with python3.
-while IFS= read -r keyfile; do
+# Determine the cluster-lock path (same dir as KEYSTORE_DIR or one level up)
+CLUSTER_LOCK=""
+for _lock_candidate in     "${KEYSTORE_DIR}/cluster-lock.json"     "$(dirname "${KEYSTORE_DIR}")/cluster-lock.json"     "/home/ethereum/.charon/cluster-lock.json"; do
+    if [ -f "$_lock_candidate" ]; then
+        CLUSTER_LOCK="$_lock_candidate"
+        break
+    fi
+done
+
+if [ -n "$CLUSTER_LOCK" ]; then
+    # ── GROUP CLUSTER ── read distributed_public_key from cluster-lock.json
+    echo "Group cluster detected."
+    echo "Reading full validator public keys from: ${CLUSTER_LOCK}"
     python3 -c "
+import sys, json, re
+try:
+    with open(sys.argv[1]) as f:
+        lock = json.load(f)
+    dvs = lock.get('distributed_validators', [])
+    for dv in dvs:
+        pubkey = str(dv.get('distributed_public_key', '')).strip().lower()
+        if not pubkey.startswith('0x'):
+            pubkey = '0x' + pubkey
+        if re.fullmatch(r'0x[0-9a-f]{96}', pubkey):
+            print(pubkey)
+except Exception as e:
+    print(f'ERROR: {e}', file=sys.stderr)
+    sys.exit(1)
+" "$CLUSTER_LOCK" > "$PUBKEY_TMP" 2>&1
+    if [ $? -ne 0 ]; then
+        echo "ERROR: Failed to read cluster-lock.json" >&2
+        rm -f "$PUBKEY_TMP"
+        exit 1
+    fi
+else
+    # ── SOLO CLUSTER ── read pubkeys from EIP-2335 keystore files
+    echo "Solo cluster detected (no cluster-lock.json found)."
+    echo "Scanning keystore directory: ${KEYSTORE_DIR}"
+
+    if [ ! -d "$KEYSTORE_DIR" ]; then
+        echo "ERROR: KEYSTORE_DIR '${KEYSTORE_DIR}' does not exist." >&2
+        rm -f "$PUBKEY_TMP"
+        exit 1
+    fi
+
+    # NOTE: python3 -c (inline script) is used deliberately instead of a heredoc.
+    # A heredoc inside a piped while loop causes a stdin conflict: bash feeds
+    # the find|sort pipeline into "read" and the heredoc into python3 at the
+    # same time, making python3 silently exit without output.
+    while IFS= read -r keyfile; do
+        python3 -c "
 import sys, json, re
 try:
     with open(sys.argv[1]) as f:
@@ -68,17 +117,23 @@ try:
 except Exception:
     pass
 " "$keyfile" 2>/dev/null
-done < <(find "$KEYSTORE_DIR" -name "*.json" -type f | sort) > "$PUBKEY_TMP"
+    done < <(find "$KEYSTORE_DIR" -name "*.json" -type f | sort) > "$PUBKEY_TMP"
+fi
 
 TOTAL=$(wc -l < "$PUBKEY_TMP" | tr -d ' ')
 
 if [ "$TOTAL" -eq 0 ]; then
-    echo "ERROR: No valid keystore files found in ${KEYSTORE_DIR}" >&2
+    echo "ERROR: No valid validator public keys found." >&2
+    if [ -n "$CLUSTER_LOCK" ]; then
+        echo "       Check that cluster-lock.json has distributed_validators entries." >&2
+    else
+        echo "       Check that ${KEYSTORE_DIR} contains valid EIP-2335 keystore files." >&2
+    fi
     rm -f "$PUBKEY_TMP"
     exit 1
 fi
 
-echo "Found ${TOTAL} keystore file(s)."
+echo "Found ${TOTAL} validator(s)."
 echo ""
 
 # =============================================================================

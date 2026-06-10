@@ -427,10 +427,20 @@ else
 
     echo "─── Validator duties monitoring ─────────────"
     echo ""
-    echo "  The control node checks missed attestations and proposals via the"
-    echo "  local beacon API. Provide the directory containing keystore .json files."
+    echo "  Are you part of a GROUP CLUSTER (Obol DKG with multiple operators)"
+    echo "  or a SOLO CLUSTER (single operator)?"
     echo ""
-    echo "  Common locations:"
+    echo "  GROUP CLUSTER: validator pubkeys are read from cluster-lock.json."
+    echo "  Copy cluster-lock.json from an Obol node to this control node first,"
+    echo "  then provide its full path (e.g. /home/ethereum/cluster-lock.json)."
+    echo "  Leave empty if solo cluster."
+    echo ""
+    ask_optional "Path to cluster-lock.json (group cluster, leave empty if solo)"
+    Q_CLUSTER_LOCK_FILE="$ANSWER"
+    echo ""
+    echo "  Keystore directory containing EIP-2335 .json files:"
+    echo "  (used for solo cluster pubkeys or as fallback for group cluster)"
+    echo "    Default    : /home/ethereum/validator_keys"
     echo "    Lighthouse : /home/ethereum/.lighthouse/mainnet/validators"
     echo "    Nimbus     : /home/ethereum/.nimbus-beacon/validators"
     echo "    Teku       : /home/ethereum/.teku/validator/key-manager/local"
@@ -438,7 +448,7 @@ else
     echo "    Lodestar   : /home/ethereum/.lodestar-beacon/validator/keystores"
     echo "    Grandine   : /home/ethereum/.grandine-beacon/mainnet/validator"
     echo ""
-    ask_required "Path to directory containing keystore .json files"
+    ask_required "Path to keystore directory"
     Q_KEYSTORE_DIR="$ANSWER"
     echo ""
 
@@ -539,6 +549,7 @@ sed -i \
     -e "s|__VPN_IP__|${Q_VPN_IP}|g" \
     -e "s|__PEER_CONTROL_IP__|${Q_PEER_CONTROL_IP}|g" \
     -e "s|__FAILOVER_CONTROL_IP__|${Q_FAILOVER_CONTROL_IP}|g" \
+    -e "s|__CLUSTER_LOCK_FILE__|${Q_CLUSTER_LOCK_FILE}|g" \
     -e "s|__KEYSTORE_DIR__|${Q_KEYSTORE_DIR}|g" \
     -e "s|__CLUSTER_SIZE__|${Q_CLUSTER_SIZE}|g" \
     -e "s|__USING_LIDO__|${USING_LIDO}|g" \

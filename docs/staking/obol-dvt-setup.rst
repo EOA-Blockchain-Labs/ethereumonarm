@@ -19,12 +19,7 @@ What you get with Obol DVT
 Running an Obol DVT cluster at home provides resilience against the most
 common causes of validator downtime:
 
-**No single point of failure**
-
-As long as a threshold of nodes remain online and in sync, the cluster keeps
-attesting. This means:
-
-- **ISP outage** — if each node is on a different internet connection, 
+- **ISP outage** — if each node is on a different internet connection,
   a single provider going down does not affect the cluster
 - **Power blackout** — if nodes are geographically distributed, a local power
   cut only affects one node, and the cluster continues signing
@@ -153,8 +148,8 @@ Once all nodes are prepared, install the required packages on each node:
 
    sudo apt-get update && sudo apt-get install dvt-obol ethereumonarm-staking-stack
 
-Create a cluster Alone
-----------------------
+Creating a cluster Alone
+------------------------
 
 A solo DVT cluster means a single operator runs all nodes. This section covers
 two scenarios: migrating existing validators into a DVT cluster, and creating a
@@ -351,8 +346,8 @@ each cluster node and import the generated keystores into the validator clients.
    are geographically distributed. For a DV Alone setup the command-line
    approach above is simpler and does not require the Launchpad.
 
-Create a cluster as a Group
----------------------------
+Creating a cluster as a Group
+-----------------------------
 
 A group DVT cluster involves multiple independent operators, each running one
 node. The validator key is never held by any single operator — it is generated
@@ -558,3 +553,161 @@ validator client. Use the import scripts included with the
    its path during the ``ethereumonarm-staking-stack`` installation. The monitor
    uses the full validator public keys from ``cluster-lock.json`` to track
    duties on the beacon chain.
+
+Monitoring the Obol cluster
+---------------------------
+
+The ``ethereumonarm-staking-stack`` package includes a comprehensive monitoring
+solution that sends Telegram alerts for cluster health, validator duties, node
+connectivity, and client updates. Alerts are sent to the Telegram channel or
+group created in the :ref:`Telegram notifications` section of the prerequisites.
+
+The monitoring covers three node roles, each installed separately.
+
+Obol node
+^^^^^^^^^
+
+Install on each of the 3 Obol cluster nodes. The Obol node monitor checks its
+own services, sync status, Charon DVT connectivity, peer counts, and system
+resources (disk, swap, CPU temperature). It sends alerts directly to Telegram
+and does not depend on the control nodes.
+
+Run the installer on each Obol node:
+
+.. prompt:: bash $
+
+   bash /usr/share/ethereumonarm-staking-stack/obol-monitor/install.sh obol
+
+The installer will ask for:
+
+- **Node name** — a label used in all alert messages (e.g. ``rock5b-plus-home-vodafone``)
+- **Telegram bot token** — from ``@BotFather`` (see Prerequisites)
+- **Telegram chat ID** — the ``id`` from ``getUpdates`` (see Prerequisites)
+- **VPN IP** — the Tailscale (or other VPN) IP of this node (optional but recommended)
+- **Cluster size** — number of nodes in the cluster (e.g. ``3``)
+- **Lido CSM** — whether this cluster is running Lido Community Staking Module validators
+
+Once installed, test the scripts manually before enabling the crontab:
+
+.. prompt:: bash $
+
+   sudo -u ethereum bash /usr/share/ethereumonarm-staking-stack/obol-monitor/scripts/obol-health.sh
+
+Then install the crontab to start automated monitoring:
+
+.. prompt:: bash $
+
+   bash /usr/share/ethereumonarm-staking-stack/obol-monitor/install.sh obol crontab
+
+Active control node
+^^^^^^^^^^^^^^^^^^^
+
+Install on the **active** control node. The control node monitor checks all
+Obol nodes remotely every 5 minutes via Charon's HTTP API, monitors the
+failover control node, runs the validator duties checker every 7 minutes, and
+checks its own local services. All alerts include recovery notifications when
+conditions resolve.
+
+Before running the installer, ensure the active control node can reach all Obol
+nodes over VPN (Tailscale or equivalent).
+
+.. prompt:: bash $
+
+   bash /usr/share/ethereumonarm-staking-stack/obol-monitor/install.sh control
+
+The installer will ask for:
+
+- **Node name** — label for this control node in alerts
+- **Telegram bot token and chat ID** — same as the Obol nodes
+- **Cluster size** — number of Obol nodes being monitored
+- **VPN IP of each Obol node** — used to query Charon's API on port 3620
+- **Failover control node VPN IP** — the active node monitors the failover
+  and alerts if it goes down
+- **Keystore or cluster-lock directory** — for validator duties monitoring:
+
+  - **DV Alone**: path to the directory containing EIP-2335 keystore files
+    (default ``/home/ethereum/validator_keys``)
+  - **DV as a Group**: path to ``cluster-lock.json`` copied from an Obol node
+    (e.g. ``/home/ethereum/cluster-lock.json``). The full validator public keys
+    are read from this file automatically
+
+Test before enabling crontab:
+
+.. prompt:: bash $
+
+   sudo -u ethereum bash /usr/share/ethereumonarm-staking-stack/obol-monitor/scripts/control-health.sh
+   sudo -u ethereum bash /usr/share/ethereumonarm-staking-stack/obol-monitor/scripts/validator-duties.sh
+
+Install the crontab:
+
+.. prompt:: bash $
+
+   bash /usr/share/ethereumonarm-staking-stack/obol-monitor/install.sh control crontab
+
+Failover control node
+^^^^^^^^^^^^^^^^^^^^^
+
+Install on the **failover** control node. The failover node is passive by
+default — it probes the active control node every 5 minutes and takes over
+monitoring automatically if the active node becomes unreachable. It runs the
+same validator duties checks but defers to the active node while it is online,
+preventing duplicate alerts.
+
+.. prompt:: bash $
+
+   bash /usr/share/ethereumonarm-staking-stack/obol-monitor/install.sh control-failover
+
+The installer will ask for the same information as the active control node,
+plus:
+
+- **Active control node VPN IP** — used to probe the primary node and decide
+  when to take over
+
+The failover probes the active node using three checks in sequence:
+
+1. **EL API query** — if the primary responds, the failover defers silently
+2. **Charon relay query** — if the relay responds but EL does not, the node
+   is up and the failover still defers
+3. **VPN ping** — only reached if both EL and relay fail. If the ping also
+   fails across two consecutive check cycles, the failover takes over
+
+All peer-related alerts require **two consecutive failing cycles** (~10 minutes)
+before firing. This prevents false alerts caused by transient VPN re-keying
+or brief service restarts.
+
+Test before enabling crontab:
+
+.. prompt:: bash $
+
+   sudo -u ethereum bash /usr/share/ethereumonarm-staking-stack/obol-monitor/scripts/control-health.sh
+
+Install the crontab:
+
+.. prompt:: bash $
+
+   bash /usr/share/ethereumonarm-staking-stack/obol-monitor/install.sh control-failover crontab
+
+.. note::
+
+   If the control node's VPN connection drops, all Obol nodes will appear
+   unreachable even if the cluster is healthy. The monitor detects this
+   condition by pinging the Obol nodes before running remote checks — if none
+   respond, a single ``⚠️ Network connectivity lost`` alert is sent instead of
+   a cascade of false node-down alerts. Remote checks are suspended until
+   connectivity is restored.
+
+Alerts and recovery notifications
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+All alerts include automatic **recovery notifications** — when a condition
+resolves, a ``✅`` message is sent to Telegram without any additional
+configuration. Alert deduplication prevents repeated messages for the same
+condition using per-condition lock files. Standard alerts do not repeat for
+24 hours. Failover and peer-down alerts use a 72-hour window to ensure
+recovery messages are not missed.
+
+A full cluster status report is sent every **Monday at 08:00** and is also
+triggered automatically on incident start and recovery. The daily package
+update check (09:00) sends a ``📦`` alert whenever a new version of a running
+client (EL, CL, MEV-Boost or Charon) is available in the Ethereum on ARM APT
+repository.

@@ -155,46 +155,44 @@ Once all nodes are prepared, install the required packages on each node:
 
 Create a cluster Alone
 ----------------------
- 
+
 A solo DVT cluster means a single operator runs all nodes. This section covers
 two scenarios: migrating existing validators into a DVT cluster, and creating a
 fresh cluster with new validators.
- 
+
 Case 1: Migrating existing validators
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 If you are already running validators, you need to split your existing keystores
 across the cluster nodes using Charon's key splitting feature.
- 
-Step 1: Prepare the keystores
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
+
+**Step 1: Prepare the keystores**
+
 Charon's ``--split-existing-keys`` option expects keystores named
 ``keystore-N.json`` with a matching ``keystore-N.txt`` file containing the
 password for each keystore. Use the preparation script included with the
 ``ethereumonarm-staking-stack`` package to rename and prepare your files:
- 
+
 .. prompt:: bash $
- 
+
    bash /usr/share/ethereumonarm-staking-stack/tools/prepare-validator-keys.sh
- 
+
 The script will ask for the keystores directory (default
 ``/home/ethereum/validator_keys``) and the keystore password. It renames all
 existing keystore JSON files to the required format and creates the matching
 password files.
- 
-Step 2: Create the cluster and split the keys
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
+
+**Step 2: Create the cluster and split the keys**
+
 You can run this command on any machine that has the ``charon`` binary
 installed — your desktop, a laptop, or one of the cluster nodes. It does not
 need to be run on a node that will participate in the cluster.
- 
+
 Once the keystores are prepared, use ``charon create cluster`` to split them
 across the cluster nodes. Replace the values in angle brackets with your own:
- 
+
 .. prompt:: bash $
- 
+
    charon create cluster \
      --nodes=3 \
      --network=mainnet \
@@ -204,126 +202,122 @@ across the cluster nodes. Replace the values in angle brackets with your own:
      --split-keys-dir=/home/ethereum/validator_keys \
      --fee-recipient-addresses=<0xYOUR_FEE_RECIPIENT> \
      --withdrawal-addresses=<0xYOUR_WITHDRAWAL_ADDRESS>
- 
+
 Adjust ``--nodes`` to match the number of nodes in your cluster (minimum 3 for
 a DV Alone setup).
- 
+
 .. warning::
- 
+
    Back up the entire ``--cluster-dir`` output directory before proceeding.
    This directory contains the ``charon-enr-private-key`` for each node, the
    ``cluster-lock.json``, and the split validator key shares. **This data
    cannot be regenerated.** If it is lost, access to the validators may be
    permanently lost. Store copies in at least two separate secure locations.
- 
-Step 3: Distribute the node directories
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
+
+**Step 3: Distribute the node directories**
+
 After the command completes, the ``--cluster-dir`` will contain one directory
 per node (``node0``, ``node1``, ``node2``, etc.). Copy each directory to its
 corresponding node and rename it to ``/home/ethereum/.charon``:
- 
+
 .. code-block:: bash
- 
+
    # On the machine where you ran charon create cluster:
    scp -r /home/ethereum/cluster/node0/ ethereum@<node1-ip>:/home/ethereum/.charon
    scp -r /home/ethereum/cluster/node1/ ethereum@<node2-ip>:/home/ethereum/.charon
    scp -r /home/ethereum/cluster/node2/ ethereum@<node3-ip>:/home/ethereum/.charon
- 
+
 .. warning::
- 
+
    The ``charon-enr-private-key`` file inside each node directory is unique to
    that node. Never copy the same node directory to multiple machines.
- 
-Step 4: Import the validator keys into the validator client
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
+
+**Step 4: Import the validator keys into the validator client**
+
 Each node's split keystores are located at
 ``/home/ethereum/.charon/validator_keys``. Use the import scripts included with
 the ``ethereumonarm-staking-stack`` package to import them into your validator
 client. The scripts stop the service, import the keystores one by one using
 the matching per-keystore password files, and restart the service automatically.
- 
+
 All scripts default to ``/home/ethereum/.charon/validator_keys`` as the source
 directory and use a dedicated data directory for the Obol validator instance
 to keep it separate from any existing solo staking setup.
- 
+
 **Lighthouse** — imports into ``/home/ethereum/.lighthouse-validator-obol``:
- 
+
 .. prompt:: bash $
- 
+
    bash /usr/share/ethereumonarm-staking-stack/tools/import-validators-lighthouse.sh
- 
+
 **Nimbus** — imports into ``/home/ethereum/.nimbus-validator-obol``:
- 
+
 .. prompt:: bash $
- 
+
    bash /usr/share/ethereumonarm-staking-stack/tools/import-validators-nimbus.sh
- 
+
 **Prysm** — imports into ``/home/ethereum/.prysm-validator-obol``:
- 
+
 .. prompt:: bash $
- 
+
    bash /usr/share/ethereumonarm-staking-stack/tools/import-validators-prysm.sh
- 
+
 **Teku** — imports into ``/home/ethereum/.teku-validator-obol``:
- 
+
 .. prompt:: bash $
- 
+
    bash /usr/share/ethereumonarm-staking-stack/tools/import-validators-teku.sh
- 
+
 **Lodestar** — imports into ``/home/ethereum/.lodestar-validator-obol``:
- 
+
 .. prompt:: bash $
- 
+
    bash /usr/share/ethereumonarm-staking-stack/tools/import-validators-lodestar.sh
- 
+
 **Grandine** — copies keystores to ``/home/ethereum/.grandine-validator-obol``:
- 
+
 .. prompt:: bash $
- 
+
    bash /usr/share/ethereumonarm-staking-stack/tools/import-validators-grandine.sh
- 
+
 Case 2: Creating a fresh cluster with new validators
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 If you do not have existing validators, you need to generate new validator keys
 as part of the cluster creation process. Charon handles this internally — no
 separate key generation step is needed.
- 
-Step 1: Generate the ENR for each node
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
+
+**Step 1: Generate the ENR for each node**
+
 On each node that will be part of the cluster, generate a Charon ENR (a
 cryptographic identity used for peer discovery and authentication):
- 
+
 .. prompt:: bash $
- 
+
    charon create enr
- 
+
 This creates the file ``/home/ethereum/.charon/charon-enr-private-key`` and
 prints your ENR to the terminal. It will look like:
- 
+
 .. code-block:: text
- 
+
    enr:-JG4QGQpV4qYe32QFUAbY1UyGNtNcrVMip83cvJRhw1brMslPeyELIz3q6dsZ7...
- 
+
 .. warning::
- 
+
    Back up ``/home/ethereum/.charon/charon-enr-private-key`` securely on each
    node. If you lose this file you will not be able to participate in the
    cluster.
- 
+
 Collect the ENR output from all nodes before proceeding to the next step.
- 
-Step 2: Create the cluster
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
+
+**Step 2: Create the cluster**
+
 As with Case 1, this command can be run on any machine with the ``charon``
 binary — it does not need to be one of the cluster nodes.
- 
+
 .. prompt:: bash $
- 
+
    charon create cluster \
      --nodes=3 \
      --network=mainnet \
@@ -332,26 +326,25 @@ binary — it does not need to be one of the cluster nodes.
      --fee-recipient-addresses=<0xYOUR_FEE_RECIPIENT> \
      --withdrawal-addresses=<0xYOUR_WITHDRAWAL_ADDRESS> \
      --operator-enrs=<enr-node1>,<enr-node2>,<enr-node3>
- 
+
 Replace ``<enr-node1>``, ``<enr-node2>``, ``<enr-node3>`` with the ENRs
 collected in Step 1.
- 
+
 .. warning::
- 
+
    Back up the entire ``--cluster-dir`` output directory before proceeding.
    This directory contains the ``charon-enr-private-key`` for each node, the
    ``cluster-lock.json``, and the generated validator key shares. **This data
    cannot be regenerated.** If it is lost, access to the validators may be
    permanently lost. Store copies in at least two separate secure locations.
- 
-Step 3: Distribute node directories and import keys
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
+
+**Step 3: Distribute node directories and import keys**
+
 Follow Steps 3 and 4 from Case 1 above to distribute the node directories to
 each cluster node and import the generated keystores into the validator clients.
- 
+
 .. note::
- 
+
    The Obol Launchpad at https://launchpad.obol.org provides a web interface
    for creating clusters, sharing ENRs between operators, and coordinating the
    DKG ceremony. It is particularly useful for group clusters where operators

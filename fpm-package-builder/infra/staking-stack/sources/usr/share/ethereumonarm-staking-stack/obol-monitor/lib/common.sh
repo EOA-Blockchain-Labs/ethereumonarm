@@ -530,7 +530,9 @@ except:
 # -----------------------------------------------------------------------------
 # check_epoch
 # Returns current_epoch - 1: the epoch to use for liveness checks.
-# Tested and confirmed working with both Lighthouse and Nimbus.
+# Tested and confirmed working with both Lighthouse and Nimbus — most
+# beacon clients restrict /eth/v1/validator/liveness/{epoch} to the current
+# or previous epoch only and return HTTP 400 for older epochs.
 # Do NOT use for the rewards/attestations endpoint — use finalized_epoch()
 # instead, as Lighthouse returns 404 for non-finalized epochs.
 # -----------------------------------------------------------------------------
@@ -542,4 +544,25 @@ check_epoch() {
         return
     fi
     echo $(( ep - 1 ))
+}
+
+# -----------------------------------------------------------------------------
+# is_optimistic
+# Returns "true" if the beacon node's head is optimistically synced (i.e.
+# the execution payload of the head block has not been validated by the EL
+# yet — common while the EL is syncing from scratch).
+#
+# While optimistic, duty/liveness data derived from the head state may be
+# unreliable: validators can appear as "not live" even though they attested
+# correctly, because the head state itself is not yet fully verified.
+# -----------------------------------------------------------------------------
+is_optimistic() {
+    beacon_get "/eth/v1/node/syncing" | \
+        python3 -c "
+import sys, json
+try:
+    print(str(json.load(sys.stdin)['data']['is_optimistic']).lower())
+except:
+    print('false')
+"
 }

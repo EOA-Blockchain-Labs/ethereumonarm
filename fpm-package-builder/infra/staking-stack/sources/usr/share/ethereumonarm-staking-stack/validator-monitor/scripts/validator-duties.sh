@@ -126,6 +126,35 @@ else
     echo "Checking epoch ${CHECK_EPOCH} (finalized; head epoch: ${CURRENT_EPOCH})"
 
     # ------------------------------------------------------------------
+    # Optimistic sync guard — checked FIRST, before any duty data is
+    # requested. If the beacon head has not been validated by the EL yet
+    # (e.g. EL syncing from scratch), ANY duty data derived from the head
+    # state (rewards or liveness) may be unreliable. Skip the check this
+    # cycle and tell the operator clearly rather than risk a false
+    # mass-miss report.
+    # ------------------------------------------------------------------
+    IS_OPTIMISTIC=$(is_optimistic)
+
+    if [ "$IS_OPTIMISTIC" = "true" ]; then
+        echo "WARNING: Beacon head is optimistically synced (EL not validated). Skipping attestation check for epoch ${CHECK_EPOCH}."
+        MISSED_ATTESTERS=""
+        OK_ATTESTERS=""
+        lock_alert "vd-beacon-data-unavailable" "$(node_label)
+⚠️ <b>Attestation duty checking paused — beacon optimistically synced</b>
+
+Epoch     : <b>${CHECK_EPOCH}</b>
+
+The beacon node's head block has not been validated by the execution layer
+yet (optimistic sync). Duty data derived from this head may be unreliable,
+so attestation checking is paused this cycle.
+
+This is expected while the execution client is syncing from scratch and
+will resolve automatically once the EL catches up.
+
+Check: <code>curl -s http://localhost:5052/eth/v1/node/syncing</code>"
+    else
+
+    # ------------------------------------------------------------------
     # Missed attestation check via rewards/attestations endpoint.
     # head + target + source all ≤ 0 → validator missed the attestation.
     # Requires a finalized epoch — Lighthouse returns 404 otherwise.
@@ -161,17 +190,27 @@ except Exception as e:
 ")
         MISSED_ATTESTERS=$(echo "$PARSE_RESULT" | grep '^MISSED:' | cut -d: -f2)
         OK_ATTESTERS=$(echo    "$PARSE_RESULT" | grep '^OK:'     | cut -d: -f2)
+        recovery_alert "vd-beacon-data-unavailable" "$(node_label)
+✅ <b>Attestation duty checking resumed</b>
 
-    elif [ "${ATT_HTTP:-0}" = "0" ] || echo "$ATT_RESP" | grep -q 'missing state\|NOT_FOUND'; then
+The beacon node is responding to duty queries again."
+
+    else
         # ── Method 2: liveness fallback ────────────────────────────────────
-        # Triggered when:
-        #   HTTP 0   → client does not support the endpoint (Nimbus)
-        #   NOT_FOUND → Lighthouse checkpoint-sync missing historical state
+        # Triggered for any non-200 response from the rewards endpoint:
+        #   HTTP 0    → client does not support the endpoint (Nimbus)
+        #   HTTP 404  → checkpoint-sync missing historical state, or other
+        #               "not found" conditions
+        #   any other → defensive catch-all
         # Falls back to liveness/{epoch} which only needs the head state.
+        # Use current_epoch-1 for liveness — most beacon clients (Nimbus
+        # included) reject liveness queries for older epochs with HTTP 400.
+        # CHECK_EPOCH (finalized, ~4 epochs behind head) is out of range.
         echo "  Rewards endpoint unavailable (HTTP ${ATT_HTTP:-0}). Falling back to liveness."
         LIVE_EPOCH=$(check_epoch)
         LIVE_RESP=$(beacon_post "/eth/v1/validator/liveness/${LIVE_EPOCH}" "$INDICES_JSON")
         LIVE_HTTP=$(beacon_http_code)
+
         if [ "$LIVE_HTTP" = "200" ] && [ -n "$LIVE_RESP" ]; then
             PARSE_RESULT=$(echo "$LIVE_RESP" | python3 -c "
 import sys, json
@@ -188,17 +227,33 @@ except Exception as e:
 ")
             MISSED_ATTESTERS=$(echo "$PARSE_RESULT" | grep '^MISSED:' | cut -d: -f2)
             OK_ATTESTERS=$(echo    "$PARSE_RESULT" | grep '^OK:'     | cut -d: -f2)
+            recovery_alert "vd-beacon-data-unavailable" "$(node_label)
+✅ <b>Attestation duty checking resumed</b>
+
+The beacon node is responding to duty queries again."
         else
-            echo "WARNING: Both rewards and liveness endpoints failed. Skipping."
+            echo "WARNING: Both rewards (HTTP ${ATT_HTTP:-0}) and liveness (HTTP ${LIVE_HTTP:-0}) endpoints failed. Skipping epoch ${CHECK_EPOCH}."
             MISSED_ATTESTERS=""
             OK_ATTESTERS=""
-        fi
+            lock_alert "vd-beacon-data-unavailable" "$(node_label)
+⚠️ <b>Validator duty data unavailable</b>
 
-    else
-        echo "WARNING: Attestation rewards endpoint returned HTTP ${ATT_HTTP:-0}. Skipping epoch ${CHECK_EPOCH}."
-        MISSED_ATTESTERS=""
-        OK_ATTESTERS=""
+Epoch     : <b>${CHECK_EPOCH}</b>
+Rewards endpoint : HTTP ${ATT_HTTP:-0}
+Liveness endpoint: HTTP ${LIVE_HTTP:-0}
+
+The beacon node is not returning attestation duty data through either
+endpoint. Missed attestations cannot currently be detected.
+
+Possible causes:
+• Beacon node is not synced or restarting
+• Beacon node checkpoint-sync is missing historical state for this epoch
+• Beacon API is overloaded
+
+Check: <code>curl -s http://localhost:5052/eth/v1/node/syncing</code>"
+        fi
     fi
+    fi  # end optimistic guard
 
         # ------------------------------------------------------------------
     # Alert on missed validators

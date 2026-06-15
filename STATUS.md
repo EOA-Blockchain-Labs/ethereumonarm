@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-06-14 07:26:40 UTC_
+_Last updated: 2026-06-15 09:28:43 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-06-14 07:26:40 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **35** (94.6%)
-- ❌ Outdated: **2** (5.4%)
+- ✅ Up-to-date: **34** (91.9%)
+- ❌ Outdated: **3** (8.1%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -46,7 +46,7 @@ _Last updated: 2026-06-14 07:26:40 UTC_
 | `lodestar` | `1.43.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.43.0` | ✅ Up-to-date |
 | `nimbus` | `26.5.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.5.0` | ✅ Up-to-date |
 | `prysm` | `7.1.4` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.4` | ✅ Up-to-date |
-| `teku` | `26.4.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.4.0` | ✅ Up-to-date |
+| `teku` | `26.6.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.4.0` | ❌ Outdated |
 
 ## Layer 1 Execution
 

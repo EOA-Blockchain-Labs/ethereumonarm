@@ -53,7 +53,6 @@ ask_required() {
 
 echo "─── Creating directories ─────────────────"
 mkdir -p "${INSTALL_DIR}/conf"
-mkdir -p "${INSTALL_DIR}/lib"
 mkdir -p "${INSTALL_DIR}/crontabs"
 mkdir -p "${INSTALL_DIR}/cache"
 mkdir -p "${INSTALL_DIR}/locks"
@@ -61,8 +60,6 @@ mkdir -p "${INSTALL_DIR}/logs"
 
 # Scripts and lib stay in /usr/share/ — updated by apt upgrade
 cp "${SCRIPT_SRC}/crontabs/validator-crontab"  "${INSTALL_DIR}/crontabs/"
-
-chmod 644 "${INSTALL_DIR}/lib/common.sh"
 
 chown -R ethereum:ethereum "${INSTALL_DIR}"
 echo "  ✅ Files installed."

@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-06-15 09:28:43 UTC_
+_Last updated: 2026-06-16 08:50:03 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-06-15 09:28:43 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **34** (91.9%)
-- ❌ Outdated: **3** (8.1%)
+- ✅ Up-to-date: **33** (89.2%)
+- ❌ Outdated: **4** (10.8%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -46,7 +46,7 @@ _Last updated: 2026-06-15 09:28:43 UTC_
 | `lodestar` | `1.43.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.43.0` | ✅ Up-to-date |
 | `nimbus` | `26.5.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.5.0` | ✅ Up-to-date |
 | `prysm` | `7.1.4` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.4` | ✅ Up-to-date |
-| `teku` | `26.6.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.4.0` | ❌ Outdated |
+| `teku` | `26.6.1` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.4.0` | ❌ Outdated |
 
 ## Layer 1 Execution
 
@@ -56,7 +56,7 @@ _Last updated: 2026-06-15 09:28:43 UTC_
 | `erigon` | `3.4.3` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.4.3` | ✅ Up-to-date |
 | `ethrex` | `16.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `16.0.0` | ✅ Up-to-date |
 | `geth` | `1.17.3` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.3` | ✅ Up-to-date |
-| `nethermind` | `1.38.0` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.38.0` | ✅ Up-to-date |
+| `nethermind` | `1.38.1` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.38.0` | ❌ Outdated |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
 | `reth` | `2.3.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `2.3.0` | ✅ Up-to-date |
 

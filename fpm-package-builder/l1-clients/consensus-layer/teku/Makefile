@@ -98,7 +98,7 @@ FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
     --deb-no-default-config-files \
     $(shell test -d extras && find extras -name 'teku-*.service' -printf "--deb-systemd %p ") \
     $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
-    --depends openjdk-21-jre-headless \
+    --depends openjdk-25-jre-headless \
     --depends merge-config
 
 # ----------------------------------------------------------------------

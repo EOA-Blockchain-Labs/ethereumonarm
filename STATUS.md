@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-06-18 08:12:32 UTC_
+_Last updated: 2026-06-19 08:35:50 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-06-18 08:12:32 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **35** (94.6%)
-- ❌ Outdated: **2** (5.4%)
+- ✅ Up-to-date: **33** (89.2%)
+- ❌ Outdated: **4** (10.8%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -53,7 +53,7 @@ _Last updated: 2026-06-18 08:12:32 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
 | `besu` | `26.6.1` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.6.1` | ✅ Up-to-date |
-| `erigon` | `3.4.3` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.4.3` | ✅ Up-to-date |
+| `erigon` | `3.4.4` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.4.3` | ❌ Outdated |
 | `ethrex` | `17.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `17.0.0` | ✅ Up-to-date |
 | `geth` | `1.17.3` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.3` | ✅ Up-to-date |
 | `nethermind` | `1.38.1` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.38.1` | ✅ Up-to-date |
@@ -78,7 +78,7 @@ _Last updated: 2026-06-18 08:12:32 UTC_
 | `optimism-op-reth` | `2.3.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |
 | `starknet-juno` | `0.16.2` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.16.2` | ✅ Up-to-date |
 | `starknet-madara` | `0.10.2` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.2` | ✅ Up-to-date |
-| `starknet-pathfinder` | `0.22.5` ([equilibriumco/pathfinder](https://github.com/equilibriumco/pathfinder)) | `0.22.5` | ✅ Up-to-date |
+| `starknet-pathfinder` | `0.22.6` ([equilibriumco/pathfinder](https://github.com/equilibriumco/pathfinder)) | `0.22.5` | ❌ Outdated |
 
 ## Web3
 

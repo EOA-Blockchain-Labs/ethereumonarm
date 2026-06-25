@@ -45,6 +45,56 @@ expire_locks "vd-"
 # Sanity checks
 # =============================================================================
 
+# ------------------------------------------------------------------
+# Nimbus compatibility check
+# ------------------------------------------------------------------
+# Nimbus does not implement POST /eth/v1/beacon/rewards/attestations/{epoch}
+# which is the only accurate way to detect missed attestations for finalized
+# epochs. There is no reliable fallback:
+#
+#   - The liveness endpoint (/eth/v1/validator/liveness/{epoch}) only accepts
+#     current_epoch or current_epoch-1. The finalized epoch we check is
+#     typically current_epoch-4, which Nimbus rejects with HTTP 400.
+#
+#   - Querying liveness at current_epoch-1 as a proxy is unreliable because
+#     it refers to a completely different epoch than the one being checked —
+#     a validator could have missed CHECK_EPOCH but appear live in
+#     current_epoch-1, or vice versa. Inclusion delay adds further noise.
+#
+# To use this script, replace Nimbus with Lighthouse or Grandine on this node.
+# Both implement the full Beacon API including the rewards/attestations endpoint.
+#
+# Install Lighthouse or Grandine:
+#   sudo apt-get update && sudo apt-get install lighthouse
+#   sudo apt-get update && sudo apt-get install grandine
+# ------------------------------------------------------------------
+if [ "${CL_CLIENT:-}" = "nimbus" ]; then
+    echo ""
+    echo "════════════════════════════════════════════════════════"
+    echo "  ⚠️  WARNING: Nimbus is not compatible with this script"
+    echo "════════════════════════════════════════════════════════"
+    echo ""
+    echo "  Nimbus does not implement the attestation rewards API"
+    echo "  required for missed attestation detection:"
+    echo ""
+    echo "    POST /eth/v1/beacon/rewards/attestations/{epoch}"
+    echo ""
+    echo "  There is no reliable fallback for Nimbus:"
+    echo "  • The liveness endpoint only accepts current/previous"
+    echo "    epoch, not the finalized epoch we need to check."
+    echo "  • Using a different epoch produces unreliable results"
+    echo "    due to attestation inclusion delay."
+    echo ""
+    echo "  To use validator duties monitoring, replace Nimbus"
+    echo "  with Lighthouse or Grandine on this node:"
+    echo ""
+    echo "    sudo apt-get update && sudo apt-get install lighthouse"
+    echo "    sudo apt-get update && sudo apt-get install grandine"
+    echo ""
+    echo "════════════════════════════════════════════════════════"
+    exit 0
+fi
+
 if [ ! -f "$INDEX_CACHE" ]; then
     echo "ERROR: Index cache not found at ${INDEX_CACHE}." >&2
     echo "       Run sync-indices.sh first." >&2
@@ -369,6 +419,7 @@ fi
 # We only alert on slots in the PAST (slot < current head slot).
 # Future/current-epoch proposal duties are informational only.
 # =============================================================================
+
 
 echo ""
 echo "--- Block proposal check ---"

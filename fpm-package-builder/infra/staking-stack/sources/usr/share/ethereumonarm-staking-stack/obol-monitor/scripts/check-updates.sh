@@ -140,4 +140,8 @@ if [ "${NODE_TYPE:-}" = "obol" ]; then
     echo ""
 fi
 
+echo "--- Staking Stack ---"
+check_package "ethereumonarm-staking-stack" "Staking Stack (ethereumonarm-staking-stack)" "📦"
+echo ""
+
 echo "=== check-updates done ==="

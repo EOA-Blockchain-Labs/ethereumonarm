@@ -1,568 +1,578 @@
 #!/bin/bash
 # =============================================================================
-# lib/common.sh — shared helpers for all obol-monitor scripts
-# Source this file at the top of every script:
-#   . "$(dirname "$0")/../lib/common.sh"
-# Requires node.env to be loaded first.
+# validator-duties.sh — Per-validator missed attestation and missed block
+# proposal checker. Run by cron every 7 minutes (just over one epoch = 6.4 min).
+#
+# Checks via the standard Ethereum Beacon API (localhost:5052):
+#
+#   Missed attestations:
+#     POST /eth/v1/validator/liveness/{epoch}
+#     → is_live: false means the validator did not participate in the epoch.
+#     Checked against the last FINALIZED epoch to avoid false positives from
+#     partially-elapsed epochs.
+#
+#   Missed block proposals:
+#     GET /eth/v1/validator/duties/proposer/{epoch}
+#     → list of (slot, validator_index) pairs scheduled to propose.
+#     GET /eth/v1/beacon/headers/{slot}
+#     → 404 = slot has no block = proposal was missed.
+#     Checked for the last PROPOSAL_CHECK_EPOCHS epochs.
+#
+# Alert deduplication: one alert per validator per epoch (lock file keyed by
+# validator_index + epoch). Locks are auto-expired after LOCK_EXPIRY seconds.
 # =============================================================================
 
-# -----------------------------------------------------------------------------
-# send_telegram <message>
-# Sends a plain-text message to the configured Telegram chat.
-# Returns 0 on success, 1 on failure.
-# -----------------------------------------------------------------------------
-send_telegram() {
-    local message="$1"
-    if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
-        echo "ERROR: TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set" >&2
-        return 1
-    fi
-    curl -s -X POST \
-        "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-        -H "Content-Type: application/json" \
-        -d "{
-            \"chat_id\": \"${TELEGRAM_CHAT_ID}\",
-            \"text\": $(printf '%s' "$message" | python3 -c 'import sys,json; print(json.dumps(sys.stdin.read()))'),
-            \"parse_mode\": \"HTML\"
-        }" \
-        --max-time 15 \
-        -o /dev/null
+export HOME=/home/ethereum
+export USER=ethereum
+export PATH=/home/ethereum/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+CONF="/home/ethereum/.obol-monitor/conf/node.env"
+
+if [ ! -f "$CONF" ]; then
+    echo "ERROR: $CONF not found." >&2
+    exit 1
+fi
+. "$CONF"
+. "${SCRIPT_DIR}/../lib/common.sh"
+
+# Failover node defers to primary — only run if this node is active
+is_primary
+case "$IS_PRIMARY_REASON" in
+    peer_healthy|peer_el_down)
+        echo "Primary node is up — deferring validator-duties to primary."
+        exit 0
+        ;;
+esac
+
+TS="$(date '+%Y-%m-%d %H:%M:%S')"
+echo "=== validator-duties check — ${TS} ==="
+
+expire_locks "vd-"
+
+# =============================================================================
+# Sanity checks
+# =============================================================================
+
+# ------------------------------------------------------------------
+# Nimbus compatibility check
+# ------------------------------------------------------------------
+# Nimbus does not implement POST /eth/v1/beacon/rewards/attestations/{epoch}
+# which is the only accurate way to detect missed attestations for finalized
+# epochs. There is no reliable fallback:
+#
+#   - The liveness endpoint (/eth/v1/validator/liveness/{epoch}) only accepts
+#     current_epoch or current_epoch-1. The finalized epoch we check is
+#     typically current_epoch-4, which Nimbus rejects with HTTP 400.
+#
+#   - Querying liveness at current_epoch-1 as a proxy is unreliable because
+#     it refers to a completely different epoch than the one being checked —
+#     a validator could have missed CHECK_EPOCH but appear live in
+#     current_epoch-1, or vice versa. Inclusion delay adds further noise.
+#
+# To use this script, replace Nimbus with Lighthouse or Grandine on this node.
+# Both implement the full Beacon API including the rewards/attestations endpoint.
+#
+# Install Lighthouse or Grandine:
+#   sudo apt-get update && sudo apt-get install lighthouse
+#   sudo apt-get update && sudo apt-get install grandine
+# ------------------------------------------------------------------
+if [ "${CL_CLIENT:-}" = "nimbus" ] || [ "${CL_CLIENT:-}" = "grandine" ]; then
+    echo ""
+    echo "════════════════════════════════════════════════════════"
+    echo "  ⚠️  WARNING: ${CL_CLIENT} is not compatible with this script"
+    echo "════════════════════════════════════════════════════════"
+    echo ""
+    echo "  ${CL_CLIENT} does not reliably support missed attestation"
+    echo "  detection. The required endpoint:"
+    echo ""
+    echo "    POST /eth/v1/beacon/rewards/attestations/{epoch}"
+    echo ""
+    echo "  returns HTTP 404 on ${CL_CLIENT}. The liveness fallback"
+    echo "  endpoint (/eth/v1/validator/liveness/{epoch}) cannot"
+    echo "  substitute for it because:"
+    echo "  • It only accepts current/previous epoch."
+    echo "  • We check finalized epochs (~4 behind head)."
+    echo "  • Querying a different epoch causes mass false misses"
+    echo "    due to attestation inclusion delay."
+    echo ""
+    echo "  To use validator duties monitoring, replace ${CL_CLIENT}"
+    echo "  with a compatible client on this node:"
+    echo ""
+    echo "  Compatible clients (implement rewards/attestations):"
+    echo "    Lighthouse : sudo apt-get install lighthouse"
+    echo "    Teku       : sudo apt-get install teku"
+    echo "    Prysm      : sudo apt-get install prysm"
+    echo "    Lodestar   : sudo apt-get install lodestar"
+    echo ""
+    echo "════════════════════════════════════════════════════════"
+    exit 0
+fi
+
+if [ ! -f "$INDEX_CACHE" ]; then
+    echo "ERROR: Index cache not found at ${INDEX_CACHE}." >&2
+    echo "       Run sync-indices.sh first." >&2
+    lock_alert "vd-no-cache" "$(node_label)
+⚠️ <b>validator-duties</b>: index cache missing.
+Run <code>bash /home/ethereum/.validator-monitor/scripts/sync-indices.sh</code> to rebuild it."
+    exit 1
+fi
+
+# Load all validator indices from cache (only active validators are monitored)
+# Cache format: { "0xpubkey": {"index": "12345", "status": "active_ongoing"}, ... }
+ACTIVE_INDICES=$(python3 -c "
+import json, sys
+with open(sys.argv[1]) as f:
+    cache = json.load(f)
+active = [v['index'] for v in cache.values() if 'active' in v.get('status','')]
+print(','.join(active))
+" "$INDEX_CACHE")
+
+if [ -z "$ACTIVE_INDICES" ]; then
+    echo "No active validators in cache. Nothing to check."
+    exit 0
+fi
+
+ACTIVE_COUNT=$(echo "$ACTIVE_INDICES" | tr ',' '\n' | wc -l | tr -d ' ')
+echo "Monitoring ${ACTIVE_COUNT} active validator(s)."
+
+# Build a JSON array of active indices for API calls
+INDICES_JSON=$(python3 -c "
+import json, sys
+indices = sys.argv[1].split(',')
+print(json.dumps(indices))
+" "$ACTIVE_INDICES")
+
+# Build a lookup map: index → short pubkey label (for human-readable alerts)
+LABEL_MAP=$(python3 -c "
+import json, sys
+with open(sys.argv[1]) as f:
+    cache = json.load(f)
+result = {v['index']: k[:10]+'...'+k[-6:] for k, v in cache.items()}
+print(json.dumps(result))
+" "$INDEX_CACHE")
+
+# Helper: get pubkey label for a validator index
+get_label() {
+    echo "$LABEL_MAP" | python3 -c "
+import sys, json
+m = json.load(sys.stdin)
+print(m.get('$1', 'idx:$1'))
+"
 }
 
-# -----------------------------------------------------------------------------
-# lock_alert <lock_name> <message>
-# Sends <message> via Telegram only if no lock exists for <lock_name>.
-# Creates a lock file so the same alert is not sent more than once per
-# LOCK_EXPIRY window (default 24 h, set in node.env).
-# -----------------------------------------------------------------------------
-lock_alert() {
-    local lock_name="$1"
-    local message="$2"
-    local custom_expiry="${3:-}"  # optional: override LOCK_EXPIRY for this alert
-    local expiry="${custom_expiry:-${LOCK_EXPIRY:-86400}}"
-    local lock_file="${LOCK_DIR}/alert-${lock_name}.lock"
+# =============================================================================
+# SECTION 1 — MISSED ATTESTATIONS (via /beacon/rewards/attestations)
+#
+# Endpoint: POST /eth/v1/beacon/rewards/attestations/{epoch}
+# Body    : ["index1", "index2", ...]
+# Response: data.total_rewards[].{ validator_index, head, target, source }
+#
+# A validator missed its attestation when ALL of head, target and source
+# equal "0" (or are negative/zero post-Electra). These are integer strings
+# in Gwei. We only check for the miss/not-miss condition — reward amounts
+# are intentionally discarded.
+#
+# Uses current_epoch - 2 (same as beaconcha.in): the latest completed epoch
+# where all attestations have had time to be included on-chain.
+# =============================================================================
 
-    [ ! -d "$LOCK_DIR" ] && mkdir -p "$LOCK_DIR"
+echo ""
+echo "--- Missed attestation check ---"
 
-    # Expire stale lock
-    if [ -f "$lock_file" ]; then
-        local age=$(( $(date +%s) - $(date -r "$lock_file" +%s 2>/dev/null || echo 0) ))
-        if [ "$age" -gt "$expiry" ]; then
-            rm -f "$lock_file"
-        fi
-    fi
+# Rewards endpoint requires a FINALIZED epoch — Lighthouse returns 404
+# for epochs not yet finalized. Use finalized_epoch(), not check_epoch().
+CHECK_EPOCH=$(finalized_epoch)
+if [ -z "$CHECK_EPOCH" ]; then
+    echo "WARNING: Could not determine finalized epoch. Skipping attestation check."
+else
+    CURRENT_EPOCH=$(current_epoch)
+    echo "Checking epoch ${CHECK_EPOCH} (finalized; head epoch: ${CURRENT_EPOCH})"
 
-    if [ ! -f "$lock_file" ]; then
-        send_telegram "$message" && touch "$lock_file"
-        return 0  # alert was sent
-    fi
-    return 1  # suppressed — lock already existed
-}
+    # ------------------------------------------------------------------
+    # Optimistic sync guard — checked FIRST, before any duty data is
+    # requested. If the beacon head has not been validated by the EL yet
+    # (e.g. EL syncing from scratch), ANY duty data derived from the head
+    # state (rewards or liveness) may be unreliable. Skip the check this
+    # cycle and tell the operator clearly rather than risk a false
+    # mass-miss report.
+    # ------------------------------------------------------------------
+    IS_OPTIMISTIC=$(is_optimistic)
 
-# -----------------------------------------------------------------------------
-# clear_lock <lock_name>
-# Removes a lock so the next failure triggers a fresh alert.
-# Call when a condition returns to normal but no recovery notification needed.
-# -----------------------------------------------------------------------------
-clear_lock() {
-    local lock_name="$1"
-    rm -f "${LOCK_DIR}/alert-${lock_name}.lock"
-}
+    if [ "$IS_OPTIMISTIC" = "true" ]; then
+        echo "WARNING: Beacon head is optimistically synced (EL not validated). Skipping attestation check for epoch ${CHECK_EPOCH}."
+        MISSED_ATTESTERS=""
+        OK_ATTESTERS=""
+        lock_alert "vd-beacon-data-unavailable" "$(node_label)
+⚠️ <b>Attestation duty checking paused — beacon optimistically synced</b>
 
-# -----------------------------------------------------------------------------
-# recovery_alert <lock_name> <message>
-# Sends a recovery Telegram notification if a previous alert was fired
-# (i.e. the lock file exists). Removes the lock after notifying.
-# Does nothing if no alert was previously sent for this condition.
-# -----------------------------------------------------------------------------
-recovery_alert() {
-    local lock_name="$1"
-    local message="$2"
-    local lock_file="${LOCK_DIR}/alert-${lock_name}.lock"
-    if [ -f "$lock_file" ]; then
-        send_telegram "$message"
-        rm -f "$lock_file"
-    fi
-}
+Epoch     : <b>${CHECK_EPOCH}</b>
 
-# -----------------------------------------------------------------------------
-# expire_locks [prefix]
-# Removes all lock files older than LOCK_EXPIRY seconds.
-# Optional prefix filters which locks are expired.
-# -----------------------------------------------------------------------------
-expire_locks() {
-    local prefix="${1:-}"
-    [ ! -d "$LOCK_DIR" ] && return
-    for lock in "${LOCK_DIR}/alert-${prefix}"*.lock; do
-        [ -f "$lock" ] || continue
-        local age=$(( $(date +%s) - $(date -r "$lock" +%s 2>/dev/null || echo 0) ))
-        if [ "$age" -gt "${LOCK_EXPIRY:-86400}" ]; then
-            rm -f "$lock"
-        fi
-    done
-}
+The beacon node's head block has not been validated by the execution layer
+yet (optimistic sync). Duty data derived from this head may be unreliable,
+so attestation checking is paused this cycle.
 
-# -----------------------------------------------------------------------------
-# cpu_temp_max
-# Returns the highest CPU temperature in degrees Celsius found in
-# /sys/class/thermal/thermal_zone*/temp (millidegrees → degrees).
-# Returns -1 if no sensor is found.
-# -----------------------------------------------------------------------------
-cpu_temp_max() {
-    local max=-1
-    for f in /sys/class/thermal/thermal_zone*/temp; do
-        [ -f "$f" ] || continue
-        local raw
-        raw=$(cat "$f" 2>/dev/null)
-        local deg=$(( raw / 1000 ))
-        [ "$deg" -gt "$max" ] && max="$deg"
-    done
-    echo "$max"
-}
+This is expected while the execution client is syncing from scratch and
+will resolve automatically once the EL catches up.
 
-# -----------------------------------------------------------------------------
-# disk_free_gb <mount>
-# Returns free space in GB (integer) for the given mount point.
-# Returns 999999 on error so threshold comparisons fail safe (no false alert).
-# -----------------------------------------------------------------------------
-disk_free_gb() {
-    local val
-    val=$(df -BG "$1" 2>/dev/null | awk 'NR==2 {gsub("G",""); print $4}')
-    # Ensure we got a plain integer; fall back to a large number on failure
-    if [[ "$val" =~ ^[0-9]+$ ]]; then
-        echo "$val"
+Check: <code>curl -s http://localhost:5052/eth/v1/node/syncing</code>"
     else
-        echo "999999"
-    fi
-}
 
-# -----------------------------------------------------------------------------
-# disk_used_pct <mount>
-# Returns used percentage (integer, no % sign) for the given mount point.
-# -----------------------------------------------------------------------------
-disk_used_pct() {
-    df "$1" 2>/dev/null | awk 'NR==2 {gsub("%",""); print $5}'
-}
+    # ------------------------------------------------------------------
+    # Missed attestation check via rewards/attestations endpoint.
+    # head + target + source all ≤ 0 → validator missed the attestation.
+    # Requires a finalized epoch — Lighthouse returns 404 otherwise.
+    # ------------------------------------------------------------------
+    ATT_RESP=$(beacon_post "/eth/v1/beacon/rewards/attestations/${CHECK_EPOCH}" "$INDICES_JSON")
+    ATT_HTTP=$(beacon_http_code)
 
-# -----------------------------------------------------------------------------
-# swap_used_gb
-# Returns swap currently in use, in GB (one decimal place).
-# -----------------------------------------------------------------------------
-swap_used_gb() {
-    local kb
-    kb=$(free -k | awk '/^Swap:/ {print $3}')
-    echo "scale=1; ${kb:-0} / 1048576" | bc 2>/dev/null || echo "0"
-}
-
-# -----------------------------------------------------------------------------
-# swap_used_kb
-# Returns swap in use in kilobytes (integer).
-# -----------------------------------------------------------------------------
-swap_used_kb() {
-    free -k | awk '/^Swap:/ {print $3}'
-}
-
-# -----------------------------------------------------------------------------
-# el_peers
-# Returns the execution client peer count via JSON-RPC, or -1 on failure.
-# -----------------------------------------------------------------------------
-el_peers() {
-    curl -s --max-time 5 -X POST "${EL_RPC:-http://localhost:8545}" \
-        -H "Content-Type: application/json" \
-        -d '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":1}' \
-        2>/dev/null | python3 -c "
+    if [ "$ATT_HTTP" = "200" ] && [ -n "$ATT_RESP" ]; then
+        # ── Method 1: rewards endpoint (on-chain confirmed) ────────────────
+        PARSE_RESULT=$(echo "$ATT_RESP" | python3 -c "
 import sys, json
 try:
-    print(int(json.load(sys.stdin)['result'], 16))
-except:
-    print(-1)
-"
-}
-
-# -----------------------------------------------------------------------------
-# cl_peers_connected
-# Returns the number of connected CL peers from the Beacon API, or -1.
-# -----------------------------------------------------------------------------
-cl_peers_connected() {
-    curl -s --max-time 5 "${CL_API:-http://localhost:5052}/eth/v1/node/peer_count" \
-        2>/dev/null | python3 -c "
-import sys, json
-try:
-    print(int(json.load(sys.stdin)['data']['connected']))
-except:
-    print(-1)
-"
-}
-
-# -----------------------------------------------------------------------------
-# el_syncing
-# Returns 'true' if EL is still syncing, 'false' if synced, 'error' on failure.
-# -----------------------------------------------------------------------------
-el_syncing() {
-    local result
-    result=$(curl -s --max-time 5 -X POST "${EL_RPC:-http://localhost:8545}" \
-        -H "Content-Type: application/json" \
-        -d '{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":1}' \
-        2>/dev/null | python3 -c "
-import sys, json
-try:
-    r = json.load(sys.stdin).get('result', True)
-    print('false' if r is False else 'true')
-except:
-    print('error')
+    rewards = json.load(sys.stdin)['data']['total_rewards']
+    missed, ok = [], []
+    for r in rewards:
+        idx = str(r.get('validator_index', ''))
+        try:
+            h = int(r.get('head',   0))
+            t = int(r.get('target', 0))
+            s = int(r.get('source', 0))
+        except:
+            h = t = s = 0
+        if h <= 0 and t <= 0 and s <= 0:
+            missed.append(idx)
+        else:
+            ok.append(idx)
+    print('MISSED:' + ' '.join(missed))
+    print('OK:'     + ' '.join(ok))
+except Exception as e:
+    print(f'ERROR:{e}', file=sys.stderr)
+    print('MISSED:')
+    print('OK:')
 ")
-    echo "$result"
-}
+        MISSED_ATTESTERS=$(echo "$PARSE_RESULT" | grep '^MISSED:' | cut -d: -f2)
+        OK_ATTESTERS=$(echo    "$PARSE_RESULT" | grep '^OK:'     | cut -d: -f2)
+        echo "ok" > "${LOCK_DIR}/vd-beacon-data-state.dat"
+        recovery_alert "vd-beacon-data-unavailable" "$(node_label)
+✅ <b>Attestation duty checking resumed</b>
 
-# -----------------------------------------------------------------------------
-# cl_syncing
-# Returns 'true' if CL is still syncing, 'false' if synced, 'error' on failure.
-# -----------------------------------------------------------------------------
-cl_syncing() {
-    curl -s --max-time 5 "${CL_API:-http://localhost:5052}/eth/v1/node/syncing" \
-        2>/dev/null | python3 -c "
+The beacon node is responding to duty queries again."
+
+    else
+        # ── Method 2: liveness fallback ────────────────────────────────────
+        # Triggered for any non-200 response from the rewards endpoint:
+        #   HTTP 0    → client does not support the endpoint (Nimbus)
+        #   HTTP 404  → checkpoint-sync missing historical state, or other
+        #               "not found" conditions
+        #   any other → defensive catch-all
+        # Falls back to liveness/{epoch} which only needs the head state.
+        # Use current_epoch-1 for liveness — most beacon clients (Nimbus
+        # included) reject liveness queries for older epochs with HTTP 400.
+        # CHECK_EPOCH (finalized, ~4 epochs behind head) is out of range.
+        echo "  Rewards endpoint unavailable (HTTP ${ATT_HTTP:-0}). Falling back to liveness."
+        LIVE_EPOCH=$(check_epoch)
+        LIVE_RESP=$(beacon_post "/eth/v1/validator/liveness/${LIVE_EPOCH}" "$INDICES_JSON")
+        LIVE_HTTP=$(beacon_http_code)
+
+        if [ "$LIVE_HTTP" = "200" ] && [ -n "$LIVE_RESP" ]; then
+            PARSE_RESULT=$(echo "$LIVE_RESP" | python3 -c "
 import sys, json
 try:
     data = json.load(sys.stdin)['data']
-    print(str(data['is_syncing']).lower())
-except:
-    print('error')
-"
-}
+    missed = [str(v['index']) for v in data if not v.get('is_live', True)]
+    ok     = [str(v['index']) for v in data if     v.get('is_live', True)]
+    print('MISSED:' + ' '.join(missed))
+    print('OK:'     + ' '.join(ok))
+except Exception as e:
+    print(f'ERROR:{e}', file=sys.stderr)
+    print('MISSED:')
+    print('OK:')
+")
+            MISSED_ATTESTERS=$(echo "$PARSE_RESULT" | grep '^MISSED:' | cut -d: -f2)
+            OK_ATTESTERS=$(echo    "$PARSE_RESULT" | grep '^OK:'     | cut -d: -f2)
+            echo "ok" > "${LOCK_DIR}/vd-beacon-data-state.dat"
+            recovery_alert "vd-beacon-data-unavailable" "$(node_label)
+✅ <b>Attestation duty checking resumed</b>
 
-# -----------------------------------------------------------------------------
-# service_active <service_name>
-# Returns 0 (true) if the systemd service is active, 1 otherwise.
-# -----------------------------------------------------------------------------
-service_active() {
-    systemctl is-active --quiet "$1" 2>/dev/null
-}
+The beacon node is responding to duty queries again."
+        else
+            echo "WARNING: Both rewards (HTTP ${ATT_HTTP:-0}) and liveness (HTTP ${LIVE_HTTP:-0}) endpoints failed. Skipping epoch ${CHECK_EPOCH}."
+            MISSED_ATTESTERS=""
+            OK_ATTESTERS=""
+            # ── 2-cycle confirmation before alerting ───────────────────────
+            # A single failure may be transient (beacon restarting, brief
+            # API overload). Only alert after two consecutive failing cycles.
+            _beacon_state_file="${LOCK_DIR}/vd-beacon-data-state.dat"
+            _prev_beacon_state=$(cat "$_beacon_state_file" 2>/dev/null || echo "ok")
+            if [ "$_prev_beacon_state" = "failed" ]; then
+                lock_alert "vd-beacon-data-unavailable" "$(node_label)
+⚠️ <b>Validator duty data unavailable</b>
 
-# -----------------------------------------------------------------------------
-# node_label
-# Returns a short label string for use in alert messages.
-# -----------------------------------------------------------------------------
-node_label() {
-    echo "🖥 <b>${NODE_NAME:-$HOSTNAME}</b>"
-}
-# -----------------------------------------------------------------------------
-# _peer_check_result <peer_ip> <timeout> <relay_port> <retry_delay>
-# Runs the 3-step probe and returns a result string:
-#   "healthy"        — EL API responded
-#   "el_down"        — relay responded, EL down
-#   "el_relay_down"  — ping responded, both EL and relay down
-#   "down"           — all three failed
-# -----------------------------------------------------------------------------
-_peer_check_result() {
-    local _ip="$1" _timeout="$2" _relay_port="$3" _retry_delay="$4"
+Epoch     : <b>${CHECK_EPOCH}</b>
+Rewards endpoint : HTTP ${ATT_HTTP:-0}
+Liveness endpoint: HTTP ${LIVE_HTTP:-0}
 
-    # Step 1 — EL API
-    _r=$(curl -s --max-time "$_timeout"         -H "Content-type: application/json"         -X POST         --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}'         "$_ip" 2>/dev/null)
-    if echo "$_r" | grep -q '"result"'; then echo "healthy"; return; fi
+The beacon node is not returning attestation duty data through either
+endpoint. Missed attestations cannot currently be detected.
 
-    # Step 2 — Charon relay
-    _rc=$(curl -s --max-time "$_timeout" -o /dev/null -w "%{http_code}"         "http://${_ip}:${_relay_port}/" 2>/dev/null)
-    if [ -n "$_rc" ] && [ "$_rc" != "000" ]; then echo "el_down"; return; fi
+Possible causes:
+• Beacon node is not synced or restarting
+• Beacon node checkpoint-sync is missing historical state for this epoch
+• Beacon API is overloaded
 
-    # Step 3 — Ping (after delay)
-    sleep "$_retry_delay"
-    if ping -c 1 -W "$_timeout" "$_ip" > /dev/null 2>&1; then
-        echo "el_relay_down"; return
-    fi
-
-    echo "down"
-}
-
-# -----------------------------------------------------------------------------
-# is_primary
-# Returns 0 (true) if this node should run health checks, 1 if it should defer.
-# Sets global IS_PRIMARY_REASON describing the outcome.
-#
-# Alerts and failover only trigger after TWO consecutive failing cycles.
-# A single failure is written to a state file but causes no action — this
-# absorbs transient VPN re-keying gaps and one-off connectivity blips.
-#
-# IS_PRIMARY_REASON values:
-#   "always_primary"      — no PEER_CONTROL_IP configured
-#   "peer_healthy"        — EL API responded
-#   "peer_el_down"        — relay responded, EL down (first or consecutive)
-#   "peer_el_relay_down"  — ping ok, EL+relay down (first or consecutive)
-#   "peer_down"           — all three failed on TWO consecutive cycles
-# -----------------------------------------------------------------------------
-IS_PRIMARY_REASON="always_primary"
-
-is_primary() {
-    IS_PRIMARY_REASON="always_primary"
-
-    if [ -z "${PEER_CONTROL_IP:-}" ]; then
-        return 0  # no peer configured — always run as primary
-    fi
-
-    local _timeout="${PEER_CHECK_TIMEOUT:-5}"
-    local _retry_delay="${PEER_RETRY_DELAY:-10}"
-    local _relay_port="${PEER_RELAY_PORT:-3640}"
-    local _state_file="${LOCK_DIR}/peer-primary-state.dat"
-
-    [ ! -d "$LOCK_DIR" ] && mkdir -p "$LOCK_DIR"
-
-    local _result
-    _result=$(_peer_check_result "$PEER_CONTROL_IP" "$_timeout" "$_relay_port" "$_retry_delay")
-
-    case "$_result" in
-        healthy)
-            IS_PRIMARY_REASON="peer_healthy"
-            echo "ok" > "$_state_file"
-            return 1
-            ;;
-        el_down)
-            IS_PRIMARY_REASON="peer_el_down"
-            echo "ok" > "$_state_file"  # relay responds — node is up
-            return 1
-            ;;
-        el_relay_down)
-            IS_PRIMARY_REASON="peer_el_relay_down"
-            # Only alert on second consecutive failure
-            local _prev
-            _prev=$(cat "$_state_file" 2>/dev/null || echo "ok")
-            echo "el_relay_down" > "$_state_file"
-            if [ "$_prev" = "el_relay_down" ] || [ "$_prev" = "down" ]; then
-                return 1  # alert handled in control scripts via IS_PRIMARY_REASON
+Check: <code>curl -s http://localhost:5052/eth/v1/node/syncing</code>"
+            else
+                echo "  First failure — waiting for second consecutive cycle before alerting."
             fi
-            # First failure — defer silently, no alert yet
-            IS_PRIMARY_REASON="peer_healthy"  # treat as healthy for this cycle
-            return 1
-            ;;
-        down)
-            IS_PRIMARY_REASON="peer_down"
-            local _prev
-            _prev=$(cat "$_state_file" 2>/dev/null || echo "ok")
-            if [ "$_prev" = "down" ] || [ "$_prev" = "el_relay_down" ]; then
-                # Second consecutive failure — confirmed, take over
-                echo "down" > "$_state_file"
-                return 0
-            fi
-            # First failure — write state, defer for one more cycle
-            echo "down" > "$_state_file"
-            IS_PRIMARY_REASON="peer_healthy"  # suppress action this cycle
-            return 1
-            ;;
-    esac
-}
-
-# -----------------------------------------------------------------------------
-# check_failover
-# Called by the PRIMARY control node to monitor the failover node.
-# Alerts only fire after TWO consecutive failing cycles (same logic as
-# is_primary). Never changes script behaviour — only sends Telegram alerts.
-# -----------------------------------------------------------------------------
-check_failover() {
-    if [ -z "${FAILOVER_CONTROL_IP:-}" ]; then
-        return 0  # no failover configured — nothing to check
+            echo "failed" > "$_beacon_state_file"
+        fi
     fi
+    fi  # end optimistic guard
 
-    local _timeout="${PEER_CHECK_TIMEOUT:-5}"
-    local _retry_delay="${PEER_RETRY_DELAY:-10}"
-    local _relay_port="${PEER_RELAY_PORT:-3640}"
-    local _state_file="${LOCK_DIR}/peer-failover-state.dat"
+        # ------------------------------------------------------------------
+    # Alert on missed validators
+    # If >= MASS_MISS_THRESHOLD validators missed the same epoch, send one
+    # global alert instead of per-validator messages (cluster/ISP outage).
+    # If < threshold, send individual alerts per validator.
+    # ------------------------------------------------------------------
+    MISSED_COUNT=$(echo "$MISSED_ATTESTERS" | wc -w | tr -d ' ')
+    OK_COUNT=$(echo     "$OK_ATTESTERS"     | wc -w | tr -d ' ')
+    TOTAL_COUNT=$(( MISSED_COUNT + OK_COUNT ))
+    echo "  Attested: ${OK_COUNT}  |  Missed: ${MISSED_COUNT}"
 
-    [ ! -d "$LOCK_DIR" ] && mkdir -p "$LOCK_DIR"
+    MASS_MISS_THRESHOLD="${MASS_MISS_THRESHOLD:-10}"
 
-    local _result
-    _result=$(_peer_check_result "$FAILOVER_CONTROL_IP" "$_timeout" "$_relay_port" "$_retry_delay")
+    if [ "${MISSED_COUNT}" -ge "${MASS_MISS_THRESHOLD}" ] 2>/dev/null; then
+        # ── Global alert: too many misses to be a per-validator issue ──────
+        # Global key (no epoch) — fires once per 6h window regardless of epoch
+        LOCK_KEY="vd-att-mass-global"
+        lock_alert "$LOCK_KEY" "$(node_label)
+🚨 <b>Mass Missed Attestations — Cluster/ISP Issue</b>
 
-    local _prev
-    _prev=$(cat "$_state_file" 2>/dev/null || echo "ok")
+Epoch       : <b>${CHECK_EPOCH}</b>
+Missed      : <b>${MISSED_COUNT} / ${TOTAL_COUNT}</b> validators
+Attested    : ${OK_COUNT}
 
-    case "$_result" in
-        healthy|el_down)
-            # Node is up (EL-only failure is not alertable — node is reachable)
-            echo "ok" > "$_state_file"
-            recovery_alert "ctrl-failover-relay-down" "$(node_label)
-✅ <b>Failover control node services restored</b>
-Node <code>${FAILOVER_CONTROL_IP}</code> is fully reachable again."
-            recovery_alert "ctrl-failover-node-down" "$(node_label)
-✅ <b>Failover control node is back online</b>
-Node <code>${FAILOVER_CONTROL_IP}</code> is reachable again."
-            clear_lock "ctrl-failover-el-down"
-            ;;
-        el_relay_down)
-            if [ "$_prev" = "el_relay_down" ] || [ "$_prev" = "down" ]; then
-                # Confirmed second consecutive failure
-                echo "el_relay_down" > "$_state_file"
-                clear_lock "ctrl-failover-node-down"
-                lock_alert "ctrl-failover-relay-down" "$(node_label)
-⚠️ <b>Failover control node: EL and relay both down</b>
+${MISSED_COUNT} validators missed attestations in the same epoch.
+This strongly suggests a cluster-wide or infrastructure problem,
+not an individual validator fault.
 
-Failover node <code>${FAILOVER_CONTROL_IP}</code> responds to ping but both
-EL API (port 80) and Charon relay (port ${_relay_port}) are not responding.
-This has been confirmed over two consecutive check cycles.
+Possible causes:
+• One or more Obol nodes are down
+• ISP or network outage affecting the cluster
+• Beacon node crashed or lost sync
+• Charon DVT threshold not reached
 
 Suggested actions:
-• SSH into the failover node and check:
-  <code>systemctl status ethrex nethermind reth erigon geth besu 2>/dev/null | grep -E "active|failed"</code>
-• Check relay: <code>sudo systemctl status charon-relay</code>
-• Check nginx: <code>sudo systemctl status nginx</code>" 259200
-            else
-                # First failure — write state, no alert yet
-                echo "el_relay_down" > "$_state_file"
-                echo "Failover EL+relay down (first occurrence) — waiting for confirmation."
-            fi
-            ;;
-        down)
-            if [ "$_prev" = "down" ] || [ "$_prev" = "el_relay_down" ]; then
-                # Confirmed second consecutive failure
-                echo "down" > "$_state_file"
-                clear_lock "ctrl-failover-el-down"
-                clear_lock "ctrl-failover-relay-down"
-                lock_alert "ctrl-failover-node-down" "$(node_label)
-🚨 <b>Failover control node is DOWN</b>
+• Check Obol node status from control node
+• Check beacon node: <code>sudo systemctl status ${CL_SERVICE:-beacon}</code>
+• Check validator client: <code>sudo journalctl -u ${VALIDATOR_SERVICE:-validator} -n 50</code>
+• Check Tailscale connectivity between cluster nodes" 21600
 
-Failover node <code>${FAILOVER_CONTROL_IP}</code> did not respond to
-EL API, Charon relay, or ping.
-This has been confirmed over two consecutive check cycles.
+        for IDX in $MISSED_ATTESTERS; do
+            clear_lock "vd-att-${IDX}-${CHECK_EPOCH}"
+        done
 
-The cluster is running without a backup control node.
+    else
+        # ── Per-validator alerts: isolated misses ──────────────────────────
+        # Only send mass-miss recovery when ALL validators are attesting (0 missed)
+        if [ "${MISSED_COUNT}" -eq 0 ] 2>/dev/null; then
+            recovery_alert "vd-att-mass-global" "$(node_label)
+✅ <b>Attestation Mass Issue Resolved</b>
 
-Suggested actions:
-• Check VPN: <code>tailscale ping ${FAILOVER_CONTROL_IP}</code>
-• Physical inspection may be required" 259200
-            else
-                # First failure — write state, no alert yet
-                echo "down" > "$_state_file"
-                echo "Failover node unreachable (first occurrence) — waiting for confirmation."
-            fi
-            ;;
-    esac
-}
+Epoch     : <b>${CHECK_EPOCH}</b>
+Attested  : <b>${OK_COUNT} / ${TOTAL_COUNT}</b> validators
 
+All validators are attesting correctly again."
+        fi
 
+        for IDX in $MISSED_ATTESTERS; do
+            LABEL=$(get_label "$IDX")
+            LOCK_KEY="vd-att-${IDX}-${CHECK_EPOCH}"
+            lock_alert "$LOCK_KEY" "$(node_label)
+❌ <b>Missed / Late Attestation</b>
 
-# =============================================================================
-# BEACON API HELPERS
-# Used by sync-indices.sh and validator-duties.sh
-# =============================================================================
+Validator : <code>${IDX}</code> (<code>${LABEL}</code>)
+Epoch     : <b>${CHECK_EPOCH}</b>
+Explorer  : https://beaconcha.in/validator/${IDX}
 
-# -----------------------------------------------------------------------------
-# beacon_get <path>
-# GET request to the local beacon API. Returns the raw response body.
-# -----------------------------------------------------------------------------
-beacon_get() {
-    curl -s --max-time 15 \
-        -H "Accept: application/json" \
-        "${CL_API:-http://localhost:5052}${1}" 2>/dev/null
-}
+The validator either missed its attestation duty or attested
+with a high inclusion distance — its attestation reward for
+this epoch was zero or below threshold.
 
-# -----------------------------------------------------------------------------
-# beacon_post <path> <json_body>
-# POST to the local beacon API. Outputs response body to stdout.
-#
-# HTTP status code is written to _BEACON_CODE_FILE (a temp file created once
-# at source time) because beacon_post is always called inside $(...) command
-# substitution — a subshell — so any variable assignment inside the function
-# is invisible to the parent shell. Reading the code from a file sidesteps
-# the subshell barrier.
-#
-# Usage:
-#   RESP=$(beacon_post "/path" "$body")
-#   CODE=$(beacon_http_code)   # read code written by last beacon_post call
-# -----------------------------------------------------------------------------
-_BEACON_CODE_FILE=$(mktemp)
+Check beaconcha.in → <b>Attestations</b> tab to distinguish:
+• <b>Included (late)</b>: attested but with high inclusion distance
+• <b>Missing</b>: attestation was not included on-chain at all
 
-beacon_post() {
-    local _body_tmp _code
-    _body_tmp=$(mktemp)
-    _code=$(curl -s --max-time 15 \
-        -X POST \
-        -H "Content-Type: application/json" \
-        -H "Accept: application/json" \
-        -w "%{http_code}" \
-        -o "$_body_tmp" \
-        -d "$2" \
-        "${CL_API:-http://localhost:5052}${1}" 2>/dev/null)
-    echo "$_code" > "$_BEACON_CODE_FILE"
-    cat "$_body_tmp"
-    rm -f "$_body_tmp"
-}
+Possible causes:
+• Late block arrival causing a head vote miss (high inclusion distance)
+• Validator client offline or crashed during this epoch
+• Beacon node was not synced or unreachable
+• Network connectivity issue (P2P port blocked)
 
-# -----------------------------------------------------------------------------
-# beacon_http_code
-# Returns the HTTP status code from the most recent beacon_post call.
-# Returns "0" if no code has been recorded yet.
-# -----------------------------------------------------------------------------
-beacon_http_code() {
-    cat "$_BEACON_CODE_FILE" 2>/dev/null || echo "0"
-}
-
-# -----------------------------------------------------------------------------
-# current_epoch
-# Returns the current beacon chain epoch derived from the head slot.
-# Slots per epoch = 32 (mainnet constant).
-# -----------------------------------------------------------------------------
-current_epoch() {
-    beacon_get "/eth/v1/node/syncing" | \
-        python3 -c "
-import sys, json
-try:
-    slot = int(json.load(sys.stdin)['data']['head_slot'])
-    print(slot // 32)
-except:
-    print('')
-"
-}
-
-# -----------------------------------------------------------------------------
-# finalized_epoch
-# Returns the most recently finalized epoch from the beacon API.
-# Required by the rewards/attestations endpoint — Lighthouse returns 404
-# for epochs that are not yet finalized.
-# -----------------------------------------------------------------------------
-finalized_epoch() {
-    beacon_get "/eth/v1/beacon/states/finalized/finality_checkpoints" | \
-        python3 -c "
-import sys, json
-try:
-    print(json.load(sys.stdin)['data']['finalized']['epoch'])
-except:
-    print('')
-"
-}
-
-# -----------------------------------------------------------------------------
-# check_epoch
-# Returns current_epoch - 1: the epoch to use for liveness checks.
-# Tested and confirmed working with both Lighthouse and Nimbus — most
-# beacon clients restrict /eth/v1/validator/liveness/{epoch} to the current
-# or previous epoch only and return HTTP 400 for older epochs.
-# Do NOT use for the rewards/attestations endpoint — use finalized_epoch()
-# instead, as Lighthouse returns 404 for non-finalized epochs.
-# -----------------------------------------------------------------------------
-check_epoch() {
-    local ep
-    ep=$(current_epoch)
-    if [ -z "$ep" ]; then
-        echo ""
-        return
+Check: <code>sudo journalctl -u ${VALIDATOR_SERVICE:-validator} -n 50</code>"
+        done
     fi
-    echo $(( ep - 1 ))
-}
 
-# -----------------------------------------------------------------------------
-# is_optimistic
-# Returns "true" if the beacon node's head is optimistically synced (i.e.
-# the execution payload of the head block has not been validated by the EL
-# yet — common while the EL is syncing from scratch).
+    for IDX in $OK_ATTESTERS; do
+        LABEL=$(get_label "$IDX")
+        recovery_alert "vd-att-${IDX}-${CHECK_EPOCH}" "$(node_label)
+✅ <b>Attestation Restored</b>
+
+Validator : <code>${IDX}</code> (<code>${LABEL}</code>)
+Epoch     : <b>${CHECK_EPOCH}</b>
+Explorer  : https://beaconcha.in/validator/${IDX}
+
+Validator is attesting correctly again."
+    done
+fi
+
+# =============================================================================
+# SECTION 2 — MISSED BLOCK PROPOSALS
 #
-# While optimistic, duty/liveness data derived from the head state may be
-# unreliable: validators can appear as "not live" even though they attested
-# correctly, because the head state itself is not yet fully verified.
-# -----------------------------------------------------------------------------
-is_optimistic() {
-    beacon_get "/eth/v1/node/syncing" | \
-        python3 -c "
+# Step A: Get proposer duties for recent epochs.
+#   GET /eth/v1/validator/duties/proposer/{epoch}
+#   → returns all (slot, validator_index) pairs for that epoch.
+#   We filter to only the validator indices we own.
+#
+# Step B: For each owned proposal slot in the past, check if a block exists.
+#   GET /eth/v1/beacon/headers/{slot}
+#   → HTTP 200 = block was proposed ✅
+#   → HTTP 404 / empty data = slot was missed ❌
+#
+# We only alert on slots in the PAST (slot < current head slot).
+# Future/current-epoch proposal duties are informational only.
+# =============================================================================
+
+
+echo ""
+echo "--- Block proposal check ---"
+
+CURRENT_EPOCH=$(current_epoch)
+if [ -z "$CURRENT_EPOCH" ]; then
+    echo "WARNING: Could not determine current epoch. Skipping proposal check."
+else
+    # Build a set of our validator indices for fast lookup
+    OUR_INDICES_SET=$(echo "$ACTIVE_INDICES" | tr ',' '\n' | sort)
+
+    # Get current head slot to distinguish past from future proposals
+    HEAD_SLOT=$(beacon_get "/eth/v1/node/syncing" | python3 -c "
 import sys, json
 try:
-    print(str(json.load(sys.stdin)['data']['is_optimistic']).lower())
+    print(json.load(sys.stdin)['data']['head_slot'])
 except:
-    print('false')
-"
-}
+    print(0)
+")
+
+    # Check the last PROPOSAL_CHECK_EPOCHS epochs
+    START_EPOCH=$(( CURRENT_EPOCH - ${PROPOSAL_CHECK_EPOCHS:-3} ))
+    [ "$START_EPOCH" -lt 0 ] && START_EPOCH=0
+
+    for EPOCH in $(seq "$START_EPOCH" "$CURRENT_EPOCH"); do
+        DUTIES_RESP=$(beacon_get "/eth/v1/validator/duties/proposer/${EPOCH}")
+
+        if [ -z "$DUTIES_RESP" ]; then
+            echo "  Epoch ${EPOCH}: no response from proposer duties endpoint."
+            continue
+        fi
+
+        # Extract duties for our validators only
+        OUR_DUTIES=$(echo "$DUTIES_RESP" | python3 -c "
+import sys, json
+our = set(sys.argv[1].split(','))
+try:
+    data = json.load(sys.stdin).get('data', [])
+except: data = []
+for d in data:
+    idx = str(d.get('validator_index',''))
+    slot = str(d.get('slot',''))
+    if idx in our: print(idx+' '+slot)
+" "$ACTIVE_INDICES")
+
+        if [ -z "$OUR_DUTIES" ]; then
+            echo "  Epoch ${EPOCH}: no proposal duties for our validators."
+            continue
+        fi
+
+        echo "  Epoch ${EPOCH}: found proposal duties:"
+        while IFS=' ' read -r IDX SLOT; do
+            LABEL=$(get_label "$IDX")
+
+            # Only check past slots — future slots have not been proposed yet
+            if [ "$SLOT" -ge "$HEAD_SLOT" ] 2>/dev/null; then
+                echo "    Slot ${SLOT} — validator ${IDX} (${LABEL}): upcoming, skipping."
+                continue
+            fi
+
+            echo -n "    Slot ${SLOT} — validator ${IDX} (${LABEL}): "
+
+            # Check if a block exists for this slot
+            HEADER_RESP=$(beacon_get "/eth/v1/beacon/headers/${SLOT}")
+
+            # A 404 or empty response means the slot was missed
+            HAS_BLOCK=$(echo "$HEADER_RESP" | python3 -c "
+import sys, json
+try:
+    d = json.load(sys.stdin)
+    # code != 200 or data missing = missed
+    if d.get('code', 200) != 200:
+        print('missed')
+    elif not d.get('data'):
+        print('missed')
+    else:
+        print('proposed')
+except:
+    print('missed')
+" 2>/dev/null)
+
+            if [ "$HAS_BLOCK" = "proposed" ]; then
+                echo "✅ proposed"
+                # Alert on successful proposal — rare event, always worth knowing
+                lock_alert "vd-proposal-ok-${IDX}-${SLOT}" "$(node_label)
+🎉 <b>Block Proposal SUCCESS</b>
+
+Validator : <code>${IDX}</code> (<code>${LABEL}</code>)
+Slot      : <b>${SLOT}</b>  (epoch ${EPOCH})
+
+Your validator successfully proposed a block.
+
+• Slot on explorer     : https://beaconcha.in/slot/${SLOT}
+• Validator on explorer: https://beaconcha.in/validator/${IDX}"
+                recovery_alert "vd-proposal-${IDX}-${SLOT}" "$(node_label)
+✅ <b>Missed Proposal Slot Recovered</b>
+
+Validator : <code>${IDX}</code> (<code>${LABEL}</code>)
+Slot      : <b>${SLOT}</b> — block IS present (may have been included late)
+Explorer  : https://beaconcha.in/slot/${SLOT}"
+            else
+                echo "❌ MISSED"
+                LOCK_KEY="vd-proposal-${IDX}-${SLOT}"
+                lock_alert "$LOCK_KEY" "$(node_label)
+🚨 <b>Missed Block Proposal</b>
+
+Validator : <code>${IDX}</code> (<code>${LABEL}</code>)
+Slot      : <b>${SLOT}</b>  (epoch ${EPOCH})
+
+This validator was scheduled to propose a block but the slot is empty.
+
+A missed proposal means loss of significant MEV + block rewards.
+
+Possible causes:
+• Validator client was offline at proposal time
+• Beacon node was not synced or had a connectivity issue
+• MEV boost relay timeout (block not received in time)
+
+Check:
+• Validator logs: <code>sudo journalctl -u ${VALIDATOR_SERVICE:-validator} -n 100</code>
+• Beacon logs  : <code>sudo journalctl -u ${BEACON_SERVICE:-beacon} -n 50</code>
+• Slot on explorer     : https://beaconcha.in/slot/${SLOT}
+• Validator on explorer: https://beaconcha.in/validator/${IDX}"
+            fi
+        done <<< "$OUR_DUTIES"
+    done
+fi
+
+echo ""
+echo "=== Done — $(date) ==="

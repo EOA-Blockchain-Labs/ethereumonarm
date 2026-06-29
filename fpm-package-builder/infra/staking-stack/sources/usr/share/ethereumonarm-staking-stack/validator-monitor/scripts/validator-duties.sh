@@ -68,28 +68,33 @@ expire_locks "vd-"
 #   sudo apt-get update && sudo apt-get install lighthouse
 #   sudo apt-get update && sudo apt-get install grandine
 # ------------------------------------------------------------------
-if [ "${CL_CLIENT:-}" = "nimbus" ]; then
+if [ "${CL_CLIENT:-}" = "nimbus" ] || [ "${CL_CLIENT:-}" = "grandine" ]; then
     echo ""
     echo "════════════════════════════════════════════════════════"
-    echo "  ⚠️  WARNING: Nimbus is not compatible with this script"
+    echo "  ⚠️  WARNING: ${CL_CLIENT} is not compatible with this script"
     echo "════════════════════════════════════════════════════════"
     echo ""
-    echo "  Nimbus does not implement the attestation rewards API"
-    echo "  required for missed attestation detection:"
+    echo "  ${CL_CLIENT} does not reliably support missed attestation"
+    echo "  detection. The required endpoint:"
     echo ""
     echo "    POST /eth/v1/beacon/rewards/attestations/{epoch}"
     echo ""
-    echo "  There is no reliable fallback for Nimbus:"
-    echo "  • The liveness endpoint only accepts current/previous"
-    echo "    epoch, not the finalized epoch we need to check."
-    echo "  • Using a different epoch produces unreliable results"
+    echo "  returns HTTP 404 on ${CL_CLIENT}. The liveness fallback"
+    echo "  endpoint (/eth/v1/validator/liveness/{epoch}) cannot"
+    echo "  substitute for it because:"
+    echo "  • It only accepts current/previous epoch."
+    echo "  • We check finalized epochs (~4 behind head)."
+    echo "  • Querying a different epoch causes mass false misses"
     echo "    due to attestation inclusion delay."
     echo ""
-    echo "  To use validator duties monitoring, replace Nimbus"
-    echo "  with Lighthouse or Grandine on this node:"
+    echo "  To use validator duties monitoring, replace ${CL_CLIENT}"
+    echo "  with a compatible client on this node:"
     echo ""
-    echo "    sudo apt-get update && sudo apt-get install lighthouse"
-    echo "    sudo apt-get update && sudo apt-get install grandine"
+    echo "  Compatible clients (implement rewards/attestations):"
+    echo "    Lighthouse : sudo apt-get install lighthouse"
+    echo "    Teku       : sudo apt-get install teku"
+    echo "    Prysm      : sudo apt-get install prysm"
+    echo "    Lodestar   : sudo apt-get install lodestar"
     echo ""
     echo "════════════════════════════════════════════════════════"
     exit 0
@@ -240,6 +245,7 @@ except Exception as e:
 ")
         MISSED_ATTESTERS=$(echo "$PARSE_RESULT" | grep '^MISSED:' | cut -d: -f2)
         OK_ATTESTERS=$(echo    "$PARSE_RESULT" | grep '^OK:'     | cut -d: -f2)
+        echo "ok" > "${LOCK_DIR}/vd-beacon-data-state.dat"
         recovery_alert "vd-beacon-data-unavailable" "$(node_label)
 ✅ <b>Attestation duty checking resumed</b>
 
@@ -277,6 +283,7 @@ except Exception as e:
 ")
             MISSED_ATTESTERS=$(echo "$PARSE_RESULT" | grep '^MISSED:' | cut -d: -f2)
             OK_ATTESTERS=$(echo    "$PARSE_RESULT" | grep '^OK:'     | cut -d: -f2)
+            echo "ok" > "${LOCK_DIR}/vd-beacon-data-state.dat"
             recovery_alert "vd-beacon-data-unavailable" "$(node_label)
 ✅ <b>Attestation duty checking resumed</b>
 
@@ -285,7 +292,13 @@ The beacon node is responding to duty queries again."
             echo "WARNING: Both rewards (HTTP ${ATT_HTTP:-0}) and liveness (HTTP ${LIVE_HTTP:-0}) endpoints failed. Skipping epoch ${CHECK_EPOCH}."
             MISSED_ATTESTERS=""
             OK_ATTESTERS=""
-            lock_alert "vd-beacon-data-unavailable" "$(node_label)
+            # ── 2-cycle confirmation before alerting ───────────────────────
+            # A single failure may be transient (beacon restarting, brief
+            # API overload). Only alert after two consecutive failing cycles.
+            _beacon_state_file="${LOCK_DIR}/vd-beacon-data-state.dat"
+            _prev_beacon_state=$(cat "$_beacon_state_file" 2>/dev/null || echo "ok")
+            if [ "$_prev_beacon_state" = "failed" ]; then
+                lock_alert "vd-beacon-data-unavailable" "$(node_label)
 ⚠️ <b>Validator duty data unavailable</b>
 
 Epoch     : <b>${CHECK_EPOCH}</b>
@@ -301,6 +314,10 @@ Possible causes:
 • Beacon API is overloaded
 
 Check: <code>curl -s http://localhost:5052/eth/v1/node/syncing</code>"
+            else
+                echo "  First failure — waiting for second consecutive cycle before alerting."
+            fi
+            echo "failed" > "$_beacon_state_file"
         fi
     fi
     fi  # end optimistic guard

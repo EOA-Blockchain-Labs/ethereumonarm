@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-06-29 08:19:50 UTC_
+_Last updated: 2026-06-30 06:59:11 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-06-29 08:19:50 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **29** (78.4%)
-- ❌ Outdated: **8** (21.6%)
+- ✅ Up-to-date: **28** (75.7%)
+- ❌ Outdated: **9** (24.3%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -41,10 +41,10 @@ _Last updated: 2026-06-29 08:19:50 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `grandine` | `2.0.4` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.4` | ✅ Up-to-date |
+| `grandine` | `2.0.5` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.4` | ❌ Outdated |
 | `lighthouse` | `8.2.0` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.2.0` | ✅ Up-to-date |
 | `lodestar` | `1.43.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.43.0` | ✅ Up-to-date |
-| `nimbus` | `26.6.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.6.0` | ✅ Up-to-date |
+| `nimbus` | `26.6.2` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.6.2` | ✅ Up-to-date |
 | `prysm` | `7.1.5` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.5` | ✅ Up-to-date |
 | `teku` | `26.6.1` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.6.1` | ✅ Up-to-date |
 
@@ -70,7 +70,7 @@ _Last updated: 2026-06-29 08:19:50 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `arbitrum-nitro` | `3.11.0` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.10.2` | ❌ Outdated |
+| `arbitrum-nitro` | `3.11.1` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.10.2` | ❌ Outdated |
 | `fuel-network` | `0.48.2` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.48.2` | ✅ Up-to-date |
 | `optimism-op-challenger` | `1.9.3` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.3` | ✅ Up-to-date |
 | `optimism-op-geth` | `1.101702.2` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101702.2` | ✅ Up-to-date |

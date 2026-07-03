@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-07-02 10:52:14 UTC_
+_Last updated: 2026-07-03 06:36:46 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-07-02 10:52:14 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **33** (89.2%)
-- ❌ Outdated: **4** (10.8%)
+- ✅ Up-to-date: **34** (91.9%)
+- ❌ Outdated: **3** (8.1%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -26,7 +26,7 @@ _Last updated: 2026-07-02 10:52:14 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `commit-boost` | `0.9.6` ([Commit-Boost/commit-boost-client](https://github.com/Commit-Boost/commit-boost-client)) | `0.9.6` | ✅ Up-to-date |
 | `dirk` | `1.2.1` ([attestantio/dirk](https://github.com/attestantio/dirk)) | `1.2.1` | ✅ Up-to-date |
-| `dvt-anchor` | `1.2.4` ([sigp/anchor](https://github.com/sigp/anchor)) | `1.2.3` | ❌ Outdated |
+| `dvt-anchor` | `1.2.4` ([sigp/anchor](https://github.com/sigp/anchor)) | `1.2.4` | ✅ Up-to-date |
 | `dvt-obol` | `1.10.3` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.10.3` | ✅ Up-to-date |
 | `dvt-ssv` | `2.4.3` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.4.3` | ✅ Up-to-date |
 | `ethereum-metrics-exporter` | `0.29.2` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.29.2` | ✅ Up-to-date |

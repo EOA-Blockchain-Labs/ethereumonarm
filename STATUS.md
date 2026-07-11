@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-07-10 06:50:26 UTC_
+_Last updated: 2026-07-11 05:44:54 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-07-10 06:50:26 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **30** (81.1%)
-- ❌ Outdated: **7** (18.9%)
+- ✅ Up-to-date: **29** (78.4%)
+- ❌ Outdated: **8** (21.6%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -53,7 +53,7 @@ _Last updated: 2026-07-10 06:50:26 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
 | `besu` | `26.6.1` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.6.1` | ✅ Up-to-date |
-| `erigon` | `3.5.0` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.5.0` | ✅ Up-to-date |
+| `erigon` | `3.5.1` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.5.0` | ❌ Outdated |
 | `ethrex` | `20.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `19.0.0` | ❌ Outdated |
 | `geth` | `1.17.4` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.4` | ✅ Up-to-date |
 | `nethermind` | `1.39.0` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.38.1` | ❌ Outdated |

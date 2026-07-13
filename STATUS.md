@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-07-12 06:08:34 UTC_
+_Last updated: 2026-07-13 06:24:43 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-07-12 06:08:34 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **28** (75.7%)
-- ❌ Outdated: **9** (24.3%)
+- ✅ Up-to-date: **31** (83.8%)
+- ❌ Outdated: **6** (16.2%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -46,17 +46,17 @@ _Last updated: 2026-07-12 06:08:34 UTC_
 | `lodestar` | `1.44.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.44.0` | ✅ Up-to-date |
 | `nimbus` | `26.6.2` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.6.2` | ✅ Up-to-date |
 | `prysm` | `7.1.6` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.6` | ✅ Up-to-date |
-| `teku` | `26.7.1` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.7.0` | ❌ Outdated |
+| `teku` | `26.7.1` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.7.1` | ✅ Up-to-date |
 
 ## Layer 1 Execution
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `besu` | `26.6.1` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.6.1` | ✅ Up-to-date |
-| `erigon` | `3.5.1` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.5.0` | ❌ Outdated |
-| `ethrex` | `20.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `19.0.0` | ❌ Outdated |
+| `besu` | `26.7.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.6.1` | ❌ Outdated |
+| `erigon` | `3.5.1` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.5.1` | ✅ Up-to-date |
+| `ethrex` | `20.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `20.0.0` | ✅ Up-to-date |
 | `geth` | `1.17.4` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.4` | ✅ Up-to-date |
-| `nethermind` | `1.39.0` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.38.1` | ❌ Outdated |
+| `nethermind` | `1.39.0` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.39.0` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
 | `reth` | `2.3.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `2.3.0` | ✅ Up-to-date |
 

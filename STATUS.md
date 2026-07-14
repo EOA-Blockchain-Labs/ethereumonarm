@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-07-13 06:24:43 UTC_
+_Last updated: 2026-07-14 05:36:14 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-07-13 06:24:43 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **31** (83.8%)
-- ❌ Outdated: **6** (16.2%)
+- ✅ Up-to-date: **29** (78.4%)
+- ❌ Outdated: **8** (21.6%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -33,7 +33,7 @@ _Last updated: 2026-07-13 06:24:43 UTC_
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |
 | `ethstaker-deposit-cli` | `1.3.0` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.3.0` | ✅ Up-to-date |
 | `mev-boost` | `1.12` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.12` | ✅ Up-to-date |
-| `stakewise-operator` | `4.1.14` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.1.14` | ✅ Up-to-date |
+| `stakewise-operator` | `4.2.0` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.1.14` | ❌ Outdated |
 | `vero` | `1.4.0` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.4.0` | ✅ Up-to-date |
 | `vouch` | `1.12.1` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.12.1` | ✅ Up-to-date |
 
@@ -44,16 +44,16 @@ _Last updated: 2026-07-13 06:24:43 UTC_
 | `grandine` | `2.0.5` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.5` | ✅ Up-to-date |
 | `lighthouse` | `8.2.0` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.2.0` | ✅ Up-to-date |
 | `lodestar` | `1.44.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.44.0` | ✅ Up-to-date |
-| `nimbus` | `26.6.2` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.6.2` | ✅ Up-to-date |
-| `prysm` | `7.1.6` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.6` | ✅ Up-to-date |
+| `nimbus` | `26.7.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.7.0` | ✅ Up-to-date |
+| `prysm` | `7.1.7` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.6` | ❌ Outdated |
 | `teku` | `26.7.1` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.7.1` | ✅ Up-to-date |
 
 ## Layer 1 Execution
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `besu` | `26.7.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.6.1` | ❌ Outdated |
-| `erigon` | `3.5.1` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.5.1` | ✅ Up-to-date |
+| `besu` | `26.7.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.7.0` | ✅ Up-to-date |
+| `erigon` | `3.5.2` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.5.1` | ❌ Outdated |
 | `ethrex` | `20.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `20.0.0` | ✅ Up-to-date |
 | `geth` | `1.17.4` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.4` | ✅ Up-to-date |
 | `nethermind` | `1.39.0` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.39.0` | ✅ Up-to-date |

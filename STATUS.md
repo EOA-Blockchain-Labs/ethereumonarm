@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-07-16 05:45:00 UTC_
+_Last updated: 2026-07-17 05:45:59 UTC_
 
 ## What this report compares
 
@@ -56,7 +56,7 @@ _Last updated: 2026-07-16 05:45:00 UTC_
 | `erigon` | `3.5.2` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.5.2` | ✅ Up-to-date |
 | `ethrex` | `21.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `21.0.0` | ✅ Up-to-date |
 | `geth` | `1.17.4` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.4` | ✅ Up-to-date |
-| `nethermind` | `1.39.0` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.39.0` | ✅ Up-to-date |
+| `nethermind` | `1.39.1` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.39.1` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
 | `reth` | `2.4.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `2.4.0` | ✅ Up-to-date |
 

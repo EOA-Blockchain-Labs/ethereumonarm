@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-07-17 05:45:59 UTC_
+_Last updated: 2026-07-18 05:32:01 UTC_
 
 ## What this report compares
 
@@ -58,7 +58,7 @@ _Last updated: 2026-07-17 05:45:59 UTC_
 | `geth` | `1.17.4` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.4` | ✅ Up-to-date |
 | `nethermind` | `1.39.1` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.39.1` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
-| `reth` | `2.4.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `2.4.0` | ✅ Up-to-date |
+| `reth` | `2.4.1` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `2.4.1` | ✅ Up-to-date |
 
 ## Layer 1 Light Clients
 
@@ -75,7 +75,7 @@ _Last updated: 2026-07-17 05:45:59 UTC_
 | `optimism-op-challenger` | `1.9.3` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.3` | ✅ Up-to-date |
 | `optimism-op-geth` | `1.101702.2` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101702.2` | ✅ Up-to-date |
 | `optimism-op-node` | `1.19.2` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.19.0` | ❌ Outdated |
-| `optimism-op-reth` | `2.4.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |
+| `optimism-op-reth` | `2.4.1` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |
 | `starknet-juno` | `0.16.4` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.16.4` | ✅ Up-to-date |
 | `starknet-madara` | `0.10.2` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.2` | ✅ Up-to-date |
 | `starknet-pathfinder` | `0.22.7` ([equilibriumco/pathfinder](https://github.com/equilibriumco/pathfinder)) | `0.22.7` | ✅ Up-to-date |

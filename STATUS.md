@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-07-22 05:54:29 UTC_
+_Last updated: 2026-07-23 06:05:59 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-07-22 05:54:29 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **27** (73.0%)
-- ❌ Outdated: **10** (27.0%)
+- ✅ Up-to-date: **29** (78.4%)
+- ❌ Outdated: **8** (21.6%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -26,7 +26,7 @@ _Last updated: 2026-07-22 05:54:29 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `commit-boost` | `0.9.6` ([Commit-Boost/commit-boost-client](https://github.com/Commit-Boost/commit-boost-client)) | `0.9.6` | ✅ Up-to-date |
 | `dirk` | `1.2.1` ([attestantio/dirk](https://github.com/attestantio/dirk)) | `1.2.1` | ✅ Up-to-date |
-| `dvt-anchor` | `1.3.0` ([sigp/anchor](https://github.com/sigp/anchor)) | `1.2.4` | ❌ Outdated |
+| `dvt-anchor` | `1.3.0` ([sigp/anchor](https://github.com/sigp/anchor)) | `1.3.0` | ✅ Up-to-date |
 | `dvt-obol` | `1.10.3` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.10.3` | ✅ Up-to-date |
 | `dvt-ssv` | `2.4.3` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.4.3` | ✅ Up-to-date |
 | `ethereum-metrics-exporter` | `0.29.2` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.29.2` | ✅ Up-to-date |
@@ -54,9 +54,9 @@ _Last updated: 2026-07-22 05:54:29 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `besu` | `26.7.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.7.0` | ✅ Up-to-date |
 | `erigon` | `3.5.2` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.5.2` | ✅ Up-to-date |
-| `ethrex` | `22.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `21.0.0` | ❌ Outdated |
+| `ethrex` | `22.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `22.0.0` | ✅ Up-to-date |
 | `geth` | `1.17.4` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.4` | ✅ Up-to-date |
-| `nethermind` | `1.39.2` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.39.1` | ❌ Outdated |
+| `nethermind` | `1.39.2` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.39.2` | ✅ Up-to-date |
 | `nimbus-ec` | `nightly` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
 | `reth` | `2.4.1` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `2.4.1` | ✅ Up-to-date |
 
@@ -72,7 +72,7 @@ _Last updated: 2026-07-22 05:54:29 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `arbitrum-nitro` | `3.11.2` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.11.1` | ❌ Outdated |
 | `fuel-network` | `0.48.2` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.48.2` | ✅ Up-to-date |
-| `optimism-op-challenger` | `1.9.3` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.3` | ✅ Up-to-date |
+| `optimism-op-challenger` | `1.9.4` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.3` | ❌ Outdated |
 | `optimism-op-geth` | `1.101702.2` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101702.2` | ✅ Up-to-date |
 | `optimism-op-node` | `1.19.3` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.19.0` | ❌ Outdated |
 | `optimism-op-reth` | `2.4.1` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |

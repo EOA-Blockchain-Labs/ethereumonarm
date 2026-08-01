@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-07-31 06:17:51 UTC_
+_Last updated: 2026-08-01 06:04:06 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-07-31 06:17:51 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **29** (78.4%)
-- ❌ Outdated: **8** (21.6%)
+- ✅ Up-to-date: **28** (75.7%)
+- ❌ Outdated: **9** (24.3%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -33,7 +33,7 @@ _Last updated: 2026-07-31 06:17:51 UTC_
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |
 | `ethstaker-deposit-cli` | `1.3.0` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.3.0` | ✅ Up-to-date |
 | `mev-boost` | `1.12` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.12` | ✅ Up-to-date |
-| `stakewise-operator` | `4.2.0` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.2.0` | ✅ Up-to-date |
+| `stakewise-operator` | `4.2.1` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.2.0` | ❌ Outdated |
 | `vero` | `1.4.1` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.4.1` | ✅ Up-to-date |
 | `vouch` | `1.13.0` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.13.0` | ✅ Up-to-date |
 

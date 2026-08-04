@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-08-03 06:28:59 UTC_
+_Last updated: 2026-08-04 05:53:24 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-08-03 06:28:59 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **28** (75.7%)
-- ❌ Outdated: **9** (24.3%)
+- ✅ Up-to-date: **26** (70.3%)
+- ❌ Outdated: **11** (29.7%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -41,7 +41,7 @@ _Last updated: 2026-08-03 06:28:59 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `grandine` | `2.0.5` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.5` | ✅ Up-to-date |
+| `grandine` | `2.0.6` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.5` | ❌ Outdated |
 | `lighthouse` | `8.2.1` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.2.1` | ✅ Up-to-date |
 | `lodestar` | `1.45.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.45.0` | ✅ Up-to-date |
 | `nimbus` | `26.7.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.7.0` | ✅ Up-to-date |
@@ -74,15 +74,15 @@ _Last updated: 2026-08-03 06:28:59 UTC_
 | `fuel-network` | `0.48.2` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.48.2` | ✅ Up-to-date |
 | `optimism-op-challenger` | `1.9.4` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.3` | ❌ Outdated |
 | `optimism-op-geth` | `1.101702.2` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101702.2` | ✅ Up-to-date |
-| `optimism-op-node` | `1.19.3` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.19.0` | ❌ Outdated |
+| `optimism-op-node` | `1.19.4` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.19.0` | ❌ Outdated |
 | `optimism-op-reth` | `2.4.1` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |
 | `starknet-juno` | `0.16.5` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.16.4` | ❌ Outdated |
 | `starknet-madara` | `0.10.2` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.2` | ✅ Up-to-date |
-| `starknet-pathfinder` | `0.23.0` ([equilibriumco/pathfinder](https://github.com/equilibriumco/pathfinder)) | `0.22.7` | ❌ Outdated |
+| `starknet-pathfinder` | `0.23.1` ([equilibriumco/pathfinder](https://github.com/equilibriumco/pathfinder)) | `0.22.7` | ❌ Outdated |
 
 ## Web3
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
 | `bee` | `2.8.1` ([ethersphere/bee](https://github.com/ethersphere/bee)) | `2.8.0` | ❌ Outdated |
-| `kubo` | `0.42.0` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.42.0` | ✅ Up-to-date |
+| `kubo` | `0.43.0` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.42.0` | ❌ Outdated |

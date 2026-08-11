@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-08-10 04:43:46 UTC_
+_Last updated: 2026-08-11 04:24:17 UTC_
 
 ## What this report compares
 
@@ -16,15 +16,15 @@ _Last updated: 2026-08-10 04:43:46 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **27** (73.0%)
-- ❌ Outdated: **10** (27.0%)
+- ✅ Up-to-date: **25** (67.6%)
+- ❌ Outdated: **12** (32.4%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `commit-boost` | `0.9.6` ([Commit-Boost/commit-boost-client](https://github.com/Commit-Boost/commit-boost-client)) | `0.9.6` | ✅ Up-to-date |
+| `commit-boost` | `0.10.0` ([Commit-Boost/commit-boost-client](https://github.com/Commit-Boost/commit-boost-client)) | `0.9.6` | ❌ Outdated |
 | `dirk` | `1.2.1` ([attestantio/dirk](https://github.com/attestantio/dirk)) | `1.2.1` | ✅ Up-to-date |
 | `dvt-anchor` | `1.3.0` ([sigp/anchor](https://github.com/sigp/anchor)) | `1.3.0` | ✅ Up-to-date |
 | `dvt-obol` | `1.10.3` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.10.3` | ✅ Up-to-date |
@@ -46,7 +46,7 @@ _Last updated: 2026-08-10 04:43:46 UTC_
 | `lodestar` | `1.45.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.45.0` | ✅ Up-to-date |
 | `nimbus` | `26.7.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.7.0` | ✅ Up-to-date |
 | `prysm` | `7.1.8` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.8` | ✅ Up-to-date |
-| `teku` | `26.7.1` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.7.1` | ✅ Up-to-date |
+| `teku` | `26.8.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.7.1` | ❌ Outdated |
 
 ## Layer 1 Execution
 

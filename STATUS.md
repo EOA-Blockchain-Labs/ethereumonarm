@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-08-11 04:24:17 UTC_
+_Last updated: 2026-08-12 04:52:05 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-08-11 04:24:17 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **25** (67.6%)
-- ❌ Outdated: **12** (32.4%)
+- ✅ Up-to-date: **27** (73.0%)
+- ❌ Outdated: **10** (27.0%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -33,7 +33,7 @@ _Last updated: 2026-08-11 04:24:17 UTC_
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |
 | `ethstaker-deposit-cli` | `1.3.0` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.3.0` | ✅ Up-to-date |
 | `mev-boost` | `1.12` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.12` | ✅ Up-to-date |
-| `stakewise-operator` | `4.2.2` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.2.0` | ❌ Outdated |
+| `stakewise-operator` | `4.2.3` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.2.3` | ✅ Up-to-date |
 | `vero` | `1.4.1` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.4.1` | ✅ Up-to-date |
 | `vouch` | `1.13.0` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.13.0` | ✅ Up-to-date |
 
@@ -46,7 +46,7 @@ _Last updated: 2026-08-11 04:24:17 UTC_
 | `lodestar` | `1.45.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.45.0` | ✅ Up-to-date |
 | `nimbus` | `26.7.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.7.0` | ✅ Up-to-date |
 | `prysm` | `7.1.8` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.8` | ✅ Up-to-date |
-| `teku` | `26.8.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.7.1` | ❌ Outdated |
+| `teku` | `26.8.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.8.0` | ✅ Up-to-date |
 
 ## Layer 1 Execution
 

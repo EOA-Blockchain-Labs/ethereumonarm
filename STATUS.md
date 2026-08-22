@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-08-21 03:53:48 UTC_
+_Last updated: 2026-08-22 03:46:40 UTC_
 
 ## What this report compares
 

@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-08-26 03:56:55 UTC_
+_Last updated: 2026-08-27 14:01:03 UTC_
 
 ## What this report compares
 
@@ -35,7 +35,7 @@ _Last updated: 2026-08-26 03:56:55 UTC_
 | `mev-boost` | `1.12` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.12` | ✅ Up-to-date |
 | `stakewise-operator` | `4.2.3` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.2.3` | ✅ Up-to-date |
 | `vero` | `1.4.1` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.4.1` | ✅ Up-to-date |
-| `vouch` | `1.13.0` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.13.0` | ✅ Up-to-date |
+| `vouch` | `1.13.1` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.13.0` | ❌ Outdated |
 
 ## Layer 1 Consensus
 
@@ -54,7 +54,7 @@ _Last updated: 2026-08-26 03:56:55 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `besu` | `26.8.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.8.0` | ✅ Up-to-date |
 | `erigon` | `3.6.0` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.6.0` | ✅ Up-to-date |
-| `ethrex` | `25.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `24.0.0` | ❌ Outdated |
+| `ethrex` | `25.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `25.0.0` | ✅ Up-to-date |
 | `geth` | `1.17.5` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.5` | ✅ Up-to-date |
 | `nethermind` | `1.39.3` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.39.3` | ✅ Up-to-date |
 | `nimbus-ec` | `0.4.0` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
@@ -84,5 +84,5 @@ _Last updated: 2026-08-26 03:56:55 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `bee` | `2.8.1` ([ethersphere/bee](https://github.com/ethersphere/bee)) | `2.8.0` | ❌ Outdated |
+| `bee` | `2.8.2` ([ethersphere/bee](https://github.com/ethersphere/bee)) | `2.8.0` | ❌ Outdated |
 | `kubo` | `0.43.0` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.42.0` | ❌ Outdated |

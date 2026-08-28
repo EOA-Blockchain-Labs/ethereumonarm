@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-08-27 14:01:03 UTC_
+_Last updated: 2026-08-28 15:12:21 UTC_
 
 ## What this report compares
 
@@ -27,7 +27,7 @@ _Last updated: 2026-08-27 14:01:03 UTC_
 | `commit-boost` | `0.10.0` ([Commit-Boost/commit-boost-client](https://github.com/Commit-Boost/commit-boost-client)) | `0.9.6` | ❌ Outdated |
 | `dirk` | `1.2.1` ([attestantio/dirk](https://github.com/attestantio/dirk)) | `1.2.1` | ✅ Up-to-date |
 | `dvt-anchor` | `1.3.1` ([sigp/anchor](https://github.com/sigp/anchor)) | `1.3.1` | ✅ Up-to-date |
-| `dvt-obol` | `1.11.0` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.10.3` | ❌ Outdated |
+| `dvt-obol` | `1.11.0` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.11.0` | ✅ Up-to-date |
 | `dvt-ssv` | `2.4.3` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.4.3` | ✅ Up-to-date |
 | `ethereum-metrics-exporter` | `0.29.2` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.29.2` | ✅ Up-to-date |
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |
@@ -71,7 +71,7 @@ _Last updated: 2026-08-27 14:01:03 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
 | `arbitrum-nitro` | `3.11.3` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.11.1` | ❌ Outdated |
-| `fuel-network` | `0.48.2` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.48.2` | ✅ Up-to-date |
+| `fuel-network` | `0.48.3` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.48.2` | ❌ Outdated |
 | `optimism-op-challenger` | `1.9.4` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.3` | ❌ Outdated |
 | `optimism-op-geth` | `1.101702.2` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101702.2` | ✅ Up-to-date |
 | `optimism-op-node` | `1.19.5` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.19.0` | ❌ Outdated |

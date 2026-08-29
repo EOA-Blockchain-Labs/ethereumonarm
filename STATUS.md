@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-08-28 15:12:21 UTC_
+_Last updated: 2026-08-29 09:54:32 UTC_
 
 ## What this report compares
 
@@ -44,7 +44,7 @@ _Last updated: 2026-08-28 15:12:21 UTC_
 | `grandine` | `2.0.6` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.6` | ✅ Up-to-date |
 | `lighthouse` | `8.2.2` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.2.2` | ✅ Up-to-date |
 | `lodestar` | `1.46.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.46.0` | ✅ Up-to-date |
-| `nimbus` | `26.7.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.7.0` | ✅ Up-to-date |
+| `nimbus` | `26.8.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.8.0` | ✅ Up-to-date |
 | `prysm` | `7.1.8` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.8` | ✅ Up-to-date |
 | `teku` | `26.8.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.8.0` | ✅ Up-to-date |
 

@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-09-01 08:29:54 UTC_
+_Last updated: 2026-09-02 07:47:34 UTC_
 
 ## What this report compares
 
@@ -33,7 +33,7 @@ _Last updated: 2026-09-01 08:29:54 UTC_
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |
 | `ethstaker-deposit-cli` | `1.3.0` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.3.0` | ✅ Up-to-date |
 | `mev-boost` | `1.12` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.12` | ✅ Up-to-date |
-| `stakewise-operator` | `4.2.3` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.2.3` | ✅ Up-to-date |
+| `stakewise-operator` | `5.0.0` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.2.3` | ❌ Outdated |
 | `vero` | `1.4.1` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.4.1` | ✅ Up-to-date |
 | `vouch` | `1.13.1` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.13.0` | ❌ Outdated |
 
@@ -52,7 +52,7 @@ _Last updated: 2026-09-01 08:29:54 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `besu` | `26.8.1` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.8.0` | ❌ Outdated |
+| `besu` | `26.8.1` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.8.1` | ✅ Up-to-date |
 | `erigon` | `3.6.0` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.6.0` | ✅ Up-to-date |
 | `ethrex` | `25.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `25.0.0` | ✅ Up-to-date |
 | `geth` | `1.17.5` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.5` | ✅ Up-to-date |
@@ -78,7 +78,7 @@ _Last updated: 2026-09-01 08:29:54 UTC_
 | `optimism-op-reth` | `2.5.1` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |
 | `starknet-juno` | `0.16.5` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.16.4` | ❌ Outdated |
 | `starknet-madara` | `0.10.2` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.2` | ✅ Up-to-date |
-| `starknet-pathfinder` | `0.23.1` ([equilibriumco/pathfinder](https://github.com/equilibriumco/pathfinder)) | `0.22.7` | ❌ Outdated |
+| `starknet-pathfinder` | `0.24.0` ([equilibriumco/pathfinder](https://github.com/equilibriumco/pathfinder)) | `0.22.7` | ❌ Outdated |
 
 ## Web3
 

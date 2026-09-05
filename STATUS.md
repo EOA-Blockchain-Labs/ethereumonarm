@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-09-04 07:52:02 UTC_
+_Last updated: 2026-09-05 07:33:22 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-09-04 07:52:02 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **21** (56.8%)
-- ❌ Outdated: **16** (43.2%)
+- ✅ Up-to-date: **24** (64.9%)
+- ❌ Outdated: **13** (35.1%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -35,7 +35,7 @@ _Last updated: 2026-09-04 07:52:02 UTC_
 | `mev-boost` | `1.12` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.12` | ✅ Up-to-date |
 | `stakewise-operator` | `5.0.0` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `4.2.3` | ❌ Outdated |
 | `vero` | `1.4.1` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.4.1` | ✅ Up-to-date |
-| `vouch` | `1.13.1` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.13.0` | ❌ Outdated |
+| `vouch` | `1.13.1` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.13.1` | ✅ Up-to-date |
 
 ## Layer 1 Consensus
 
@@ -43,7 +43,7 @@ _Last updated: 2026-09-04 07:52:02 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `grandine` | `2.0.6` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.6` | ✅ Up-to-date |
 | `lighthouse` | `8.2.2` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.2.2` | ✅ Up-to-date |
-| `lodestar` | `1.47.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.46.0` | ❌ Outdated |
+| `lodestar` | `1.47.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.47.0` | ✅ Up-to-date |
 | `nimbus` | `26.8.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.8.0` | ✅ Up-to-date |
 | `prysm` | `7.1.8` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.8` | ✅ Up-to-date |
 | `teku` | `26.8.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.8.0` | ✅ Up-to-date |
@@ -58,7 +58,7 @@ _Last updated: 2026-09-04 07:52:02 UTC_
 | `geth` | `1.17.5` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.5` | ✅ Up-to-date |
 | `nethermind` | `1.39.3` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.39.3` | ✅ Up-to-date |
 | `nimbus-ec` | `0.4.0` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
-| `reth` | `2.5.2` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `2.5.1` | ❌ Outdated |
+| `reth` | `2.5.2` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `2.5.2` | ✅ Up-to-date |
 
 ## Layer 1 Light Clients
 
@@ -72,7 +72,7 @@ _Last updated: 2026-09-04 07:52:02 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `arbitrum-nitro` | `3.11.3` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.11.1` | ❌ Outdated |
 | `fuel-network` | `0.48.3` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.48.2` | ❌ Outdated |
-| `optimism-op-challenger` | `1.9.4` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.3` | ❌ Outdated |
+| `optimism-op-challenger` | `1.9.5` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.3` | ❌ Outdated |
 | `optimism-op-geth` | `1.101702.3` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101702.2` | ❌ Outdated |
 | `optimism-op-node` | `1.19.5` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.19.0` | ❌ Outdated |
 | `optimism-op-reth` | `2.5.2` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |

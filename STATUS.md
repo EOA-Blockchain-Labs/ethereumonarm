@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-09-12 07:48:45 UTC_
+_Last updated: 2026-09-13 08:10:36 UTC_
 
 ## What this report compares
 
@@ -57,7 +57,7 @@ _Last updated: 2026-09-12 07:48:45 UTC_
 | `ethrex` | `26.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `26.0.0` | ✅ Up-to-date |
 | `geth` | `1.17.5` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.5` | ✅ Up-to-date |
 | `nethermind` | `1.39.3` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.39.3` | ✅ Up-to-date |
-| `nimbus-ec` | `0.4.0` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
+| `nimbus-ec` | `0.4.1` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
 | `reth` | `2.5.2` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `2.5.2` | ✅ Up-to-date |
 
 ## Layer 1 Light Clients

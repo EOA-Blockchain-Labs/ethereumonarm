@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-09-15 08:32:45 UTC_
+_Last updated: 2026-09-16 08:26:42 UTC_
 
 ## What this report compares
 
@@ -43,7 +43,7 @@ _Last updated: 2026-09-15 08:32:45 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `grandine` | `2.0.6` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.6` | ✅ Up-to-date |
 | `lighthouse` | `8.2.2` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.2.2` | ✅ Up-to-date |
-| `lodestar` | `1.47.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.47.0` | ✅ Up-to-date |
+| `lodestar` | `1.48.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.47.0` | ❌ Outdated |
 | `nimbus` | `26.8.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.8.0` | ✅ Up-to-date |
 | `prysm` | `7.1.8` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.8` | ✅ Up-to-date |
 | `teku` | `26.8.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.8.0` | ✅ Up-to-date |
@@ -54,7 +54,7 @@ _Last updated: 2026-09-15 08:32:45 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `besu` | `26.8.1` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.8.1` | ✅ Up-to-date |
 | `erigon` | `3.6.1` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.6.1` | ✅ Up-to-date |
-| `ethrex` | `26.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `26.0.0` | ✅ Up-to-date |
+| `ethrex` | `27.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `27.0.0` | ✅ Up-to-date |
 | `geth` | `1.17.5` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.5` | ✅ Up-to-date |
 | `nethermind` | `1.39.3` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `1.39.3` | ✅ Up-to-date |
 | `nimbus-ec` | `0.4.1` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
@@ -72,7 +72,7 @@ _Last updated: 2026-09-15 08:32:45 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `arbitrum-nitro` | `3.11.3` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.11.3` | ✅ Up-to-date |
 | `fuel-network` | `0.48.3` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.48.3` | ✅ Up-to-date |
-| `optimism-op-challenger` | `1.9.5` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.3` | ❌ Outdated |
+| `optimism-op-challenger` | `1.9.6` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.3` | ❌ Outdated |
 | `optimism-op-geth` | `1.101702.3` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101702.3` | ✅ Up-to-date |
 | `optimism-op-node` | `1.19.7` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.19.0` | ❌ Outdated |
 | `optimism-op-reth` | `2.5.2` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |
@@ -85,4 +85,4 @@ _Last updated: 2026-09-15 08:32:45 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
 | `bee` | `2.8.2` ([ethersphere/bee](https://github.com/ethersphere/bee)) | `2.8.2` | ✅ Up-to-date |
-| `kubo` | `0.43.1` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.43.0` | ❌ Outdated |
+| `kubo` | `0.43.1` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.43.1` | ✅ Up-to-date |

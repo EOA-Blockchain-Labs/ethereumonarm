@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-09-16 08:26:42 UTC_
+_Last updated: 2026-09-17 08:32:06 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-09-16 08:26:42 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **31** (83.8%)
-- ❌ Outdated: **6** (16.2%)
+- ✅ Up-to-date: **29** (78.4%)
+- ❌ Outdated: **8** (21.6%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -46,7 +46,7 @@ _Last updated: 2026-09-16 08:26:42 UTC_
 | `lodestar` | `1.48.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.47.0` | ❌ Outdated |
 | `nimbus` | `26.8.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.8.0` | ✅ Up-to-date |
 | `prysm` | `7.1.8` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.8` | ✅ Up-to-date |
-| `teku` | `26.8.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.8.0` | ✅ Up-to-date |
+| `teku` | `26.9.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.8.0` | ❌ Outdated |
 
 ## Layer 1 Execution
 
@@ -70,7 +70,7 @@ _Last updated: 2026-09-16 08:26:42 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `arbitrum-nitro` | `3.11.3` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.11.3` | ✅ Up-to-date |
+| `arbitrum-nitro` | `3.11.4` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.11.3` | ❌ Outdated |
 | `fuel-network` | `0.48.3` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.48.3` | ✅ Up-to-date |
 | `optimism-op-challenger` | `1.9.6` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.3` | ❌ Outdated |
 | `optimism-op-geth` | `1.101702.3` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101702.3` | ✅ Up-to-date |

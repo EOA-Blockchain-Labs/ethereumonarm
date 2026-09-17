@@ -109,7 +109,7 @@ FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
     --architecture $(PKG_ARCH_RPM) \
     $(shell test -d extras && find extras -name '$(PKG_NAME)*.service' -printf "--rpm-systemd %p " || true) \
     --depends openjdk-21-jre-headless \
-    --depends "libsecp256k1-0 | libsecp256k1-1" \
+    --depends "libsecp256k1-0 | libsecp256k1-1 | libsecp256k1-6" \
     --depends merge-config \
     --depends libjemalloc-devel
 

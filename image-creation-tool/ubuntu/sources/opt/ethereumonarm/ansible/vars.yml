@@ -120,6 +120,7 @@ base_packages:
   - vim
   - wget
   - kitty-terminfo
+  - python3-passlib
 
 ethereum_packages:
   - arbitrum-nitro
@@ -142,8 +143,6 @@ ethereum_packages:
   - mev-boost
   - nethermind
   - nimbus
-  - optimism-cannon
-  - optimism-op-challenger
   - optimism-op-geth
   - optimism-op-node
   - optimism-op-program

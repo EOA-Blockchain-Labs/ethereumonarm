@@ -1,6 +1,10 @@
 ---
 # Ethereum on ARM - Variables
-# All configuration in one place
+# All configuration in one place.
+#
+# Anything here can be overridden from the command line, e.g.
+#   ansible-playbook -i inventory.yml playbook.yml -e nvme_device=/dev/nvme1n1
+# (install.sh does this for you through its flags).
 
 # =============================================================================
 # SYSTEM CONFIGURATION
@@ -8,6 +12,36 @@
 timezone: "UTC"
 locale: "en_US.UTF-8"
 network_wait_time: 20
+
+# =============================================================================
+# HARDWARE / OS REQUIREMENTS (checked before anything is changed)
+# =============================================================================
+# 16 GB boards report roughly 15.5-16 GB usable, so the threshold sits below 16384.
+min_ram_mb: 15000
+# "2 TB" class drives. Decimal GB (a 2 TB drive is ~2000 GB / 1.82 TiB).
+min_nvme_size_gb: 1900
+# Leave empty to auto-detect the NVMe disk. Set it (e.g. /dev/nvme1n1) when the
+# board has more than one NVMe disk that meets the size requirement.
+nvme_device: ""
+# Ubuntu releases this playbook accepts (Armbian images built on them).
+#   noble    = Ubuntu 24.04 LTS
+#   resolute = Ubuntu 26.04 LTS
+supported_releases:
+  - noble
+  - resolute
+# APT suite used for a third-party repository that does not publish the running
+# release (the playbook probes for this at run time - see "@SUITE@" below).
+fallback_release: "noble"
+require_armbian: true
+skip_os_check: false
+
+# =============================================================================
+# RUN CONTROL
+# =============================================================================
+# true = run discovery + safety checks, print the plan and stop. Nothing is changed.
+plan_only: false
+# Schedule a reboot one minute after a successful run.
+reboot_after: true
 
 # =============================================================================
 # USER CONFIGURATION
@@ -24,69 +58,95 @@ ethereum_groups:
   - dialout
   - plugdev
 
+# What to do with regular users (UID_MIN..UID_MAX) that already exist on the image:
+#   remove : delete the ACCOUNT. Their home directories are never deleted
+#            (they are migrated to the NVMe first, see migrate_existing_home).
+#   keep   : leave them untouched.
+# The user who launched the installer (SUDO_USER) is never removed by this run.
+existing_users_policy: "remove"
+
+# The ethereum user's password is forced to `ethereum_password` (and must be changed
+# on first login) only when the account is created by this run. If the account
+# already existed (Armbian first-login wizard, previous run, ...) its password is left
+# alone unless this is set to true.
+reset_ethereum_password: false
+
 # =============================================================================
 # DISK CONFIGURATION
 # =============================================================================
 data_mount_point: "/home"
-data_filesystem: "ext4"
 data_label: "ethereum_data"
-format_flag_file: ".format_me"
+# What happens to the NVMe disk (decided automatically, no flags):
+#   ext4 first partition ........ KEPT, unless the format flag file below exists on it
+#   new / unformatted disk ...... FORMATTED
+#   any other filesystem ........ FORMATTED (Windows, macOS, XFS, btrfs, LVM/RAID/LUKS, ...)
+# Exceptions that stop the run instead, before anything is changed: the disk holds the OS or
+# swap, ext4 data that is not the first partition, or several NVMe disks qualify.
+# A non-ext4 first partition that is mounted as /home right now is left as it is.
+#
+# Format flag file: create it on an ext4 data disk to have the disk wiped on the next run.
+# Paths are relative to the root of the data partition (= /home while it is mounted).
+format_flag_files:
+  - "{{ ethereum_home | relpath(data_mount_point) }}/.format.me"    # /home/ethereum/.format.me
+  - "{{ ethereum_home | relpath(data_mount_point) }}/.format_me"
+  - ".format_me"                                                      # /home/.format_me (original location)
+
+# If /home currently lives on the SD card / eMMC (or any device other than the
+# NVMe), copy its content to the NVMe before the NVMe is mounted over it.
+# Existing files on the NVMe are never overwritten.
+migrate_existing_home: true
 
 # =============================================================================
 # SWAP CONFIGURATION
 # =============================================================================
 swap_max_mb: 65536
-swap_file: "/home/ethereum/swapfile"
+swap_file: "{{ ethereum_home }}/swapfile"
 
 # =============================================================================
-# DEVICE CONFIGURATIONS
-# Each device has: target_disk, partition_suffix, hostname_seed
+# KNOWN BOARDS
+# Only used to build a short, stable hostname. Boards that are not listed work
+# too: the hostname is derived from the device-tree model string instead.
+# When several patterns match, the longest one wins (ROCK 5B+ beats ROCK 5B).
 # =============================================================================
 devices:
   rock5t:
     pattern: "ROCK 5T"
-    target_disk: "/dev/nvme0n1"
-    partition_suffix: "p1"
     hostname_seed: "rock5t"
 
   rock5b:
     pattern: "ROCK 5B"
-    target_disk: "/dev/nvme0n1"
-    partition_suffix: "p1"
     hostname_seed: "rock5b"
 
   rock5b+:
     pattern: "ROCK 5B+"
-    target_disk: "/dev/nvme0n1"
-    partition_suffix: "p1"
     hostname_seed: "rock5b-plus"
 
   rpi5:
     pattern: "Raspberry Pi 5"
-    target_disk: "/dev/nvme0n1"
-    partition_suffix: "p1"
     hostname_seed: "rpi5"
 
   orangepi5plus:
     pattern: "Orange Pi 5 Plus"
-    target_disk: "/dev/nvme0n1"
-    partition_suffix: "p1"
     hostname_seed: "opi5plus"
 
   nanopct6:
     pattern: "NanoPC-T6"
-    target_disk: "/dev/nvme0n1"
-    partition_suffix: "p1"
     hostname_seed: "nanopct6"
 
 # =============================================================================
 # APT REPOSITORIES
 # =============================================================================
+# "@SUITE@" in `repo` / `suite_probe` is replaced with the running Ubuntu release
+# (noble, resolute). When the running release is not the fallback release, the
+# playbook first checks that `suite_probe` answers HTTP 200 for it; if it does not,
+# that one repository falls back to `fallback_release`. Sources without "@SUITE@"
+# (grafana) are used as written.
 apt_sources:
   - name: "ethereum-on-arm"
     key_url: "https://repo.ethereumonarm.com/eoa.apt.keyring.gpg"
     keyring: "/etc/apt/keyrings/ethereumonarm.gpg"
-    repo: "deb [signed-by=/etc/apt/keyrings/ethereumonarm.gpg] https://repo.ethereumonarm.com noble main"
+    repo: "deb [signed-by=/etc/apt/keyrings/ethereumonarm.gpg] https://repo.ethereumonarm.com @SUITE@ main"
+    suite_probe: "https://repo.ethereumonarm.com/dists/@SUITE@/InRelease"
     dearmor: false
 
   - name: "grafana"
@@ -98,7 +158,8 @@ apt_sources:
   - name: "nginx"
     key_url: "https://nginx.org/keys/nginx_signing.key"
     keyring: "/usr/share/keyrings/nginx-archive-keyring.gpg"
-    repo: "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://nginx.org/packages/ubuntu noble nginx"
+    repo: "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://nginx.org/packages/ubuntu @SUITE@ nginx"
+    suite_probe: "https://nginx.org/packages/ubuntu/dists/@SUITE@/InRelease"
     dearmor: true
     pinning: true
 

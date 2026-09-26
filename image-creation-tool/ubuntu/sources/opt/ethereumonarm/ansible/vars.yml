@@ -234,6 +234,7 @@ monitoring_packages:
   - prometheus
   - prometheus-node-exporter
   - ethereum-metrics-exporter
+  - ethereumonarm-staking-stack
 
 nginx_packages:
   - nginx

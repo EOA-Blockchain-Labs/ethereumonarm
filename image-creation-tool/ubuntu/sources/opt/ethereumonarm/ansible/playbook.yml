@@ -144,6 +144,28 @@
       ansible.builtin.set_fact:
         calculated_swap_mb: "{{ [ansible_facts['memtotal_mb'] * 2, swap_max_mb] | min | int }}"
 
+    # Root-disk-side half of the home-disk backups (see vars.yml). Independent of the NVMe
+    # disk's state entirely - the root disk is never formatted by this playbook, so whether it
+    # holds a backup can be checked here regardless of what happens to the NVMe disk below.
+    # Whether each one is actually restored is decided live in PHASE 2d, since that also needs
+    # to know whether the live copy already exists once the NVMe disk is actually mounted.
+    - name: Check for root-disk backups of home-disk-critical data
+      ansible.builtin.stat:
+        path: "{{ home_disk_backup_root }}{{ item }}"
+      loop: "{{ home_disk_backup_paths }}"
+      loop_control:
+        label: "{{ item }}"
+      register: home_disk_backup_root_stats
+      when: restore_home_disk_backups | bool
+
+    - name: Record which home-disk backups exist on the root disk
+      ansible.builtin.set_fact:
+        home_disk_backups_on_root_disk: >-
+          {{ (home_disk_backup_root_stats.results | default([]))
+             | selectattr('stat.exists', 'defined') | selectattr('stat.exists')
+             | map(attribute='item') | list
+             if (restore_home_disk_backups | bool) else [] }}
+
     # =========================================================================
     # PHASE 1c - NVMe DISCOVERY (read-only)
     # =========================================================================
@@ -362,13 +384,16 @@
             path: "{{ peek_root }}/{{ ethereum_user }}"
           register: ethereum_dir
 
-        # Image upgrade path: a config backup left by ethereumonarm-config-sync on the old
-        # installation, restored to client_config_dir once the client packages are installed
-        # (PHASE 2f). See the documentation's "Image Upgrade" section.
-        - name: Check for a client config backup from a previous installation
+        # Cross-disk backups left by ethereumonarm-config-sync on the old installation, restored
+        # to their live location once the client packages are installed (PHASE 2f). See
+        # root_disk_backup_paths in vars.yml.
+        - name: Check for root-disk backups from a previous installation
           ansible.builtin.stat:
-            path: "{{ peek_root }}/{{ client_config_backup_relpath }}"
-          register: config_backup_dir
+            path: "{{ peek_root }}/{{ ethereum_home | relpath(data_mount_point) }}/.{{ item | regex_replace('^/', '') }}"
+          loop: "{{ root_disk_backup_paths }}"
+          loop_control:
+            label: "{{ item }}"
+          register: root_disk_backup_stats
 
         - name: List top-level content of the partition
           ansible.builtin.command:
@@ -396,10 +421,14 @@
           {{ (format_flag_results.results | default([]) | selectattr('stat.exists', 'defined') | selectattr('stat.exists') | list | length) > 0 }}
         data_entries: "{{ data_entries_raw.stdout_lines | default([]) }}"
         nvme_home_present: "{{ ethereum_dir.stat.isdir | default(false) }}"
-        # Whether a config backup was seen on disk right now. should_format isn't known yet at
-        # this point (see "Decide" below) - config_backup_found, which also accounts for it,
-        # is computed once should_format is available.
-        config_backup_seen: "{{ (restore_client_configs | bool) and (config_backup_dir.stat.isdir | default(false)) }}"
+        # Which root-disk backups were seen on disk right now. should_format isn't known yet at
+        # this point (see "Decide" below) - root_disk_backups_to_restore, which also accounts
+        # for it, is computed once should_format is available.
+        root_disk_backups_seen: >-
+          {{ (root_disk_backup_stats.results | default([]))
+             | selectattr('stat.exists', 'defined') | selectattr('stat.exists')
+             | map(attribute='item') | list
+             if (restore_root_disk_backups | bool) else [] }}
 
     # The three rules:
     #   1. ext4 is kept, unless the format flag file is on it
@@ -423,7 +452,7 @@
           {%- else -%}other filesystem ({{ disk_signatures | join('; ') }}){%- endif -%}
         # A backup seen above doesn't survive a format: if the disk is about to be wiped,
         # there is nothing left to restore from by the time PHASE 2f runs.
-        config_backup_found: "{{ config_backup_seen | bool and not (should_format | bool) }}"
+        root_disk_backups_to_restore: "{{ root_disk_backups_seen if not (should_format | bool) else [] }}"
 
     # =========================================================================
     # PHASE 1e - WHERE /home LIVES TODAY AND WHO ALREADY EXISTS (read-only)
@@ -537,7 +566,8 @@
             {% endif %}
           - "/home now        : {{ 'on the NVMe already (' ~ partition_device ~ ')' if home_on_target_partition | bool else ('a separate mount from ' ~ home_mount_source if home_is_separate_mount | bool else 'on the root filesystem (' ~ home_mount_source ~ ')') }}"
           - "/home migration  : {{ 'YES - ' ~ (home_entries | length) ~ ' entr' ~ ('y' if home_entries | length == 1 else 'ies') ~ ' (' ~ (home_entries | join(', ')) ~ ') copied to the NVMe first; existing NVMe files are never overwritten' if migrate_home | bool else 'not needed' }}"
-          - "Client configs  : {{ 'found at ' ~ client_config_backup_dir ~ ' - will be restored to ' ~ client_config_dir ~ ' after packages install' if config_backup_found | bool else 'no backup found, nothing to restore' }}"
+          - "Root disk backups: {{ 'none found' if (root_disk_backups_to_restore | length) == 0 else (root_disk_backups_to_restore | join(', ') ~ ' - will be restored after packages install') }}"
+          - "Home disk backups: {{ (home_disk_backups_on_root_disk | join(', ') ~ ' found on the root disk - restored if not already present') if (home_disk_backups_on_root_disk | length) > 0 else 'none found on the root disk' }}"
           - "Existing users  : {{ ((other_users | map(attribute='name') | list) + ([ethereum_user ~ ' (already exists)'] if ethereum_user_exists | bool else [])) | join(', ') or 'none' }}"
           - "User actions    : remove accounts [{{ users_to_remove | join(', ') or 'none' }}] (home directories are kept); keep [{{ users_kept | join(', ') or 'none' }}]{{ ' - ' ~ invoking_user ~ ' launched this run and is protected' if invoking_user | length > 0 and invoking_user in users_kept and existing_users_policy == 'remove' else '' }}; ethereum user {{ 'exists - password left alone' if (ethereum_user_exists | bool and not (ethereum_password_managed | bool)) else ('will be created' if not (ethereum_user_exists | bool) else 'exists - password will be reset') }}"
 
@@ -932,6 +962,43 @@
     # SSH configuration is handled in the FINAL ACCESS ENFORCEMENT section
     # to ensure it runs after all packages are installed
 
+    # Cross-disk backup restore, home-disk side (see home_disk_backup_paths in vars.yml). Unlike
+    # the root-disk backups restored later (PHASE 2f), these are only restored when the live
+    # copy is missing right now - never overlaid on top of one that already exists, since this
+    # is state that cannot be regenerated if lost (see vars.yml for why). Checked live rather
+    # than reusing a PHASE 1 fact: what matters is whether the path exists on whatever actually
+    # ends up mounted at the data mount point, which the should_format decision already fully
+    # determines by this point (kept data still has it; anything formatted or freshly created
+    # here does not) - re-checking live avoids relying on that reasoning being airtight, at the
+    # cost of one extra stat call per path.
+    - name: Check whether each home-disk-critical path already exists
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop: "{{ home_disk_backup_paths }}"
+      loop_control:
+        label: "{{ item }}"
+      register: home_disk_live_stats
+      when: restore_home_disk_backups | bool
+
+    - name: Restore each home-disk-critical path from its root-disk backup
+      ansible.builtin.command:
+        argv: [rsync, -a, "{{ home_disk_backup_root }}{{ item }}/", "{{ item }}/"]
+      loop: "{{ home_disk_backup_paths }}"
+      loop_control:
+        label: "{{ item }}"
+        index_var: hd_idx
+      register: home_disk_restore
+      when: >-
+        (restore_home_disk_backups | bool)
+        and (item in home_disk_backups_on_root_disk)
+        and not (home_disk_live_stats.results[hd_idx].stat.exists | default(false))
+
+    - name: Record which home-disk paths were actually restored
+      ansible.builtin.set_fact:
+        home_disk_paths_restored: >-
+          {{ (home_disk_restore.results | default([]))
+             | rejectattr('skipped', 'defined') | map(attribute='item') | list }}
+
     # On a preserved disk, the reuse-hint logic (PHASE 2c) only assigns the on-disk owner's
     # UID/GID to the new account when nothing else on this SD card already holds them. When it
     # can't (for example, a still-present other user happens to have the same UID as the old
@@ -1006,33 +1073,68 @@
     # =========================================================================
     # PHASE 2f - ETHEREUM CONFIGURATION
     # =========================================================================
-    # Image upgrade path: restore client configs a previous installation backed up with
-    # ethereumonarm-config-sync (see the documentation's "Image Upgrade" section), now that the
-    # freshly installed client packages have written their own defaults. Never deletes: a file
-    # the backup doesn't have (a new default from a newer client version) is left as the package
-    # installed it; a file the backup does have overwrites that fresh default. A restore failure
-    # (full disk, bad backup, ...) fails the run rather than silently continuing on empty configs.
-    - name: Restore client configs from a previous installation
-      when: config_backup_found | bool
+    # Cross-disk backup restore, root-disk side (see root_disk_backup_paths in vars.yml).
+    # Restored now that the freshly installed client packages have written their own defaults.
+    # Never deletes: a file the backup doesn't have (a new default from a newer client version)
+    # is left as the package installed it; a file the backup does have overwrites that fresh
+    # default. A restore failure (full disk, bad backup, ...) fails the run rather than silently
+    # continuing on empty configs.
+    - name: Restore /etc/ethereum from its NVMe backup
+      when: "'/etc/ethereum' in root_disk_backups_to_restore"
       block:
-        - name: Make sure the client config directory exists
+        - name: Make sure /etc/ethereum exists
           ansible.builtin.file:
-            path: "{{ client_config_dir }}"
+            path: /etc/ethereum
             state: directory
             mode: "0755"
 
-        - name: Restore client configs
+        - name: Restore /etc/ethereum
           ansible.builtin.command:
-            argv: [rsync, -a, --min-size=1, "{{ client_config_backup_dir }}/", "{{ client_config_dir }}/"]
-          register: config_restore
+            argv: [rsync, -a, --min-size=1, "{{ ethereum_home }}/.etc/ethereum/", "/etc/ethereum/"]
+          register: etc_ethereum_restore
 
         # Like the ethereum home directory, the backup can carry the previous installation's
         # numeric UID/GID (rsync -a preserves them), and that UID isn't guaranteed to still
         # belong to the ethereum account on this SD card - so ownership is set explicitly
         # rather than trusted from the backup.
-        - name: Fix client config ownership
+        - name: Fix /etc/ethereum ownership
           ansible.builtin.command:
-            argv: [chown, -R, --no-dereference, "{{ ethereum_user }}:{{ ethereum_group }}", "{{ client_config_dir }}"]
+            argv: [chown, -R, --no-dereference, "{{ ethereum_user }}:{{ ethereum_group }}", /etc/ethereum]
+
+    # The ethereum user's crontab. Unlike /etc/ethereum this is a single file, and its
+    # permissions matter for a different reason: most cron implementations silently ignore a
+    # crontab file that isn't owned exactly as they expect, so a restore that gets this wrong
+    # would look like it worked while the jobs quietly never ran.
+    - name: Restore the ethereum user's crontab from its NVMe backup
+      when: "('/var/spool/cron/crontabs/' ~ ethereum_user) in root_disk_backups_to_restore"
+      block:
+        - name: Make sure /var/spool/cron/crontabs exists
+          ansible.builtin.file:
+            path: /var/spool/cron/crontabs
+            state: directory
+            mode: "1730"
+
+        - name: Restore the crontab file
+          ansible.builtin.command:
+            argv: [rsync, -a, "{{ ethereum_home }}/.var/spool/cron/crontabs/{{ ethereum_user }}", "/var/spool/cron/crontabs/{{ ethereum_user }}"]
+          register: crontab_restore
+
+        # Debian's cron expects crontab files to be owned "user:crontab"; other cron
+        # implementations may not have that group at all, so fall back to the ethereum group
+        # rather than fail the run over a group name that varies by package.
+        - name: Look up the crontab group, if this system has one
+          ansible.builtin.command:
+            argv: [getent, group, crontab]
+          register: crontab_group_lookup
+          changed_when: false
+          failed_when: false
+
+        - name: Fix crontab ownership and permissions
+          ansible.builtin.file:
+            path: "/var/spool/cron/crontabs/{{ ethereum_user }}"
+            owner: "{{ ethereum_user }}"
+            group: "{{ 'crontab' if crontab_group_lookup.rc == 0 else ethereum_group }}"
+            mode: "0600"
 
     - name: Write EOA release file
       ansible.builtin.copy:
@@ -1205,7 +1307,8 @@
           Ethereum on ARM provisioning completed successfully!
           NVMe            : {{ target_disk }} {{ 'was FORMATTED' if should_format | bool else 'was kept (data preserved)' }}, mounted on {{ data_mount_point }}
           Previous /home  : {{ ('copied from ' ~ home_mount_source ~ ' (the original files are still on that device, hidden under the mount; view them with: mount --bind / /mnt && ls /mnt' ~ data_mount_point ~ ')') if migrate_home | bool else 'nothing to migrate' }}
-          Client configs  : {{ ('restored from ' ~ client_config_backup_dir ~ ' to ' ~ client_config_dir) if config_backup_found | bool else 'no backup found, packages left at their defaults' }}
+          Root disk backups: {{ 'none, packages left at their defaults' if (root_disk_backups_to_restore | length) == 0 else ('restored: ' ~ (root_disk_backups_to_restore | join(', '))) }}
+          Home disk backups: {{ 'restored: ' ~ (home_disk_paths_restored | join(', ')) if (home_disk_paths_restored | default([]) | length) > 0 else ('already present, no restore needed' if (home_disk_backups_on_root_disk | length) > 0 else 'no backup found on the root disk') }}
           Users removed   : {{ users_to_remove | difference(user_removal.results | default([]) | selectattr('failed', 'defined') | selectattr('failed') | map(attribute='item') | list) | join(', ') or 'none' }} (home directories kept)
           Not removable   : {{ user_removal.results | default([]) | selectattr('failed', 'defined') | selectattr('failed') | map(attribute='item') | list | join(', ') or 'none' }} (still logged in? remove after the reboot with: sudo userdel <name>)
           Users kept      : {{ users_kept | difference([invoking_user]) | join(', ') or 'none' }}{{ ('; ' ~ invoking_user ~ ' was NOT removed because it launched this run - after the reboot remove it with: sudo userdel ' ~ invoking_user) if invoking_user | length > 0 and invoking_user in users_kept and existing_users_policy == 'remove' else '' }}

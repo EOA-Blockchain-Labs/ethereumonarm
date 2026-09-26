@@ -1,9 +1,0 @@
-/var/log/eoa_backup.log {
-    rotate 5
-    daily
-    missingok
-    notifempty
-    compress
-    delaycompress
-    copytruncate
-}

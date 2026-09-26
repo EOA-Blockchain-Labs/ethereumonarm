@@ -209,18 +209,34 @@ Standard `apt install` for the Ethereum clients and dependencies, with an automa
 
 ### Ethereum Configuration (Phase 2f)
 
-* **Client config restore (image upgrade)**: see below.
+* **Root-disk backup restore**: see "Cross-disk backups" below.
 * **Swap file**: configures `dphys-swapfile` to create a swap file in the ethereum home on the NVMe (2 x RAM, capped at `swap_max_mb`).
 
-#### Client config restore (image upgrade)
+## 5. Cross-disk Backups (Medium Failure Recovery)
 
-Before reflashing an existing node, the [documentation's image-upgrade flow](https://ethereum-on-arm-documentation.readthedocs.io/en/latest/getting-started/installation.html#image-upgrade) has the operator install `ethereumonarm-config-sync` on the **old** system and run `ethereumonarm-config-sync.sh`, which backs `/etc/ethereum` up to `/home/ethereum/.etc/ethereum` (`client_config_dir` and `client_config_backup_dir` in `vars.yml`) with `rsync -a --delete`. Because that backup lives on the NVMe, it survives the reflash whenever the disk itself is preserved.
+The root disk (SD card / eMMC) and the NVMe disk can each fail independently, and each holds data the other needs to survive that. The `ethereumonarm-config-sync` service mirrors a small set of paths from whichever disk they normally live on to the other, on a schedule, while the node is running. If a disk is later replaced, this playbook restores what it can from the surviving disk's copy. See `root_disk_backup_paths`, `home_disk_backup_paths` and `home_disk_backup_root` in `vars.yml`.
 
-* **Detection (Phase 1d)**: while the ext4 partition is already being peeked at for the format flag file and the `ethereum` directory, the playbook also checks for `ethereum/.etc/ethereum` at the same time - no extra mount. `config_backup_found` is only ever true when the disk is being kept: if the disk is about to be formatted (blank, flag file, or a non-ext4 disk being replaced), the backup would be destroyed along with everything else, so there is nothing to restore.
-* **Restore (Phase 2f)**: once the client packages are installed, `rsync -a --min-size=1` copies the backup into `client_config_dir`, without `--delete`. A file the backup doesn't have - a new default from a client version newer than the one that made the backup - is left as the package installed it; a file the backup does have overwrites that fresh default. This preserves the reasoning of the original restore script exactly, just run through Ansible instead of inline shell.
-* **Ownership**: like the ethereum home directory (see above), the backup can carry the old installation's numeric UID/GID, which is not guaranteed to match the new account's UID on this SD card. Ownership is set explicitly with `chown -R` after the restore rather than trusted from the backup.
-* **Failure handling**: unlike the dpkg-repair step above, a restore failure (full disk, corrupt backup) fails the run. Client configs are not something to continue past silently.
-* **Turning it off**: `restore_client_configs: false` skips detection and restore entirely, if you'd rather always start from the packages' defaults.
+The two directions are not symmetric, because the backup and the live data don't have the same relationship in each case:
+
+| | Lives on | Mirrored to | Restored when | Overlay behaviour |
+| - | -------- | ----------- | -------------- | ------------------ |
+| `/etc/ethereum` | root disk | `{{ ethereum_home }}/.etc/ethereum` (NVMe) | the NVMe disk was kept, not formatted | overlays live data - a package's fresh default loses to the backup |
+| `/var/spool/cron/crontabs/{{ ethereum_user }}` | root disk | `{{ ethereum_home }}/.var/spool/cron/crontabs/{{ ethereum_user }}` (NVMe) | the NVMe disk was kept, not formatted | overlays live data, same reasoning |
+| `{{ ethereum_home }}/.charon` | NVMe (ethereum home) | `{{ home_disk_backup_root }}{{ ethereum_home }}/.charon` (root disk) | the live copy is missing | never overlays - live data always wins |
+
+**Root disk → NVMe (`root_disk_backup_paths`).** The backup itself lives on the NVMe disk, so whether it survives this run depends on whether the NVMe disk is about to be formatted - exactly the same dependency the original single-purpose client-config restore had, now generalised to a list:
+
+* **Detection (Phase 1d)**: while the ext4 partition is already being peeked at for the format flag file and the `ethereum` directory, the playbook also checks for each path in `root_disk_backup_paths` at the same time - no extra mount. `root_disk_backups_to_restore` is only ever non-empty when the disk is being kept: if the disk is about to be formatted (blank, flag file, or a non-ext4 disk being replaced), the backups would be destroyed along with everything else, so there is nothing to restore.
+* **Restore (Phase 2f)**: once the client packages are installed, each backup found is restored - `/etc/ethereum` with `rsync -a --min-size=1` (no `--delete`: a file the backup doesn't have, such as a new default from a client version newer than the one that made the backup, is left as the package installed it), and the crontab file the same way as a single file rather than a directory.
+* **Ownership**: like the ethereum home directory (see above), a backup can carry the old installation's numeric UID/GID, which is not guaranteed to match the new account's UID on this SD card - ownership is set explicitly after each restore rather than trusted from the backup. The crontab file is a special case: most cron implementations silently ignore a crontab file that isn't owned exactly as they expect (typically `<user>:crontab`, mode `0600`), so a restore that got this wrong would look successful while the jobs quietly never ran. The playbook checks whether this system has a `crontab` group (`getent group crontab`) and uses it if so, falling back to the ethereum group otherwise, since not every cron implementation uses that group name.
+* **Failure handling**: unlike the dpkg-repair step above, a restore failure (full disk, corrupt backup) fails the run. These are not something to continue past silently.
+* **Turning it off**: `restore_root_disk_backups: false` skips detection and restore entirely, if you'd rather always start from the packages' defaults.
+
+**NVMe home → root disk (`home_disk_backup_paths`).** The backup lives on the root disk, which this playbook never formats, so whether the NVMe disk is being formatted doesn't matter here. What matters instead is not overwriting live data with a possibly-older backup - this is for state that cannot be regenerated if lost (an Obol Charon cluster's data: without it, that node cannot rejoin its cluster, and the cluster has to be reinstalled), so it is only ever restored when the live copy is missing, never overlaid on top of one that already exists:
+
+* **Detection**: the root-disk side is checked early (Phase 1b), independently of anything to do with the NVMe disk, since the root disk's state doesn't depend on any decision this playbook makes. The live side is checked again in Phase 2d, right after the ethereum account exists, since that is the earliest point the actual (kept-or-fresh) NVMe content is known for certain.
+* **Restore (Phase 2d)**: `rsync -a` copies the backup in, only when `home_disk_backups_on_root_disk` says the root disk has it *and* the live path doesn't exist yet. Placed immediately before the existing "fix ethereum home ownership" task, so that task's `chown -R` picks up the newly restored files without a separate explicit chown here.
+* **Turning it off**: `restore_home_disk_backups: false`.
 
 ### Monitoring (Phase 2g)
 
@@ -245,7 +261,7 @@ Runs last so nothing installed earlier can undo it: enforces the password and th
 
 ---
 
-## 5. Running as a First-Boot Service vs. `install.sh`
+## 6. Running as a First-Boot Service vs. `install.sh`
 
 Both paths run the same `playbook.yml` and `vars.yml`. What differs is who is there to answer questions.
 
@@ -278,7 +294,7 @@ Behaviors that matter only when nobody is watching:
 
 ---
 
-## 6. Running It
+## 7. Running It
 
 `install.sh` installs the dependencies (`git`, `ansible`, `python3-passlib`, the `ansible.posix` and `community.general` collections), downloads the playbook, runs Phase 1, asks for confirmation and then runs the full playbook. It works from `/opt/eoa-installer` and pins Ansible's home to `/root`, never under `/home`, which gets remounted during the run.
 
@@ -301,6 +317,6 @@ sudo ./install.sh               # plan, confirm, run
 
 `--wipe-nvme` is still accepted so old command lines do not break, but it does nothing.
 
-Variables that can only be set with `-e` / `vars.yml`: `min_ram_mb`, `min_nvme_size_gb`, `supported_releases`, `fallback_release`, `migrate_existing_home`, `reset_ethereum_password`, `format_flag_files`, `swap_max_mb`.
+Variables that can only be set with `-e` / `vars.yml`: `min_ram_mb`, `min_nvme_size_gb`, `supported_releases`, `fallback_release`, `migrate_existing_home`, `reset_ethereum_password`, `format_flag_files`, `swap_max_mb`, `root_disk_backup_paths`, `restore_root_disk_backups`, `home_disk_backup_paths`, `home_disk_backup_root`, `restore_home_disk_backups`.
 
 To ask for a wipe of an ext4 data disk on the next run, create the flag file while the disk is mounted on `/home`: `touch /home/ethereum/.format.me` (the `ethereum` user can do this without `sudo`). The disk is formatted on the next run, and the flag disappears with the rest of the data.

@@ -1,0 +1,14 @@
+[Unit]
+Description=Periodically mirror root-disk / NVMe backups for Ethereum on ARM
+
+[Timer]
+# Runs shortly after boot (once the disks are settled) and every 15 minutes after that.
+# 15 minutes bounds how stale a backup can be if a disk fails right before the next run -
+# short enough to matter for a live crontab or Charon's slashing-protection database,
+# long enough not to be a meaningful load on a Raspberry-Pi-class board.
+OnBootSec=5min
+OnUnitActiveSec=15min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

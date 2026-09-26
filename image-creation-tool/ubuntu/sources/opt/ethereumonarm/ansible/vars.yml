@@ -102,15 +102,40 @@ migrate_existing_home: true
 swap_max_mb: 65536
 swap_file: "{{ ethereum_home }}/swapfile"
 
-# Client config restore (image upgrade path, see the documentation's "Image Upgrade" section).
-# Before reflashing, the ethereumonarm-config-sync package backs client_config_dir up to
-# client_config_backup_dir on the NVMe. If that backup is present, it is restored here after the
-# client packages install, so an upgrade or reinstall comes back up with the previous settings
-# (validator keys, custom data paths, ...) instead of the packages' fresh defaults.
-client_config_dir: "/etc/ethereum"
-client_config_backup_dir: "{{ ethereum_home }}/.etc/ethereum"                                   # /home/ethereum/.etc/ethereum
-client_config_backup_relpath: "{{ ethereum_home | relpath(data_mount_point) }}/.etc/ethereum"   # same path, relative to /home - used to peek at it in Phase 1, before /home is mounted
-restore_client_configs: true
+# Cross-disk backups (medium failure recovery).
+#
+# The root disk (SD card / eMMC) and the NVMe disk can each fail independently. The
+# ethereumonarm-config-sync service mirrors a small set of paths from whichever disk they
+# normally live on to the other, on a schedule, while the node is running. If one disk is
+# later replaced, this playbook restores what it can from the surviving disk's copy.
+#
+# The two directions need different safety rules, because the backup and the live data don't
+# have the same relationship in each case:
+#   - root_disk_backup_paths: normally live on the root disk, mirrored onto the NVMe disk at
+#     "{{ ethereum_home }}/.<path, without the leading slash>" (e.g. /etc/ethereum is mirrored
+#     to "{{ ethereum_home }}/.etc/ethereum"). The backup itself lives on the NVMe disk, so if
+#     the NVMe disk is being formatted this run, the backup goes with it - restoring after
+#     packages install only makes sense when the NVMe disk was kept. Once restored, the backup
+#     is allowed to overlay live data: these are config files a fresh package install may have
+#     already recreated defaults for, and the previous, real settings should win.
+#   - home_disk_backup_paths: normally live under the ethereum home (on the NVMe disk),
+#     mirrored onto the root disk at "home_disk_backup_root + the original absolute path"
+#     (e.g. "{{ ethereum_home }}/.charon" is mirrored to
+#     "{{ home_disk_backup_root }}{{ ethereum_home }}/.charon"). The backup lives on the root
+#     disk, which this playbook never formats, so whether the NVMe disk is being formatted
+#     doesn't matter here - what matters is not overwriting live data with a possibly-older
+#     backup, so restore only ever happens when the live copy is missing. This is for state
+#     that cannot be regenerated if lost (for example, an Obol Charon cluster's data - without
+#     it, that node cannot rejoin its cluster and the cluster has to be reinstalled).
+root_disk_backup_paths:
+  - "/etc/ethereum"
+  - "/var/spool/cron/crontabs/{{ ethereum_user }}"
+restore_root_disk_backups: true
+
+home_disk_backup_paths:
+  - "{{ ethereum_home }}/.charon"
+home_disk_backup_root: "/var/backups/ethereumonarm"
+restore_home_disk_backups: true
 
 # =============================================================================
 # KNOWN BOARDS
@@ -234,7 +259,6 @@ monitoring_packages:
   - prometheus
   - prometheus-node-exporter
   - ethereum-metrics-exporter
-  - ethereumonarm-staking-stack
 
 nginx_packages:
   - nginx

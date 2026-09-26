@@ -1,5 +1,0 @@
-# This file stores the Restic repository encryption password.
-# Keep it private and secure. Without this password,
-# your backups cannot be decrypted or restored.
-
-YourStrongResticPassword

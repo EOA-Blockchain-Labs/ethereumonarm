@@ -43,7 +43,7 @@ else
 # Package metadata
 # ----------------------------------------------------------------------
 PKG_NAME        ?= besu
-PKG_RELEASE     ?= 1
+PKG_RELEASE     ?= 2
 PKG_ARCH        ?= arm64
 PKG_ARCH_RPM    ?= aarch64
 PKG_VENDOR      ?= Ethereum on ARM
@@ -97,7 +97,7 @@ FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
     $(shell test -d extras && find extras -name '$(PKG_NAME)*.service' -printf "--deb-systemd %p " || true) \
     $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
     --depends openjdk-25-jre-headless \
-    --depends "libsecp256k1-0|libsecp256k1-1" \
+    --depends "libsecp256k1-0 | libsecp256k1-1 | libsecp256k1-6" \
     --depends merge-config \
     --depends libjemalloc-dev
 

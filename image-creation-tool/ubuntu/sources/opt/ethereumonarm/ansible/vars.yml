@@ -102,6 +102,16 @@ migrate_existing_home: true
 swap_max_mb: 65536
 swap_file: "{{ ethereum_home }}/swapfile"
 
+# Client config restore (image upgrade path, see the documentation's "Image Upgrade" section).
+# Before reflashing, the ethereumonarm-config-sync package backs client_config_dir up to
+# client_config_backup_dir on the NVMe. If that backup is present, it is restored here after the
+# client packages install, so an upgrade or reinstall comes back up with the previous settings
+# (validator keys, custom data paths, ...) instead of the packages' fresh defaults.
+client_config_dir: "/etc/ethereum"
+client_config_backup_dir: "{{ ethereum_home }}/.etc/ethereum"                                   # /home/ethereum/.etc/ethereum
+client_config_backup_relpath: "{{ ethereum_home | relpath(data_mount_point) }}/.etc/ethereum"   # same path, relative to /home - used to peek at it in Phase 1, before /home is mounted
+restore_client_configs: true
+
 # =============================================================================
 # KNOWN BOARDS
 # Only used to build a short, stable hostname. Boards that are not listed work

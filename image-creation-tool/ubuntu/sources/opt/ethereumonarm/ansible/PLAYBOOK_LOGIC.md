@@ -91,7 +91,7 @@ and unmounts again. It also finds all mount points that use the disk, its UUID, 
 
 ### 1f. The plan
 
-The plan lists: OS release and APT suites, board, NVMe disk / size / state, the format decision **and the reason for it**, where `/home` is now, the migration, existing users and the user actions. There is no separate authorisation step for formatting: the rules in section 3 are the authorisation. Interactive protection comes from `install.sh`, which shows this plan and asks for confirmation before it changes anything.
+The plan lists: OS release and APT suites, board, NVMe disk / size / state, the format decision **and the reason for it**, where `/home` is now, the migration, whether a client config backup was found and will be restored, existing users and the user actions. There is no separate authorisation step for formatting: the rules in section 3 are the authorisation. Interactive protection comes from `install.sh`, which shows this plan and asks for confirmation before it changes anything.
 
 If `plan_only=true` the play ends here.
 
@@ -209,8 +209,18 @@ Standard `apt install` for the Ethereum clients and dependencies, with an automa
 
 ### Ethereum Configuration (Phase 2f)
 
-* **Directory structure**: creates the standard tree (`.ethereum`, `.lighthouse`, ...) in the ethereum home, which is now on the NVMe disk.
+* **Client config restore (image upgrade)**: see below.
 * **Swap file**: configures `dphys-swapfile` to create a swap file in the ethereum home on the NVMe (2 x RAM, capped at `swap_max_mb`).
+
+#### Client config restore (image upgrade)
+
+Before reflashing an existing node, the [documentation's image-upgrade flow](https://ethereum-on-arm-documentation.readthedocs.io/en/latest/getting-started/installation.html#image-upgrade) has the operator install `ethereumonarm-config-sync` on the **old** system and run `ethereumonarm-config-sync.sh`, which backs `/etc/ethereum` up to `/home/ethereum/.etc/ethereum` (`client_config_dir` and `client_config_backup_dir` in `vars.yml`) with `rsync -a --delete`. Because that backup lives on the NVMe, it survives the reflash whenever the disk itself is preserved.
+
+* **Detection (Phase 1d)**: while the ext4 partition is already being peeked at for the format flag file and the `ethereum` directory, the playbook also checks for `ethereum/.etc/ethereum` at the same time - no extra mount. `config_backup_found` is only ever true when the disk is being kept: if the disk is about to be formatted (blank, flag file, or a non-ext4 disk being replaced), the backup would be destroyed along with everything else, so there is nothing to restore.
+* **Restore (Phase 2f)**: once the client packages are installed, `rsync -a --min-size=1` copies the backup into `client_config_dir`, without `--delete`. A file the backup doesn't have - a new default from a client version newer than the one that made the backup - is left as the package installed it; a file the backup does have overwrites that fresh default. This preserves the reasoning of the original restore script exactly, just run through Ansible instead of inline shell.
+* **Ownership**: like the ethereum home directory (see above), the backup can carry the old installation's numeric UID/GID, which is not guaranteed to match the new account's UID on this SD card. Ownership is set explicitly with `chown -R` after the restore rather than trusted from the backup.
+* **Failure handling**: unlike the dpkg-repair step above, a restore failure (full disk, corrupt backup) fails the run. Client configs are not something to continue past silently.
+* **Turning it off**: `restore_client_configs: false` skips detection and restore entirely, if you'd rather always start from the packages' defaults.
 
 ### Monitoring (Phase 2g)
 

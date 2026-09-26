@@ -362,6 +362,14 @@
             path: "{{ peek_root }}/{{ ethereum_user }}"
           register: ethereum_dir
 
+        # Image upgrade path: a config backup left by ethereumonarm-config-sync on the old
+        # installation, restored to client_config_dir once the client packages are installed
+        # (PHASE 2f). See the documentation's "Image Upgrade" section.
+        - name: Check for a client config backup from a previous installation
+          ansible.builtin.stat:
+            path: "{{ peek_root }}/{{ client_config_backup_relpath }}"
+          register: config_backup_dir
+
         - name: List top-level content of the partition
           ansible.builtin.command:
             argv: [find, "{{ peek_root }}", -mindepth, "1", -maxdepth, "1", -not, -name, "lost+found", -printf, "%f\\n"]
@@ -388,6 +396,10 @@
           {{ (format_flag_results.results | default([]) | selectattr('stat.exists', 'defined') | selectattr('stat.exists') | list | length) > 0 }}
         data_entries: "{{ data_entries_raw.stdout_lines | default([]) }}"
         nvme_home_present: "{{ ethereum_dir.stat.isdir | default(false) }}"
+        # Whether a config backup was seen on disk right now. should_format isn't known yet at
+        # this point (see "Decide" below) - config_backup_found, which also accounts for it,
+        # is computed once should_format is available.
+        config_backup_seen: "{{ (restore_client_configs | bool) and (config_backup_dir.stat.isdir | default(false)) }}"
 
     # The three rules:
     #   1. ext4 is kept, unless the format flag file is on it
@@ -409,6 +421,9 @@
           {%- if disk_state == 'blank' -%}new or unformatted disk (no filesystem found)
           {%- elif disk_state == 'ext4' -%}format flag file found
           {%- else -%}other filesystem ({{ disk_signatures | join('; ') }}){%- endif -%}
+        # A backup seen above doesn't survive a format: if the disk is about to be wiped,
+        # there is nothing left to restore from by the time PHASE 2f runs.
+        config_backup_found: "{{ config_backup_seen | bool and not (should_format | bool) }}"
 
     # =========================================================================
     # PHASE 1e - WHERE /home LIVES TODAY AND WHO ALREADY EXISTS (read-only)
@@ -522,6 +537,7 @@
             {% endif %}
           - "/home now        : {{ 'on the NVMe already (' ~ partition_device ~ ')' if home_on_target_partition | bool else ('a separate mount from ' ~ home_mount_source if home_is_separate_mount | bool else 'on the root filesystem (' ~ home_mount_source ~ ')') }}"
           - "/home migration  : {{ 'YES - ' ~ (home_entries | length) ~ ' entr' ~ ('y' if home_entries | length == 1 else 'ies') ~ ' (' ~ (home_entries | join(', ')) ~ ') copied to the NVMe first; existing NVMe files are never overwritten' if migrate_home | bool else 'not needed' }}"
+          - "Client configs  : {{ 'found at ' ~ client_config_backup_dir ~ ' - will be restored to ' ~ client_config_dir ~ ' after packages install' if config_backup_found | bool else 'no backup found, nothing to restore' }}"
           - "Existing users  : {{ ((other_users | map(attribute='name') | list) + ([ethereum_user ~ ' (already exists)'] if ethereum_user_exists | bool else [])) | join(', ') or 'none' }}"
           - "User actions    : remove accounts [{{ users_to_remove | join(', ') or 'none' }}] (home directories are kept); keep [{{ users_kept | join(', ') or 'none' }}]{{ ' - ' ~ invoking_user ~ ' launched this run and is protected' if invoking_user | length > 0 and invoking_user in users_kept and existing_users_policy == 'remove' else '' }}; ethereum user {{ 'exists - password left alone' if (ethereum_user_exists | bool and not (ethereum_password_managed | bool)) else ('will be created' if not (ethereum_user_exists | bool) else 'exists - password will be reset') }}"
 
@@ -990,6 +1006,34 @@
     # =========================================================================
     # PHASE 2f - ETHEREUM CONFIGURATION
     # =========================================================================
+    # Image upgrade path: restore client configs a previous installation backed up with
+    # ethereumonarm-config-sync (see the documentation's "Image Upgrade" section), now that the
+    # freshly installed client packages have written their own defaults. Never deletes: a file
+    # the backup doesn't have (a new default from a newer client version) is left as the package
+    # installed it; a file the backup does have overwrites that fresh default. A restore failure
+    # (full disk, bad backup, ...) fails the run rather than silently continuing on empty configs.
+    - name: Restore client configs from a previous installation
+      when: config_backup_found | bool
+      block:
+        - name: Make sure the client config directory exists
+          ansible.builtin.file:
+            path: "{{ client_config_dir }}"
+            state: directory
+            mode: "0755"
+
+        - name: Restore client configs
+          ansible.builtin.command:
+            argv: [rsync, -a, --min-size=1, "{{ client_config_backup_dir }}/", "{{ client_config_dir }}/"]
+          register: config_restore
+
+        # Like the ethereum home directory, the backup can carry the previous installation's
+        # numeric UID/GID (rsync -a preserves them), and that UID isn't guaranteed to still
+        # belong to the ethereum account on this SD card - so ownership is set explicitly
+        # rather than trusted from the backup.
+        - name: Fix client config ownership
+          ansible.builtin.command:
+            argv: [chown, -R, --no-dereference, "{{ ethereum_user }}:{{ ethereum_group }}", "{{ client_config_dir }}"]
+
     - name: Write EOA release file
       ansible.builtin.copy:
         dest: /etc/eoa-release
@@ -1161,6 +1205,7 @@
           Ethereum on ARM provisioning completed successfully!
           NVMe            : {{ target_disk }} {{ 'was FORMATTED' if should_format | bool else 'was kept (data preserved)' }}, mounted on {{ data_mount_point }}
           Previous /home  : {{ ('copied from ' ~ home_mount_source ~ ' (the original files are still on that device, hidden under the mount; view them with: mount --bind / /mnt && ls /mnt' ~ data_mount_point ~ ')') if migrate_home | bool else 'nothing to migrate' }}
+          Client configs  : {{ ('restored from ' ~ client_config_backup_dir ~ ' to ' ~ client_config_dir) if config_backup_found | bool else 'no backup found, packages left at their defaults' }}
           Users removed   : {{ users_to_remove | difference(user_removal.results | default([]) | selectattr('failed', 'defined') | selectattr('failed') | map(attribute='item') | list) | join(', ') or 'none' }} (home directories kept)
           Not removable   : {{ user_removal.results | default([]) | selectattr('failed', 'defined') | selectattr('failed') | map(attribute='item') | list | join(', ') or 'none' }} (still logged in? remove after the reboot with: sudo userdel <name>)
           Users kept      : {{ users_kept | difference([invoking_user]) | join(', ') or 'none' }}{{ ('; ' ~ invoking_user ~ ' was NOT removed because it launched this run - after the reboot remove it with: sudo userdel ' ~ invoking_user) if invoking_user | length > 0 and invoking_user in users_kept and existing_users_policy == 'remove' else '' }}

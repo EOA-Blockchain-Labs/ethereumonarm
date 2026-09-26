@@ -57,7 +57,7 @@ OUTPUTDIR       ?= ../../packages
 # ----------------------------------------------------------------------
 # Upstream version and source info
 # ----------------------------------------------------------------------
-PKG_VERSION ?= 0.4
+PKG_VERSION ?= 0.5
 
 PKG_DEB      := $(OUTPUTDIR)/$(PKG_NAME)_$(PKG_VERSION)-$(PKG_RELEASE)_$(PKG_ARCH).deb
 PKG_RPM      := $(OUTPUTDIR)/$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).$(PKG_ARCH_RPM).rpm
@@ -86,7 +86,7 @@ FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
     -t deb \
     --architecture $(PKG_ARCH) \
     --deb-no-default-config-files \
-    $(shell test -d extras && find extras -name 'ethereumonarm-config-sync*.service' -printf "--deb-systemd %p ") \
+    $(shell test -d extras && find extras -name 'ethereum*' -printf "--deb-systemd %p ") \
     $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
     --depends merge-config
 

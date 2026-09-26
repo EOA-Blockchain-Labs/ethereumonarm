@@ -125,8 +125,9 @@ swap_file: "{{ ethereum_home }}/swapfile"
 #     disk, which this playbook never formats, so whether the NVMe disk is being formatted
 #     doesn't matter here - what matters is not overwriting live data with a possibly-older
 #     backup, so restore only ever happens when the live copy is missing. This is for state
-#     that cannot be regenerated if lost (for example, an Obol Charon cluster's data - without
-#     it, that node cannot rejoin its cluster and the cluster has to be reinstalled).
+#     that cannot be regenerated if lost (an Obol Charon cluster's data - without it, that node
+#     cannot rejoin its cluster and the cluster has to be reinstalled) or whose presence itself
+#     is meaningful (.obol-monitor marks this node as monitoring a DVT cluster).
 root_disk_backup_paths:
   - "/etc/ethereum"
   - "/var/spool/cron/crontabs/{{ ethereum_user }}"
@@ -134,6 +135,7 @@ restore_root_disk_backups: true
 
 home_disk_backup_paths:
   - "{{ ethereum_home }}/.charon"
+  - "{{ ethereum_home }}/.obol-monitor"
 home_disk_backup_root: "/var/backups/ethereumonarm"
 restore_home_disk_backups: true
 

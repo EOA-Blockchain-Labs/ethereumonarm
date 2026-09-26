@@ -885,12 +885,18 @@
           the console) and run again.
       when: old_home_umount.rc is defined and old_home_umount.rc != 0
 
+    # nofail: if this disk is ever physically replaced, the UUID in /etc/fstab stops matching
+    # anything. Without nofail, systemd treats this as a required mount and will not reach
+    # local-fs.target until it times out - which blocks sshd along with everything else that
+    # depends on it, on a board with no local console. With nofail, boot proceeds without this
+    # mount (data_mount_point stays on the root disk, empty), the board stays reachable over
+    # the network, and the replacement can be handled by re-running install.sh.
     - name: Mount the data partition on /home and persist it in /etc/fstab
       ansible.posix.mount:
         path: "{{ data_mount_point }}"
         src: "UUID={{ partition_uuid.stdout }}"
         fstype: "{{ data_fs_type }}"
-        opts: defaults,noatime
+        opts: defaults,noatime,nofail,x-systemd.device-timeout=10s
         state: mounted
 
     - name: Look for an existing ethereum home on the data disk
@@ -945,6 +951,20 @@
     # Doing it here, before Phase 2e, expired the account mid-install: any package postinst
     # script that runs setup as this user (su/runuser) would be rejected by PAM before it
     # could do anything, since a non-interactive session can't satisfy a forced password change.
+
+    # The user module above only creates the home directory when it creates the account
+    # (useradd -m); for an account that already existed (ethereum_user_exists), it uses usermod,
+    # which does not create a missing home directory at all. That gap matters here specifically:
+    # if the NVMe disk was replaced after the ethereum account was already created on this SD
+    # card, the account survives but its home directory does not - and the home-disk backup
+    # restore right after this depends on the directory already existing.
+    - name: Make sure the ethereum home directory exists
+      ansible.builtin.file:
+        path: "{{ ethereum_home }}"
+        state: directory
+        owner: "{{ ethereum_user }}"
+        group: "{{ ethereum_group }}"
+        mode: "0755"
 
     - name: Add user to groups
       ansible.builtin.user:

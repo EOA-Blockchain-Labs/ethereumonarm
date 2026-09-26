@@ -175,11 +175,12 @@ Before the NVMe is mounted on `/home`, the playbook handles whatever `/home` is 
 ### Mounting
 
 * **UUID lookup**: `/etc/fstab` uses the UUID, because `/dev/nvme0n1` naming can change when other drives are added.
-* **Mount and persist**: `ansible.posix.mount` with `state: mounted`, options `defaults,noatime`, filesystem type `ext4` after a format or the detected type when data is preserved.
+* **Mount and persist**: `ansible.posix.mount` with `state: mounted`, options `defaults,noatime,nofail,x-systemd.device-timeout=10s`, filesystem type `ext4` after a format or the detected type when data is preserved. `nofail` matters specifically for NVMe disk failure: if the disk is later physically replaced, the UUID this line was written for no longer exists. Without `nofail`, systemd treats the mount as required and will not reach `local-fs.target` until it gives up waiting for the device - which blocks `sshd` along with everything else that depends on it, on a board that may have no local console. With it, boot proceeds without the mount (`/home` stays on the root disk, empty) and the board stays reachable, so the replacement can be handled by re-running `install.sh`. See "Recovering from a Disk Replacement" below.
 
 ### User Handling
 
 * **`ethereum` group and user** are created only if missing (using the UID/GID hints from scenario D when they apply) with `move_home: true`.
+* **Home directory existence**: for an account that already exists, the `user` module uses `usermod`, not `useradd -m` - and `usermod` does not create a missing home directory. A separate, unconditional task guarantees the directory exists (with correct ownership) regardless of whether the account was just created or already existed, since the home-disk backup restore right after it depends on that directory being there.
 * **Password**: forced to `ethereum_password` with a required change at first login **only when `ethereum_password_managed` is true** (new account, or `reset_ethereum_password=true`). An existing `ethereum` account keeps its password.
 * **Sudo**: password-less sudo through `/etc/sudoers.d/90-ethereum-nopasswd`, validated with `visudo -c -f` before it is installed (this form works with both classic sudo and the `sudo-rs` shipped with Ubuntu 26.04).
 * **Removing other users** (`existing_users_policy: remove`, default): only the **account** is removed (`remove: false`). Home directories are never deleted, because they may hold data that was just migrated or preserved. `SUDO_USER` is never removed. With `keep`, nobody is removed.
@@ -260,6 +261,21 @@ Runs last so nothing installed earlier can undo it: enforces the password and th
 * Schedules `shutdown -r +1` **only if `reboot_after` is true** (`install.sh --no-reboot` turns it off).
 
 ---
+
+### Recovering from a Disk Replacement
+
+If the NVMe disk fails and is physically replaced with a blank one, no manual mount repair is needed before re-running the installer:
+
+1. **Boot still succeeds.** `nofail` (see "Mounting" above) means the missing device doesn't block `local-fs.target`; the board comes up with `/home` on the root disk (empty) and stays reachable over SSH. Password login as `ethereum` still works even though its home directory is temporarily gone, since authentication doesn't require the home directory to exist.
+2. **Re-run `install.sh`** (or the raw `ansible-playbook` command) the same way as any other run. Everything from here is the ordinary flow, not a special "recovery mode":
+   - The new disk has no filesystem, so it is classified `blank` and formatted (rule 2 in section 3) - no flags or confirmation needed beyond the normal plan/confirm step.
+   - The `ethereum` account already exists on this SD card from the original install, so `ethereum_user_exists` is true; its password is left alone, and the "make sure the ethereum home directory exists" task (see "User Handling" above) recreates the directory that the account otherwise still points at.
+   - Anything in `home_disk_backup_paths` (Charon's data) is restored from its root-disk backup, since the live copy is now missing.
+   - Anything in `root_disk_backup_paths` (`/etc/ethereum`, the crontab) needs no restore at all here - those live on the root disk, which was never touched by the failure, so the originals are already exactly as they were.
+
+**Is a "has this run here before" flag worth adding?** For this specific scenario, no additional flag is needed: everything above is already derived from live state (`disk_state`, whether the `ethereum` account exists, whether each backup path exists) rather than from a marker that has to be trusted and kept in sync. Live state is more robust here, since it stays correct even if a disk is manually reformatted, cloned, or moved to another board outside of this playbook. The root disk also already has an equivalent flag for a related purpose - `/root/first-run.flag`, created at the very end of a successful run - which is what stops the first-boot systemd service from running again on every subsequent boot; it does not need to know anything about individual disk replacements, since `install.sh` is meant to be re-run for those on demand.
+
+There is one narrower thing a flag genuinely would add that live state can't: right now, **any** disk whose first partition is ext4 is kept and adopted (section 3), with no check that it was ever actually provisioned by this project. A disk that happens to be ext4 for unrelated reasons - reused from another board, formatted on a test bench - would be silently treated the same as one this playbook created. A small marker written at the end of a successful run (for example, a hidden file at the root of the data partition) would let a future run tell those two cases apart and be more cautious about the second one. That's a real, separate hardening option if you want it - it doesn't change anything about the recovery flow above, which works either way.
 
 ## 6. Running as a First-Boot Service vs. `install.sh`
 

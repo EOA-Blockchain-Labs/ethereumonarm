@@ -1,10 +1,8 @@
 #!/bin/bash
 set -e
 
-chmod 600 /etc/ethereum/restic.passwd
-chmod 600 /etc/ethereum/restic_eoa.conf
 chmod 755 /usr/sbin/format_swapped_disk
-chown root:root /etc/ethereum/restic.passwd /etc/ethereum/restic_eoa.conf /usr/sbin/format_swapped_disk
+chown root:root /usr/sbin/format_swapped_disk
 
 # Reload systemd, enable and start the timer
 echo "Reloading systemd"
@@ -12,6 +10,5 @@ systemctl daemon-reload
 
 echo "Enabling and starting timers..."
 systemctl enable --now ethereum-swappiness-enforce.timer || true
-systemctl enable --now ethereum-backup.timer || true
 
 exit 0

@@ -99,7 +99,7 @@ migrate_existing_home: true
 # =============================================================================
 # SWAP CONFIGURATION
 # =============================================================================
-swap_max_mb: 65536
+swap_max_mb: 24576   # 24 GB cap; swap itself is calculated as min(2x RAM, this)
 swap_file: "{{ ethereum_home }}/swapfile"
 
 # Cross-disk backups (medium failure recovery).
@@ -273,7 +273,7 @@ monitoring_packages:
   - prometheus
   - prometheus-node-exporter
   - ethereum-metrics-exporter
-  - ethereumonarm-staking-monitor
+
 nginx_packages:
   - nginx
   - ethereumonarm-config-sync

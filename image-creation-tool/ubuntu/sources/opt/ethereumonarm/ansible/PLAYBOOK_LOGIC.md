@@ -59,7 +59,7 @@ Swap size is `min(2 x RAM, swap_max_mb)`.
     * `nvme_device` given: it must be one of the candidates, otherwise the run fails.
     * Exactly one candidate: it is used.
     * No candidate: the run fails.
-    * Several candidates: the run fails as ambiguous. Choose one with `--nvme /dev/nvmeXnY`.
+    * Several candidates (for example, a board like the Rock 5B+ with two NVMe slots): the first one by device name (`nvme0n1` before `nvme1n1`, ...) is used by default, with a note in the plan showing every candidate that was found and that this choice was made - not a silent guess. Choose a different one with `--nvme /dev/nvmeXnY`.
 4. **Refuses to touch a disk that holds the OS**: any mount of `/`, `/boot`, `/usr`, `/var`, `/etc`, `/opt` or `/root` on it, or active swap on it, stops the run. The installer expects the OS on the SD card / eMMC.
 5. Derives `partition_suffix` (`p1` for NVMe) and `partition_device` (e.g. `/dev/nvme0n1p1`).
 
@@ -118,7 +118,7 @@ Four situations are not covered by the rules, and each is handled conservatively
 | Non-ext4 first partition that is **mounted as `/home` right now** | Kept and left as it is | It is somebody's live home; destroying it under their feet is not what rule 3 is for |
 | ext4 that is **not the first partition** (or ext4 on the whole disk) | **Refused**, nothing changed | Rule 1 forbids formatting it, but only an ext4 first partition can be used as `/home`. Wipe it yourself (`wipefs -a`) or pick another disk with `--nvme` |
 | `/home` served by another partition of the target disk | **Refused** | The layout is not one this installer can keep or replace safely |
-| The disk holds `/`, `/boot`, `/usr`, `/var`, `/etc`, `/opt`, `/root` or active swap, or several NVMe disks qualify | **Refused** | Unchanged from section 1c |
+| The disk holds `/`, `/boot`, `/usr`, `/var`, `/etc`, `/opt`, `/root` or active swap | **Refused** | Unchanged from section 1c |
 
 A foreign disk that is mounted somewhere **other** than `/home` (for example an NTFS disk auto-mounted under `/media`) is unmounted and formatted; if the unmount fails because it is busy, the run stops before anything is wiped.
 

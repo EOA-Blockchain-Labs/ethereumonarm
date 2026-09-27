@@ -1,293 +1,1433 @@
 ---
-# Ethereum on ARM - Variables
-# All configuration in one place.
+# Ethereum on ARM - First Boot Provisioning Playbook
+# Single-file playbook with all tasks inline for simplicity.
 #
-# Anything here can be overridden from the command line, e.g.
-#   ansible-playbook -i inventory.yml playbook.yml -e nvme_device=/dev/nvme1n1
-# (install.sh does this for you through its flags).
-
-# =============================================================================
-# SYSTEM CONFIGURATION
-# =============================================================================
-timezone: "UTC"
-locale: "en_US.UTF-8"
-network_wait_time: 20
-
-# =============================================================================
-# HARDWARE / OS REQUIREMENTS (checked before anything is changed)
-# =============================================================================
-# 16 GB boards report roughly 15.5-16 GB usable, so the threshold sits below 16384.
-min_ram_mb: 15000
-# "2 TB" class drives. Decimal GB (a 2 TB drive is ~2000 GB / 1.82 TiB).
-min_nvme_size_gb: 1900
-# Leave empty to auto-detect the NVMe disk. Set it (e.g. /dev/nvme1n1) when the
-# board has more than one NVMe disk that meets the size requirement.
-nvme_device: ""
-# Ubuntu releases this playbook accepts (Armbian images built on them).
-#   noble    = Ubuntu 24.04 LTS
-#   resolute = Ubuntu 26.04 LTS
-supported_releases:
-  - noble
-  - resolute
-# APT suite used for a third-party repository that does not publish the running
-# release (the playbook probes for this at run time - see "@SUITE@" below).
-fallback_release: "noble"
-require_armbian: true
-skip_os_check: false
-
-# =============================================================================
-# RUN CONTROL
-# =============================================================================
-# true = run discovery + safety checks, print the plan and stop. Nothing is changed.
-plan_only: false
-# Schedule a reboot one minute after a successful run.
-reboot_after: true
-
-# =============================================================================
-# USER CONFIGURATION
-# =============================================================================
-ethereum_user: "ethereum"
-ethereum_group: "ethereum"
-ethereum_home: "/home/ethereum"
-ethereum_password: "ethereum"
-ethereum_groups:
-  - sudo
-  - netdev
-  - audio
-  - video
-  - dialout
-  - plugdev
-
-# What to do with regular users (UID_MIN..UID_MAX) that already exist on the image:
-#   remove : delete the ACCOUNT. Their home directories are never deleted
-#            (they are migrated to the NVMe first, see migrate_existing_home).
-#   keep   : leave them untouched.
-# The user who launched the installer (SUDO_USER) is never removed by this run.
-existing_users_policy: "remove"
-
-# The ethereum user's password is forced to `ethereum_password` (and must be changed
-# on first login) only when the account is created by this run. If the account
-# already existed (Armbian first-login wizard, previous run, ...) its password is left
-# alone unless this is set to true.
-reset_ethereum_password: false
-
-# =============================================================================
-# DISK CONFIGURATION
-# =============================================================================
-data_mount_point: "/home"
-data_label: "ethereum_data"
-# What happens to the NVMe disk (decided automatically, no flags):
-#   ext4 first partition ........ KEPT, unless the format flag file below exists on it
-#   new / unformatted disk ...... FORMATTED
-#   any other filesystem ........ FORMATTED (Windows, macOS, XFS, btrfs, LVM/RAID/LUKS, ...)
-# Exceptions that stop the run instead, before anything is changed: the disk holds the OS or
-# swap, ext4 data that is not the first partition, or several NVMe disks qualify.
-# A non-ext4 first partition that is mounted as /home right now is left as it is.
+# Layout of this file
+#   PHASE 1  read-only : requirements, board/NVMe/home/user discovery, safety gates, plan
+#   PHASE 2  changes   : apt, network, disk, users, packages, monitoring, security
 #
-# Format flag file: create it on an ext4 data disk to have the disk wiped on the next run.
-# Paths are relative to the root of the data partition (= /home while it is mounted).
-format_flag_files:
-  - "{{ ethereum_home | relpath(data_mount_point) }}/.format.me"    # /home/ethereum/.format.me
-  - "{{ ethereum_home | relpath(data_mount_point) }}/.format_me"
-  - ".format_me"                                                      # /home/.format_me (original location)
+# Run only PHASE 1 (nothing is modified):  -e plan_only=true
 
-# If /home currently lives on the SD card / eMMC (or any device other than the
-# NVMe), copy its content to the NVMe before the NVMe is mounted over it.
-# Existing files on the NVMe are never overwritten.
-migrate_existing_home: true
+- name: Ethereum on ARM First Boot Provisioning
+  hosts: localhost
+  connection: local
+  become: true
+  gather_facts: true
 
-# =============================================================================
-# SWAP CONFIGURATION
-# =============================================================================
-swap_max_mb: 65536
-swap_file: "{{ ethereum_home }}/swapfile"
+  vars_files:
+    - vars.yml
 
-# Cross-disk backups (medium failure recovery).
-#
-# The root disk (SD card / eMMC) and the NVMe disk can each fail independently. The
-# ethereumonarm-config-sync service mirrors a small set of paths from whichever disk they
-# normally live on to the other, on a schedule, while the node is running. If one disk is
-# later replaced, this playbook restores what it can from the surviving disk's copy.
-#
-# The two directions need different safety rules, because the backup and the live data don't
-# have the same relationship in each case:
-#   - root_disk_backup_paths: normally live on the root disk, mirrored onto the NVMe disk at
-#     "{{ ethereum_home }}/.<path, without the leading slash>" (e.g. /etc/ethereum is mirrored
-#     to "{{ ethereum_home }}/.etc/ethereum"). The backup itself lives on the NVMe disk, so if
-#     the NVMe disk is being formatted this run, the backup goes with it - restoring after
-#     packages install only makes sense when the NVMe disk was kept. Once restored, the backup
-#     is allowed to overlay live data: these are config files a fresh package install may have
-#     already recreated defaults for, and the previous, real settings should win.
-#   - home_disk_backup_paths: normally live under the ethereum home (on the NVMe disk),
-#     mirrored onto the root disk at "home_disk_backup_root + the original absolute path"
-#     (e.g. "{{ ethereum_home }}/.charon" is mirrored to
-#     "{{ home_disk_backup_root }}{{ ethereum_home }}/.charon"). The backup lives on the root
-#     disk, which this playbook never formats, so whether the NVMe disk is being formatted
-#     doesn't matter here - what matters is not overwriting live data with a possibly-older
-#     backup, so restore only ever happens when the live copy is missing. This is for state
-#     that cannot be regenerated if lost (an Obol Charon cluster's data - without it, that node
-#     cannot rejoin its cluster and the cluster has to be reinstalled) or whose presence itself
-#     is meaningful (.obol-monitor marks this node as monitoring a DVT cluster).
-root_disk_backup_paths:
-  - "/etc/ethereum"
-  - "/var/spool/cron/crontabs/{{ ethereum_user }}"
-  - "/var/lib/tailscale"
-restore_root_disk_backups: true
+  module_defaults:
+    # apt/dpkg is frequently locked by first-boot jobs (unattended-upgrades, armbian-firstrun...)
+    ansible.builtin.apt:
+      lock_timeout: 300
 
-home_disk_backup_paths:
-  - "{{ ethereum_home }}/.charon"
-  - "{{ ethereum_home }}/.obol-monitor"
-home_disk_backup_root: "/var/backups/ethereumonarm"
-restore_home_disk_backups: true
+  tasks:
+    # =========================================================================
+    # PHASE 1a - REQUIREMENTS (read-only)
+    # =========================================================================
+    - name: Display provisioning start
+      ansible.builtin.debug:
+        msg: "Starting Ethereum on ARM provisioning (plan_only={{ plan_only | bool }})..."
 
-# =============================================================================
-# KNOWN BOARDS
-# Only used to build a short, stable hostname. Boards that are not listed work
-# too: the hostname is derived from the device-tree model string instead.
-# When several patterns match, the longest one wins (ROCK 5B+ beats ROCK 5B).
-# =============================================================================
-devices:
-  rock5t:
-    pattern: "ROCK 5T"
-    hostname_seed: "rock5t"
+    - name: Check CPU architecture
+      ansible.builtin.assert:
+        that: ansible_facts['architecture'] in ['aarch64', 'arm64']
+        fail_msg: "Unsupported CPU architecture '{{ ansible_facts['architecture'] }}'. An ARM64 board is required."
+        quiet: true
 
-  rock5b:
-    pattern: "ROCK 5B"
-    hostname_seed: "rock5b"
+    - name: Check installed RAM
+      ansible.builtin.assert:
+        that: ansible_facts['memtotal_mb'] | int >= min_ram_mb | int
+        fail_msg: >-
+          This board reports {{ ansible_facts['memtotal_mb'] }} MB of RAM but at least
+          {{ min_ram_mb }} MB (16 GB class) is required.
+        quiet: true
 
-  rock5b+:
-    pattern: "ROCK 5B+"
-    hostname_seed: "rock5b-plus"
+    - name: Look for the Armbian release file
+      ansible.builtin.stat:
+        path: /etc/armbian-release
+      register: armbian_release
 
-  rpi5:
-    pattern: "Raspberry Pi 5"
-    hostname_seed: "rpi5"
+    - name: Check that this is an Armbian image
+      ansible.builtin.assert:
+        that: armbian_release.stat.exists
+        fail_msg: >-
+          /etc/armbian-release not found: this does not look like an Armbian image.
+          Set require_armbian=false to override.
+        quiet: true
+      when: require_armbian | bool
 
-  orangepi5plus:
-    pattern: "Orange Pi 5 Plus"
-    hostname_seed: "opi5plus"
+    - name: Check the OS release is one this playbook supports
+      ansible.builtin.assert:
+        that: ansible_facts['distribution_release'] in supported_releases
+        fail_msg: >-
+          OS release is '{{ ansible_facts['distribution_release'] }}' but this playbook supports
+          {{ supported_releases | join(' and ') }} only (the Ethereum on ARM packages are built for
+          those). Use an Armbian image based on one of them, or set skip_os_check=true at your
+          own risk (third-party APT repositories then use '{{ fallback_release }}').
+        quiet: true
+      when: not (skip_os_check | bool)
 
-  nanopct6:
-    pattern: "NanoPC-T6"
-    hostname_seed: "nanopct6"
+    # Release used in the third-party APT repository lines. Normally the running
+    # release; only differs when skip_os_check let an unlisted release through.
+    - name: Pick the APT suite for this release
+      ansible.builtin.set_fact:
+        os_suite: "{{ ansible_facts['distribution_release'] if ansible_facts['distribution_release'] in supported_releases else fallback_release }}"
+        apt_suite_by_name: {}
 
-# =============================================================================
-# APT REPOSITORIES
-# =============================================================================
-# "@SUITE@" in `repo` / `suite_probe` is replaced with the running Ubuntu release
-# (noble, resolute). When the running release is not the fallback release, the
-# playbook first checks that `suite_probe` answers HTTP 200 for it; if it does not,
-# that one repository falls back to `fallback_release`. Sources without "@SUITE@"
-# (grafana) are used as written.
-apt_sources:
-  - name: "ethereum-on-arm"
-    key_url: "https://repo.ethereumonarm.com/eoa.apt.keyring.gpg"
-    keyring: "/etc/apt/keyrings/ethereumonarm.gpg"
-    repo: "deb [signed-by=/etc/apt/keyrings/ethereumonarm.gpg] https://repo.ethereumonarm.com @SUITE@ main"
-    suite_probe: "https://repo.ethereumonarm.com/dists/@SUITE@/InRelease"
-    dearmor: false
+    # Read-only HTTP HEAD requests. Skipped on the fallback release (nothing to decide).
+    - name: Check which suites the release-specific APT repositories publish
+      ansible.builtin.uri:
+        url: "{{ item.suite_probe | replace('@SUITE@', os_suite) }}"
+        method: HEAD
+        timeout: 20
+      register: suite_probe_results
+      # First boot: the network may still be coming up. Retry while nothing answered (status -1).
+      until: (suite_probe_results.status | default(-1) | int) > 0
+      retries: 5
+      delay: 6
+      failed_when: false
+      # Retries exhausted marks the task failed; the next task turns that into a decision.
+      ignore_errors: true
+      changed_when: false
+      loop: "{{ apt_sources | selectattr('suite_probe', 'defined') | list }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when: os_suite != fallback_release
 
-  - name: "grafana"
-    key_url: "https://apt.grafana.com/gpg.key"
-    keyring: "/etc/apt/keyrings/grafana.gpg"
-    repo: "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main"
-    dearmor: true
+    # A repository that answers with anything other than 200 for this release (typically 404)
+    # falls back to fallback_release instead of breaking `apt update` later. If it could not be
+    # reached at all (status -1 after the retries) the running release is kept: nothing is known
+    # about the suite, and `apt update` would fail on a dead network whatever suite was chosen.
+    - name: Record the APT suite chosen for each repository
+      ansible.builtin.set_fact:
+        apt_suite_by_name: >-
+          {{ apt_suite_by_name | combine({item.item.name: (fallback_release if (item.status | default(-1) | int) > 0 and (item.status | int) != 200 else os_suite)}) }}
+      loop: "{{ suite_probe_results.results | default([]) }}"
+      loop_control:
+        label: "{{ item.item.name }}"
 
-  - name: "nginx"
-    key_url: "https://nginx.org/keys/nginx_signing.key"
-    keyring: "/usr/share/keyrings/nginx-archive-keyring.gpg"
-    repo: "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://nginx.org/packages/ubuntu @SUITE@ nginx"
-    suite_probe: "https://nginx.org/packages/ubuntu/dists/@SUITE@/InRelease"
-    dearmor: true
-    pinning: true
+    # =========================================================================
+    # PHASE 1b - BOARD DETECTION (read-only)
+    # =========================================================================
+    - name: Detect device model from device tree
+      ansible.builtin.slurp:
+        src: /sys/firmware/devicetree/base/model
+      register: device_tree_model
+      ignore_errors: true
 
-# =============================================================================
-# PACKAGE LISTS
-# =============================================================================
-base_packages:
-  - apt-utils
-  - bash-completion
-  - file
-  - gdisk
-  - gpg
-  - parted
-  - net-tools
-  - rsync
-  - software-properties-common
-  - dphys-swapfile
-  - ufw
-  - vim
-  - wget
-  - kitty-terminfo
-  - python3-passlib
+    - name: Set device model fact
+      ansible.builtin.set_fact:
+        detected_model: "{{ (device_tree_model.content | b64decode | regex_replace('\\x00', '')) if device_tree_model is succeeded else 'Unknown' }}"
 
-ethereum_packages:
-  - arbitrum-nitro
-  - bee
-  - besu
-  - commit-boost
-  - dvt-obol
-  - dvt-ssv
-  - erigon
-  - ethstaker-deposit-cli
-  - ethereumonarm-utils
-  - ethrex
-  - fuel-network
-  - geth
-  - grandine
-  - kubo
-  - lighthouse
-  - lodestar
-  - ls-lido
-  - mev-boost
-  - nethermind
-  - nimbus
-  - optimism-op-geth
-  - optimism-op-node
-  - optimism-op-program
-  - optimism-op-proposer
-  - optimism-op-reth
-  - prysm
-  - reth
-  - starknet-juno
-  - starknet-madara
-  - starknet-pathfinder
-  - teku
-  - vero
-  - vouch
+    - name: Derive hostname seed (known board pattern, otherwise slug of the model string)
+      ansible.builtin.set_fact:
+        hostname_seed: >-
+          {%- set ns = namespace(seed='', best=0) -%}
+          {%- for d in devices.values() -%}
+            {%- if d.pattern in detected_model and (d.pattern | length) > ns.best -%}
+              {%- set ns.seed = d.hostname_seed -%}
+              {%- set ns.best = d.pattern | length -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {%- set slug = detected_model | lower | regex_replace('[^a-z0-9]+', '-') | regex_replace('^-+|-+$', '') | truncate(24, True, '') | regex_replace('-+$', '') -%}
+          {%- if ns.seed | length > 0 -%}{{ ns.seed }}
+          {%- elif detected_model != 'Unknown' and slug | length > 0 -%}{{ slug }}
+          {%- else -%}arm64{%- endif -%}
 
-monitoring_packages:
-  - ethereumonarm-monitoring-extras
-  - grafana
-  - prometheus
-  - prometheus-node-exporter
-  - ethereum-metrics-exporter
+    - name: Display detected device
+      ansible.builtin.debug:
+        msg: "Detected device: {{ detected_model }} (hostname seed: {{ hostname_seed }})"
 
-nginx_packages:
-  - nginx
-  - ethereumonarm-config-sync
-  - ethereumonarm-nginx-proxy-extras
+    - name: Calculate swap size (2x RAM, max 64GB)
+      ansible.builtin.set_fact:
+        calculated_swap_mb: "{{ [ansible_facts['memtotal_mb'] * 2, swap_max_mb] | min | int }}"
 
-# =============================================================================
-# NTP SERVERS
-# =============================================================================
-ntp_servers:
-  - time1.google.com
-  - time2.google.com
-  - time3.google.com
-  - time4.google.com
+    # Root-disk-side half of the home-disk backups (see vars.yml). Independent of the NVMe
+    # disk's state entirely - the root disk is never formatted by this playbook, so whether it
+    # holds a backup can be checked here regardless of what happens to the NVMe disk below.
+    # Whether each one is actually restored is decided live in PHASE 2d, since that also needs
+    # to know whether the live copy already exists once the NVMe disk is actually mounted.
+    - name: Check for root-disk backups of home-disk-critical data
+      ansible.builtin.stat:
+        path: "{{ home_disk_backup_root }}{{ item }}"
+      loop: "{{ home_disk_backup_paths }}"
+      loop_control:
+        label: "{{ item }}"
+      register: home_disk_backup_root_stats
+      when: restore_home_disk_backups | bool
 
-# =============================================================================
-# MONITORING
-# =============================================================================
-prometheus_user: "prometheus"
-prometheus_home: "/home/prometheus"
-prometheus_dirs:
-  - metrics2
-  - node-exporter
+    - name: Record which home-disk backups exist on the root disk
+      ansible.builtin.set_fact:
+        home_disk_backups_on_root_disk: >-
+          {{ (home_disk_backup_root_stats.results | default([]))
+             | selectattr('stat.exists', 'defined') | selectattr('stat.exists')
+             | map(attribute='item') | list
+             if (restore_home_disk_backups | bool) else [] }}
 
-# =============================================================================
-# VERSION
-# =============================================================================
-eoa_minor_version: "{{ lookup('env', 'EOA_MINOR_VERSION') | default('0', true) }}"
-first_run_flag: "/root/first-run.flag"
+    # =========================================================================
+    # PHASE 1c - NVMe DISCOVERY (read-only)
+    # =========================================================================
+    - name: Find the disk that holds the root filesystem
+      ansible.builtin.shell:
+        cmd: |
+          set -o pipefail
+          src=$(findmnt -rno SOURCE / | sed 's/\[.*$//')
+          lsblk -no PKNAME "$src" 2>/dev/null | head -n1
+        executable: /bin/bash
+      register: root_disk_name
+      changed_when: false
+      failed_when: false
+
+    - name: List NVMe disks (name and size in bytes)
+      ansible.builtin.shell:
+        cmd: |
+          lsblk -dnbr -o NAME,SIZE,TYPE | awk '$3 == "disk" && $1 ~ /^nvme[0-9]+n[0-9]+$/ {print "/dev/" $1 " " $2}'
+      register: nvme_all_raw
+      changed_when: false
+      # First boot: the NVMe can enumerate a few seconds after the service starts.
+      until: nvme_all_raw.stdout_lines | length > 0
+      retries: 6
+      delay: 5
+      # Retries exhausted marks the task failed; "Fail if no suitable NVMe disk" reports it properly.
+      ignore_errors: true
+
+    - name: Select NVMe disks that are big enough and do not hold the OS
+      ansible.builtin.set_fact:
+        nvme_all: "{{ nvme_all_raw.stdout_lines }}"
+        nvme_candidates: >-
+          {%- set out = [] -%}
+          {%- for line in nvme_all_raw.stdout_lines -%}
+            {%- set p = line.split() -%}
+            {%- if (p[1] | int) >= (min_nvme_size_gb | int) * 1000000000 and p[0] != '/dev/' ~ (root_disk_name.stdout | trim) -%}
+              {%- set _ = out.append(p[0]) -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {{ out }}
+
+    - name: Fail if the requested NVMe device is not usable
+      ansible.builtin.fail:
+        msg: >-
+          nvme_device={{ nvme_device }} is not a usable target. Usable NVMe disks
+          (>= {{ min_nvme_size_gb }} GB, not holding the OS): {{ nvme_candidates }}.
+          NVMe disks seen (path size-in-bytes): {{ nvme_all }}.
+      when: nvme_device | length > 0 and nvme_device not in nvme_candidates
+
+    - name: Fail if no suitable NVMe disk was found
+      ansible.builtin.fail:
+        msg: >-
+          No NVMe disk of at least {{ min_nvme_size_gb }} GB (2 TB class) was found
+          (disks that hold the OS are ignored). NVMe disks seen (path size-in-bytes): {{ nvme_all }}.
+      when: nvme_device | length == 0 and nvme_candidates | length == 0
+
+    - name: Fail if several NVMe disks qualify
+      ansible.builtin.fail:
+        msg: >-
+          More than one NVMe disk qualifies: {{ nvme_candidates }}. Refusing to guess which one
+          to use - pass nvme_device=<path> (install.sh --nvme <path>).
+      when: nvme_device | length == 0 and nvme_candidates | length > 1
+
+    - name: Set target disk facts
+      ansible.builtin.set_fact:
+        target_disk: "{{ nvme_device if nvme_device | length > 0 else nvme_candidates[0] }}"
+        partition_suffix: "p1"
+
+    - name: Set partition path
+      ansible.builtin.set_fact:
+        partition_device: "{{ target_disk }}{{ partition_suffix }}"
+
+    - name: Collect every device node of the target disk (disk first, then partitions)
+      ansible.builtin.command:
+        cmd: "lsblk -nrp -o NAME {{ target_disk }}"
+      register: disk_nodes_raw
+      changed_when: false
+
+    - name: Collect mount points that use the target disk
+      ansible.builtin.shell:
+        cmd: |
+          for d in $(lsblk -nrp -o NAME {{ target_disk }}); do
+            findmnt -rn -S "$d" -o TARGET || true
+          done
+      register: disk_mounts_raw
+      changed_when: false
+
+    - name: Collect active swap on the target disk
+      ansible.builtin.shell:
+        cmd: "swapon --noheadings --raw --show=NAME | grep -E '^{{ target_disk }}(p[0-9]+)?$' || true"
+      register: disk_swap_raw
+      changed_when: false
+
+    - name: Classify the mounts of the target disk
+      ansible.builtin.set_fact:
+        disk_nodes: "{{ disk_nodes_raw.stdout_lines }}"
+        disk_mount_targets: "{{ disk_mounts_raw.stdout_lines }}"
+        disk_system_mounts: "{{ disk_mounts_raw.stdout_lines | select('match', '^(/|/boot(/.*)?|/usr(/.*)?|/var(/.*)?|/etc(/.*)?|/opt(/.*)?|/root(/.*)?)$') | list }}"
+        disk_active_swap: "{{ disk_swap_raw.stdout_lines }}"
+
+    - name: Refuse to touch a disk that holds the operating system or active swap
+      ansible.builtin.fail:
+        msg: >-
+          {{ target_disk }} is in use by the system (mounts: {{ disk_system_mounts }},
+          swap: {{ disk_active_swap }}). This installer expects the OS on the SD card/eMMC and
+          the NVMe to be a data disk. Nothing has been changed.
+      when: disk_system_mounts | length > 0 or disk_active_swap | length > 0
+
+    # =========================================================================
+    # PHASE 1d - WHAT IS ON THE NVMe (read-only)
+    # =========================================================================
+    - name: Check if partition has filesystem
+      ansible.builtin.command:
+        cmd: "blkid -o value -s TYPE {{ partition_device }}"
+      register: partition_type
+      changed_when: false
+      failed_when: false
+
+    # blkid -p reads the device itself (no cache). Prints "<device> <type>" for the whole disk and
+    # for every partition that carries a filesystem, RAID, LVM or LUKS signature.
+    - name: Look for signatures on the disk and on every partition
+      ansible.builtin.shell:
+        cmd: |
+          for d in $(lsblk -nrp -o NAME {{ target_disk }}); do
+            t=$(blkid -p -o value -s TYPE "$d" 2>/dev/null) || t=""
+            if [ -n "$t" ]; then echo "$d $t"; fi
+          done
+          exit 0
+        executable: /bin/bash
+      register: disk_signatures_raw
+      changed_when: false
+
+    - name: Remember the current filesystem UUID (used to clean stale fstab entries)
+      ansible.builtin.command:
+        cmd: "blkid -o value -s UUID {{ partition_device }}"
+      register: old_partition_uuid_raw
+      changed_when: false
+      failed_when: false
+
+    - name: Find where the data partition is mounted right now
+      ansible.builtin.command:
+        cmd: "findmnt -rn -S {{ partition_device }} -o TARGET"
+      register: partition_mounts_raw
+      changed_when: false
+      failed_when: false
+
+    - name: Sort the signatures found
+      ansible.builtin.set_fact:
+        old_partition_uuid: "{{ old_partition_uuid_raw.stdout | trim }}"
+        partition_mount_targets: "{{ partition_mounts_raw.stdout_lines }}"
+        partition_in_use: "{{ partition_mounts_raw.stdout_lines | length > 0 }}"
+        disk_signatures: "{{ disk_signatures_raw.stdout_lines }}"
+        other_ext4_nodes: >-
+          {{ disk_signatures_raw.stdout_lines | select('search', ' ext4$') | reject('match', '^' ~ partition_device ~ ' ') | list }}
+
+    # ext4           the first partition is ext4                  -> keep, unless the format flag file is there
+    # ext4_elsewhere ext4 exists, but not as the first partition  -> never formatted here, and cannot be used: refuse
+    # blank          no signature anywhere (new disk, empty partition table, partitions with no filesystem)
+    # foreign        any other filesystem / RAID / LVM / LUKS (NTFS, exFAT, HFS+, APFS, XFS, btrfs, ...)
+    - name: Classify the NVMe disk
+      ansible.builtin.set_fact:
+        disk_state: >-
+          {%- if partition_type.stdout | trim == 'ext4' -%}ext4
+          {%- elif other_ext4_nodes | length > 0 -%}ext4_elsewhere
+          {%- elif (partition_type.stdout | trim | length) == 0 and (disk_signatures | length) == 0 -%}blank
+          {%- else -%}foreign{%- endif -%}
+
+    - name: Refuse to touch ext4 data that is not the first partition of the disk
+      ansible.builtin.fail:
+        msg: >-
+          {{ target_disk }} holds an ext4 filesystem that is not its first partition
+          ({{ other_ext4_nodes | join(', ') }}). ext4 data is never formatted here without the flag file,
+          but only an ext4 first partition can be used as {{ data_mount_point }}. Nothing has been changed.
+          Back the data up and wipe the disk yourself (wipefs -a {{ target_disk }}), or pick another disk
+          with nvme_device=<path>.
+      when: disk_state == 'ext4_elsewhere'
+
+    - name: Refuse if the data mount point is served by another part of the target disk
+      ansible.builtin.fail:
+        msg: >-
+          {{ data_mount_point }} is mounted from {{ target_disk }}, but not from its first partition
+          ({{ partition_device }}). Nothing has been changed. Move that data yourself, or pick another
+          disk with nvme_device=<path>.
+      when: (data_mount_point in disk_mount_targets) and not (data_mount_point in partition_mount_targets)
+
+    # Peek inside an ext4 partition: is the format flag there? what data does it hold?
+    # An already-mounted partition is inspected in place (a second, read-only mount of a
+    # device that is mounted read-write is refused by the kernel).
+    - name: Inspect the existing ext4 partition
+      when: disk_state == 'ext4'
+      block:
+        - name: Create temp mount point
+          ansible.builtin.tempfile:
+            state: directory
+            prefix: "disk_check_"
+          register: peek_tmp
+          when: partition_mount_targets | length == 0
+
+        - name: Mount partition read-only to check it
+          ansible.builtin.command:
+            argv: [mount, -o, "ro,noatime", "{{ partition_device }}", "{{ peek_tmp.path }}"]
+          when: partition_mount_targets | length == 0
+          changed_when: false
+
+        - name: Set inspection root
+          ansible.builtin.set_fact:
+            peek_root: "{{ partition_mount_targets[0] if partition_mount_targets | length > 0 else peek_tmp.path }}"
+
+        - name: Check for the format flag files
+          ansible.builtin.stat:
+            path: "{{ peek_root }}/{{ item }}"
+          register: format_flag_results
+          loop: "{{ format_flag_files }}"
+
+        - name: Check for the ethereum home directory
+          ansible.builtin.stat:
+            path: "{{ peek_root }}/{{ ethereum_user }}"
+          register: ethereum_dir
+
+        # Cross-disk backups left by ethereumonarm-config-sync on the old installation, restored
+        # to their live location once the client packages are installed (PHASE 2f). See
+        # root_disk_backup_paths in vars.yml.
+        - name: Check for root-disk backups from a previous installation
+          ansible.builtin.stat:
+            path: "{{ peek_root }}/{{ ethereum_home | relpath(data_mount_point) }}/.{{ item | regex_replace('^/', '') }}"
+          loop: "{{ root_disk_backup_paths }}"
+          loop_control:
+            label: "{{ item }}"
+          register: root_disk_backup_stats
+
+        - name: List top-level content of the partition
+          ansible.builtin.command:
+            argv: [find, "{{ peek_root }}", -mindepth, "1", -maxdepth, "1", -not, -name, "lost+found", -printf, "%f\\n"]
+          register: data_entries_raw
+          changed_when: false
+      always:
+        - name: Unmount temp mount
+          ansible.builtin.command:
+            cmd: "umount {{ peek_tmp.path }}"
+          when: peek_tmp.path is defined
+          changed_when: false
+          failed_when: false
+
+        - name: Remove temp mount point
+          ansible.builtin.file:
+            path: "{{ peek_tmp.path }}"
+            state: absent
+          when: peek_tmp.path is defined
+          ignore_errors: true
+
+    - name: Determine if formatting is needed
+      ansible.builtin.set_fact:
+        format_flag_found: >-
+          {{ (format_flag_results.results | default([]) | selectattr('stat.exists', 'defined') | selectattr('stat.exists') | list | length) > 0 }}
+        data_entries: "{{ data_entries_raw.stdout_lines | default([]) }}"
+        nvme_home_present: "{{ ethereum_dir.stat.isdir | default(false) }}"
+        # Which root-disk backups were seen on disk right now. should_format isn't known yet at
+        # this point (see "Decide" below) - root_disk_backups_to_restore, which also accounts
+        # for it, is computed once should_format is available.
+        root_disk_backups_seen: >-
+          {{ (root_disk_backup_stats.results | default([]))
+             | selectattr('stat.exists', 'defined') | selectattr('stat.exists')
+             | map(attribute='item') | list
+             if (restore_root_disk_backups | bool) else [] }}
+
+    # The three rules:
+    #   1. ext4 is kept, unless the format flag file is on it
+    #   2. a new / unformatted disk is formatted
+    #   3. any other filesystem (Windows, macOS, ...) is formatted
+    # The one exception to 3: a non-ext4 first partition that is mounted as the data mount point
+    # right now is a live /home - it is left as it is instead of being destroyed under its users.
+    - name: Decide
+      ansible.builtin.set_fact:
+        should_format: >-
+          {{ disk_state == 'blank'
+             or (disk_state == 'ext4' and (format_flag_found | bool))
+             or (disk_state == 'foreign' and not (data_mount_point in partition_mount_targets)) }}
+
+    - name: Work out the filesystem to mount and why
+      ansible.builtin.set_fact:
+        data_fs_type: "{{ 'ext4' if (should_format | bool) else (partition_type.stdout | trim) }}"
+        format_reason: >-
+          {%- if disk_state == 'blank' -%}new or unformatted disk (no filesystem found)
+          {%- elif disk_state == 'ext4' -%}format flag file found
+          {%- else -%}other filesystem ({{ disk_signatures | join('; ') }}){%- endif -%}
+        # A backup seen above doesn't survive a format: if the disk is about to be wiped,
+        # there is nothing left to restore from by the time PHASE 2f runs.
+        root_disk_backups_to_restore: "{{ root_disk_backups_seen if not (should_format | bool) else [] }}"
+
+    # =========================================================================
+    # PHASE 1e - WHERE /home LIVES TODAY AND WHO ALREADY EXISTS (read-only)
+    # =========================================================================
+    - name: Find what backs the data mount point
+      ansible.builtin.command:
+        cmd: "findmnt -rn -T {{ data_mount_point }} -o TARGET,SOURCE,FSTYPE"
+      register: home_fs
+      changed_when: false
+      failed_when: false
+
+    - name: Set /home location facts
+      ansible.builtin.set_fact:
+        home_mount_target: "{{ home_fs.stdout.split()[0] if home_fs.stdout | trim | length > 0 else '/' }}"
+        home_mount_source: "{{ (home_fs.stdout.split()[1] | regex_replace('\\[.*$', '')) if home_fs.stdout | trim | length > 0 else 'rootfs' }}"
+        home_on_target_partition: "{{ data_mount_point in partition_mount_targets }}"
+
+    - name: Set /home mount-type facts
+      ansible.builtin.set_fact:
+        home_is_separate_mount: "{{ home_mount_target == data_mount_point }}"
+
+    - name: List what /home currently contains (when it is not already the NVMe)
+      ansible.builtin.command:
+        argv: [find, "{{ data_mount_point }}", -mindepth, "1", -maxdepth, "1", -not, -name, "lost+found", -printf, "%f\\n"]
+      register: home_entries_raw
+      changed_when: false
+      failed_when: false
+      when: not (home_on_target_partition | bool)
+
+    - name: Decide whether the current /home has to be migrated to the NVMe
+      ansible.builtin.set_fact:
+        home_entries: "{{ home_entries_raw.stdout_lines | default([]) }}"
+        migrate_home: >-
+          {{ (migrate_existing_home | bool)
+             and not (home_on_target_partition | bool)
+             and (home_entries_raw.stdout_lines | default([]) | length > 0) }}
+
+    - name: Read UID range
+      ansible.builtin.shell:
+        cmd: |
+          awk '/^UID_MIN/{a=$2} /^UID_MAX/{b=$2} END{print (a ? a : 1000) ":" (b ? b : 60000)}' /etc/login.defs
+      register: uid_range
+      changed_when: false
+
+    - name: Read the passwd database
+      ansible.builtin.getent:
+        database: passwd
+
+    - name: Read the group database
+      ansible.builtin.getent:
+        database: group
+
+    - name: Work out which regular users already exist
+      ansible.builtin.set_fact:
+        uid_min: "{{ uid_range.stdout | trim | split(':') | first }}"
+        uid_max: "{{ uid_range.stdout | trim | split(':') | last }}"
+        invoking_user: "{{ lookup('env', 'SUDO_USER') }}"
+        ethereum_user_exists: "{{ ethereum_user in ansible_facts.getent_passwd }}"
+
+    - name: Build the user lists
+      ansible.builtin.set_fact:
+        regular_users: >-
+          {%- set out = [] -%}
+          {%- for name, f in ansible_facts.getent_passwd.items() -%}
+            {%- if (f[1] | int) >= (uid_min | int) and (f[1] | int) <= (uid_max | int) -%}
+              {%- set _ = out.append({'name': name, 'uid': f[1] | int, 'home': f[4]}) -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {{ out }}
+
+    - name: Decide what happens to the other users
+      ansible.builtin.set_fact:
+        other_users: "{{ regular_users | rejectattr('name', 'equalto', ethereum_user) | list }}"
+        users_to_remove: >-
+          {{ (regular_users | rejectattr('name', 'equalto', ethereum_user) | map(attribute='name')
+              | reject('equalto', invoking_user) | list)
+             if existing_users_policy == 'remove' else [] }}
+        ethereum_password_managed: "{{ (not (ethereum_user in ansible_facts.getent_passwd)) or (reset_ethereum_password | bool) }}"
+
+    - name: List the users that stay
+      ansible.builtin.set_fact:
+        users_kept: "{{ other_users | map(attribute='name') | reject('in', users_to_remove) | list }}"
+
+    - name: Warn if the playbook lives under the data mount point
+      ansible.builtin.debug:
+        msg: >-
+          WARNING: {{ playbook_dir }} is under {{ data_mount_point }}, which is about to be
+          replaced by the NVMe mount. The run should still finish (everything is already loaded)
+          but run it from another directory (install.sh uses /opt/eoa-installer) to be safe.
+      when: playbook_dir is match(data_mount_point ~ '(/|$)')
+
+    # =========================================================================
+    # PHASE 1f - PLAN + SAFETY GATE
+    # =========================================================================
+    - name: Build the plan
+      ansible.builtin.set_fact:
+        plan_lines:
+          - "OS release      : {{ ansible_facts['distribution_release'] }} (supported: {{ supported_releases | join(', ') }}); APT suites - {% for s in apt_sources if s.suite_probe is defined %}{% set suite = apt_suite_by_name[s.name] | default(os_suite) %}{{ s.name }}: {{ suite }}{{ ' (' ~ os_suite ~ ' not published there, using fallback)' if suite != os_suite else '' }}{{ '; ' if not loop.last else '' }}{% endfor %}"
+          - "Board           : {{ detected_model }} ({{ ansible_facts['memtotal_mb'] }} MB RAM, hostname seed '{{ hostname_seed }}')"
+          - >-
+            NVMe disk       : {{ target_disk }}
+            ({{ ((nvme_all | select('match', '^' ~ target_disk ~ ' ') | first).split()[1] | int / 1000000000) | round | int }} GB),
+            {% if disk_state == 'blank' %}new or unformatted (no filesystem found)
+            {% elif disk_state == 'ext4' %}ext4 on {{ partition_device }}, top-level content: {{ data_entries | join(', ') if data_entries | length > 0 else 'empty' }}
+            {% else %}other filesystem: {{ disk_signatures | join('; ') }}
+            {% endif %}
+          - >-
+            NVMe action     : {% if should_format | bool %}FORMAT - {{ format_reason }} - everything on {{ target_disk }} will be DESTROYED
+            {% elif disk_state == 'ext4' %}KEEP - ext4 data preserved (no format flag file){% if partition_in_use | bool %}, already mounted at {{ partition_mount_targets | join(', ') }}{% endif %}
+            {% else %}KEEP - {{ partition_device }} is in use as {{ data_mount_point }} ({{ partition_type.stdout | trim }}), left as it is
+            {% endif %}
+          - "/home now        : {{ 'on the NVMe already (' ~ partition_device ~ ')' if home_on_target_partition | bool else ('a separate mount from ' ~ home_mount_source if home_is_separate_mount | bool else 'on the root filesystem (' ~ home_mount_source ~ ')') }}"
+          - "/home migration  : {{ 'YES - ' ~ (home_entries | length) ~ ' entr' ~ ('y' if home_entries | length == 1 else 'ies') ~ ' (' ~ (home_entries | join(', ')) ~ ') copied to the NVMe first; existing NVMe files are never overwritten' if migrate_home | bool else 'not needed' }}"
+          - "Root disk backups: {{ 'none found' if (root_disk_backups_to_restore | length) == 0 else (root_disk_backups_to_restore | join(', ') ~ ' - will be restored after packages install') }}"
+          - "Home disk backups: {{ (home_disk_backups_on_root_disk | join(', ') ~ ' found on the root disk - restored if not already present') if (home_disk_backups_on_root_disk | length) > 0 else 'none found on the root disk' }}"
+          - "Existing users  : {{ ((other_users | map(attribute='name') | list) + ([ethereum_user ~ ' (already exists)'] if ethereum_user_exists | bool else [])) | join(', ') or 'none' }}"
+          - "User actions    : remove accounts [{{ users_to_remove | join(', ') or 'none' }}] (home directories are kept); keep [{{ users_kept | join(', ') or 'none' }}]{{ ' - ' ~ invoking_user ~ ' launched this run and is protected' if invoking_user | length > 0 and invoking_user in users_kept and existing_users_policy == 'remove' else '' }}; ethereum user {{ 'exists - password left alone' if (ethereum_user_exists | bool and not (ethereum_password_managed | bool)) else ('will be created' if not (ethereum_user_exists | bool) else 'exists - password will be reset') }}"
+
+    - name: Show the plan
+      ansible.builtin.debug:
+        msg: "{{ plan_lines | join('\n') }}"
+
+    - name: Stop here in plan-only mode
+      ansible.builtin.meta: end_play
+      when: plan_only | bool
+
+    # =========================================================================
+    # PHASE 2a - APT SETUP
+    # =========================================================================
+    - name: Set DEBIAN_FRONTEND to noninteractive
+      ansible.builtin.lineinfile:
+        path: /etc/environment
+        line: "DEBIAN_FRONTEND=noninteractive"
+        create: true
+        mode: "0644"
+
+    # curl and gpg are needed by the key tasks below, before base_packages is installed.
+    # Minimal Armbian images do not always ship them.
+    - name: Install prerequisites for APT key handling
+      ansible.builtin.apt:
+        name: [ca-certificates, curl, gpg]
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Create APT keyrings directory
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: "0755"
+
+    - name: Add APT repository keys (binary format)
+      ansible.builtin.get_url:
+        url: "{{ item.key_url }}"
+        dest: "{{ item.keyring }}"
+        mode: "0644"
+      loop: "{{ apt_sources }}"
+      when: item.key_url is defined and not (item.dearmor | default(false))
+
+    - name: Add APT repository keys (dearmor ASCII keys)
+      ansible.builtin.shell:
+        cmd: 'curl -fsSL "{{ item.key_url }}" | gpg --dearmor -o "{{ item.keyring }}"'
+        creates: "{{ item.keyring }}"
+      loop: "{{ apt_sources }}"
+      when: item.key_url is defined and (item.dearmor | default(false))
+
+    - name: Add APT pinning for Nginx
+      ansible.builtin.copy:
+        dest: /etc/apt/preferences.d/99nginx
+        content: |
+          Package: *
+          Pin: origin nginx.org
+          Pin: release o=nginx
+          Pin-Priority: 900
+        mode: "0644"
+      when: apt_sources | selectattr('name', 'equalto', 'nginx') | selectattr('pinning', 'defined') | list | length > 0
+
+    - name: Add APT repositories
+      ansible.builtin.apt_repository:
+        repo: "{{ item.repo | replace('@SUITE@', apt_suite_by_name[item.name] | default(os_suite)) }}"
+        state: present
+        filename: "{{ item.name }}"
+      loop: "{{ apt_sources }}"
+
+    - name: Update APT cache
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install base packages
+      ansible.builtin.apt:
+        name: "{{ base_packages }}"
+        state: present
+      retries: 3
+      delay: 10
+
+    # =========================================================================
+    # PHASE 2b - NETWORK CONFIGURATION
+    # =========================================================================
+    - name: Check if netplan is used
+      ansible.builtin.stat:
+        path: /etc/netplan
+      register: netplan_dir
+
+    - name: Create netplan override for optional interfaces
+      ansible.builtin.copy:
+        dest: /etc/netplan/99-optional-interfaces.yaml
+        content: |
+          network:
+            version: 2
+            ethernets:
+              all-eth-interfaces:
+                optional: true
+                dhcp4: true
+        mode: "0600"
+      when: netplan_dir.stat.isdir | default(false)
+
+    - name: Ensure timesyncd config directory exists
+      ansible.builtin.file:
+        path: /etc/systemd/timesyncd.conf.d
+        state: directory
+        mode: "0755"
+
+    - name: Configure NTP servers
+      ansible.builtin.copy:
+        dest: /etc/systemd/timesyncd.conf.d/custom-ntp.conf
+        content: |
+          [Time]
+          NTP={{ ntp_servers | join(' ') }}
+          PollIntervalMinSec=16
+          PollIntervalMaxSec=64
+        mode: "0644"
+      notify: Restart timesyncd
+
+    - name: Enable NTP synchronization
+      ansible.builtin.command:
+        cmd: timedatectl set-ntp true
+      changed_when: false
+      failed_when: false
+
+    - name: Get active network interface
+      ansible.builtin.shell:
+        cmd: |
+          ip route get 8.8.8.8 | awk '{for (i = 1; i <= NF; i++) if ($i == "dev") { print $(i + 1); exit }}'
+      register: active_interface
+      changed_when: false
+      ignore_errors: true
+
+    - name: Get MAC address
+      ansible.builtin.slurp:
+        src: "/sys/class/net/{{ active_interface.stdout }}/address"
+      register: mac_address
+      when: active_interface.stdout | default('') | length > 0
+      ignore_errors: true
+
+    - name: Generate hostname from MAC
+      ansible.builtin.set_fact:
+        generated_hostname: "ethereumonarm-{{ hostname_seed }}-{{ (mac_address.content | b64decode | trim | hash('sha256'))[:8] }}"
+      when: mac_address.content is defined
+
+    - name: Set system hostname
+      ansible.builtin.hostname:
+        name: "{{ generated_hostname }}"
+      when: generated_hostname is defined
+
+    - name: Update /etc/hostname
+      ansible.builtin.copy:
+        dest: /etc/hostname
+        content: "{{ generated_hostname }}\n"
+        mode: "0644"
+      when: generated_hostname is defined
+
+    - name: Update /etc/hosts
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        regexp: "^127\\.0\\.1\\.1"
+        line: "127.0.1.1\t{{ generated_hostname }}"
+      when: generated_hostname is defined
+
+    # =========================================================================
+    # PHASE 2c - DISK CONFIGURATION
+    # =========================================================================
+    - name: Display format decision
+      ansible.builtin.debug:
+        msg: "Disk {{ target_disk }} will {{ 'BE FORMATTED' if should_format | bool else 'NOT be formatted (data preserved)' }}"
+
+    # ---- Format disk if needed ------------------------------------------------
+    - name: Unmount everything that is mounted from the target disk
+      ansible.builtin.command:
+        cmd: "umount {{ item }}"
+      loop: "{{ disk_mount_targets | reverse | list }}"
+      when: should_format | bool
+      register: umount_result
+      failed_when: false
+
+    - name: Stop if a mount could not be released
+      ansible.builtin.fail:
+        msg: >-
+          Could not unmount {{ item.item }}: {{ item.stderr }}. Close every shell/process that uses it
+          (or reboot without it mounted) and run again. Nothing has been wiped.
+      loop: "{{ umount_result.results | default([]) }}"
+      when: (should_format | bool) and item.rc is defined and item.rc != 0
+
+    - name: Drop stale fstab entries that use the old partition device path
+      ansible.builtin.lineinfile:
+        path: /etc/fstab
+        regexp: "^{{ partition_device }}\\s"
+        state: absent
+        backup: true
+      when: should_format | bool
+
+    - name: Drop stale fstab entries that use the old filesystem UUID
+      ansible.builtin.lineinfile:
+        path: /etc/fstab
+        regexp: "^UUID={{ old_partition_uuid }}\\s"
+        state: absent
+        backup: true
+      when: (should_format | bool) and old_partition_uuid | length > 0
+
+    - name: Wipe filesystem signatures (partitions first, then the disk)
+      ansible.builtin.command:
+        cmd: "wipefs --all --force {{ item }}"
+      loop: "{{ disk_nodes | reverse | list }}"
+      when: should_format | bool
+
+    - name: Create GPT partition table
+      ansible.builtin.shell:
+        cmd: 'echo "label: gpt" | sfdisk --force --no-reread "{{ target_disk }}"'
+      when: should_format | bool
+
+    - name: Create Linux partition
+      ansible.builtin.shell:
+        cmd: 'echo "type=linux" | sfdisk --append --force --no-reread "{{ target_disk }}"'
+      when: should_format | bool
+
+    - name: Probe partition table
+      ansible.builtin.command:
+        cmd: "partprobe {{ target_disk }}"
+      when: should_format | bool
+
+    - name: Trigger udev
+      ansible.builtin.command:
+        cmd: udevadm settle
+      when: should_format | bool
+
+    - name: Wait for partition
+      ansible.builtin.wait_for:
+        path: "{{ partition_device }}"
+        timeout: 30
+      when: should_format | bool
+
+    - name: Format partition with ext4
+      community.general.filesystem:
+        fstype: ext4
+        dev: "{{ partition_device }}"
+        opts: "-L {{ data_label }}"
+        force: true
+      when: should_format | bool
+
+    - name: Set reserved blocks to 0%
+      ansible.builtin.command:
+        cmd: "tune2fs -m 0 {{ partition_device }}"
+      when: should_format | bool
+
+    - name: Get partition UUID
+      ansible.builtin.command:
+        cmd: "blkid -o value -s UUID {{ partition_device }}"
+      register: partition_uuid
+      changed_when: false
+
+    # ---- Scenario: /home currently lives on the SD card / eMMC ----------------
+    # Copy it to the NVMe BEFORE the NVMe is mounted over it, otherwise the
+    # existing users' files would silently disappear under the new mount.
+    - name: Copy the current /home to the data partition
+      when: migrate_home | bool
+      block:
+        - name: Create staging mount point
+          ansible.builtin.tempfile:
+            state: directory
+            prefix: "home_stage_"
+          register: stage_tmp
+
+        - name: Mount the data partition on the staging directory
+          ansible.builtin.command:
+            argv: [mount, "{{ partition_device }}", "{{ stage_tmp.path }}"]
+          changed_when: true
+
+        - name: Copy /home (existing files on the NVMe are never overwritten)
+          ansible.builtin.command:
+            argv:
+              - rsync
+              - -aHAX
+              - --numeric-ids
+              - --ignore-existing
+              - --exclude=/lost+found
+              - "{{ data_mount_point }}/"
+              - "{{ stage_tmp.path }}/"
+          register: home_rsync
+          # 24 = some files vanished while copying (live session files) - harmless
+          failed_when: home_rsync.rc not in [0, 24]
+          changed_when: true
+      always:
+        - name: Unmount the staging directory
+          ansible.builtin.command:
+            cmd: "umount {{ stage_tmp.path }}"
+          when: stage_tmp.path is defined
+          changed_when: false
+          failed_when: false
+
+        - name: Remove the staging directory
+          ansible.builtin.file:
+            path: "{{ stage_tmp.path }}"
+            state: absent
+          when: stage_tmp.path is defined
+          ignore_errors: true
+
+    # ---- Scenario: /home is a separate partition on another device -----------
+    - name: Release the previous /home mount (different device)
+      ansible.builtin.command:
+        cmd: "umount {{ data_mount_point }}"
+      register: old_home_umount
+      when: (home_is_separate_mount | bool) and not (home_on_target_partition | bool)
+      changed_when: true
+      failed_when: false
+
+    - name: Stop if the previous /home could not be released
+      ansible.builtin.fail:
+        msg: >-
+          {{ data_mount_point }} (from {{ home_mount_source }}) is busy: {{ old_home_umount.stderr }}.
+          Its content was already copied to the NVMe. Close sessions that use it (log in as root on
+          the console) and run again.
+      when: old_home_umount.rc is defined and old_home_umount.rc != 0
+
+    # nofail: if this disk is ever physically replaced, the UUID in /etc/fstab stops matching
+    # anything. Without nofail, systemd treats this as a required mount and will not reach
+    # local-fs.target until it times out - which blocks sshd along with everything else that
+    # depends on it, on a board with no local console. With nofail, boot proceeds without this
+    # mount (data_mount_point stays on the root disk, empty), the board stays reachable over
+    # the network, and the replacement can be handled by re-running install.sh.
+    - name: Mount the data partition on /home and persist it in /etc/fstab
+      ansible.posix.mount:
+        path: "{{ data_mount_point }}"
+        src: "UUID={{ partition_uuid.stdout }}"
+        fstype: "{{ data_fs_type }}"
+        opts: defaults,noatime,nofail,x-systemd.device-timeout=10s
+        state: mounted
+
+    - name: Look for an existing ethereum home on the data disk
+      ansible.builtin.stat:
+        path: "{{ ethereum_home }}"
+      register: ethereum_home_stat
+
+    # Data kept from a previous install: reuse its numeric IDs so no ownership change is needed.
+    - name: Reuse the numeric IDs of the existing ethereum home when they are free
+      ansible.builtin.set_fact:
+        ethereum_uid_hint: "{{ ethereum_home_stat.stat.uid }}"
+        ethereum_gid_hint: "{{ ethereum_home_stat.stat.gid }}"
+      when:
+        - not (ethereum_user_exists | bool)
+        - ethereum_home_stat.stat.isdir | default(false)
+        - ethereum_home_stat.stat.uid | default(0) | int >= uid_min | int
+        - ethereum_home_stat.stat.gid | default(0) | int >= uid_min | int
+        - (ethereum_home_stat.stat.uid | string) not in (ansible_facts.getent_passwd.values() | map(attribute='1') | list)
+        - (ethereum_home_stat.stat.gid | string) not in (ansible_facts.getent_group.values() | map(attribute='1') | list)
+        - ethereum_group not in ansible_facts.getent_group
+
+    # =========================================================================
+    # PHASE 2d - USER SETUP
+    # =========================================================================
+    - name: Make sure the supplementary groups exist
+      ansible.builtin.group:
+        name: "{{ item }}"
+        state: present
+        system: true
+      loop: "{{ ethereum_groups }}"
+
+    - name: Create ethereum group
+      ansible.builtin.group:
+        name: "{{ ethereum_group }}"
+        gid: "{{ ethereum_gid_hint | default(omit) }}"
+        state: present
+
+    - name: Create (or adopt) the ethereum user
+      ansible.builtin.user:
+        name: "{{ ethereum_user }}"
+        comment: "{{ 'Ethereum Node Operator' if not (ethereum_user_exists | bool) else omit }}"
+        uid: "{{ ethereum_uid_hint | default(omit) }}"
+        group: "{{ ethereum_group }}"
+        shell: /bin/bash
+        create_home: true
+        home: "{{ ethereum_home }}"
+        move_home: true
+        password: "{{ ethereum_password | password_hash('sha512') }}"
+        update_password: on_create
+
+    # Password expiry is forced later, in FINAL ACCESS ENFORCEMENT (after packages install).
+    # Doing it here, before Phase 2e, expired the account mid-install: any package postinst
+    # script that runs setup as this user (su/runuser) would be rejected by PAM before it
+    # could do anything, since a non-interactive session can't satisfy a forced password change.
+
+    # The user module above only creates the home directory when it creates the account
+    # (useradd -m); for an account that already existed (ethereum_user_exists), it uses usermod,
+    # which does not create a missing home directory at all. That gap matters here specifically:
+    # if the NVMe disk was replaced after the ethereum account was already created on this SD
+    # card, the account survives but its home directory does not - and the home-disk backup
+    # restore right after this depends on the directory already existing.
+    - name: Make sure the ethereum home directory exists
+      ansible.builtin.file:
+        path: "{{ ethereum_home }}"
+        state: directory
+        owner: "{{ ethereum_user }}"
+        group: "{{ ethereum_group }}"
+        mode: "0755"
+
+    - name: Add user to groups
+      ansible.builtin.user:
+        name: "{{ ethereum_user }}"
+        groups: "{{ ethereum_groups }}"
+        append: true
+
+    - name: Create sudoers file
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/90-ethereum-nopasswd
+        content: "{{ ethereum_user }} ALL=(ALL) NOPASSWD: ALL\n"
+        mode: "0440"
+        validate: "visudo -c -f %s"
+
+    # SSH configuration is handled in the FINAL ACCESS ENFORCEMENT section
+    # to ensure it runs after all packages are installed
+
+    # Cross-disk backup restore, home-disk side (see home_disk_backup_paths in vars.yml). Unlike
+    # the root-disk backups restored later (PHASE 2f), these are only restored when the live
+    # copy is missing right now - never overlaid on top of one that already exists, since this
+    # is state that cannot be regenerated if lost (see vars.yml for why). Checked live rather
+    # than reusing a PHASE 1 fact: what matters is whether the path exists on whatever actually
+    # ends up mounted at the data mount point, which the should_format decision already fully
+    # determines by this point (kept data still has it; anything formatted or freshly created
+    # here does not) - re-checking live avoids relying on that reasoning being airtight, at the
+    # cost of one extra stat call per path.
+    - name: Check whether each home-disk-critical path already exists
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop: "{{ home_disk_backup_paths }}"
+      loop_control:
+        label: "{{ item }}"
+      register: home_disk_live_stats
+      when: restore_home_disk_backups | bool
+
+    - name: Restore each home-disk-critical path from its root-disk backup
+      ansible.builtin.command:
+        argv: [rsync, -a, "{{ home_disk_backup_root }}{{ item }}/", "{{ item }}/"]
+      loop: "{{ home_disk_backup_paths }}"
+      loop_control:
+        label: "{{ item }}"
+        index_var: hd_idx
+      register: home_disk_restore
+      when: >-
+        (restore_home_disk_backups | bool)
+        and (item in home_disk_backups_on_root_disk)
+        and not (home_disk_live_stats.results[hd_idx].stat.exists | default(false))
+
+    - name: Record which home-disk paths were actually restored
+      ansible.builtin.set_fact:
+        home_disk_paths_restored: >-
+          {{ (home_disk_restore.results | default([]))
+             | rejectattr('skipped', 'defined') | map(attribute='item') | list }}
+
+    # On a preserved disk, the reuse-hint logic (PHASE 2c) only assigns the on-disk owner's
+    # UID/GID to the new account when nothing else on this SD card already holds them. When it
+    # can't (for example, a still-present other user happens to have the same UID as the old
+    # ethereum owner), the account above gets a different UID than the directory on disk. Some
+    # package postinst scripts (in PHASE 2e, next) set up their own files as this user
+    # (sudo -u ethereum / su ethereum) and need the home directory to already be theirs, so the
+    # ownership has to be fixed here, before any package installs, not only at the end of the run.
+    - name: Check ethereum home ownership
+      ansible.builtin.command:
+        argv:
+          - find
+          - "{{ ethereum_home }}"
+          - -xdev
+          - "("
+          - "!"
+          - -user
+          - "{{ ethereum_user }}"
+          - -o
+          - "!"
+          - -group
+          - "{{ ethereum_group }}"
+          - ")"
+          - -print
+          - -quit
+      register: ownership_check
+      changed_when: false
+
+    # Only touches the tree when something is actually wrong (a preserved multi-TB
+    # chain database is not rewritten on every run).
+    - name: Fix ethereum home ownership
+      ansible.builtin.command:
+        argv: [chown, -R, --no-dereference, "{{ ethereum_user }}:{{ ethereum_group }}", "{{ ethereum_home }}"]
+      when: ownership_check.stdout | length > 0
+
+    # =========================================================================
+    # PHASE 2e - PACKAGE INSTALLATION
+    # =========================================================================
+    - name: Install Ethereum packages
+      ansible.builtin.apt:
+        name: "{{ ethereum_packages }}"
+        state: present
+      retries: 3
+      delay: 10
+
+    - name: Fix any broken dpkg packages
+      ansible.builtin.command:
+        cmd: dpkg --configure -a
+      ignore_errors: true
+      changed_when: false
+
+    - name: Install Nginx packages
+      ansible.builtin.apt:
+        name: "{{ nginx_packages }}"
+        state: present
+      retries: 3
+      delay: 10
+      register: nginx_install
+
+    - name: Ensure Nginx is configured correctly after install
+      ansible.builtin.command:
+        cmd: nginx -t
+      register: nginx_config_test
+      failed_when: false
+      changed_when: false
+      when: nginx_install is succeeded
+
+    - name: Warn if Nginx configuration has issues
+      ansible.builtin.debug:
+        msg: "Warning: Nginx configuration test failed. Check /etc/nginx/ for issues."
+      when: nginx_config_test.rc is defined and nginx_config_test.rc != 0
+
+    # =========================================================================
+    # PHASE 2f - ETHEREUM CONFIGURATION
+    # =========================================================================
+    # Cross-disk backup restore, root-disk side (see root_disk_backup_paths in vars.yml).
+    # Restored now that the freshly installed client packages have written their own defaults.
+    # Never deletes: a file the backup doesn't have (a new default from a newer client version)
+    # is left as the package installed it; a file the backup does have overwrites that fresh
+    # default. A restore failure (full disk, bad backup, ...) fails the run rather than silently
+    # continuing on empty configs.
+    - name: Restore /etc/ethereum from its NVMe backup
+      when: "'/etc/ethereum' in root_disk_backups_to_restore"
+      block:
+        - name: Make sure /etc/ethereum exists
+          ansible.builtin.file:
+            path: /etc/ethereum
+            state: directory
+            mode: "0755"
+
+        - name: Restore /etc/ethereum
+          ansible.builtin.command:
+            argv: [rsync, -a, --min-size=1, "{{ ethereum_home }}/.etc/ethereum/", "/etc/ethereum/"]
+          register: etc_ethereum_restore
+
+        # Like the ethereum home directory, the backup can carry the previous installation's
+        # numeric UID/GID (rsync -a preserves them), and that UID isn't guaranteed to still
+        # belong to the ethereum account on this SD card - so ownership is set explicitly
+        # rather than trusted from the backup.
+        - name: Fix /etc/ethereum ownership
+          ansible.builtin.command:
+            argv: [chown, -R, --no-dereference, "{{ ethereum_user }}:{{ ethereum_group }}", /etc/ethereum]
+
+    # The ethereum user's crontab. Unlike /etc/ethereum this is a single file, and its
+    # permissions matter for a different reason: most cron implementations silently ignore a
+    # crontab file that isn't owned exactly as they expect, so a restore that gets this wrong
+    # would look like it worked while the jobs quietly never ran.
+    - name: Restore the ethereum user's crontab from its NVMe backup
+      when: "('/var/spool/cron/crontabs/' ~ ethereum_user) in root_disk_backups_to_restore"
+      block:
+        - name: Make sure /var/spool/cron/crontabs exists
+          ansible.builtin.file:
+            path: /var/spool/cron/crontabs
+            state: directory
+            mode: "1730"
+
+        - name: Restore the crontab file
+          ansible.builtin.command:
+            argv: [rsync, -a, "{{ ethereum_home }}/.var/spool/cron/crontabs/{{ ethereum_user }}", "/var/spool/cron/crontabs/{{ ethereum_user }}"]
+          register: crontab_restore
+
+        # Debian's cron expects crontab files to be owned "user:crontab"; other cron
+        # implementations may not have that group at all, so fall back to the ethereum group
+        # rather than fail the run over a group name that varies by package.
+        - name: Look up the crontab group, if this system has one
+          ansible.builtin.command:
+            argv: [getent, group, crontab]
+          register: crontab_group_lookup
+          changed_when: false
+          failed_when: false
+
+        - name: Fix crontab ownership and permissions
+          ansible.builtin.file:
+            path: "/var/spool/cron/crontabs/{{ ethereum_user }}"
+            owner: "{{ ethereum_user }}"
+            group: "{{ 'crontab' if crontab_group_lookup.rc == 0 else ethereum_group }}"
+            mode: "0600"
+
+    # A backup existing at all means this node was using Tailscale before the root disk was
+    # reflashed - restoring its state onto a fresh image is pointless without tailscaled there
+    # to read it back, so it is reinstalled first. Never runs when there is no backup: a node
+    # that has never used Tailscale gets nothing installed on its behalf.
+    - name: Install Tailscale, since this node was using it before
+      when: >-
+        (install_tailscale_if_backup_found | bool)
+        and ('/var/lib/tailscale' in root_disk_backups_to_restore)
+      block:
+        - name: Check whether Tailscale is already installed
+          ansible.builtin.command:
+            argv: [dpkg-query, -W, "-f=${Status}", tailscale]
+          register: tailscale_dpkg_status
+          changed_when: false
+          failed_when: false
+
+        - name: Download and run the official Tailscale install script
+          when: "'install ok installed' not in tailscale_dpkg_status.stdout"
+          block:
+            - name: Download the official Tailscale install script
+              ansible.builtin.get_url:
+                url: "{{ tailscale_install_url }}"
+                dest: /tmp/tailscale-install.sh
+                mode: "0755"
+
+            - name: Run the Tailscale install script
+              ansible.builtin.command:
+                cmd: /bin/bash /tmp/tailscale-install.sh
+
+            - name: Remove the downloaded install script
+              ansible.builtin.file:
+                path: /tmp/tailscale-install.sh
+                state: absent
+          rescue:
+            # Not fatal: the rest of the node's setup should still succeed even if this one
+            # extra, optional step couldn't reach the network. The restored state is left in
+            # place either way, ready for whenever Tailscale does get installed.
+            - name: Warn that Tailscale could not be installed automatically
+              ansible.builtin.debug:
+                msg: >-
+                  Could not install Tailscale automatically (no network access to
+                  tailscale.com, or the install script failed). The restored state at
+                  /var/lib/tailscale is in place, but no tailscaled service exists yet to use
+                  it. Install manually once the node has network access:
+                  curl -fsSL {{ tailscale_install_url }} | sh
+
+    # Tailscale's node identity (and so its IP, which doesn't change with the hardware) lives
+    # in this state directory. Restoring it means an OS reinstall or SD card failure doesn't
+    # force re-registering the node and getting a new address. Unlike /etc/ethereum and the
+    # crontab file, no ownership fix is needed afterwards: this directory is root-owned, and
+    # root's UID (0) is universal across any system, unlike the ethereum account's UID, which
+    # is allocated per-install and isn't guaranteed to match the one the backup was made under.
+    - name: Restore Tailscale state from its NVMe backup
+      when: "'/var/lib/tailscale' in root_disk_backups_to_restore"
+      block:
+        - name: Make sure /var/lib/tailscale exists
+          ansible.builtin.file:
+            path: /var/lib/tailscale
+            state: directory
+            mode: "0700"
+
+        - name: Restore Tailscale state
+          ansible.builtin.command:
+            argv: [rsync, -a, "{{ ethereum_home }}/.var/lib/tailscale/", "/var/lib/tailscale/"]
+          register: tailscale_restore
+
+        # Only matters if tailscaled was already running with fresh state by the time this
+        # runs (for example, started by its own package install earlier in this same play) -
+        # it would otherwise keep using the state it already loaded into memory rather than
+        # the state just restored to disk. Not fatal if tailscaled isn't installed or managed
+        # by systemd at all: this project doesn't install it, so nothing here assumes it will
+        # be present.
+        - name: Restart tailscaled to pick up the restored state, if it is running
+          ansible.builtin.systemd:
+            name: tailscaled
+            state: restarted
+          failed_when: false
+
+    - name: Write EOA release file
+      ansible.builtin.copy:
+        dest: /etc/eoa-release
+        content: "Ethereum on ARM {{ ansible_facts['date_time']['year'][-2:] }}.{{ ansible_facts['date_time']['month'] }}.{{ eoa_minor_version }}\n"
+        mode: "0644"
+
+    - name: Add update-ethereum alias
+      ansible.builtin.blockinfile:
+        path: /etc/bash.bashrc
+        block: |
+          # Shortcut to update Ethereum packages
+          alias update-ethereum='sudo apt-get update && sudo apt-get install {{ ethereum_packages | join(" ") }}'
+        marker: "# {mark} ETHEREUM ON ARM ALIAS"
+        create: true
+        mode: "0644"
+
+    - name: Configure swap location
+      ansible.builtin.lineinfile:
+        path: /etc/dphys-swapfile
+        regexp: "^#?CONF_SWAPFILE="
+        line: "CONF_SWAPFILE={{ swap_file }}"
+
+    - name: Configure swap size
+      ansible.builtin.lineinfile:
+        path: /etc/dphys-swapfile
+        regexp: "^#?CONF_SWAPSIZE="
+        line: "CONF_SWAPSIZE={{ calculated_swap_mb }}"
+
+    - name: Configure max swap
+      ansible.builtin.lineinfile:
+        path: /etc/dphys-swapfile
+        regexp: "^#?CONF_MAXSWAP="
+        line: "CONF_MAXSWAP={{ calculated_swap_mb }}"
+
+    - name: Enable swap service
+      ansible.builtin.systemd:
+        name: dphys-swapfile
+        enabled: true
+        state: started
+
+    # =========================================================================
+    # PHASE 2g - MONITORING SETUP
+    # =========================================================================
+    - name: Create prometheus user
+      ansible.builtin.user:
+        name: "{{ prometheus_user }}"
+        system: true
+        create_home: true
+        home: "{{ prometheus_home }}"
+        shell: /usr/sbin/nologin
+
+    - name: Create prometheus directories
+      ansible.builtin.file:
+        path: "{{ prometheus_home }}/{{ item }}"
+        state: directory
+        owner: "{{ prometheus_user }}"
+        group: "{{ prometheus_user }}"
+        mode: "0755"
+      loop: "{{ prometheus_dirs }}"
+
+    - name: Install monitoring packages
+      ansible.builtin.apt:
+        name: "{{ monitoring_packages }}"
+        state: present
+      retries: 3
+      delay: 10
+
+    - name: Enable prometheus
+      ansible.builtin.systemd:
+        name: prometheus
+        enabled: true
+
+    - name: Enable node exporter
+      ansible.builtin.systemd:
+        name: prometheus-node-exporter
+        enabled: true
+
+    - name: Enable grafana
+      ansible.builtin.systemd:
+        name: grafana-server
+        enabled: true
+
+    - name: Run monitoring extras
+      ansible.builtin.command:
+        cmd: set-ethereumonarm-monitoring-extras -o
+      ignore_errors: true
+      changed_when: false
+
+    # =========================================================================
+    # PHASE 2h - SECURITY
+    # =========================================================================
+    - name: Check if root account is locked
+      ansible.builtin.shell:
+        cmd: "passwd -S root | awk '{print $2}'"
+      register: root_status
+      changed_when: false
+
+    - name: Lock root account
+      ansible.builtin.command:
+        cmd: passwd -l root
+      when: root_status.stdout != 'L'
+      changed_when: true
+
+    # Only the ACCOUNT is removed. Home directories are deliberately kept: they were
+    # migrated to the NVMe above and, on a preserved disk, may hold data that matters.
+    - name: Remove other users (accounts only, home directories are kept)
+      ansible.builtin.user:
+        name: "{{ item }}"
+        state: absent
+        remove: false
+      loop: "{{ users_to_remove }}"
+      register: user_removal
+      ignore_errors: true
+
+    - name: Enable nginx
+      ansible.builtin.systemd:
+        name: nginx
+        enabled: true
+
+    # =========================================================================
+    # PHASE 2i - FINAL ACCESS ENFORCEMENT (Safety Step)
+    # =========================================================================
+    # Applied only to accounts created by this run (or when reset_ethereum_password=true).
+    # A pre-existing ethereum user keeps the password its owner chose.
+    - name: Enforce final password for TTY and SSH
+      ansible.builtin.user:
+        name: "{{ ethereum_user }}"
+        password: "{{ ethereum_password | password_hash('sha512') }}"
+        update_password: always
+      when: ethereum_password_managed | bool
+      # Forced at the end to overwrite any package-induced changes
+
+    - name: Force password change on first login (final enforcement)
+      ansible.builtin.command:
+        cmd: "chage -d 0 {{ ethereum_user }}"
+      changed_when: false
+      when: ethereum_password_managed | bool
+
+    - name: Configure SSH to guarantee password access
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+      loop:
+        - { regexp: '^#?PasswordAuthentication', line: 'PasswordAuthentication yes' }
+        - { regexp: '^#?KbdInteractiveAuthentication', line: 'KbdInteractiveAuthentication yes' }
+        - { regexp: '^#?UsePAM', line: 'UsePAM yes' }
+      notify: Restart ssh
+
+    # Armbian shows a "create your user" wizard on the first root login while this file exists.
+    # This is a headless node with its own user, so mark the wizard as done.
+    - name: Mark the Armbian first-login wizard as done
+      ansible.builtin.file:
+        path: /root/.not_logged_in_yet
+        state: absent
+
+    # =========================================================================
+    # PHASE 2j - FINALIZE
+    # =========================================================================
+    - name: Create first-run flag
+      ansible.builtin.file:
+        path: "{{ first_run_flag }}"
+        state: touch
+        mode: "0644"
+
+    - name: Summarise what was done
+      ansible.builtin.debug:
+        msg: |-
+          Ethereum on ARM provisioning completed successfully!
+          NVMe            : {{ target_disk }} {{ 'was FORMATTED' if should_format | bool else 'was kept (data preserved)' }}, mounted on {{ data_mount_point }}
+          Previous /home  : {{ ('copied from ' ~ home_mount_source ~ ' (the original files are still on that device, hidden under the mount; view them with: mount --bind / /mnt && ls /mnt' ~ data_mount_point ~ ')') if migrate_home | bool else 'nothing to migrate' }}
+          Root disk backups: {{ 'none, packages left at their defaults' if (root_disk_backups_to_restore | length) == 0 else ('restored: ' ~ (root_disk_backups_to_restore | join(', '))) }}
+          Home disk backups: {{ 'restored: ' ~ (home_disk_paths_restored | join(', ')) if (home_disk_paths_restored | default([]) | length) > 0 else ('already present, no restore needed' if (home_disk_backups_on_root_disk | length) > 0 else 'no backup found on the root disk') }}
+          Users removed   : {{ users_to_remove | difference(user_removal.results | default([]) | selectattr('failed', 'defined') | selectattr('failed') | map(attribute='item') | list) | join(', ') or 'none' }} (home directories kept)
+          Not removable   : {{ user_removal.results | default([]) | selectattr('failed', 'defined') | selectattr('failed') | map(attribute='item') | list | join(', ') or 'none' }} (still logged in? remove after the reboot with: sudo userdel <name>)
+          Users kept      : {{ users_kept | difference([invoking_user]) | join(', ') or 'none' }}{{ ('; ' ~ invoking_user ~ ' was NOT removed because it launched this run - after the reboot remove it with: sudo userdel ' ~ invoking_user) if invoking_user | length > 0 and invoking_user in users_kept and existing_users_policy == 'remove' else '' }}
+          Login           : {{ ethereum_user }} / {{ ethereum_password if ethereum_password_managed | bool else '(existing password)' }}{{ ' (must be changed on first login)' if ethereum_password_managed | bool else '' }}
+
+    - name: Schedule reboot
+      ansible.builtin.command:
+        cmd: "shutdown -r +1 'Rebooting to apply Ethereum on ARM configuration'"
+      async: 1
+      poll: 0
+      ignore_errors: true
+      when: reboot_after | bool
+
+  handlers:
+    - name: Restart timesyncd
+      ansible.builtin.systemd:
+        name: systemd-timesyncd
+        state: restarted
+      ignore_errors: true
+
+    - name: Restart ssh
+      ansible.builtin.service:
+        name: ssh
+        state: restarted

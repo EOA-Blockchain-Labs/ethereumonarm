@@ -1,293 +1,341 @@
+# Ansible Playbook Low-Level Explanation
+
+This document explains how `playbook.yml` (with `vars.yml` and the `install.sh` wrapper) provisions an Ethereum on ARM node on first boot. It walks through the automation step by step, with a deep dive into the disk, `/home` and user handling, which is where the playbook can destroy data if it gets a decision wrong.
+
+## 1. Playbook Overview
+
+The playbook runs locally on the device (`hosts: localhost`, `connection: local`). Its goal is to turn a generic Armbian image into an Ethereum node by configuring networking, storage, users and packages.
+
+**Supported targets.** Any ARM64 board with at least 16 GB of RAM and a 2 TB-class NVMe disk, running an Armbian image based on Ubuntu **noble (24.04)** or **resolute (26.04)**. The three boards the project shipped for (Rock 5B, Orange Pi 5 Plus, NanoPC-T6) are still recognised by name, but a board does not need to be listed to work.
+
+**Two phases.**
+
+| Phase | What it does | Changes the system? |
+| ----- | ------------ | ------------------- |
+| **Phase 1** (1a-1f) | Requirement checks, board / NVMe / `/home` / user discovery, safety gates, prints the plan | **No** (read-only) |
+| **Phase 2** (2a-2j) | APT, network, disk, users, packages, monitoring, security, finalize | Yes |
+
+Phase 2 only starts if Phase 1 finished without a failure. With `plan_only=true` (`install.sh --plan`) the play stops after printing the plan, so you can see exactly what would happen before anything is touched. `install.sh` always runs Phase 1 first as a separate pass and asks for confirmation before running the full playbook.
+
+## 2. Phase 1: Read-Only Checks and Discovery
+
+### 1a. Requirements
+
+Each check fails the run with a clear message, before anything has changed:
+
+* **Architecture**: must be `aarch64`.
+* **RAM**: at least `min_ram_mb` (default 15000 MB, because a 16 GB board reports about 15.5-16 GB usable).
+* **Armbian**: `/etc/armbian-release` must exist (`require_armbian`).
+* **Ubuntu release**: `ansible_distribution_release` must be in `supported_releases` (`noble`, `resolute`). `skip_os_check=true` bypasses this at your own risk.
+
+### 1a (continued). APT suite selection
+
+Two third-party repositories are tied to an Ubuntu release: `ethereum-on-arm` and `nginx.org`. In `vars.yml` their `repo` line contains the placeholder `@SUITE@` instead of a hard-coded release name.
+
+1. `os_suite` is the running release (`noble` or `resolute`), or `fallback_release` (`noble`) if `skip_os_check` let an unlisted release through.
+2. If `os_suite` differs from `fallback_release` (for example on resolute), the playbook sends an HTTP `HEAD` request to each repository's `suite_probe` URL (`.../dists/<suite>/InRelease`).
+3. A request that gets no answer at all (network still coming up) is retried up to 5 times, 6 seconds apart.
+4. A repository answering **200** uses the running release. A repository answering with **any other HTTP status** (typically 404) makes **that repository only** fall back to `fallback_release`, so a suite that is not published cannot break `apt update` later. If it still cannot be reached after the retries, the running release is kept: nothing is known about the suite, and `apt update` would fail on a dead network whatever suite was chosen.
+5. The plan prints the result, for example `ethereum-on-arm: noble (resolute not published there, using fallback); nginx: resolute`.
+
+On noble nothing is probed and both repositories use `noble`. Grafana's repository has no `@SUITE@` and is used as written.
+
+### 1b. Board detection
+
+1. Reads `/sys/firmware/devicetree/base/model`.
+2. Strips null bytes.
+3. Looks for the **longest** matching `pattern` in the `devices` dictionary (so `ROCK 5B+` wins over `ROCK 5B`) and uses its `hostname_seed`.
+4. If nothing matches, builds a seed from the model string (lower-cased, non-alphanumerics replaced by `-`, kept short enough for a valid hostname), or `arm64` if the model is empty.
+
+The disk path and partition naming are **not** stored per board any more. They are detected (next step), which is what makes unlisted boards work.
+
+Swap size is `min(2 x RAM, swap_max_mb)`.
+
+### 1c. NVMe discovery
+
+1. Finds the disk that holds `/` (`findmnt` + `lsblk`) so it can be excluded.
+2. Lists `/dev/nvme*n*` disks (retrying for up to 30 seconds if none is visible yet, because at first boot the NVMe can enumerate a little after the service starts) and keeps those of at least `min_nvme_size_gb` (default 1900 GB).
+3. Selection:
+    * `nvme_device` given: it must be one of the candidates, otherwise the run fails.
+    * Exactly one candidate: it is used.
+    * No candidate: the run fails.
+    * Several candidates: the run fails as ambiguous. Choose one with `--nvme /dev/nvmeXnY`.
+4. **Refuses to touch a disk that holds the OS**: any mount of `/`, `/boot`, `/usr`, `/var`, `/etc`, `/opt` or `/root` on it, or active swap on it, stops the run. The installer expects the OS on the SD card / eMMC.
+5. Derives `partition_suffix` (`p1` for NVMe) and `partition_device` (e.g. `/dev/nvme0n1p1`).
+
+### 1d. What is on the disk (`disk_state`)
+
+`blkid -p` (which reads the device itself, not a cache) is run on the whole disk and on every partition. It reports a filesystem, RAID, LVM or LUKS signature if there is one. The disk is then put in exactly one state:
+
+| `disk_state` | Meaning |
+| ------------ | ------- |
+| `ext4` | The **first partition** is ext4 |
+| `blank` | No signature anywhere: a new disk, an empty partition table, or partitions that carry no filesystem ("unformatted") |
+| `foreign` | Any other filesystem or container: NTFS, exFAT, FAT, HFS+, APFS, XFS, btrfs, swap, LVM, RAID, LUKS, ... |
+| `ext4_elsewhere` | ext4 exists, but **not** as the first partition (a reused Linux disk with an EFI partition first, or ext4 written straight onto the whole disk) |
+
+For `ext4` the playbook looks inside. If the partition is not already mounted it mounts it **read-only** on a temporary directory (a mounted one is inspected in place), then checks for:
+
+* the **format flag file**: `/home/ethereum/.format.me` as seen when the disk is mounted on `/home`, which is `ethereum/.format.me` at the root of the partition. The same file with an underscore (`.format_me`) and the original location `/home/.format_me` also count. The list is `format_flag_files` in `vars.yml`.
+* an existing `ethereum` directory,
+* the top-level entries (shown in the plan),
+
+and unmounts again. It also finds all mount points that use the disk, its UUID, and every device node on it.
+
+### 1e. Where `/home` lives and who already exists
+
+* **`/home` location**, from `findmnt`: on the root filesystem (SD card / eMMC), already on the NVMe partition, or a separate mount from another device.
+* **`migrate_home`** is true only if `migrate_existing_home` is on, `/home` is **not** already on the target partition, and it has content.
+* **Users**: regular accounts are those with a UID inside `UID_MIN..UID_MAX` from `/etc/login.defs`. The user who launched the run (`SUDO_USER`) is **always protected** from removal, even with `existing_users_policy: remove`.
+* **`ethereum_password_managed`** is true only if the `ethereum` account is new or `reset_ethereum_password=true`. An existing `ethereum` account keeps its password.
+
+### 1f. The plan
+
+The plan lists: OS release and APT suites, board, NVMe disk / size / state, the format decision **and the reason for it**, where `/home` is now, the migration, whether a client config backup was found and will be restored, existing users and the user actions. There is no separate authorisation step for formatting: the rules in section 3 are the authorisation. Interactive protection comes from `install.sh`, which shows this plan and asks for confirmation before it changes anything.
+
+If `plan_only=true` the play ends here.
+
 ---
-# Ethereum on ARM - Variables
-# All configuration in one place.
-#
-# Anything here can be overridden from the command line, e.g.
-#   ansible-playbook -i inventory.yml playbook.yml -e nvme_device=/dev/nvme1n1
-# (install.sh does this for you through its flags).
 
-# =============================================================================
-# SYSTEM CONFIGURATION
-# =============================================================================
-timezone: "UTC"
-locale: "en_US.UTF-8"
-network_wait_time: 20
+## 3. Deep Dive: Disk, `/home` and Users
 
-# =============================================================================
-# HARDWARE / OS REQUIREMENTS (checked before anything is changed)
-# =============================================================================
-# 16 GB boards report roughly 15.5-16 GB usable, so the threshold sits below 16384.
-min_ram_mb: 15000
-# "2 TB" class drives. Decimal GB (a 2 TB drive is ~2000 GB / 1.82 TiB).
-min_nvme_size_gb: 1900
-# Leave empty to auto-detect the NVMe disk. Set it (e.g. /dev/nvme1n1) when the
-# board has more than one NVMe disk that meets the size requirement.
-nvme_device: ""
-# Ubuntu releases this playbook accepts (Armbian images built on them).
-#   noble    = Ubuntu 24.04 LTS
-#   resolute = Ubuntu 26.04 LTS
-supported_releases:
-  - noble
-  - resolute
-# APT suite used for a third-party repository that does not publish the running
-# release (the playbook probes for this at run time - see "@SUITE@" below).
-fallback_release: "noble"
-require_armbian: true
-skip_os_check: false
+This is the part that decides whether your data survives. An ext4 data disk is never formatted by accident: it takes a flag file you create on purpose. Anything that is not ext4, or holds nothing, is replaced.
 
-# =============================================================================
-# RUN CONTROL
-# =============================================================================
-# true = run discovery + safety checks, print the plan and stop. Nothing is changed.
-plan_only: false
-# Schedule a reboot one minute after a successful run.
-reboot_after: true
+### The Decision Logic: "To Format or Not To Format?"
 
-# =============================================================================
-# USER CONFIGURATION
-# =============================================================================
-ethereum_user: "ethereum"
-ethereum_group: "ethereum"
-ethereum_home: "/home/ethereum"
-ethereum_password: "ethereum"
-ethereum_groups:
-  - sudo
-  - netdev
-  - audio
-  - video
-  - dialout
-  - plugdev
+Three rules decide it:
 
-# What to do with regular users (UID_MIN..UID_MAX) that already exist on the image:
-#   remove : delete the ACCOUNT. Their home directories are never deleted
-#            (they are migrated to the NVMe first, see migrate_existing_home).
-#   keep   : leave them untouched.
-# The user who launched the installer (SUDO_USER) is never removed by this run.
-existing_users_policy: "remove"
+1. **ext4 is kept**, unless the flag file `/home/ethereum/.format.me` is on it.
+2. **A new or unformatted disk is formatted.**
+3. **A disk with any other filesystem (Windows, macOS, ...) is formatted.**
 
-# The ethereum user's password is forced to `ethereum_password` (and must be changed
-# on first login) only when the account is created by this run. If the account
-# already existed (Armbian first-login wizard, previous run, ...) its password is left
-# alone unless this is set to true.
-reset_ethereum_password: false
+Nothing has to be passed on the command line for any of this, so a first-boot service and `install.sh` behave the same way. There is no `allow_disk_format` any more.
 
-# =============================================================================
-# DISK CONFIGURATION
-# =============================================================================
-data_mount_point: "/home"
-data_label: "ethereum_data"
-# What happens to the NVMe disk (decided automatically, no flags):
-#   ext4 first partition ........ KEPT, unless the format flag file below exists on it
-#   new / unformatted disk ...... FORMATTED
-#   any other filesystem ........ FORMATTED (Windows, macOS, XFS, btrfs, LVM/RAID/LUKS, ...)
-# Exceptions that stop the run instead, before anything is changed: the disk holds the OS or
-# swap, ext4 data that is not the first partition, or several NVMe disks qualify.
-# A non-ext4 first partition that is mounted as /home right now is left as it is.
-#
-# Format flag file: create it on an ext4 data disk to have the disk wiped on the next run.
-# Paths are relative to the root of the data partition (= /home while it is mounted).
-format_flag_files:
-  - "{{ ethereum_home | relpath(data_mount_point) }}/.format.me"    # /home/ethereum/.format.me
-  - "{{ ethereum_home | relpath(data_mount_point) }}/.format_me"
-  - ".format_me"                                                      # /home/.format_me (original location)
+Four situations are not covered by the rules, and each is handled conservatively:
 
-# If /home currently lives on the SD card / eMMC (or any device other than the
-# NVMe), copy its content to the NVMe before the NVMe is mounted over it.
-# Existing files on the NVMe are never overwritten.
-migrate_existing_home: true
+| Situation | What happens | Why |
+| --------- | ------------ | --- |
+| Non-ext4 first partition that is **mounted as `/home` right now** | Kept and left as it is | It is somebody's live home; destroying it under their feet is not what rule 3 is for |
+| ext4 that is **not the first partition** (or ext4 on the whole disk) | **Refused**, nothing changed | Rule 1 forbids formatting it, but only an ext4 first partition can be used as `/home`. Wipe it yourself (`wipefs -a`) or pick another disk with `--nvme` |
+| `/home` served by another partition of the target disk | **Refused** | The layout is not one this installer can keep or replace safely |
+| The disk holds `/`, `/boot`, `/usr`, `/var`, `/etc`, `/opt`, `/root` or active swap, or several NVMe disks qualify | **Refused** | Unchanged from section 1c |
 
-# =============================================================================
-# SWAP CONFIGURATION
-# =============================================================================
-swap_max_mb: 65536
-swap_file: "{{ ethereum_home }}/swapfile"
+A foreign disk that is mounted somewhere **other** than `/home` (for example an NTFS disk auto-mounted under `/media`) is unmounted and formatted; if the unmount fails because it is busy, the run stops before anything is wiped.
 
-# Cross-disk backups (medium failure recovery).
-#
-# The root disk (SD card / eMMC) and the NVMe disk can each fail independently. The
-# ethereumonarm-config-sync service mirrors a small set of paths from whichever disk they
-# normally live on to the other, on a schedule, while the node is running. If one disk is
-# later replaced, this playbook restores what it can from the surviving disk's copy.
-#
-# The two directions need different safety rules, because the backup and the live data don't
-# have the same relationship in each case:
-#   - root_disk_backup_paths: normally live on the root disk, mirrored onto the NVMe disk at
-#     "{{ ethereum_home }}/.<path, without the leading slash>" (e.g. /etc/ethereum is mirrored
-#     to "{{ ethereum_home }}/.etc/ethereum"). The backup itself lives on the NVMe disk, so if
-#     the NVMe disk is being formatted this run, the backup goes with it - restoring after
-#     packages install only makes sense when the NVMe disk was kept. Once restored, the backup
-#     is allowed to overlay live data: these are config files a fresh package install may have
-#     already recreated defaults for, and the previous, real settings should win.
-#   - home_disk_backup_paths: normally live under the ethereum home (on the NVMe disk),
-#     mirrored onto the root disk at "home_disk_backup_root + the original absolute path"
-#     (e.g. "{{ ethereum_home }}/.charon" is mirrored to
-#     "{{ home_disk_backup_root }}{{ ethereum_home }}/.charon"). The backup lives on the root
-#     disk, which this playbook never formats, so whether the NVMe disk is being formatted
-#     doesn't matter here - what matters is not overwriting live data with a possibly-older
-#     backup, so restore only ever happens when the live copy is missing. This is for state
-#     that cannot be regenerated if lost (an Obol Charon cluster's data - without it, that node
-#     cannot rejoin its cluster and the cluster has to be reinstalled) or whose presence itself
-#     is meaningful (.obol-monitor marks this node as monitoring a DVT cluster).
-root_disk_backup_paths:
-  - "/etc/ethereum"
-  - "/var/spool/cron/crontabs/{{ ethereum_user }}"
-  - "/var/lib/tailscale"
-restore_root_disk_backups: true
+### Decision Flow Diagram
 
-home_disk_backup_paths:
-  - "{{ ethereum_home }}/.charon"
-  - "{{ ethereum_home }}/.obol-monitor"
-home_disk_backup_root: "/var/backups/ethereumonarm"
-restore_home_disk_backups: true
+```text
+Look at the disk: blkid -p on the disk and on every partition
+│
+├─ no signature anywhere (new disk, empty partition table, unformatted) ──► 🔴 FORMAT   (rule 2)
+│
+├─ first partition is ext4
+│    ├─ /home/ethereum/.format.me exists ─────────────────────────────────► 🔴 FORMAT   (rule 1)
+│    └─ no flag file ─────────────────────────────────────────────────────► 🟢 KEEP     (rule 1)
+│
+├─ ext4 exists, but not as the first partition (or on the whole disk) ────► ⛔ REFUSE   (nothing is changed)
+│
+└─ anything else: NTFS, exFAT, APFS, XFS, btrfs, LVM, RAID, LUKS, ...
+     ├─ the first partition is mounted as /home right now ────────────────► 🟢 KEEP     (live /home)
+     └─ otherwise ────────────────────────────────────────────────────────► 🔴 FORMAT   (rule 3)
+```
 
-# =============================================================================
-# KNOWN BOARDS
-# Only used to build a short, stable hostname. Boards that are not listed work
-# too: the hostname is derived from the device-tree model string instead.
-# When several patterns match, the longest one wins (ROCK 5B+ beats ROCK 5B).
-# =============================================================================
-devices:
-  rock5t:
-    pattern: "ROCK 5T"
-    hostname_seed: "rock5t"
+### Decision Summary Table
 
-  rock5b:
-    pattern: "ROCK 5B"
-    hostname_seed: "rock5b"
+| Disk | Extra condition | Action |
+| ---- | --------------- | ------ |
+| New disk, empty partition table, or partitions without a filesystem | none | **FORMAT** (rule 2) |
+| ext4 first partition | no flag file | **KEEP** ✓ (rule 1) |
+| ext4 first partition | `/home/ethereum/.format.me` present | **FORMAT** (rule 1) |
+| Other filesystem (NTFS, exFAT, HFS+, APFS, XFS, btrfs, LVM, RAID, LUKS, ...) | not mounted as `/home` | **FORMAT** (rule 3) |
+| Other filesystem | first partition mounted as `/home` right now | **KEEP** ✓ (live home) |
+| ext4 that is not the first partition | none | **REFUSE** |
 
-  rock5b+:
-    pattern: "ROCK 5B+"
-    hostname_seed: "rock5b-plus"
+### The Formatting Process (if `should_format` is true)
 
-  rpi5:
-    pattern: "Raspberry Pi 5"
-    hostname_seed: "rpi5"
+1. **Unmount** every mount point that uses the disk, in reverse order. If one is busy the run **fails** with "Nothing has been wiped" instead of continuing.
+2. **Drop stale `/etc/fstab` entries** that reference the old partition path or the old UUID (a backup is kept), so the next boot cannot hang on a device that no longer exists.
+3. **Wipe signatures** with `wipefs --all --force`, partitions first, then the disk.
+4. **Partition table**: `label: gpt`, then one Linux partition spanning the disk, both through `sfdisk`.
+5. **Kernel sync**: `partprobe`, `udevadm settle`, then `wait_for` until the partition device node exists (replaces a fixed sleep).
+6. **Filesystem**: `ext4` with label `ethereum_data`; `force: true` overwrites a stubborn leftover signature.
+7. **Optimisation**: `tune2fs -m 0` sets reserved blocks to 0%. The default 5% would waste about 100 GB on a 2 TB disk.
 
-  orangepi5plus:
-    pattern: "Orange Pi 5 Plus"
-    hostname_seed: "opi5plus"
+### `/home` Scenarios
 
-  nanopct6:
-    pattern: "NanoPC-T6"
-    hostname_seed: "nanopct6"
+Before the NVMe is mounted on `/home`, the playbook handles whatever `/home` is today:
 
-# =============================================================================
-# APT REPOSITORIES
-# =============================================================================
-# "@SUITE@" in `repo` / `suite_probe` is replaced with the running Ubuntu release
-# (noble, resolute). When the running release is not the fallback release, the
-# playbook first checks that `suite_probe` answers HTTP 200 for it; if it does not,
-# that one repository falls back to `fallback_release`. Sources without "@SUITE@"
-# (grafana) are used as written.
-apt_sources:
-  - name: "ethereum-on-arm"
-    key_url: "https://repo.ethereumonarm.com/eoa.apt.keyring.gpg"
-    keyring: "/etc/apt/keyrings/ethereumonarm.gpg"
-    repo: "deb [signed-by=/etc/apt/keyrings/ethereumonarm.gpg] https://repo.ethereumonarm.com @SUITE@ main"
-    suite_probe: "https://repo.ethereumonarm.com/dists/@SUITE@/InRelease"
-    dearmor: false
+| Situation | What happens |
+| --------- | ------------ |
+| **A. `/home` is on the SD card / eMMC** (existing user with home on the root filesystem) | The data partition is mounted on a temporary staging directory and the current `/home` content is copied with `rsync -aHAX --numeric-ids --ignore-existing --exclude=/lost+found`. Existing NVMe files are **never overwritten**. Only then is the NVMe mounted over `/home`. The original files remain on the SD card, hidden under the mount. Turn this off with `migrate_existing_home: false`. rsync exit code 24 (files vanished during the copy) is treated as success. |
+| **B. `/home` is already on the NVMe** | Nothing to copy. If the disk is preserved it is simply (re)mounted by UUID. |
+| **C. `/home` is a separate mount from another device** | Content is copied as in A, then the old mount is released. If it is busy the run fails with a clear message (the copy has already happened). |
+| **D. Preserved disk already holds an `ethereum` home** | If the `ethereum` user does not exist yet, its numeric UID/GID are read from that directory and reused when they are free and in the normal user range, so no ownership fix is needed. |
 
-  - name: "grafana"
-    key_url: "https://apt.grafana.com/gpg.key"
-    keyring: "/etc/apt/keyrings/grafana.gpg"
-    repo: "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main"
-    dearmor: true
+### Mounting
 
-  - name: "nginx"
-    key_url: "https://nginx.org/keys/nginx_signing.key"
-    keyring: "/usr/share/keyrings/nginx-archive-keyring.gpg"
-    repo: "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://nginx.org/packages/ubuntu @SUITE@ nginx"
-    suite_probe: "https://nginx.org/packages/ubuntu/dists/@SUITE@/InRelease"
-    dearmor: true
-    pinning: true
+* **UUID lookup**: `/etc/fstab` uses the UUID, because `/dev/nvme0n1` naming can change when other drives are added.
+* **Mount and persist**: `ansible.posix.mount` with `state: mounted`, options `defaults,noatime,nofail,x-systemd.device-timeout=10s`, filesystem type `ext4` after a format or the detected type when data is preserved. `nofail` matters specifically for NVMe disk failure: if the disk is later physically replaced, the UUID this line was written for no longer exists. Without `nofail`, systemd treats the mount as required and will not reach `local-fs.target` until it gives up waiting for the device - which blocks `sshd` along with everything else that depends on it, on a board that may have no local console. With it, boot proceeds without the mount (`/home` stays on the root disk, empty) and the board stays reachable, so the replacement can be handled by re-running `install.sh`. See "Recovering from a Disk Replacement" below.
 
-# =============================================================================
-# PACKAGE LISTS
-# =============================================================================
-base_packages:
-  - apt-utils
-  - bash-completion
-  - file
-  - gdisk
-  - gpg
-  - parted
-  - net-tools
-  - rsync
-  - software-properties-common
-  - dphys-swapfile
-  - ufw
-  - vim
-  - wget
-  - kitty-terminfo
-  - python3-passlib
+### User Handling
 
-ethereum_packages:
-  - arbitrum-nitro
-  - bee
-  - besu
-  - commit-boost
-  - dvt-obol
-  - dvt-ssv
-  - erigon
-  - ethstaker-deposit-cli
-  - ethereumonarm-utils
-  - ethrex
-  - fuel-network
-  - geth
-  - grandine
-  - kubo
-  - lighthouse
-  - lodestar
-  - ls-lido
-  - mev-boost
-  - nethermind
-  - nimbus
-  - optimism-op-geth
-  - optimism-op-node
-  - optimism-op-program
-  - optimism-op-proposer
-  - optimism-op-reth
-  - prysm
-  - reth
-  - starknet-juno
-  - starknet-madara
-  - starknet-pathfinder
-  - teku
-  - vero
-  - vouch
+* **`ethereum` group and user** are created only if missing (using the UID/GID hints from scenario D when they apply) with `move_home: true`.
+* **Home directory existence**: for an account that already exists, the `user` module uses `usermod`, not `useradd -m` - and `usermod` does not create a missing home directory. A separate, unconditional task guarantees the directory exists (with correct ownership) regardless of whether the account was just created or already existed, since the home-disk backup restore right after it depends on that directory being there.
+* **Password**: forced to `ethereum_password` with a required change at first login **only when `ethereum_password_managed` is true** (new account, or `reset_ethereum_password=true`). An existing `ethereum` account keeps its password.
+* **Sudo**: password-less sudo through `/etc/sudoers.d/90-ethereum-nopasswd`, validated with `visudo -c -f` before it is installed (this form works with both classic sudo and the `sudo-rs` shipped with Ubuntu 26.04).
+* **Removing other users** (`existing_users_policy: remove`, default): only the **account** is removed (`remove: false`). Home directories are never deleted, because they may hold data that was just migrated or preserved. `SUDO_USER` is never removed. With `keep`, nobody is removed.
 
-monitoring_packages:
-  - ethereumonarm-monitoring-extras
-  - grafana
-  - prometheus
-  - prometheus-node-exporter
-  - ethereum-metrics-exporter
+---
 
-nginx_packages:
-  - nginx
-  - ethereumonarm-config-sync
-  - ethereumonarm-nginx-proxy-extras
+## 4. Remaining Tasks
 
-# =============================================================================
-# NTP SERVERS
-# =============================================================================
-ntp_servers:
-  - time1.google.com
-  - time2.google.com
-  - time3.google.com
-  - time4.google.com
+### APT Setup (Phase 2a)
 
-# =============================================================================
-# MONITORING
-# =============================================================================
-prometheus_user: "prometheus"
-prometheus_home: "/home/prometheus"
-prometheus_dirs:
-  - metrics2
-  - node-exporter
+* **Non-interactive**: `DEBIAN_FRONTEND=noninteractive` in `/etc/environment`.
+* **Prerequisites first**: installs `ca-certificates`, `curl` and `gpg` before any key is fetched (minimal images do not always ship them).
+* **Keys**: downloaded with `get_url`, or fetched and de-armored (`curl | gpg --dearmor`) into `/etc/apt/keyrings` (nginx into `/usr/share/keyrings`).
+* **Pinning**: prefers `nginx.org` packages over Ubuntu's.
+* **Repositories**: each `repo` line has `@SUITE@` replaced by the suite chosen in Phase 1 (see "APT suite selection"), then written to `/etc/apt/sources.list.d/`.
+* Then `apt update` and installation of `base_packages`.
 
-# =============================================================================
-# VERSION
-# =============================================================================
-eoa_minor_version: "{{ lookup('env', 'EOA_MINOR_VERSION') | default('0', true) }}"
-first_run_flag: "/root/first-run.flag"
+### Network Configuration (Phase 2b)
+
+* **Netplan override**: `99-optional-interfaces.yaml` marks interfaces `optional: true` so a missing cable does not block boot. Skipped if `/etc/netplan` does not exist.
+* **NTP**: configures `systemd-timesyncd` with the servers from `vars.yml` and restarts it on change.
+* **Hostname**: finds the interface used by the default route (`ip route get 8.8.8.8`, reading the token after `dev`, which stays correct whether or not the route has a `via` gateway), reads its MAC address, takes the first 8 characters of its SHA256, and builds `ethereumonarm-<hostname_seed>-<hash>`. `/etc/hostname` and `/etc/hosts` are updated immediately.
+
+### Package Installation (Phase 2e)
+
+Standard `apt install` for the Ethereum clients and dependencies, with an automatic `dpkg --configure -a` repair on failure.
+
+### Ethereum Configuration (Phase 2f)
+
+* **Root-disk backup restore**: see "Cross-disk backups" below.
+* **Swap file**: configures `dphys-swapfile` to create a swap file in the ethereum home on the NVMe (2 x RAM, capped at `swap_max_mb`).
+
+## 5. Cross-disk Backups (Medium Failure Recovery)
+
+The root disk (SD card / eMMC) and the NVMe disk can each fail independently, and each holds data the other needs to survive that. The `ethereumonarm-config-sync` service mirrors a small set of paths from whichever disk they normally live on to the other, on a schedule, while the node is running. If a disk is later replaced, this playbook restores what it can from the surviving disk's copy. See `root_disk_backup_paths`, `home_disk_backup_paths` and `home_disk_backup_root` in `vars.yml`.
+
+The two directions are not symmetric, because the backup and the live data don't have the same relationship in each case:
+
+| | Lives on | Mirrored to | Restored when | Overlay behaviour |
+| - | -------- | ----------- | -------------- | ------------------ |
+| `/etc/ethereum` | root disk | `{{ ethereum_home }}/.etc/ethereum` (NVMe) | the NVMe disk was kept, not formatted | overlays live data - a package's fresh default loses to the backup |
+| `/var/spool/cron/crontabs/{{ ethereum_user }}` | root disk | `{{ ethereum_home }}/.var/spool/cron/crontabs/{{ ethereum_user }}` (NVMe) | the NVMe disk was kept, not formatted | overlays live data, same reasoning |
+| `/var/lib/tailscale` | root disk | `{{ ethereum_home }}/.var/lib/tailscale` (NVMe) | the NVMe disk was kept, not formatted | overlays live data; no ownership fix needed (root-owned, and root's UID is universal) |
+| `{{ ethereum_home }}/.charon` | NVMe (ethereum home) | `{{ home_disk_backup_root }}{{ ethereum_home }}/.charon` (root disk) | the live copy is missing | never overlays - live data always wins |
+
+**Root disk → NVMe (`root_disk_backup_paths`).** The backup itself lives on the NVMe disk, so whether it survives this run depends on whether the NVMe disk is about to be formatted - exactly the same dependency the original single-purpose client-config restore had, now generalised to a list:
+
+* **Detection (Phase 1d)**: while the ext4 partition is already being peeked at for the format flag file and the `ethereum` directory, the playbook also checks for each path in `root_disk_backup_paths` at the same time - no extra mount. `root_disk_backups_to_restore` is only ever non-empty when the disk is being kept: if the disk is about to be formatted (blank, flag file, or a non-ext4 disk being replaced), the backups would be destroyed along with everything else, so there is nothing to restore.
+* **Restore (Phase 2f)**: once the client packages are installed, each backup found is restored - `/etc/ethereum` and `/var/lib/tailscale` with `rsync -a --min-size=1` (no `--delete`: a file the backup doesn't have, such as a new default from a client version newer than the one that made the backup, is left as the package installed it), and the crontab file the same way as a single file rather than a directory.
+* **Ownership**: like the ethereum home directory (see above), a backup of `/etc/ethereum` or the crontab file can carry the old installation's numeric UID/GID, which is not guaranteed to match the new account's UID on this SD card - ownership is set explicitly after each restore rather than trusted from the backup. The crontab file is a special case: most cron implementations silently ignore a crontab file that isn't owned exactly as they expect (typically `<user>:crontab`, mode `0600`), so a restore that got this wrong would look successful while the jobs quietly never ran. The playbook checks whether this system has a `crontab` group (`getent group crontab`) and uses it if so, falling back to the ethereum group otherwise, since not every cron implementation uses that group name. `/var/lib/tailscale` needs none of this: it is root-owned, and root's UID (0) is the same on every system, so there is nothing to reconcile.
+* **Tailscale's identity, specifically**: `tailscaled` stores its node identity (and so its Tailscale IP, which is tied to that identity rather than the hardware) in this directory. Restoring it means an OS reinstall or SD card replacement doesn't force re-registering the node. If `tailscaled` happened to already be running with fresh state by the time this restore runs (for example, started by its own package's install earlier in the same run), it would keep using the state already loaded into memory rather than what was just written to disk - so the playbook also restarts it, tolerating that service not existing at all, since this project doesn't install Tailscale itself.
+* **Tailscale gets (re)installed first, but only when there is a backup to restore.** A fresh root disk has no `tailscaled` to read the restored state back - without reinstalling it, the restore would just leave an inert directory on disk. Rather than a separate "install Tailscale" toggle that could drift out of sync with whether a node actually uses it, installation is tied to the same detection this project already does: `install_tailscale_if_backup_found` (default `true`) only triggers `curl`ing Tailscale's own official install script when `/var/lib/tailscale` is one of the backups being restored. A node that has never used Tailscale has no backup, and so gets nothing installed on its behalf - "optional" is enforced by the same mechanism that decides everything else here, not by a flag someone has to remember to set correctly. Already-installed is detected with `dpkg-query` first, so a later re-run doesn't reach out to the network needlessly. The install script only installs the package and starts the service - it does not run `tailscale up` or join a tailnet, which remains a manual step either way. If the install fails (no network reachable, for example), it's a warning, not a failure of the run: the rest of the node's setup still completes, and the restored state is left in place for whenever Tailscale does get installed.
+* **Failure handling**: unlike the dpkg-repair step above, a restore failure (full disk, corrupt backup) fails the run. These are not something to continue past silently.
+* **Turning it off**: `restore_root_disk_backups: false` skips detection and restore entirely, if you'd rather always start from the packages' defaults.
+
+**NVMe home → root disk (`home_disk_backup_paths`).** The backup lives on the root disk, which this playbook never formats, so whether the NVMe disk is being formatted doesn't matter here. What matters instead is not overwriting live data with a possibly-older backup - this is for state that cannot be regenerated if lost (an Obol Charon cluster's data: without it, that node cannot rejoin its cluster, and the cluster has to be reinstalled), so it is only ever restored when the live copy is missing, never overlaid on top of one that already exists:
+
+* **Detection**: the root-disk side is checked early (Phase 1b), independently of anything to do with the NVMe disk, since the root disk's state doesn't depend on any decision this playbook makes. The live side is checked again in Phase 2d, right after the ethereum account exists, since that is the earliest point the actual (kept-or-fresh) NVMe content is known for certain.
+* **Restore (Phase 2d)**: `rsync -a` copies the backup in, only when `home_disk_backups_on_root_disk` says the root disk has it *and* the live path doesn't exist yet. Placed immediately before the existing "fix ethereum home ownership" task, so that task's `chown -R` picks up the newly restored files without a separate explicit chown here.
+* **Turning it off**: `restore_home_disk_backups: false`.
+
+### Monitoring (Phase 2g)
+
+Creates the Prometheus user and directories, installs the monitoring packages and enables Prometheus, node exporter and Grafana.
+
+### Security (Phase 2h)
+
+* **Lock root**: `passwd -l root`, so people log in as `ethereum` and use `sudo`.
+* **User cleanup**: removes other regular accounts as described under "User Handling".
+* **Ownership check**: the recursive `chown` of the ethereum home runs **only** if a `find` finds a file with the wrong owner or group. A preserved multi-TB chain database is therefore not rewritten on every run.
+* **Nginx** is enabled.
+
+### Final Access Enforcement (Phase 2i)
+
+Runs last so nothing installed earlier can undo it: enforces the password and the forced change at first login (only when `ethereum_password_managed`), makes sure SSH allows password login, and removes Armbian's `/root/.not_logged_in_yet` marker so the first-login wizard does not start.
+
+### Finalize (Phase 2j)
+
+* Creates the `first-run` flag file.
+* Prints a summary: NVMe action, where `/home` was migrated from, users removed / kept / not removable, and the login details.
+* Schedules `shutdown -r +1` **only if `reboot_after` is true** (`install.sh --no-reboot` turns it off).
+
+---
+
+### Recovering from a Disk Replacement
+
+If the NVMe disk fails and is physically replaced with a blank one, no manual mount repair is needed before re-running the installer:
+
+1. **Boot still succeeds.** `nofail` (see "Mounting" above) means the missing device doesn't block `local-fs.target`; the board comes up with `/home` on the root disk (empty) and stays reachable over SSH. Password login as `ethereum` still works even though its home directory is temporarily gone, since authentication doesn't require the home directory to exist.
+2. **Re-run `install.sh`** (or the raw `ansible-playbook` command) the same way as any other run. Everything from here is the ordinary flow, not a special "recovery mode":
+   - The new disk has no filesystem, so it is classified `blank` and formatted (rule 2 in section 3) - no flags or confirmation needed beyond the normal plan/confirm step.
+   - The `ethereum` account already exists on this SD card from the original install, so `ethereum_user_exists` is true; its password is left alone, and the "make sure the ethereum home directory exists" task (see "User Handling" above) recreates the directory that the account otherwise still points at.
+   - Anything in `home_disk_backup_paths` (Charon's data) is restored from its root-disk backup, since the live copy is now missing.
+   - Anything in `root_disk_backup_paths` (`/etc/ethereum`, the crontab) needs no restore at all here - those live on the root disk, which was never touched by the failure, so the originals are already exactly as they were.
+
+**Is a "has this run here before" flag worth adding?** For this specific scenario, no additional flag is needed: everything above is already derived from live state (`disk_state`, whether the `ethereum` account exists, whether each backup path exists) rather than from a marker that has to be trusted and kept in sync. Live state is more robust here, since it stays correct even if a disk is manually reformatted, cloned, or moved to another board outside of this playbook. The root disk also already has an equivalent flag for a related purpose - `/root/first-run.flag`, created at the very end of a successful run - which is what stops the first-boot systemd service from running again on every subsequent boot; it does not need to know anything about individual disk replacements, since `install.sh` is meant to be re-run for those on demand.
+
+There is one narrower thing a flag genuinely would add that live state can't: right now, **any** disk whose first partition is ext4 is kept and adopted (section 3), with no check that it was ever actually provisioned by this project. A disk that happens to be ext4 for unrelated reasons - reused from another board, formatted on a test bench - would be silently treated the same as one this playbook created. A small marker written at the end of a successful run (for example, a hidden file at the root of the data partition) would let a future run tell those two cases apart and be more cautious about the second one. That's a real, separate hardening option if you want it - it doesn't change anything about the recovery flow above, which works either way.
+
+## 6. Running as a First-Boot Service vs. `install.sh`
+
+Both paths run the same `playbook.yml` and `vars.yml`. What differs is who is there to answer questions.
+
+| | First-boot service (image) | `install.sh` |
+| --- | --- | --- |
+| Command | `ansible-playbook -i inventory.yml playbook.yml --connection=local` | The same, plus `-e` flags, after a `plan_only=true` pass |
+| Operator | None | Yes (or `--yes`) |
+| Confirmation | None: Phase 1 and Phase 2 run in one pass | Plan shown, then confirmed |
+| `SUDO_USER` | Empty, so no account is protected from removal | The invoking user is protected |
+| Dependencies | Must already be in the image | Installed by the script |
+| Plan output | In the service log / journal | On screen and in `/var/log/eoa-install.log` |
+
+What the first-boot service needs to guarantee:
+
+* `ansible` **with** the `ansible.posix` and `community.general` collections (the Ubuntu `ansible` package bundles them; `ansible-core` does not) and `python3-passlib`, installed at image build time.
+* The playbook directory outside `/home` (for example `/opt/ethereumonarm/ansible`).
+* Network up before it starts (`After=network-online.target`); the run downloads packages and repository keys.
+* The service must not run again once `/root/first-run.flag` exists (`ConditionPathExists=!/root/first-run.flag`). The playbook creates that flag only at the very end of a successful run.
+* `/etc/armbian-release` present in the image (or `require_armbian=false`).
+* `EOA_MINOR_VERSION` in the service environment if `/etc/eoa-release` should carry the real minor version (`install.sh` leaves it at `0`).
+
+Behaviors that matter only when nobody is watching:
+
+* **Nothing needs to be configured for the disk.** The three rules apply as they are: a new / unformatted disk or any non-ext4 disk is formatted, an ext4 disk is kept unless `/home/ethereum/.format.me` is on it. The image copy of `vars.yml` is the same file as the repository's; no build-time patching is needed.
+* **Refusals are failures, not questions.** The disk holds the OS or swap, ext4 that is not the first partition, several qualifying NVMe disks, too little RAM or NVMe capacity: the run stops with the reason in the log before anything is changed. The flag file is not created, so the service tries again on the next boot.
+* **A blank NVMe** is formatted with no questions, which is the normal first-boot case.
+* **A previously provisioned NVMe** (ext4 with data, no `.format.me`) is kept and mounted, and the new SD card gets a fresh `ethereum` user that reuses the numeric IDs of the existing home when they are free.
+* **Users**: with no `SUDO_USER`, every regular account other than `ethereum` is removed (home directories kept), as before.
+* **`ethereum` account already present in the image**: its password is left alone (`ethereum_password_managed` is false). If the image builder pre-creates that user and the first-login password change is expected, set `reset_ethereum_password: true`.
+
+---
+
+## 7. Running It
+
+`install.sh` installs the dependencies (`git`, `ansible`, `python3-passlib`, the `ansible.posix` and `community.general` collections), downloads the playbook, runs Phase 1, asks for confirmation and then runs the full playbook. It works from `/opt/eoa-installer` and pins Ansible's home to `/root`, never under `/home`, which gets remounted during the run.
+
+```bash
+sudo ./install.sh --plan        # read-only: print the plan, change nothing
+sudo ./install.sh               # plan, confirm, run
+```
+
+| `install.sh` flag | Playbook variable | Effect |
+| ----------------- | ----------------- | ------ |
+| `--plan` | `plan_only=true` | Stop after Phase 1 |
+| `-y`, `--yes` | (none) | Skip the confirmation prompt (required without a TTY) |
+| `--nvme /dev/nvmeXnY` | `nvme_device` | Pick the disk when several qualify |
+| `--keep-users` | `existing_users_policy=keep` | Do not remove existing users |
+| `--no-reboot` | `reboot_after=false` | No reboot at the end |
+| `--skip-os-check` | `skip_os_check=true` | Allow a release other than noble / resolute |
+| `--ansible-dir DIR` | (none) | Use local playbook files instead of cloning |
+| `--ref REF`, `--repo URL` | (none) | Use another git branch or repository |
+| `-e K=V` | any | Pass an extra variable |
+
+`--wipe-nvme` is still accepted so old command lines do not break, but it does nothing.
+
+Variables that can only be set with `-e` / `vars.yml`: `min_ram_mb`, `min_nvme_size_gb`, `supported_releases`, `fallback_release`, `migrate_existing_home`, `reset_ethereum_password`, `format_flag_files`, `swap_max_mb`, `root_disk_backup_paths`, `restore_root_disk_backups`, `home_disk_backup_paths`, `home_disk_backup_root`, `restore_home_disk_backups`.
+
+To ask for a wipe of an ext4 data disk on the next run, create the flag file while the disk is mounted on `/home`: `touch /home/ethereum/.format.me` (the `ethereum` user can do this without `sudo`). The disk is formatted on the next run, and the flag disappears with the rest of the data.

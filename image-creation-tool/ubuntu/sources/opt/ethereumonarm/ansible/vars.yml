@@ -134,6 +134,17 @@ root_disk_backup_paths:
   - "/var/lib/tailscale"
 restore_root_disk_backups: true
 
+# Tailscale itself is optional and this project does not install it as a matter of course, or
+# manage a tailnet membership (that remains a manual "tailscale up" step either way). Restoring
+# /var/lib/tailscale onto a freshly flashed root disk is pointless on its own, though: there is
+# no tailscaled there yet to read that state back. It is (re)installed automatically only when
+# a backup is actually found - tying it to the same detection this project already does keeps a
+# node that never used Tailscale completely untouched, with no separate toggle to fall out of
+# sync with reality. Uses Tailscale's own official install script (does not run "tailscale up"
+# or join a tailnet - it only installs the package and starts the service).
+install_tailscale_if_backup_found: true
+tailscale_install_url: "https://tailscale.com/install.sh"
+
 home_disk_backup_paths:
   - "{{ ethereum_home }}/.charon"
   - "{{ ethereum_home }}/.obol-monitor"
@@ -262,7 +273,7 @@ monitoring_packages:
   - prometheus
   - prometheus-node-exporter
   - ethereum-metrics-exporter
-
+  - ethereumonarm-staking-monitor
 nginx_packages:
   - nginx
   - ethereumonarm-config-sync

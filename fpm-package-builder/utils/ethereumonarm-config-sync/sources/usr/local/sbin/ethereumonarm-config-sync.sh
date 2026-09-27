@@ -10,16 +10,17 @@
 # Run on a schedule by ethereumonarm-config-sync.timer, and safe to run manually or on demand
 # (e.g. via "systemctl start ethereumonarm-config-sync.service") at any time in between.
 #
-# The two directions are not symmetric, and this script does not try to make them so:
-#   - root_disk_paths:  live on the root disk, mirrored onto the NVMe disk. This is a plain
-#     mirror in both directions of travel - synced here with --delete so the backup doesn't
-#     accumulate files the live config no longer has, and restored by Ansible by overlaying
-#     the backup onto fresh package defaults (see the playbook for that half).
-#   - home_disk_paths:  live under the ethereum home (on the NVMe disk), mirrored onto the
-#     root disk. Also synced here with --delete for the same reason, but Ansible only ever
-#     restores these when the live copy is missing entirely - never overlaid on top of one
-#     that already exists. This is for state that cannot be regenerated if lost (for example,
-#     an Obol Charon cluster's data).
+# The two directions are not symmetric in how Ansible restores them, though this script treats
+# both the same way (see sync_path / is_empty_source below: a backup is only ever updated with
+# something to actually back up, never emptied out to match a source that currently has
+# nothing in it - whether that's because it failed, or because someone meant to remove it):
+#   - root_disk_paths:  live on the root disk, mirrored onto the NVMe disk. Restored by Ansible
+#     by overlaying the backup onto fresh package defaults (see the playbook for that half).
+#   - home_disk_paths:  live under the ethereum home (on the NVMe disk), mirrored onto the root
+#     disk. Ansible only ever restores these when the live copy is missing entirely - never
+#     overlaid on top of one that already exists. This is for state that cannot be regenerated
+#     if lost (an Obol Charon cluster's data) or whose presence itself is meaningful
+#     (.obol-monitor marks this node as monitoring a DVT cluster).
 #
 # Keep the paths below in sync with root_disk_backup_paths / home_disk_backup_paths /
 # home_disk_backup_root in the Ansible playbook's vars.yml - the playbook can only restore
@@ -37,15 +38,39 @@ ROOT_DISK_PATHS=(
 
 HOME_DISK_PATHS=(
   "$ETHEREUM_HOME/.charon"
+  "$ETHEREUM_HOME/.obol-monitor"
 )
+
+# is_empty_source SRC
+# True if SRC has nothing worth backing up right now: it doesn't exist, exists as a directory
+# with no regular file anywhere underneath it (checked recursively - a directory that itself
+# has entries but only empty subdirectories still counts as empty), or exists as a zero-byte
+# file.
+is_empty_source() {
+  local src="$1"
+  if [[ -d "$src" ]]; then
+    [[ -z "$(find "$src" -type f -print -quit 2>/dev/null)" ]]
+  elif [[ -f "$src" ]]; then
+    [[ ! -s "$src" ]]
+  else
+    return 0
+  fi
+}
 
 # sync_path SRC DEST
 # Mirrors SRC onto DEST, matching whichever of the two it is (a single file or a whole
-# directory), and does nothing if SRC doesn't exist yet (nothing has been set up to back up).
+# directory). Does nothing at all if SRC is empty or missing right now - a backup is only ever
+# updated with something to actually back up, never emptied out to match a source that has
+# nothing in it. That covers a disk that has failed (its data looks "missing" from here) just
+# as much as a deliberate removal (rm -rf) on the live side: this script has no way to tell
+# those two apart, and guessing wrong in the failure case would destroy the one surviving copy
+# of exactly the data this mechanism exists to protect. If something genuinely needs to be
+# removed from a backup, that has to be done to the backup directly, not inferred from the
+# live copy disappearing.
 # (No -z: source and destination are both on the same host, so compression only costs CPU.)
 sync_path() {
   local src="$1" dest="$2"
-  if [[ ! -e "$src" ]]; then
+  if is_empty_source "$src"; then
     return 0
   fi
   mkdir -p "$(dirname "$dest")"

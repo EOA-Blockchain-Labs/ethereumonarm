@@ -34,6 +34,7 @@ HOME_DISK_BACKUP_ROOT="/var/backups/ethereumonarm"
 ROOT_DISK_PATHS=(
   "/etc/ethereum"
   "/var/spool/cron/crontabs/ethereum"
+  "/var/lib/tailscale"
 )
 
 HOME_DISK_PATHS=(

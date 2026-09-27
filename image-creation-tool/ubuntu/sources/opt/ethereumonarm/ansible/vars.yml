@@ -131,6 +131,7 @@ swap_file: "{{ ethereum_home }}/swapfile"
 root_disk_backup_paths:
   - "/etc/ethereum"
   - "/var/spool/cron/crontabs/{{ ethereum_user }}"
+  - "/var/lib/tailscale"
 restore_root_disk_backups: true
 
 home_disk_backup_paths:

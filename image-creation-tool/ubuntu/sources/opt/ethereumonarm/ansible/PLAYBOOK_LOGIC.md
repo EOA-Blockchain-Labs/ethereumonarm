@@ -203,6 +203,7 @@ Before the NVMe is mounted on `/home`, the playbook handles whatever `/home` is 
 * **Netplan override**: `99-optional-interfaces.yaml` marks interfaces `optional: true` so a missing cable does not block boot. Skipped if `/etc/netplan` does not exist.
 * **NTP**: configures `systemd-timesyncd` with the servers from `vars.yml` and restarts it on change.
 * **Hostname**: finds the interface used by the default route (`ip route get 8.8.8.8`, reading the token after `dev`, which stays correct whether or not the route has a `via` gateway), reads its MAC address, takes the first 8 characters of its SHA256, and builds `ethereumonarm-<hostname_seed>-<hash>`. `/etc/hostname` and `/etc/hosts` are updated immediately.
+* **Unprivileged ping**: writes `net.ipv4.ping_group_range = 0 2147483647` to `/etc/sysctl.d/60-eoa-ping.conf` and applies it to the running kernel (`unprivileged_ping_group_range` in `vars.yml`; set it to `""` to skip). Newer `iputils-ping` packages (Debian trixie, Ubuntu resolute) no longer install `ping` with `cap_net_raw` or setuid - unprivileged ping uses ICMP datagram sockets instead, and access to those is controlled by this sysctl. Its default normally comes from a separate, only-recommended package, so an image built or upgraded without recommends ends up with the kernel default (disabled) and `ping` fails for every non-root user with `missing cap_net_raw+p capability or setuid?`. That matters here because the `ethereum` user's cron jobs (peer monitoring over Tailscale) run as a normal user. The drop-in sorts after `50-default.conf`, so it wins whether or not that package is installed. It has no effect inside a container that has its own network namespace - that needs its own `--sysctl` or `NET_RAW`.
 
 ### Package Installation (Phase 2e)
 
@@ -336,6 +337,6 @@ sudo ./install.sh               # plan, confirm, run
 
 `--wipe-nvme` is still accepted so old command lines do not break, but it does nothing.
 
-Variables that can only be set with `-e` / `vars.yml`: `min_ram_mb`, `min_nvme_size_gb`, `supported_releases`, `fallback_release`, `migrate_existing_home`, `reset_ethereum_password`, `format_flag_files`, `swap_max_mb`, `root_disk_backup_paths`, `restore_root_disk_backups`, `home_disk_backup_paths`, `home_disk_backup_root`, `restore_home_disk_backups`.
+Variables that can only be set with `-e` / `vars.yml`: `min_ram_mb`, `min_nvme_size_gb`, `supported_releases`, `fallback_release`, `migrate_existing_home`, `reset_ethereum_password`, `format_flag_files`, `swap_max_mb`, `unprivileged_ping_group_range`, `root_disk_backup_paths`, `restore_root_disk_backups`, `home_disk_backup_paths`, `home_disk_backup_root`, `restore_home_disk_backups`.
 
 To ask for a wipe of an ext4 data disk on the next run, create the flag file while the disk is mounted on `/home`: `touch /home/ethereum/.format.me` (the `ethereum` user can do this without `sudo`). The disk is formatted on the next run, and the flag disappears with the rest of the data.

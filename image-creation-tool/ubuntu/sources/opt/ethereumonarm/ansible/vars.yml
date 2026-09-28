@@ -269,7 +269,6 @@ ethereum_packages:
 
 monitoring_packages:
   - ethereumonarm-monitoring-extras
-  - ethereumonarm-staking-stack
   - grafana
   - prometheus
   - prometheus-node-exporter
@@ -288,6 +287,19 @@ ntp_servers:
   - time2.google.com
   - time3.google.com
   - time4.google.com
+
+# =============================================================================
+# UNPRIVILEGED PING
+# =============================================================================
+# Newer iputils-ping packages (Debian trixie, Ubuntu resolute) no longer install ping with
+# cap_net_raw or setuid. Unprivileged ping instead uses ICMP datagram sockets, whose access is
+# controlled by this sysctl (a range of group IDs). The default normally comes from a separate,
+# only-recommended package, so an image built or upgraded without recommends keeps the kernel
+# default (disabled) and ping fails for every non-root user with "missing cap_net_raw+p
+# capability or setuid?". The ethereum user's cron jobs (peer monitoring) run as a normal user,
+# so this is set explicitly instead of depending on which package happens to provide it.
+# "0 2147483647" is what systemd and Debian ship as the default. Set to "" to leave it alone.
+unprivileged_ping_group_range: "0 2147483647"
 
 # =============================================================================
 # MONITORING

@@ -269,6 +269,7 @@ ethereum_packages:
 
 monitoring_packages:
   - ethereumonarm-monitoring-extras
+  - ethereumonarm-staking-stack
   - grafana
   - prometheus
   - prometheus-node-exporter

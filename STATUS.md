@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-09-29 09:39:50 UTC_
+_Last updated: 2026-09-30 09:31:19 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-09-29 09:39:50 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **26** (70.3%)
-- ❌ Outdated: **11** (29.7%)
+- ✅ Up-to-date: **28** (75.7%)
+- ❌ Outdated: **9** (24.3%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -43,9 +43,9 @@ _Last updated: 2026-09-29 09:39:50 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `grandine` | `2.0.6` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.6` | ✅ Up-to-date |
 | `lighthouse` | `8.2.2` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.2.2` | ✅ Up-to-date |
-| `lodestar` | `1.49.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.48.0` | ❌ Outdated |
-| `nimbus` | `26.8.0` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.8.0` | ✅ Up-to-date |
-| `prysm` | `7.2.0` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.1.8` | ❌ Outdated |
+| `lodestar` | `1.49.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.49.0` | ✅ Up-to-date |
+| `nimbus` | `26.9.1` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.9.1` | ✅ Up-to-date |
+| `prysm` | `7.2.0` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.2.0` | ✅ Up-to-date |
 | `teku` | `26.9.1` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.9.1` | ✅ Up-to-date |
 
 ## Layer 1 Execution
@@ -54,10 +54,10 @@ _Last updated: 2026-09-29 09:39:50 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `besu` | `26.9.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.9.0` | ✅ Up-to-date |
 | `erigon` | `3.7.0` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.7.0` | ✅ Up-to-date |
-| `ethrex` | `27.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `27.0.0` | ✅ Up-to-date |
+| `ethrex` | `28.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `28.0.0` | ✅ Up-to-date |
 | `geth` | `1.17.6` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.6` | ✅ Up-to-date |
 | `nethermind` | `2.0.0` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `2.0.0` | ✅ Up-to-date |
-| `nimbus-ec` | `0.4.1` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
+| `nimbus-ec` | `0.4.2` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
 | `reth` | `2.7.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `2.7.0` | ✅ Up-to-date |
 
 ## Layer 1 Light Clients

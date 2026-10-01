@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-09-30 09:31:19 UTC_
+_Last updated: 2026-10-01 09:58:01 UTC_
 
 ## What this report compares
 
@@ -42,7 +42,7 @@ _Last updated: 2026-09-30 09:31:19 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
 | `grandine` | `2.0.6` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.6` | ✅ Up-to-date |
-| `lighthouse` | `8.2.2` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.2.2` | ✅ Up-to-date |
+| `lighthouse` | `8.2.3` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.2.3` | ✅ Up-to-date |
 | `lodestar` | `1.49.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.49.0` | ✅ Up-to-date |
 | `nimbus` | `26.9.1` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.9.1` | ✅ Up-to-date |
 | `prysm` | `7.2.0` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.2.0` | ✅ Up-to-date |
@@ -55,7 +55,7 @@ _Last updated: 2026-09-30 09:31:19 UTC_
 | `besu` | `26.9.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.9.0` | ✅ Up-to-date |
 | `erigon` | `3.7.0` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.7.0` | ✅ Up-to-date |
 | `ethrex` | `28.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `28.0.0` | ✅ Up-to-date |
-| `geth` | `1.17.6` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.6` | ✅ Up-to-date |
+| `geth` | `1.17.7` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.7` | ✅ Up-to-date |
 | `nethermind` | `2.0.0` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `2.0.0` | ✅ Up-to-date |
 | `nimbus-ec` | `0.4.2` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
 | `reth` | `2.7.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `2.7.0` | ✅ Up-to-date |
@@ -74,7 +74,7 @@ _Last updated: 2026-09-30 09:31:19 UTC_
 | `fuel-network` | `0.48.3` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.48.3` | ✅ Up-to-date |
 | `optimism-op-challenger` | `1.10.0` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.3` | ❌ Outdated |
 | `optimism-op-geth` | `1.101702.3` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101702.3` | ✅ Up-to-date |
-| `optimism-op-node` | `1.19.7` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.19.0` | ❌ Outdated |
+| `optimism-op-node` | `1.19.8` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.19.0` | ❌ Outdated |
 | `optimism-op-reth` | `2.7.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |
 | `starknet-juno` | `0.16.7` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.16.6` | ❌ Outdated |
 | `starknet-madara` | `0.10.2` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.2` | ✅ Up-to-date |

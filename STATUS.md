@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-10-07 10:04:12 UTC_
+_Last updated: 2026-10-08 10:18:01 UTC_
 
 ## What this report compares
 
@@ -78,7 +78,7 @@ _Last updated: 2026-10-07 10:04:12 UTC_
 | `optimism-op-reth` | `2.7.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |
 | `starknet-juno` | `0.16.8` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.16.6` | ❌ Outdated |
 | `starknet-madara` | `0.10.2` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.2` | ✅ Up-to-date |
-| `starknet-pathfinder` | `0.24.1` ([equilibriumco/pathfinder](https://github.com/equilibriumco/pathfinder)) | `0.24.0` | ❌ Outdated |
+| `starknet-pathfinder` | `0.24.2` ([equilibriumco/pathfinder](https://github.com/equilibriumco/pathfinder)) | `0.24.0` | ❌ Outdated |
 
 ## Web3
 

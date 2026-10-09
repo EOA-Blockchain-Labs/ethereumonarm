@@ -101,6 +101,12 @@ ask_required() {
     done
 }
 
+ask_optional() {
+    # ask_optional <prompt>  →  accepts empty answer  →  sets $ANSWER
+    local prompt="$1"
+    read -rp "  ${prompt} (optional, press Enter to skip): " ANSWER
+}
+
 # =============================================================================
 # STEP 1 — AUTO-DETECT RUNNING ETHEREUM CLIENTS
 # =============================================================================

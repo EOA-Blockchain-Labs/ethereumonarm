@@ -1,7 +1,7 @@
 #!/bin/bash
 # =============================================================================
 # control-status.sh — Sends a full cluster status report via Telegram.
-# Shows all 3 Obol nodes (via Charon HTTP API) + this control node.
+# Shows all Obol nodes (via Charon HTTP API) + this control node.
 # Run manually or from cron (daily digest at 08:00).
 # =============================================================================
 
@@ -19,58 +19,11 @@ fi
 . "$CONF"
 . "${SCRIPT_DIR}/../lib/common.sh"
 
-# Primary node monitors failover health (only runs on NODE_TYPE=control)
-if [ "${NODE_TYPE:-}" = "control" ]; then
-    check_failover
+# Primary/backup deduplication: skip if peer control node is reachable
+if ! is_primary; then
+    echo "Peer control node (${PEER_CONTROL_IP}) is reachable — deferring status report to primary."
+    exit 0
 fi
-
-# Primary/backup deduplication — three-state check via is_primary()
-is_primary
-case "$IS_PRIMARY_REASON" in
-    always_primary)
-        # No peer configured — always run
-        ;;
-    peer_healthy)
-        # Peer EL API responded — fully healthy, defer
-        echo "Primary node (${PEER_CONTROL_IP}) is healthy — deferring to primary."
-        exit 0
-        ;;
-    peer_el_down)
-        # Relay responded — primary node is up, EL-only issue.
-        # No alert: node is reachable, EL may be restarting or behind.
-        clear_lock "ctrl-peer-el-down"
-        echo "Primary relay responds, EL down — deferring silently."
-        exit 0
-        ;;
-    peer_el_relay_down)
-        # Both EL and relay down but ping succeeded — alert, still defer
-        lock_alert "ctrl-peer-el-down" "$(node_label)
-⚠️ <b>Primary control node: EL and relay both down</b>
-
-Node <code>${PEER_CONTROL_IP}</code> responds to ping but both
-EL API (port 80) and Charon relay (port ${PEER_RELAY_PORT:-3640}) are not responding.
-
-Suggested actions:
-• Check EL: <code>sudo systemctl status ${EL_SERVICE}</code>
-• Check relay: <code>sudo systemctl status ${OBOL_RELAY_SERVICE}</code>"
-        echo "Primary EL+relay down but node pings — alert sent, deferring."
-        exit 0
-        ;;
-    peer_down)
-        # Both checks failed — peer is down, take over
-        clear_lock "ctrl-peer-el-down"
-        lock_alert "ctrl-peer-node-down" "$(node_label)
-🚨 <b>Primary control node is DOWN</b>
-
-Node <code>${PEER_CONTROL_IP}</code> did not respond to ping or EL API query.
-This node (<b>${NODE_NAME}</b>) is taking over as active monitor.
-
-Suggested actions:
-• Check Tailscale: <code>tailscale ping ${PEER_CONTROL_IP}</code>
-• Check Tailscale admin panel for node status
-• Physical inspection of primary node may be required"
-        ;;
-esac
 
 TS=$(date '+%Y-%m-%d %H:%M:%S %Z')
 _NODES_DOWN_FILE=$(mktemp)
@@ -170,7 +123,7 @@ print(\", \".join(rows) if rows else \"no data yet\")
     echo "✅ <b>${node_name}</b> (<code>${node_ip}</code>)
   Charon livez : ${LIVEZ}  readyz : ${READYZ} ${READYZ_ICON} ${READYZ_LABEL}
   DVT peers    : ${PEERS_ICON} ${CHARON_PEERS}/${CHARON_PEERS_EXPECTED} — ${PEER_NAMES}
-  Latency p50  : ${LATENCY_INFO}"
+  Latency avg  : ${LATENCY_INFO}"
 }
 
 # =============================================================================
@@ -196,7 +149,7 @@ rm -f "$_NODES_DOWN_FILE" "$_VALIDATORS_DOWN_FILE"
 
 OBOL_NODES_UP=$(( ${CLUSTER_SIZE:-3} - OBOL_NODES_DOWN ))
 
-# Cluster health summary line — shown at top of OBOL NODES section
+# Cluster health summary line — shown at top of report
 if [ "$OBOL_NODES_DOWN" -eq 0 ] && [ "$OBOL_VALIDATORS_DOWN" -eq 0 ]; then
     CLUSTER_STATUS="🟢 All ${CLUSTER_SIZE} nodes up — all validators running"
 elif [ "$OBOL_NODES_DOWN" -eq 0 ] && [ "$OBOL_VALIDATORS_DOWN" -gt 0 ]; then

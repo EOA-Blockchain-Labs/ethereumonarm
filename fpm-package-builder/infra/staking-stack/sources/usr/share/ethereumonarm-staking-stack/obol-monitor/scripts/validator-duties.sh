@@ -36,15 +36,6 @@ fi
 . "$CONF"
 . "${SCRIPT_DIR}/../lib/common.sh"
 
-# Failover node defers to primary — only run if this node is active
-is_primary
-case "$IS_PRIMARY_REASON" in
-    peer_healthy|peer_el_down)
-        echo "Primary node is up — deferring validator-duties to primary."
-        exit 0
-        ;;
-esac
-
 TS="$(date '+%Y-%m-%d %H:%M:%S')"
 echo "=== validator-duties check — ${TS} ==="
 
@@ -54,67 +45,12 @@ expire_locks "vd-"
 # Sanity checks
 # =============================================================================
 
-# ------------------------------------------------------------------
-# Nimbus compatibility check
-# ------------------------------------------------------------------
-# Nimbus does not implement POST /eth/v1/beacon/rewards/attestations/{epoch}
-# which is the only accurate way to detect missed attestations for finalized
-# epochs. There is no reliable fallback:
-#
-#   - The liveness endpoint (/eth/v1/validator/liveness/{epoch}) only accepts
-#     current_epoch or current_epoch-1. The finalized epoch we check is
-#     typically current_epoch-4, which Nimbus rejects with HTTP 400.
-#
-#   - Querying liveness at current_epoch-1 as a proxy is unreliable because
-#     it refers to a completely different epoch than the one being checked —
-#     a validator could have missed CHECK_EPOCH but appear live in
-#     current_epoch-1, or vice versa. Inclusion delay adds further noise.
-#
-# To use this script, replace Nimbus with Lighthouse or Grandine on this node.
-# Both implement the full Beacon API including the rewards/attestations endpoint.
-#
-# Install Lighthouse or Grandine:
-#   sudo apt-get update && sudo apt-get install lighthouse
-#   sudo apt-get update && sudo apt-get install grandine
-# ------------------------------------------------------------------
-if [ "${CL_CLIENT:-}" = "nimbus" ] || [ "${CL_CLIENT:-}" = "grandine" ]; then
-    echo ""
-    echo "════════════════════════════════════════════════════════"
-    echo "  ⚠️  WARNING: ${CL_CLIENT} is not compatible with this script"
-    echo "════════════════════════════════════════════════════════"
-    echo ""
-    echo "  ${CL_CLIENT} does not reliably support missed attestation"
-    echo "  detection. The required endpoint:"
-    echo ""
-    echo "    POST /eth/v1/beacon/rewards/attestations/{epoch}"
-    echo ""
-    echo "  returns HTTP 404 on ${CL_CLIENT}. The liveness fallback"
-    echo "  endpoint (/eth/v1/validator/liveness/{epoch}) cannot"
-    echo "  substitute for it because:"
-    echo "  • It only accepts current/previous epoch."
-    echo "  • We check finalized epochs (~4 behind head)."
-    echo "  • Querying a different epoch causes mass false misses"
-    echo "    due to attestation inclusion delay."
-    echo ""
-    echo "  To use validator duties monitoring, replace ${CL_CLIENT}"
-    echo "  with a compatible client on this node:"
-    echo ""
-    echo "  Compatible clients (implement rewards/attestations):"
-    echo "    Lighthouse : sudo apt-get install lighthouse"
-    echo "    Teku       : sudo apt-get install teku"
-    echo "    Prysm      : sudo apt-get install prysm"
-    echo "    Lodestar   : sudo apt-get install lodestar"
-    echo ""
-    echo "════════════════════════════════════════════════════════"
-    exit 0
-fi
-
 if [ ! -f "$INDEX_CACHE" ]; then
     echo "ERROR: Index cache not found at ${INDEX_CACHE}." >&2
     echo "       Run sync-indices.sh first." >&2
     lock_alert "vd-no-cache" "$(node_label)
 ⚠️ <b>validator-duties</b>: index cache missing.
-Run <code>bash /home/ethereum/.validator-monitor/scripts/sync-indices.sh</code> to rebuild it."
+Run <code>bash /home/ethereum/.validator-monitor/scripts/sync-indices.sh</code> to rebuild it." "detailed"
     exit 1
 fi
 
@@ -180,54 +116,24 @@ print(m.get('$1', 'idx:$1'))
 echo ""
 echo "--- Missed attestation check ---"
 
-# Rewards endpoint requires a FINALIZED epoch — Lighthouse returns 404
-# for epochs not yet finalized. Use finalized_epoch(), not check_epoch().
-CHECK_EPOCH=$(finalized_epoch)
+CHECK_EPOCH=$(check_epoch)
 if [ -z "$CHECK_EPOCH" ]; then
-    echo "WARNING: Could not determine finalized epoch. Skipping attestation check."
+    echo "WARNING: Could not determine current epoch. Skipping attestation check."
 else
     CURRENT_EPOCH=$(current_epoch)
-    echo "Checking epoch ${CHECK_EPOCH} (finalized; head epoch: ${CURRENT_EPOCH})"
+    echo "Checking epoch ${CHECK_EPOCH} (head epoch: ${CURRENT_EPOCH}, using head-1)"
 
     # ------------------------------------------------------------------
-    # Optimistic sync guard — checked FIRST, before any duty data is
-    # requested. If the beacon head has not been validated by the EL yet
-    # (e.g. EL syncing from scratch), ANY duty data derived from the head
-    # state (rewards or liveness) may be unreliable. Skip the check this
-    # cycle and tell the operator clearly rather than risk a false
-    # mass-miss report.
-    # ------------------------------------------------------------------
-    IS_OPTIMISTIC=$(is_optimistic)
-
-    if [ "$IS_OPTIMISTIC" = "true" ]; then
-        echo "WARNING: Beacon head is optimistically synced (EL not validated). Skipping attestation check for epoch ${CHECK_EPOCH}."
-        MISSED_ATTESTERS=""
-        OK_ATTESTERS=""
-        lock_alert "vd-beacon-data-unavailable" "$(node_label)
-⚠️ <b>Attestation duty checking paused — beacon optimistically synced</b>
-
-Epoch     : <b>${CHECK_EPOCH}</b>
-
-The beacon node's head block has not been validated by the execution layer
-yet (optimistic sync). Duty data derived from this head may be unreliable,
-so attestation checking is paused this cycle.
-
-This is expected while the execution client is syncing from scratch and
-will resolve automatically once the EL catches up.
-
-Check: <code>curl -s http://localhost:5052/eth/v1/node/syncing</code>"
-    else
-
-    # ------------------------------------------------------------------
-    # Missed attestation check via rewards/attestations endpoint.
-    # head + target + source all ≤ 0 → validator missed the attestation.
-    # Requires a finalized epoch — Lighthouse returns 404 otherwise.
+    # Method 1 — rewards/attestations endpoint
+    # Preferred: head+target+source all ≤ 0 → validator missed attestation.
+    # Not supported by all clients (Nimbus closes connection → HTTP 0).
     # ------------------------------------------------------------------
     ATT_RESP=$(beacon_post "/eth/v1/beacon/rewards/attestations/${CHECK_EPOCH}" "$INDICES_JSON")
     ATT_HTTP=$(beacon_http_code)
 
     if [ "$ATT_HTTP" = "200" ] && [ -n "$ATT_RESP" ]; then
-        # ── Method 1: rewards endpoint (on-chain confirmed) ────────────────
+        echo "  Method: rewards/attestations (HTTP 200)"
+
         PARSE_RESULT=$(echo "$ATT_RESP" | python3 -c "
 import sys, json
 try:
@@ -254,29 +160,27 @@ except Exception as e:
 ")
         MISSED_ATTESTERS=$(echo "$PARSE_RESULT" | grep '^MISSED:' | cut -d: -f2)
         OK_ATTESTERS=$(echo    "$PARSE_RESULT" | grep '^OK:'     | cut -d: -f2)
-        echo "ok" > "${LOCK_DIR}/vd-beacon-data-state.dat"
-        recovery_alert "vd-beacon-data-unavailable" "$(node_label)
-✅ <b>Attestation duty checking resumed</b>
-
-The beacon node is responding to duty queries again."
 
     else
-        # ── Method 2: liveness fallback ────────────────────────────────────
-        # Triggered for any non-200 response from the rewards endpoint:
-        #   HTTP 0    → client does not support the endpoint (Nimbus)
-        #   HTTP 404  → checkpoint-sync missing historical state, or other
-        #               "not found" conditions
-        #   any other → defensive catch-all
-        # Falls back to liveness/{epoch} which only needs the head state.
-        # Use current_epoch-1 for liveness — most beacon clients (Nimbus
-        # included) reject liveness queries for older epochs with HTTP 400.
-        # CHECK_EPOCH (finalized, ~4 epochs behind head) is out of range.
-        echo "  Rewards endpoint unavailable (HTTP ${ATT_HTTP:-0}). Falling back to liveness."
-        LIVE_EPOCH=$(check_epoch)
-        LIVE_RESP=$(beacon_post "/eth/v1/validator/liveness/${LIVE_EPOCH}" "$INDICES_JSON")
+        # ------------------------------------------------------------------
+        # Method 2 — validator/liveness fallback
+        # Used when the rewards endpoint is not available (Nimbus, older clients).
+        # is_live: false → validator did not participate in the epoch.
+        # Less precise than rewards (cannot distinguish head/target/source misses)
+        # but reliable and universally supported.
+        # ------------------------------------------------------------------
+        echo "  Method: validator/liveness fallback (rewards endpoint returned HTTP ${ATT_HTTP:-0})"
+
+        LIVE_RESP=$(beacon_post "/eth/v1/validator/liveness/${CHECK_EPOCH}" "$INDICES_JSON")
         LIVE_HTTP=$(beacon_http_code)
 
-        if [ "$LIVE_HTTP" = "200" ] && [ -n "$LIVE_RESP" ]; then
+        if [ -z "$LIVE_RESP" ] || [ "$LIVE_HTTP" != "200" ]; then
+            echo "WARNING: Both attestation endpoints failed."
+            echo "         rewards HTTP=${ATT_HTTP:-0}  liveness HTTP=${LIVE_HTTP:-0}"
+            echo "         Skipping attestation check for epoch ${CHECK_EPOCH}."
+            MISSED_ATTESTERS=""
+            OK_ATTESTERS=""
+        else
             PARSE_RESULT=$(echo "$LIVE_RESP" | python3 -c "
 import sys, json
 try:
@@ -292,140 +196,68 @@ except Exception as e:
 ")
             MISSED_ATTESTERS=$(echo "$PARSE_RESULT" | grep '^MISSED:' | cut -d: -f2)
             OK_ATTESTERS=$(echo    "$PARSE_RESULT" | grep '^OK:'     | cut -d: -f2)
-            echo "ok" > "${LOCK_DIR}/vd-beacon-data-state.dat"
-            recovery_alert "vd-beacon-data-unavailable" "$(node_label)
-✅ <b>Attestation duty checking resumed</b>
-
-The beacon node is responding to duty queries again."
-        else
-            echo "WARNING: Both rewards (HTTP ${ATT_HTTP:-0}) and liveness (HTTP ${LIVE_HTTP:-0}) endpoints failed. Skipping epoch ${CHECK_EPOCH}."
-            MISSED_ATTESTERS=""
-            OK_ATTESTERS=""
-            # ── 2-cycle confirmation before alerting ───────────────────────
-            # A single failure may be transient (beacon restarting, brief
-            # API overload). Only alert after two consecutive failing cycles.
-            _beacon_state_file="${LOCK_DIR}/vd-beacon-data-state.dat"
-            _prev_beacon_state=$(cat "$_beacon_state_file" 2>/dev/null || echo "ok")
-            if [ "$_prev_beacon_state" = "failed" ]; then
-                lock_alert "vd-beacon-data-unavailable" "$(node_label)
-⚠️ <b>Validator duty data unavailable</b>
-
-Epoch     : <b>${CHECK_EPOCH}</b>
-Rewards endpoint : HTTP ${ATT_HTTP:-0}
-Liveness endpoint: HTTP ${LIVE_HTTP:-0}
-
-The beacon node is not returning attestation duty data through either
-endpoint. Missed attestations cannot currently be detected.
-
-Possible causes:
-• Beacon node is not synced or restarting
-• Beacon node checkpoint-sync is missing historical state for this epoch
-• Beacon API is overloaded
-
-Check: <code>curl -s http://localhost:5052/eth/v1/node/syncing</code>"
-            else
-                echo "  First failure — waiting for second consecutive cycle before alerting."
-            fi
-            echo "failed" > "$_beacon_state_file"
         fi
     fi
-    fi  # end optimistic guard
 
-        # ------------------------------------------------------------------
-    # Alert on missed validators
-    # If >= MASS_MISS_THRESHOLD validators missed the same epoch, send one
-    # global alert instead of per-validator messages (cluster/ISP outage).
-    # If < threshold, send individual alerts per validator.
+    # ------------------------------------------------------------------
+    # Alert on any missed validators (same logic regardless of method)
     # ------------------------------------------------------------------
     MISSED_COUNT=$(echo "$MISSED_ATTESTERS" | wc -w | tr -d ' ')
     OK_COUNT=$(echo     "$OK_ATTESTERS"     | wc -w | tr -d ' ')
-    TOTAL_COUNT=$(( MISSED_COUNT + OK_COUNT ))
     echo "  Attested: ${OK_COUNT}  |  Missed: ${MISSED_COUNT}"
 
-    MASS_MISS_THRESHOLD="${MASS_MISS_THRESHOLD:-10}"
-
-    if [ "${MISSED_COUNT}" -ge "${MASS_MISS_THRESHOLD}" ] 2>/dev/null; then
-        # ── Global alert: too many misses to be a per-validator issue ──────
-        # Global key (no epoch) — fires once per 6h window regardless of epoch
-        LOCK_KEY="vd-att-mass-global"
-        lock_alert "$LOCK_KEY" "$(node_label)
-🚨 <b>Mass Missed Attestations — Cluster/ISP Issue</b>
-
-Epoch       : <b>${CHECK_EPOCH}</b>
-Missed      : <b>${MISSED_COUNT} / ${TOTAL_COUNT}</b> validators
-Attested    : ${OK_COUNT}
-
-${MISSED_COUNT} validators missed attestations in the same epoch.
-This strongly suggests a cluster-wide or infrastructure problem,
-not an individual validator fault.
-
-Possible causes:
-• One or more Obol nodes are down
-• ISP or network outage affecting the cluster
-• Beacon node crashed or lost sync
-• Charon DVT threshold not reached
-
-Suggested actions:
-• Check Obol node status from control node
-• Check beacon node: <code>sudo systemctl status ${CL_SERVICE:-beacon}</code>
-• Check validator client: <code>sudo journalctl -u ${VALIDATOR_SERVICE:-validator} -n 50</code>
-• Check Tailscale connectivity between cluster nodes" 21600
-
-        for IDX in $MISSED_ATTESTERS; do
-            clear_lock "vd-att-${IDX}-${CHECK_EPOCH}"
-        done
-
-    else
-        # ── Per-validator alerts: isolated misses ──────────────────────────
-        # Only send mass-miss recovery when ALL validators are attesting (0 missed)
-        if [ "${MISSED_COUNT}" -eq 0 ] 2>/dev/null; then
-            recovery_alert "vd-att-mass-global" "$(node_label)
-✅ <b>Attestation Mass Issue Resolved</b>
+    # ------------------------------------------------------------------
+    # CRITICAL: mass missed attestation alert
+    # Fires when > MASS_MISS_THRESHOLD_PCT % of active validators missed
+    # the same epoch — signals a cluster-level outage, not a single-node
+    # fault. Individual INFO alerts still fire below for each missed validator.
+    # ------------------------------------------------------------------
+    if [ "${MISSED_COUNT:-0}" -gt 0 ] && [ "${ACTIVE_COUNT:-0}" -gt 0 ]; then
+        MISS_PCT=$(( MISSED_COUNT * 100 / ACTIVE_COUNT ))
+        if [ "$MISS_PCT" -ge "${MASS_MISS_THRESHOLD_PCT:-30}" ]; then
+            lock_alert "vd-mass-miss-${CHECK_EPOCH}" "$(node_label)
+🚨 <b>Mass Missed Attestations</b>
 
 Epoch     : <b>${CHECK_EPOCH}</b>
-Attested  : <b>${OK_COUNT} / ${TOTAL_COUNT}</b> validators
+Missed    : <b>${MISSED_COUNT} / ${ACTIVE_COUNT}</b> validators (${MISS_PCT}%)
+Threshold : ${MASS_MISS_THRESHOLD_PCT:-30}%
 
-All validators are attesting correctly again."
+This indicates a cluster-level issue, not a single-validator fault.
+
+Possible causes:
+• Beacon node down or not synced during this epoch
+• Charon not reaching DVT signing quorum
+• Network / Tailscale outage affecting multiple nodes
+
+Check:
+• Charon    : <code>sudo journalctl -u ${CHARON_SERVICE:-charon} -n 50</code>
+• Validator : <code>sudo journalctl -u ${VALIDATOR_SERVICE:-validator} -n 50</code>" "critical"
         fi
+    fi
 
-        for IDX in $MISSED_ATTESTERS; do
-            LABEL=$(get_label "$IDX")
-            LOCK_KEY="vd-att-${IDX}-${CHECK_EPOCH}"
-            lock_alert "$LOCK_KEY" "$(node_label)
-❌ <b>Missed / Late Attestation</b>
+    for IDX in $MISSED_ATTESTERS; do
+        LABEL=$(get_label "$IDX")
+        LOCK_KEY="vd-att-${IDX}-${CHECK_EPOCH}"
+        lock_alert "$LOCK_KEY" "$(node_label)
+❌ <b>Missed Attestation</b>
 
 Validator : <code>${IDX}</code> (<code>${LABEL}</code>)
 Epoch     : <b>${CHECK_EPOCH}</b>
 Explorer  : https://beaconcha.in/validator/${IDX}
 
-The validator either missed its attestation duty or attested
-with a high inclusion distance — its attestation reward for
-this epoch was zero or below threshold.
-
-Check beaconcha.in → <b>Attestations</b> tab to distinguish:
-• <b>Included (late)</b>: attested but with high inclusion distance
-• <b>Missing</b>: attestation was not included on-chain at all
+The validator did not participate in duties during this epoch —
+its attestation was not included on-chain.
 
 Possible causes:
-• Late block arrival causing a head vote miss (high inclusion distance)
 • Validator client offline or crashed during this epoch
 • Beacon node was not synced or unreachable
 • Network connectivity issue (P2P port blocked)
 
-Check: <code>sudo journalctl -u ${VALIDATOR_SERVICE:-validator} -n 50</code>"
-        done
-    fi
+Check: <code>sudo journalctl -u ${VALIDATOR_SERVICE:-validator} -n 50</code>" "info"
+    done
 
     for IDX in $OK_ATTESTERS; do
-        LABEL=$(get_label "$IDX")
-        recovery_alert "vd-att-${IDX}-${CHECK_EPOCH}" "$(node_label)
-✅ <b>Attestation Restored</b>
-
-Validator : <code>${IDX}</code> (<code>${LABEL}</code>)
-Epoch     : <b>${CHECK_EPOCH}</b>
-Explorer  : https://beaconcha.in/validator/${IDX}
-
-Validator is attesting correctly again."
+        clear_lock "vd-att-${IDX}-${CHECK_EPOCH}"
     done
 fi
 
@@ -445,7 +277,6 @@ fi
 # We only alert on slots in the PAST (slot < current head slot).
 # Future/current-epoch proposal duties are informational only.
 # =============================================================================
-
 
 echo ""
 echo "--- Block proposal check ---"
@@ -529,23 +360,7 @@ except:
 
             if [ "$HAS_BLOCK" = "proposed" ]; then
                 echo "✅ proposed"
-                # Alert on successful proposal — rare event, always worth knowing
-                lock_alert "vd-proposal-ok-${IDX}-${SLOT}" "$(node_label)
-🎉 <b>Block Proposal SUCCESS</b>
-
-Validator : <code>${IDX}</code> (<code>${LABEL}</code>)
-Slot      : <b>${SLOT}</b>  (epoch ${EPOCH})
-
-Your validator successfully proposed a block.
-
-• Slot on explorer     : https://beaconcha.in/slot/${SLOT}
-• Validator on explorer: https://beaconcha.in/validator/${IDX}"
-                recovery_alert "vd-proposal-${IDX}-${SLOT}" "$(node_label)
-✅ <b>Missed Proposal Slot Recovered</b>
-
-Validator : <code>${IDX}</code> (<code>${LABEL}</code>)
-Slot      : <b>${SLOT}</b> — block IS present (may have been included late)
-Explorer  : https://beaconcha.in/slot/${SLOT}"
+                clear_lock "vd-proposal-${IDX}-${SLOT}"
             else
                 echo "❌ MISSED"
                 LOCK_KEY="vd-proposal-${IDX}-${SLOT}"
@@ -568,7 +383,7 @@ Check:
 • Validator logs: <code>sudo journalctl -u ${VALIDATOR_SERVICE:-validator} -n 100</code>
 • Beacon logs  : <code>sudo journalctl -u ${BEACON_SERVICE:-beacon} -n 50</code>
 • Slot on explorer     : https://beaconcha.in/slot/${SLOT}
-• Validator on explorer: https://beaconcha.in/validator/${IDX}"
+• Validator on explorer: https://beaconcha.in/validator/${IDX}" "critical"
             fi
         done <<< "$OUR_DUTIES"
     done

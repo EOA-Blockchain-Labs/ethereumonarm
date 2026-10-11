@@ -30,59 +30,79 @@ send_telegram() {
 }
 
 # -----------------------------------------------------------------------------
-# lock_alert <lock_name> <message>
+# _alert_level_num <level>
+# Maps an alert level name to a numeric value for comparison.
+#   critical → 1   (most restrictive — only the most important alerts)
+#   info     → 2   (default — operational issues worth acting on)
+#   detailed → 3   (all alerts, including low-severity diagnostics)
+# Unknown values map to 2 (info) as a safe default.
+# -----------------------------------------------------------------------------
+_alert_level_num() {
+    case "${1:-info}" in
+        critical) echo 1 ;;
+        info)     echo 2 ;;
+        detailed) echo 3 ;;
+        *)        echo 2 ;;
+    esac
+}
+
+# -----------------------------------------------------------------------------
+# should_alert <level>
+# Returns 0 (fire) if the alert's level is within the configured ALERT_LEVEL.
+# Hierarchy: critical(1) ⊂ info(2) ⊂ detailed(3)
+# Example: ALERT_LEVEL=info → critical and info fire; detailed is suppressed.
+# ALERT_LEVEL defaults to "info" when not set in node.env.
+# -----------------------------------------------------------------------------
+should_alert() {
+    local req_num cfg_num
+    req_num=$(_alert_level_num "${1:-info}")
+    cfg_num=$(_alert_level_num "${ALERT_LEVEL:-info}")
+    [ "$req_num" -le "$cfg_num" ]
+}
+
+# -----------------------------------------------------------------------------
+# lock_alert <lock_name> <message> [level]
 # Sends <message> via Telegram only if no lock exists for <lock_name>.
 # Creates a lock file so the same alert is not sent more than once per
 # LOCK_EXPIRY window (default 24 h, set in node.env).
+#
+# Optional third argument <level> (critical | info | detailed, default: info)
+# gates the alert against the ALERT_LEVEL setting. If the alert's level
+# exceeds the configured threshold it is silently skipped — no lock is
+# created, so the condition will be re-evaluated on the next run.
 # -----------------------------------------------------------------------------
 lock_alert() {
     local lock_name="$1"
     local message="$2"
-    local custom_expiry="${3:-}"  # optional: override LOCK_EXPIRY for this alert
-    local expiry="${custom_expiry:-${LOCK_EXPIRY:-86400}}"
+    local level="${3:-info}"
     local lock_file="${LOCK_DIR}/alert-${lock_name}.lock"
+
+    # Suppress alert if its level exceeds the configured ALERT_LEVEL
+    should_alert "$level" || return 0
 
     [ ! -d "$LOCK_DIR" ] && mkdir -p "$LOCK_DIR"
 
     # Expire stale lock
     if [ -f "$lock_file" ]; then
         local age=$(( $(date +%s) - $(date -r "$lock_file" +%s 2>/dev/null || echo 0) ))
-        if [ "$age" -gt "$expiry" ]; then
+        if [ "$age" -gt "${LOCK_EXPIRY:-86400}" ]; then
             rm -f "$lock_file"
         fi
     fi
 
     if [ ! -f "$lock_file" ]; then
         send_telegram "$message" && touch "$lock_file"
-        return 0  # alert was sent
     fi
-    return 1  # suppressed — lock already existed
 }
 
 # -----------------------------------------------------------------------------
 # clear_lock <lock_name>
 # Removes a lock so the next failure triggers a fresh alert.
-# Call when a condition returns to normal but no recovery notification needed.
+# Call this when a condition returns to normal.
 # -----------------------------------------------------------------------------
 clear_lock() {
     local lock_name="$1"
     rm -f "${LOCK_DIR}/alert-${lock_name}.lock"
-}
-
-# -----------------------------------------------------------------------------
-# recovery_alert <lock_name> <message>
-# Sends a recovery Telegram notification if a previous alert was fired
-# (i.e. the lock file exists). Removes the lock after notifying.
-# Does nothing if no alert was previously sent for this condition.
-# -----------------------------------------------------------------------------
-recovery_alert() {
-    local lock_name="$1"
-    local message="$2"
-    local lock_file="${LOCK_DIR}/alert-${lock_name}.lock"
-    if [ -f "$lock_file" ]; then
-        send_telegram "$message"
-        rm -f "$lock_file"
-    fi
 }
 
 # -----------------------------------------------------------------------------
@@ -246,196 +266,26 @@ node_label() {
     echo "🖥 <b>${NODE_NAME:-$HOSTNAME}</b>"
 }
 # -----------------------------------------------------------------------------
-# _peer_check_result <peer_ip> <timeout> <relay_port> <retry_delay>
-# Runs the 3-step probe and returns a result string:
-#   "healthy"        — EL API responded
-#   "el_down"        — relay responded, EL down
-#   "el_relay_down"  — ping responded, both EL and relay down
-#   "down"           — all three failed
-# -----------------------------------------------------------------------------
-_peer_check_result() {
-    local _ip="$1" _timeout="$2" _relay_port="$3" _retry_delay="$4"
-
-    # Step 1 — EL API
-    _r=$(curl -s --max-time "$_timeout"         -H "Content-type: application/json"         -X POST         --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}'         "$_ip" 2>/dev/null)
-    if echo "$_r" | grep -q '"result"'; then echo "healthy"; return; fi
-
-    # Step 2 — Charon relay
-    _rc=$(curl -s --max-time "$_timeout" -o /dev/null -w "%{http_code}"         "http://${_ip}:${_relay_port}/" 2>/dev/null)
-    if [ -n "$_rc" ] && [ "$_rc" != "000" ]; then echo "el_down"; return; fi
-
-    # Step 3 — Ping (after delay)
-    sleep "$_retry_delay"
-    if ping -c 1 -W "$_timeout" "$_ip" > /dev/null 2>&1; then
-        echo "el_relay_down"; return
-    fi
-
-    echo "down"
-}
-
-# -----------------------------------------------------------------------------
 # is_primary
-# Returns 0 (true) if this node should run health checks, 1 if it should defer.
-# Sets global IS_PRIMARY_REASON describing the outcome.
+# Returns 0 (true) if this node should run health checks, 1 if it should defer
+# to the peer control node.
 #
-# Alerts and failover only trigger after TWO consecutive failing cycles.
-# A single failure is written to a state file but causes no action — this
-# absorbs transient VPN re-keying gaps and one-off connectivity blips.
-#
-# IS_PRIMARY_REASON values:
-#   "always_primary"      — no PEER_CONTROL_IP configured
-#   "peer_healthy"        — EL API responded
-#   "peer_el_down"        — relay responded, EL down (first or consecutive)
-#   "peer_el_relay_down"  — ping ok, EL+relay down (first or consecutive)
-#   "peer_down"           — all three failed on TWO consecutive cycles
+# Logic:
+#   - PEER_CONTROL_IP is empty → always primary → always run → return 0
+#   - PEER_CONTROL_IP is set → ping peer over VPN:
+#       peer responds   → peer is primary, we are backup → skip → return 1
+#       peer unreachable → peer is down, we take over   → run  → return 0
 # -----------------------------------------------------------------------------
-IS_PRIMARY_REASON="always_primary"
-
 is_primary() {
-    IS_PRIMARY_REASON="always_primary"
-
     if [ -z "${PEER_CONTROL_IP:-}" ]; then
-        return 0  # no peer configured — always run as primary
+        return 0  # no peer configured — always run
     fi
-
-    local _timeout="${PEER_CHECK_TIMEOUT:-5}"
-    local _retry_delay="${PEER_RETRY_DELAY:-10}"
-    local _relay_port="${PEER_RELAY_PORT:-3640}"
-    local _state_file="${LOCK_DIR}/peer-primary-state.dat"
-
-    [ ! -d "$LOCK_DIR" ] && mkdir -p "$LOCK_DIR"
-
-    local _result
-    _result=$(_peer_check_result "$PEER_CONTROL_IP" "$_timeout" "$_relay_port" "$_retry_delay")
-
-    case "$_result" in
-        healthy)
-            IS_PRIMARY_REASON="peer_healthy"
-            echo "ok" > "$_state_file"
-            return 1
-            ;;
-        el_down)
-            IS_PRIMARY_REASON="peer_el_down"
-            echo "ok" > "$_state_file"  # relay responds — node is up
-            return 1
-            ;;
-        el_relay_down)
-            IS_PRIMARY_REASON="peer_el_relay_down"
-            # Only alert on second consecutive failure
-            local _prev
-            _prev=$(cat "$_state_file" 2>/dev/null || echo "ok")
-            echo "el_relay_down" > "$_state_file"
-            if [ "$_prev" = "el_relay_down" ] || [ "$_prev" = "down" ]; then
-                return 1  # alert handled in control scripts via IS_PRIMARY_REASON
-            fi
-            # First failure — defer silently, no alert yet
-            IS_PRIMARY_REASON="peer_healthy"  # treat as healthy for this cycle
-            return 1
-            ;;
-        down)
-            IS_PRIMARY_REASON="peer_down"
-            local _prev
-            _prev=$(cat "$_state_file" 2>/dev/null || echo "ok")
-            if [ "$_prev" = "down" ] || [ "$_prev" = "el_relay_down" ]; then
-                # Second consecutive failure — confirmed, take over
-                echo "down" > "$_state_file"
-                return 0
-            fi
-            # First failure — write state, defer for one more cycle
-            echo "down" > "$_state_file"
-            IS_PRIMARY_REASON="peer_healthy"  # suppress action this cycle
-            return 1
-            ;;
-    esac
-}
-
-# -----------------------------------------------------------------------------
-# check_failover
-# Called by the PRIMARY control node to monitor the failover node.
-# Alerts only fire after TWO consecutive failing cycles (same logic as
-# is_primary). Never changes script behaviour — only sends Telegram alerts.
-# -----------------------------------------------------------------------------
-check_failover() {
-    if [ -z "${FAILOVER_CONTROL_IP:-}" ]; then
-        return 0  # no failover configured — nothing to check
+    if ping -c 1 -W "${PEER_CHECK_TIMEOUT:-5}" "$PEER_CONTROL_IP" > /dev/null 2>&1; then
+        return 1  # peer is alive — defer to it
+    else
+        return 0  # peer is unreachable — take over
     fi
-
-    local _timeout="${PEER_CHECK_TIMEOUT:-5}"
-    local _retry_delay="${PEER_RETRY_DELAY:-10}"
-    local _relay_port="${PEER_RELAY_PORT:-3640}"
-    local _state_file="${LOCK_DIR}/peer-failover-state.dat"
-
-    [ ! -d "$LOCK_DIR" ] && mkdir -p "$LOCK_DIR"
-
-    local _result
-    _result=$(_peer_check_result "$FAILOVER_CONTROL_IP" "$_timeout" "$_relay_port" "$_retry_delay")
-
-    local _prev
-    _prev=$(cat "$_state_file" 2>/dev/null || echo "ok")
-
-    case "$_result" in
-        healthy|el_down)
-            # Node is up (EL-only failure is not alertable — node is reachable)
-            echo "ok" > "$_state_file"
-            recovery_alert "ctrl-failover-relay-down" "$(node_label)
-✅ <b>Failover control node services restored</b>
-Node <code>${FAILOVER_CONTROL_IP}</code> is fully reachable again."
-            recovery_alert "ctrl-failover-node-down" "$(node_label)
-✅ <b>Failover control node is back online</b>
-Node <code>${FAILOVER_CONTROL_IP}</code> is reachable again."
-            clear_lock "ctrl-failover-el-down"
-            ;;
-        el_relay_down)
-            if [ "$_prev" = "el_relay_down" ] || [ "$_prev" = "down" ]; then
-                # Confirmed second consecutive failure
-                echo "el_relay_down" > "$_state_file"
-                clear_lock "ctrl-failover-node-down"
-                lock_alert "ctrl-failover-relay-down" "$(node_label)
-⚠️ <b>Failover control node: EL and relay both down</b>
-
-Failover node <code>${FAILOVER_CONTROL_IP}</code> responds to ping but both
-EL API (port 80) and Charon relay (port ${_relay_port}) are not responding.
-This has been confirmed over two consecutive check cycles.
-
-Suggested actions:
-• SSH into the failover node and check:
-  <code>systemctl status ethrex nethermind reth erigon geth besu 2>/dev/null | grep -E "active|failed"</code>
-• Check relay: <code>sudo systemctl status charon-relay</code>
-• Check nginx: <code>sudo systemctl status nginx</code>" 259200
-            else
-                # First failure — write state, no alert yet
-                echo "el_relay_down" > "$_state_file"
-                echo "Failover EL+relay down (first occurrence) — waiting for confirmation."
-            fi
-            ;;
-        down)
-            if [ "$_prev" = "down" ] || [ "$_prev" = "el_relay_down" ]; then
-                # Confirmed second consecutive failure
-                echo "down" > "$_state_file"
-                clear_lock "ctrl-failover-el-down"
-                clear_lock "ctrl-failover-relay-down"
-                lock_alert "ctrl-failover-node-down" "$(node_label)
-🚨 <b>Failover control node is DOWN</b>
-
-Failover node <code>${FAILOVER_CONTROL_IP}</code> did not respond to
-EL API, Charon relay, or ping.
-This has been confirmed over two consecutive check cycles.
-
-The cluster is running without a backup control node.
-
-Suggested actions:
-• Check VPN: <code>tailscale ping ${FAILOVER_CONTROL_IP}</code>
-• Physical inspection may be required" 259200
-            else
-                # First failure — write state, no alert yet
-                echo "down" > "$_state_file"
-                echo "Failover node unreachable (first occurrence) — waiting for confirmation."
-            fi
-            ;;
-    esac
 }
-
-
 
 # =============================================================================
 # BEACON API HELPERS
@@ -511,30 +361,9 @@ except:
 }
 
 # -----------------------------------------------------------------------------
-# finalized_epoch
-# Returns the most recently finalized epoch from the beacon API.
-# Required by the rewards/attestations endpoint — Lighthouse returns 404
-# for epochs that are not yet finalized.
-# -----------------------------------------------------------------------------
-finalized_epoch() {
-    beacon_get "/eth/v1/beacon/states/finalized/finality_checkpoints" | \
-        python3 -c "
-import sys, json
-try:
-    print(json.load(sys.stdin)['data']['finalized']['epoch'])
-except:
-    print('')
-"
-}
-
-# -----------------------------------------------------------------------------
 # check_epoch
-# Returns current_epoch - 1: the epoch to use for liveness checks.
-# Tested and confirmed working with both Lighthouse and Nimbus — most
-# beacon clients restrict /eth/v1/validator/liveness/{epoch} to the current
-# or previous epoch only and return HTTP 400 for older epochs.
-# Do NOT use for the rewards/attestations endpoint — use finalized_epoch()
-# instead, as Lighthouse returns 404 for non-finalized epochs.
+# Returns current_epoch - 1: the epoch to use for attestation checks.
+# Tested and confirmed working with both Lighthouse and Nimbus.
 # -----------------------------------------------------------------------------
 check_epoch() {
     local ep
@@ -544,25 +373,4 @@ check_epoch() {
         return
     fi
     echo $(( ep - 1 ))
-}
-
-# -----------------------------------------------------------------------------
-# is_optimistic
-# Returns "true" if the beacon node's head is optimistically synced (i.e.
-# the execution payload of the head block has not been validated by the EL
-# yet — common while the EL is syncing from scratch).
-#
-# While optimistic, duty/liveness data derived from the head state may be
-# unreliable: validators can appear as "not live" even though they attested
-# correctly, because the head state itself is not yet fully verified.
-# -----------------------------------------------------------------------------
-is_optimistic() {
-    beacon_get "/eth/v1/node/syncing" | \
-        python3 -c "
-import sys, json
-try:
-    print(str(json.load(sys.stdin)['data']['is_optimistic']).lower())
-except:
-    print('false')
-"
 }

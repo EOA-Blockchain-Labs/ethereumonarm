@@ -28,11 +28,11 @@ expire_locks "obol-"
 check_service() {
     local svc="$1"
     local label="$2"
+    local level="${3:-info}"    # alert level: critical | info | detailed
     local lock="obol-svc-${svc}"
 
     if service_active "$svc"; then
-        recovery_alert "$lock" "$(node_label)
-✅ <b>Service RESTORED</b>: <code>${svc}</code> (${label}) is running again."
+        clear_lock "$lock"
     else
         lock_alert "$lock" "$(node_label)
 🚨 <b>Service DOWN</b>: <code>${svc}</code> (${label}) is not running.
@@ -40,15 +40,17 @@ check_service() {
 Suggested actions:
 • Check status: <code>sudo systemctl status ${svc}</code>
 • Check logs: <code>sudo journalctl -u ${svc} -n 50</code>
-• Restart: <code>sudo systemctl restart ${svc}</code>"
+• Restart: <code>sudo systemctl restart ${svc}</code>" "$level"
     fi
 }
 
-check_service "$EL_SERVICE"     "Execution client"
-check_service "$CL_SERVICE"     "Consensus client (beacon)"
-check_service "$MEV_SERVICE"    "MEV Boost"
-check_service "$CHARON_SERVICE" "Charon DVT"
-check_service "$VALIDATOR_SERVICE" "Validator client"
+# Charon and Validator are CRITICAL — cluster cannot sign without them.
+# EL, CL, MEV are INFO — important but node may still participate briefly.
+check_service "$EL_SERVICE"        "Execution client"        "info"
+check_service "$CL_SERVICE"        "Consensus client (beacon)" "info"
+check_service "$MEV_SERVICE"       "MEV Boost"               "info"
+check_service "$CHARON_SERVICE"    "Charon DVT"              "critical"
+check_service "$VALIDATOR_SERVICE" "Validator client"        "critical"
 
 # =============================================================================
 # 2. SYNC STATUS
@@ -80,18 +82,16 @@ Progress: ${CURRENT}
 
 Suggested actions:
 • Check logs: <code>sudo journalctl -u ${EL_SERVICE} -n 30</code>
-• Verify peer count and network connectivity."
+• Verify peer count and network connectivity." "info"
     elif [ "$EL_SYNC" = "error" ]; then
         lock_alert "obol-el-rpc" "$(node_label)
 ⚠️ <b>EL RPC unreachable</b>: cannot reach <code>${EL_RPC}</code>.
 
 The execution client may have crashed or is still starting up.
-• Check status: <code>sudo systemctl status ${EL_SERVICE}</code>"
+• Check status: <code>sudo systemctl status ${EL_SERVICE}</code>" "info"
     else
-        recovery_alert "obol-el-sync" "$(node_label)
-✅ <b>EL sync resolved</b>: <code>${EL_SERVICE}</code> is now synced."
-        recovery_alert "obol-el-rpc"  "$(node_label)
-✅ <b>EL RPC restored</b>: <code>${EL_RPC}</code> is responding."
+        clear_lock "obol-el-sync"
+        clear_lock "obol-el-rpc"
     fi
 
     # --- Consensus client sync ---
@@ -112,18 +112,16 @@ Progress: ${CL_INFO}
 
 Suggested actions:
 • Check logs: <code>sudo journalctl -u ${CL_SERVICE} -n 30</code>
-• Verify peer count."
+• Verify peer count." "info"
     elif [ "$CL_SYNC" = "error" ]; then
         lock_alert "obol-cl-api" "$(node_label)
 ⚠️ <b>CL API unreachable</b>: cannot reach <code>${CL_API}</code>.
 
 The consensus client may have crashed or is still starting up.
-• Check status: <code>sudo systemctl status ${CL_SERVICE}</code>"
+• Check status: <code>sudo systemctl status ${CL_SERVICE}</code>" "info"
     else
-        recovery_alert "obol-cl-sync" "$(node_label)
-✅ <b>CL sync resolved</b>: <code>${CL_SERVICE}</code> is now synced."
-        recovery_alert "obol-cl-api"  "$(node_label)
-✅ <b>CL API restored</b>: <code>${CL_API}</code> is responding."
+        clear_lock "obol-cl-sync"
+        clear_lock "obol-cl-api"
     fi
 fi
 
@@ -145,10 +143,9 @@ Possible causes:
 
 Suggested actions:
 • Verify port 30303 is reachable from the internet
-• Check logs: <code>sudo journalctl -u ${EL_SERVICE} -n 30</code>"
+• Check logs: <code>sudo journalctl -u ${EL_SERVICE} -n 30</code>" "detailed"
         else
-            recovery_alert "obol-el-peers" "$(node_label)
-✅ <b>EL peers restored</b>: peer count is now ${EL_PEER_COUNT} (min ${EL_PEERS_MIN:-5})."
+            clear_lock "obol-el-peers"
         fi
     fi
 fi
@@ -166,10 +163,9 @@ Possible causes:
 
 Suggested actions:
 • Verify port 9000 is open
-• Check logs: <code>sudo journalctl -u ${CL_SERVICE} -n 30</code>"
+• Check logs: <code>sudo journalctl -u ${CL_SERVICE} -n 30</code>" "detailed"
         else
-            recovery_alert "obol-cl-peers" "$(node_label)
-✅ <b>CL peers restored</b>: peer count is now ${CL_PEER_COUNT} (min ${CL_PEERS_MIN:-10})."
+            clear_lock "obol-cl-peers"
         fi
     fi
 fi
@@ -196,10 +192,9 @@ Suggested actions:
 • Check Charon logs: <code>sudo journalctl -u ${CHARON_SERVICE} -n 50</code>
 • Verify Tailscale is running: <code>tailscale status</code>
 • Confirm Charon p2p port is reachable from other cluster nodes
-• Check cluster peer config in <code>/home/ethereum/.charon/</code>"
+• Check cluster peer config in <code>/home/ethereum/.charon/</code>" "critical"
     else
-        recovery_alert "obol-charon-peers" "$(node_label)
-✅ <b>Charon peers restored</b>: ${CHARON_PEERS} peer(s) connected (min ${CHARON_PEERS_MIN:-2})."
+        clear_lock "obol-charon-peers"
     fi
 
     # Latency — p50 per peer. Empty if no pings recorded yet; skip alert in that case.
@@ -238,10 +233,9 @@ High latency between DVT cluster nodes can cause missed attestations.
 
 Suggested actions:
 • Check Tailscale latency: <code>tailscale ping &lt;peer-tailscale-ip&gt;</code>
-• Check Charon logs: <code>sudo journalctl -u ${CHARON_SERVICE} -n 30</code>"
+• Check Charon logs: <code>sudo journalctl -u ${CHARON_SERVICE} -n 30</code>" "info"
     else
-        recovery_alert "obol-charon-latency" "$(node_label)
-✅ <b>Charon latency resolved</b>: peer latency is back within threshold."
+        clear_lock "obol-charon-latency"
     fi
 fi
 
@@ -252,7 +246,7 @@ fi
 # --- Swap usage ---
 SWAP_KB=$(swap_used_kb)
 SWAP_GB=$(swap_used_gb)
-SWAP_THRESHOLD_KB=$(( ${SWAP_ALERT_GB:-10} * 1048576 ))
+SWAP_THRESHOLD_KB=$(( ${SWAP_ALERT_GB:-6} * 1048576 ))
 
 if [ "${SWAP_KB:-0}" -gt "$SWAP_THRESHOLD_KB" ] 2>/dev/null; then
     lock_alert "obol-swap" "$(node_label)
@@ -265,10 +259,9 @@ Possible causes:
 Suggested actions:
 • Check memory: <code>free -h</code>
 • Check top consumers: <code>ps aux --sort=-%mem | head -10</code>
-• If persistent, consider restarting the highest-RAM client"
+• If persistent, consider restarting the highest-RAM client" "info"
 else
-    recovery_alert "obol-swap" "$(node_label)
-✅ <b>Swap usage resolved</b>: swap is back below ${SWAP_ALERT_GB:-10} GB."
+    clear_lock "obol-swap"
 fi
 
 # --- /home/ethereum disk space ---
@@ -282,10 +275,9 @@ Ethereum client data is growing. If this reaches 0 the node will crash.
 Suggested actions:
 • Check usage per client: <code>du -sh /home/ethereum/.*</code>
 • Check overall usage: <code>df -h /home/ethereum</code>
-• Consider pruning or switching to a more space-efficient client"
+• Consider pruning or switching to a more space-efficient client" "critical"
 else
-    recovery_alert "obol-disk-eth" "$(node_label)
-✅ <b>Disk space restored</b>: /home/ethereum has more than ${DISK_ETH_ALERT_GB:-150} GB free."
+    clear_lock "obol-disk-eth"
 fi
 
 # --- / (root) disk space ---
@@ -298,10 +290,9 @@ Suggested actions:
 • Check usage: <code>df -h /</code>
 • Find large files: <code>du -sh /* 2>/dev/null | sort -rh | head -10</code>
 • Clean apt cache: <code>sudo apt-get clean</code>
-• Check and rotate logs: <code>sudo journalctl --vacuum-size=500M</code>"
+• Check and rotate logs: <code>sudo journalctl --vacuum-size=500M</code>" "info"
 else
-    recovery_alert "obol-disk-root" "$(node_label)
-✅ <b>Root disk resolved</b>: / usage is back below ${DISK_ROOT_ALERT_PCT:-85}%."
+    clear_lock "obol-disk-root"
 fi
 
 # --- CPU temperature ---
@@ -316,8 +307,7 @@ Suggested actions:
 • Check airflow and heatsink contact
 • Check all thermal zones: <code>cat /sys/class/thermal/thermal_zone*/temp</code>
 • Monitor over time: <code>watch -n 2 'cat /sys/class/thermal/thermal_zone*/temp | awk \"{print \$1/1000}\"'</code>
-• Consider reducing CPU governor: <code>cpufreq-info</code>"
+• Consider reducing CPU governor: <code>cpufreq-info</code>" "info"
 else
-    recovery_alert "obol-cpu-temp" "$(node_label)
-✅ <b>CPU temperature normalized</b>: back below ${CPU_TEMP_ALERT_C:-80}°C."
+    clear_lock "obol-cpu-temp"
 fi

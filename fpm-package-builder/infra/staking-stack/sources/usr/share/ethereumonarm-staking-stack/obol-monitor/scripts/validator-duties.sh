@@ -36,6 +36,12 @@ fi
 . "$CONF"
 . "${SCRIPT_DIR}/../lib/common.sh"
 
+# Primary/backup deduplication: skip if peer control node is reachable
+if ! is_primary; then
+    echo "Peer control node (${PEER_CONTROL_IP}) is reachable — deferring validator duties check to primary."
+    exit 0
+fi
+
 TS="$(date '+%Y-%m-%d %H:%M:%S')"
 echo "=== validator-duties check — ${TS} ==="
 

@@ -99,10 +99,31 @@ lock_alert() {
 # clear_lock <lock_name>
 # Removes a lock so the next failure triggers a fresh alert.
 # Call this when a condition returns to normal.
+# No Telegram message is sent — use clear_lock_alert when a "resolved"
+# notification is needed.
 # -----------------------------------------------------------------------------
 clear_lock() {
     local lock_name="$1"
     rm -f "${LOCK_DIR}/alert-${lock_name}.lock"
+}
+
+# -----------------------------------------------------------------------------
+# clear_lock_alert <lock_name> <resolved_message> [level]
+# If a lock exists for <lock_name>, sends <resolved_message> via Telegram
+# and then removes the lock. Does nothing when the lock is not present
+# (condition was never alerted, or already resolved).
+# The optional <level> must match the level of the original lock_alert call
+# so the resolved message is gated by the same ALERT_LEVEL threshold.
+# -----------------------------------------------------------------------------
+clear_lock_alert() {
+    local lock_name="$1"
+    local resolved_message="$2"
+    local level="${3:-info}"
+    local lock_file="${LOCK_DIR}/alert-${lock_name}.lock"
+    if [ -f "$lock_file" ]; then
+        should_alert "$level" && send_telegram "$resolved_message"
+        rm -f "$lock_file"
+    fi
 }
 
 # -----------------------------------------------------------------------------

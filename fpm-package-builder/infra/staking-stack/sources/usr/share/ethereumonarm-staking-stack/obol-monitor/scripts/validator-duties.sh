@@ -227,7 +227,7 @@ except Exception as e:
     MASS_MISS_FIRED=false
     if [ "${MISSED_COUNT:-0}" -ge "${MASS_MISS_THRESHOLD:-10}" ]; then
         MISS_PCT=$(( ACTIVE_COUNT > 0 ? MISSED_COUNT * 100 / ACTIVE_COUNT : 0 ))
-        lock_alert "vd-mass-miss-${CHECK_EPOCH}" "$(node_label)
+        lock_alert "vd-mass-miss" "$(node_label)
 🚨 <b>Mass Missed Attestations</b>
 
 Epoch     : <b>${CHECK_EPOCH}</b>
@@ -245,6 +245,14 @@ Check:
 • Charon    : <code>sudo journalctl -u ${CHARON_SERVICE:-charon} -n 50</code>
 • Validator : <code>sudo journalctl -u ${VALIDATOR_SERVICE:-validator} -n 50</code>" "critical"
         MASS_MISS_FIRED=true
+    else
+        clear_lock_alert "vd-mass-miss" "$(node_label)
+✅ <b>Resolved: Mass Missed Attestations</b>
+
+The cluster is attesting normally again.
+
+Epoch  : <b>${CHECK_EPOCH}</b>
+Missed : ${MISSED_COUNT} / ${ACTIVE_COUNT} validators (below threshold of ${MASS_MISS_THRESHOLD:-10})" "critical"
     fi
 
     # Individual per-validator alerts — suppressed when mass-miss already fired,

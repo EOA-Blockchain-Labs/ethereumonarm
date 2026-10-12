@@ -208,10 +208,12 @@ except Exception as e:
 
     # ------------------------------------------------------------------
     # CRITICAL: mass missed attestation alert
-    # Fires when > MASS_MISS_THRESHOLD_PCT % of active validators missed
+    # Fires when >= MASS_MISS_THRESHOLD_PCT % of active validators missed
     # the same epoch — signals a cluster-level outage, not a single-node
-    # fault. Individual INFO alerts still fire below for each missed validator.
+    # fault. When this fires, individual per-validator alerts are suppressed
+    # to avoid flooding with N messages for the same root cause.
     # ------------------------------------------------------------------
+    MASS_MISS_FIRED=false
     if [ "${MISSED_COUNT:-0}" -gt 0 ] && [ "${ACTIVE_COUNT:-0}" -gt 0 ]; then
         MISS_PCT=$(( MISSED_COUNT * 100 / ACTIVE_COUNT ))
         if [ "$MISS_PCT" -ge "${MASS_MISS_THRESHOLD_PCT:-30}" ]; then
@@ -232,13 +234,17 @@ Possible causes:
 Check:
 • Charon    : <code>sudo journalctl -u ${CHARON_SERVICE:-charon} -n 50</code>
 • Validator : <code>sudo journalctl -u ${VALIDATOR_SERVICE:-validator} -n 50</code>" "critical"
+            MASS_MISS_FIRED=true
         fi
     fi
 
-    for IDX in $MISSED_ATTESTERS; do
-        LABEL=$(get_label "$IDX")
-        LOCK_KEY="vd-att-${IDX}-${CHECK_EPOCH}"
-        lock_alert "$LOCK_KEY" "$(node_label)
+    # Individual per-validator alerts — suppressed when mass-miss already fired,
+    # since the critical alert above covers the entire cluster event.
+    if [ "$MASS_MISS_FIRED" = "false" ]; then
+        for IDX in $MISSED_ATTESTERS; do
+            LABEL=$(get_label "$IDX")
+            LOCK_KEY="vd-att-${IDX}-${CHECK_EPOCH}"
+            lock_alert "$LOCK_KEY" "$(node_label)
 ❌ <b>Missed Attestation</b>
 
 Validator : <code>${IDX}</code> (<code>${LABEL}</code>)
@@ -254,7 +260,8 @@ Possible causes:
 • Network connectivity issue (P2P port blocked)
 
 Check: <code>sudo journalctl -u ${VALIDATOR_SERVICE:-validator} -n 50</code>" "info"
-    done
+        done
+    fi
 
     for IDX in $OK_ATTESTERS; do
         clear_lock "vd-att-${IDX}-${CHECK_EPOCH}"

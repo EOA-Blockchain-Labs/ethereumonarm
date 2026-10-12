@@ -208,21 +208,20 @@ except Exception as e:
 
     # ------------------------------------------------------------------
     # CRITICAL: mass missed attestation alert
-    # Fires when >= MASS_MISS_THRESHOLD_PCT % of active validators missed
-    # the same epoch — signals a cluster-level outage, not a single-node
-    # fault. When this fires, individual per-validator alerts are suppressed
+    # Fires when >= MASS_MISS_THRESHOLD validators missed the same epoch —
+    # signals a cluster-level outage, not a single-node fault.
+    # When this fires, individual per-validator alerts are suppressed
     # to avoid flooding with N messages for the same root cause.
     # ------------------------------------------------------------------
     MASS_MISS_FIRED=false
-    if [ "${MISSED_COUNT:-0}" -gt 0 ] && [ "${ACTIVE_COUNT:-0}" -gt 0 ]; then
-        MISS_PCT=$(( MISSED_COUNT * 100 / ACTIVE_COUNT ))
-        if [ "$MISS_PCT" -ge "${MASS_MISS_THRESHOLD_PCT:-30}" ]; then
-            lock_alert "vd-mass-miss-${CHECK_EPOCH}" "$(node_label)
+    if [ "${MISSED_COUNT:-0}" -ge "${MASS_MISS_THRESHOLD:-10}" ]; then
+        MISS_PCT=$(( ACTIVE_COUNT > 0 ? MISSED_COUNT * 100 / ACTIVE_COUNT : 0 ))
+        lock_alert "vd-mass-miss-${CHECK_EPOCH}" "$(node_label)
 🚨 <b>Mass Missed Attestations</b>
 
 Epoch     : <b>${CHECK_EPOCH}</b>
 Missed    : <b>${MISSED_COUNT} / ${ACTIVE_COUNT}</b> validators (${MISS_PCT}%)
-Threshold : ${MASS_MISS_THRESHOLD_PCT:-30}%
+Threshold : ${MASS_MISS_THRESHOLD:-10} validators
 
 This indicates a cluster-level issue, not a single-validator fault.
 
@@ -234,8 +233,7 @@ Possible causes:
 Check:
 • Charon    : <code>sudo journalctl -u ${CHARON_SERVICE:-charon} -n 50</code>
 • Validator : <code>sudo journalctl -u ${VALIDATOR_SERVICE:-validator} -n 50</code>" "critical"
-            MASS_MISS_FIRED=true
-        fi
+        MASS_MISS_FIRED=true
     fi
 
     # Individual per-validator alerts — suppressed when mass-miss already fired,

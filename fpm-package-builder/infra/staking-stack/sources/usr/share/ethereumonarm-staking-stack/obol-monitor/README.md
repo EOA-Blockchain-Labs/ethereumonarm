@@ -161,7 +161,7 @@ Setting `ALERT_LEVEL=detailed` gives you everything.
 | Condition | Level | Alert |
 |---|---|---|
 | Missed block proposal | critical | 🚨 Missed Block Proposal |
-| ≥ `MASS_MISS_THRESHOLD_PCT` % of validators missed an epoch | critical | 🚨 Mass Missed Attestations |
+| ≥ `MASS_MISS_THRESHOLD` validators missed an epoch | critical | 🚨 Mass Missed Attestations |
 | Single validator missed attestation | info | ❌ Missed Attestation |
 | Validator index cache missing | detailed | ⚠️ Cache missing |
 
@@ -218,6 +218,6 @@ All thresholds are set in `node.env` and can be adjusted per node.
 | `DISK_ETH_ALERT_GB` | 150 | Free space alert on /home/ethereum (GB) |
 | `DISK_ROOT_ALERT_PCT` | 85 | Root disk used% alert |
 | `CPU_TEMP_ALERT_C` | 80 | CPU temperature alert (°C) |
-| `MASS_MISS_THRESHOLD_PCT` | 30 | % of validators that triggers mass-miss alert |
+| `MASS_MISS_THRESHOLD` | 10 | Number of validators that triggers mass-miss alert |
 | `LOCK_EXPIRY` | 86400 | Alert cooldown in seconds (24 h) |
-| `CHARON_API_TIMEOUT` | 8 | Timeout for Charon HTTP calls (seconds) |ññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññ
+| `CHARON_API_TIMEOUT` | 8 | Timeout for Charon HTTP calls (seconds) |

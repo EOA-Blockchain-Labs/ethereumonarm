@@ -137,6 +137,7 @@ Setting `ALERT_LEVEL=detailed` gives you everything.
 | EL RPC unreachable | info | ⚠️ EL RPC unreachable |
 | CL API unreachable | info | ⚠️ CL API unreachable |
 | Charon peer latency > `CHARON_LATENCY_ALERT_MS` ms | info | ⚠️ High latency |
+| ≥ `BCAST_DELAY_COUNT_MIN` attestation submissions with delay > `BCAST_DELAY_ALERT_MS` ms | info | ⚠️ Charon slow attestation submissions |
 | Swap > `SWAP_ALERT_GB` GB | info | ⚠️ High swap |
 | `/` used > `DISK_ROOT_ALERT_PCT` % | info | ⚠️ Low root disk |
 | CPU temp > `CPU_TEMP_ALERT_C` °C | info | 🌡 High CPU temp |
@@ -151,6 +152,7 @@ Setting `ALERT_LEVEL=detailed` gives you everything.
 | Charon peer count < minimum (remote) | critical | 🚨 Charon low peers |
 | `/home/ethereum` free < threshold | critical | 🚨 Low disk |
 | Charon peer latency > threshold (remote) | info | ⚠️ High latency |
+| One Charon peer avg latency >3× others (outlier) | info | ⚠️ Charon peer outlier |
 | Swap / root disk / CPU temp | info | ⚠️ (same thresholds) |
 | Charon metrics endpoint empty | detailed | ⚠️ Metrics unavailable |
 | Local backup services down | detailed | 🚨 Service DOWN |
@@ -163,6 +165,7 @@ Setting `ALERT_LEVEL=detailed` gives you everything.
 | Missed block proposal | critical | 🚨 Missed Block Proposal |
 | ≥ `MASS_MISS_THRESHOLD` validators missed an epoch | critical | 🚨 Mass Missed Attestations |
 | Single validator missed attestation | info | ❌ Missed Attestation |
+| Rolling head-miss rate ≥ `HEAD_MISS_RATE_PCT` % over `HEAD_MISS_WINDOW_HOURS` h | info | 📉 Degraded Attestation Performance |
 | Validator index cache missing | detailed | ⚠️ Cache missing |
 
 ---
@@ -214,10 +217,14 @@ All thresholds are set in `node.env` and can be adjusted per node.
 | `CHARON_PEERS_MIN` | cluster−1 | Minimum Charon cluster peers |
 | `CHARON_PEERS_EXPECTED` | cluster−1 | Expected Charon peers (control node) |
 | `CHARON_LATENCY_ALERT_MS` | 500 | Max acceptable peer RTT in ms |
+| `BCAST_DELAY_ALERT_MS` | 3000 | Attestation bcast delay threshold (ms) — obol node only |
+| `BCAST_DELAY_COUNT_MIN` | 4 | Min high-delay submissions in 5 min to fire alert — obol node only |
 | `SWAP_ALERT_GB` | 6 | Swap usage alert threshold (GB) |
 | `DISK_ETH_ALERT_GB` | 150 | Free space alert on /home/ethereum (GB) |
 | `DISK_ROOT_ALERT_PCT` | 85 | Root disk used% alert |
 | `CPU_TEMP_ALERT_C` | 80 | CPU temperature alert (°C) |
 | `MASS_MISS_THRESHOLD` | 10 | Number of validators that triggers mass-miss alert |
+| `HEAD_MISS_RATE_PCT` | 1.0 | Rolling head-miss rate % that triggers performance alert |
+| `HEAD_MISS_WINDOW_HOURS` | 1 | Rolling window for head-miss rate calculation (hours) |
 | `LOCK_EXPIRY` | 86400 | Alert cooldown in seconds (24 h) |
 | `CHARON_API_TIMEOUT` | 8 | Timeout for Charon HTTP calls (seconds) |

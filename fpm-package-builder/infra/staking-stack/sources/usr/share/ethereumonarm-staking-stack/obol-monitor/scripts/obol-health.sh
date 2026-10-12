@@ -237,6 +237,98 @@ Suggested actions:
     else
         clear_lock "obol-charon-latency"
     fi
+
+    # ------------------------------------------------------------------
+    # Charon attestation submission delay (from Charon service logs)
+    #
+    # Scans the last 6 minutes of Charon logs for lines matching
+    # "Successfully submitted v2 attestations". The "delay" field is the
+    # gap between receiving the minimum valid partial-signature set and
+    # actually submitting to the beacon node — a direct proxy for how
+    # late the slowest contributing peer was.
+    #
+    # The "peer" field names the Charon node whose partial signature
+    # was the last one needed to meet the threshold, making it the
+    # most actionable signal for identifying a slow cluster node.
+    #
+    # Fires when BCAST_DELAY_COUNT_MIN or more submissions exceed
+    # BCAST_DELAY_ALERT_MS within the 5-minute cron window.
+    # ------------------------------------------------------------------
+    BCAST_DATA=$(journalctl -u "$CHARON_SERVICE" --since "6 minutes ago" \
+        --no-pager -q 2>/dev/null | python3 -c "
+import sys, re, json
+from collections import defaultdict
+
+threshold_ms = ${BCAST_DELAY_ALERT_MS:-3000}
+delays = []
+peer_counts = defaultdict(int)
+
+for line in sys.stdin:
+    if 'Successfully submitted v2 attestations' not in line:
+        continue
+    m = re.search(r'\{.*\}', line)
+    if not m:
+        continue
+    try:
+        data = json.loads(m.group())
+        delay_str = data.get('delay', '')
+        peer = data.get('peer', 'unknown')
+        ms = None
+        if delay_str.endswith('ms'):
+            ms = float(delay_str[:-2])
+        elif delay_str.endswith('s'):
+            s_part = delay_str[:-1]
+            if 'm' in s_part:
+                mins, secs = s_part.split('m', 1)
+                ms = float(mins) * 60000 + float(secs or 0) * 1000
+            else:
+                ms = float(s_part) * 1000
+        if ms is not None and ms >= threshold_ms:
+            delays.append(ms)
+            peer_counts[peer] += 1
+    except:
+        pass
+
+count = len(delays)
+print(f'COUNT:{count}')
+if delays:
+    top_peer = max(peer_counts, key=peer_counts.get)
+    print(f'MAX_MS:{max(delays):.0f}')
+    print(f'TOP_PEER:{top_peer}')
+    print(f'TOP_COUNT:{peer_counts[top_peer]}')
+else:
+    print('MAX_MS:0')
+    print('TOP_PEER:')
+    print('TOP_COUNT:0')
+" 2>/dev/null)
+
+    BCAST_HIGH=$(  echo "$BCAST_DATA" | grep '^COUNT:'     | cut -d: -f2)
+    BCAST_MAX=$(   echo "$BCAST_DATA" | grep '^MAX_MS:'    | cut -d: -f2)
+    BCAST_PEER=$(  echo "$BCAST_DATA" | grep '^TOP_PEER:'  | cut -d: -f2)
+    BCAST_PCOUNT=$(echo "$BCAST_DATA" | grep '^TOP_COUNT:' | cut -d: -f2)
+
+    echo "  Bcast high-delay (>${BCAST_DELAY_ALERT_MS:-3000}ms): ${BCAST_HIGH:-0} submissions in last 5 min"
+
+    if [ "${BCAST_HIGH:-0}" -ge "${BCAST_DELAY_COUNT_MIN:-4}" ]; then
+        lock_alert "obol-charon-bcast-delay" "$(node_label)
+⚠️ <b>Charon slow attestation submissions</b>
+
+High-delay submissions  : <b>${BCAST_HIGH}</b> in last 5 min (threshold: ≥${BCAST_DELAY_COUNT_MIN:-4})
+Highest delay           : <b>${BCAST_MAX}ms</b>  (alert above: ${BCAST_DELAY_ALERT_MS:-3000}ms)
+Most frequent slow peer : <b>${BCAST_PEER}</b> (${BCAST_PCOUNT} of ${BCAST_HIGH} submissions)
+
+The delay is the gap between the first valid partial-signature set and
+actual beacon node submission. A high value means one Charon peer is
+consistently late — this degrades head vote timing even without a full
+attestation miss.
+
+Suggested actions:
+• Check system load on <b>${BCAST_PEER}</b>: <code>uptime</code>, <code>top</code>
+• Charon bcast logs : <code>sudo journalctl -u ${CHARON_SERVICE} -n 100 | grep bcast</code>
+• Tailscale latency : <code>tailscale ping &lt;peer-tailscale-ip&gt;</code>" "info"
+    else
+        clear_lock "obol-charon-bcast-delay"
+    fi
 fi
 
 # =============================================================================

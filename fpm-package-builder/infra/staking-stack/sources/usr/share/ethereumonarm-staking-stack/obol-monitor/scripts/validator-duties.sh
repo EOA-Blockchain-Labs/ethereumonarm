@@ -138,7 +138,7 @@ else
 import sys, json
 try:
     rewards = json.load(sys.stdin)['data']['total_rewards']
-    missed, ok = [], []
+    missed, head_missed, ok = [], [], []
     for r in rewards:
         idx = str(r.get('validator_index', ''))
         try:
@@ -148,18 +148,23 @@ try:
         except:
             h = t = s = 0
         if h <= 0 and t <= 0 and s <= 0:
-            missed.append(idx)
+            missed.append(idx)          # full miss — validator did not participate
+        elif h <= 0:
+            head_missed.append(idx)     # participated but head vote wrong or late
         else:
             ok.append(idx)
-    print('MISSED:' + ' '.join(missed))
-    print('OK:'     + ' '.join(ok))
+    print('MISSED:'      + ' '.join(missed))
+    print('HEAD_MISSED:' + ' '.join(head_missed))
+    print('OK:'          + ' '.join(ok))
 except Exception as e:
     print(f'ERROR:{e}', file=sys.stderr)
     print('MISSED:')
+    print('HEAD_MISSED:')
     print('OK:')
 ")
-        MISSED_ATTESTERS=$(echo "$PARSE_RESULT" | grep '^MISSED:' | cut -d: -f2)
-        OK_ATTESTERS=$(echo    "$PARSE_RESULT" | grep '^OK:'     | cut -d: -f2)
+        MISSED_ATTESTERS=$(echo "$PARSE_RESULT"      | grep '^MISSED:'      | cut -d: -f2)
+        HEAD_MISSED_ATTESTERS=$(echo "$PARSE_RESULT" | grep '^HEAD_MISSED:' | cut -d: -f2)
+        OK_ATTESTERS=$(echo    "$PARSE_RESULT"       | grep '^OK:'          | cut -d: -f2)
 
     else
         # ------------------------------------------------------------------
@@ -264,6 +269,124 @@ Check: <code>sudo journalctl -u ${VALIDATOR_SERVICE:-validator} -n 50</code>" "i
     for IDX in $OK_ATTESTERS; do
         clear_lock "vd-att-${IDX}-${CHECK_EPOCH}"
     done
+
+    # ------------------------------------------------------------------
+    # Head-miss rolling rate (Method 1 only — rewards endpoint required)
+    #
+    # Tracks validators that attested correctly (source + target > 0) but
+    # cast a wrong or late head vote (head ≤ 0). These are performance
+    # misses, not full misses — they reduce rewards slightly but do not
+    # appear as full missed attestations.
+    #
+    # A rolling state file accumulates per-epoch data over the window.
+    # Epochs that had full misses are excluded from the rate so a cluster
+    # outage does not inflate the head-miss baseline.
+    #
+    # Alert fires when the rolling rate ≥ HEAD_MISS_RATE_PCT and at least
+    # 2 clean epochs have been collected (avoids noise on first run).
+    # Lock clears automatically when the rate recovers below threshold.
+    # ------------------------------------------------------------------
+    if [ "$ATT_HTTP" = "200" ] && [ "$MASS_MISS_FIRED" = "false" ]; then
+        HEAD_MISS_COUNT=$(echo "${HEAD_MISSED_ATTESTERS}" | wc -w | tr -d ' ')
+        HEAD_MISS_STATE="${INDEX_CACHE%/*}/head-miss-rate.json"
+        _HM_NOW=$(date +%s)
+        _HM_WINDOW=$(( ${HEAD_MISS_WINDOW_HOURS:-1} * 3600 ))
+
+        HEAD_RATE_DATA=$(python3 -I -c "
+import json, sys
+
+state_file = sys.argv[1]
+now        = int(sys.argv[2])
+window     = int(sys.argv[3])
+epoch      = int(sys.argv[4])
+head_miss  = int(sys.argv[5])
+active     = int(sys.argv[6])
+full_miss  = int(sys.argv[7])
+
+try:
+    with open(state_file) as f:
+        state = json.load(f)
+except Exception:
+    state = {'epochs': []}
+
+state['epochs'].append({
+    'epoch': epoch, 'ts': now,
+    'head_missed': head_miss, 'active': active, 'full_missed': full_miss
+})
+
+# Prune old entries; deduplicate by epoch (keep last entry per epoch)
+state['epochs'] = [e for e in state['epochs'] if now - e['ts'] <= window]
+seen = {}
+for e in state['epochs']:
+    seen[e['epoch']] = e
+state['epochs'] = sorted(seen.values(), key=lambda e: e['epoch'])
+
+try:
+    with open(state_file, 'w') as f:
+        json.dump(state, f)
+except Exception as err:
+    print(f'SAVE_ERR:{err}', file=sys.stderr)
+
+# Rate: skip epochs with full misses (cluster outage distorts baseline)
+clean     = [e for e in state['epochs'] if e['full_missed'] == 0]
+total_hm  = sum(e['head_missed'] for e in clean)
+total_att = sum(e['active']      for e in clean)
+n_epochs  = len(clean)
+rate = (total_hm / total_att * 100) if total_att > 0 else 0.0
+
+print(f'RATE:{rate:.3f}')
+print(f'EPOCHS:{n_epochs}')
+print(f'TOTAL_HM:{total_hm}')
+print(f'TOTAL_ATT:{total_att}')
+" "$HEAD_MISS_STATE" "$_HM_NOW" "$_HM_WINDOW" \
+            "$CHECK_EPOCH" "${HEAD_MISS_COUNT:-0}" \
+            "$ACTIVE_COUNT" "${MISSED_COUNT:-0}" 2>/dev/null)
+
+        ROLLING_RATE=$(    echo "$HEAD_RATE_DATA" | grep '^RATE:'      | cut -d: -f2)
+        ROLLING_EPOCHS=$(  echo "$HEAD_RATE_DATA" | grep '^EPOCHS:'    | cut -d: -f2)
+        ROLLING_TOTAL_HM=$(echo "$HEAD_RATE_DATA" | grep '^TOTAL_HM:'  | cut -d: -f2)
+        ROLLING_TOTAL_ATT=$(echo "$HEAD_RATE_DATA" | grep '^TOTAL_ATT:' | cut -d: -f2)
+
+        echo "  Head-only misses: ${HEAD_MISS_COUNT} | Rolling rate (${ROLLING_EPOCHS:-0} clean epochs): ${ROLLING_RATE:-0}%"
+
+        # Float comparison via Python (bash arithmetic is integers only)
+        RATE_EXCEEDED=$(python3 -c "
+import sys
+try:
+    rate = float(sys.argv[1])
+    thr  = float(sys.argv[2])
+    n    = int(sys.argv[3])
+    # Require at least 2 clean epochs to avoid false positives on first run
+    print('yes' if rate >= thr and n >= 2 else 'no')
+except:
+    print('no')
+" "${ROLLING_RATE:-0}" "${HEAD_MISS_RATE_PCT:-1.0}" "${ROLLING_EPOCHS:-0}")
+
+        if [ "$RATE_EXCEEDED" = "yes" ]; then
+            lock_alert "vd-head-rate" "$(node_label)
+📉 <b>Degraded Attestation Performance</b>
+
+Head-miss rate : <b>${ROLLING_RATE}%</b>  (threshold: ${HEAD_MISS_RATE_PCT:-1.0}%)
+Window         : ${HEAD_MISS_WINDOW_HOURS:-1}h (${ROLLING_EPOCHS} epochs)
+Head misses    : ${ROLLING_TOTAL_HM} / ${ROLLING_TOTAL_ATT} attestations
+
+Validators attested correctly (source + target) but cast a wrong or late
+head vote. Rewards are slightly reduced — this is a performance issue,
+not a full attestation miss.
+
+Typical causes in a DVT cluster:
+• A Charon peer with elevated latency causing late head delivery
+• Beacon node fork-choice delay (head divergence across nodes)
+• Clock skew on one or more Obol nodes
+
+Check:
+• Peer latency in control-health alerts
+• Charon logs  : <code>sudo journalctl -u charon -n 50</code>
+• Beacon logs  : <code>sudo journalctl -u ${CL_SERVICE:-beacon} -n 30</code>" "info"
+        else
+            clear_lock "vd-head-rate"
+        fi
+    fi
 fi
 
 # =============================================================================

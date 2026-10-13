@@ -1,25 +1,14 @@
 #!/bin/bash
 # =============================================================================
-# validator-duties.sh — Per-validator missed attestation and missed block
-# proposal checker. Run by cron every 7 minutes (just over one epoch = 6.4 min).
+# control-health.sh — Control node health monitor, run by cron every 5 min.
 #
-# Checks via the standard Ethereum Beacon API (localhost:5052):
+# Remote Obol node checks use Charon's HTTP API on port 3620 (no SSH needed):
+#   - /livez  → node reachability (200 = up, 000 = unreachable)
+#   - /metrics → Charon peer count and ping latency
 #
-#   Missed attestations:
-#     POST /eth/v1/validator/liveness/{epoch}
-#     → is_live: false means the validator did not participate in the epoch.
-#     Checked against the last FINALIZED epoch to avoid false positives from
-#     partially-elapsed epochs.
-#
-#   Missed block proposals:
-#     GET /eth/v1/validator/duties/proposer/{epoch}
-#     → list of (slot, validator_index) pairs scheduled to propose.
-#     GET /eth/v1/beacon/headers/{slot}
-#     → 404 = slot has no block = proposal was missed.
-#     Checked for the last PROPOSAL_CHECK_EPOCHS epochs.
-#
-# Alert deduplication: one alert per validator per epoch (lock file keyed by
-# validator_index + epoch). Locks are auto-expired after LOCK_EXPIRY seconds.
+# Local checks: backup EL/CL/MEV/validator/relay services + system resources.
+# System resource alerts on Obol nodes are handled by obol-health.sh on each
+# node — no duplication here.
 # =============================================================================
 
 export HOME=/home/ethereum
@@ -30,492 +19,372 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 CONF="/home/ethereum/.obol-monitor/conf/node.env"
 
 if [ ! -f "$CONF" ]; then
-    echo "ERROR: $CONF not found." >&2
+    echo "ERROR: $CONF not found. Run install.sh first." >&2
     exit 1
 fi
 . "$CONF"
 . "${SCRIPT_DIR}/../lib/common.sh"
 
-TS="$(date '+%Y-%m-%d %H:%M:%S')"
-echo "=== validator-duties check — ${TS} ==="
-
-expire_locks "vd-"
-
-# =============================================================================
-# Sanity checks
-# =============================================================================
-
-if [ ! -f "$INDEX_CACHE" ]; then
-    echo "ERROR: Index cache not found at ${INDEX_CACHE}." >&2
-    echo "       Run sync-indices.sh first." >&2
-    lock_alert "vd-no-cache" "$(node_label)
-⚠️ <b>validator-duties</b>: index cache missing.
-Run <code>bash /home/ethereum/.validator-monitor/scripts/sync-indices.sh</code> to rebuild it." "detailed"
-    exit 1
-fi
-
-# Load all validator indices from cache (only active validators are monitored)
-# Cache format: { "0xpubkey": {"index": "12345", "status": "active_ongoing"}, ... }
-ACTIVE_INDICES=$(python3 -c "
-import json, sys
-with open(sys.argv[1]) as f:
-    cache = json.load(f)
-active = [v['index'] for v in cache.values() if 'active' in v.get('status','')]
-print(','.join(active))
-" "$INDEX_CACHE")
-
-if [ -z "$ACTIVE_INDICES" ]; then
-    echo "No active validators in cache. Nothing to check."
+# Primary/backup deduplication: skip if peer control node is reachable
+if ! is_primary; then
+    echo "Peer control node (${PEER_CONTROL_IP}) is reachable — deferring health check to primary."
     exit 0
 fi
 
-ACTIVE_COUNT=$(echo "$ACTIVE_INDICES" | tr ',' '\n' | wc -l | tr -d ' ')
-echo "Monitoring ${ACTIVE_COUNT} active validator(s)."
-
-# Build a JSON array of active indices for API calls
-INDICES_JSON=$(python3 -c "
-import json, sys
-indices = sys.argv[1].split(',')
-print(json.dumps(indices))
-" "$ACTIVE_INDICES")
-
-# Build a lookup map: index → short pubkey label (for human-readable alerts)
-LABEL_MAP=$(python3 -c "
-import json, sys
-with open(sys.argv[1]) as f:
-    cache = json.load(f)
-result = {v['index']: k[:10]+'...'+k[-6:] for k, v in cache.items()}
-print(json.dumps(result))
-" "$INDEX_CACHE")
-
-# Helper: get pubkey label for a validator index
-get_label() {
-    echo "$LABEL_MAP" | python3 -c "
-import sys, json
-m = json.load(sys.stdin)
-print(m.get('$1', 'idx:$1'))
-"
-}
+expire_locks "ctrl-"
 
 # =============================================================================
-# SECTION 1 — MISSED ATTESTATIONS (via /beacon/rewards/attestations)
-#
-# Endpoint: POST /eth/v1/beacon/rewards/attestations/{epoch}
-# Body    : ["index1", "index2", ...]
-# Response: data.total_rewards[].{ validator_index, head, target, source }
-#
-# A validator missed its attestation when ALL of head, target and source
-# equal "0" (or are negative/zero post-Electra). These are integer strings
-# in Gwei. We only check for the miss/not-miss condition — reward amounts
-# are intentionally discarded.
-#
-# Uses current_epoch - 2 (same as beaconcha.in): the latest completed epoch
-# where all attestations have had time to be included on-chain.
+# SECTION 1 — REMOTE OBOL NODE CHECKS (via Charon HTTP API on :3620)
 # =============================================================================
 
-echo ""
-echo "--- Missed attestation check ---"
-
-CHECK_EPOCH=$(check_epoch)
-if [ -z "$CHECK_EPOCH" ]; then
-    echo "WARNING: Could not determine current epoch. Skipping attestation check."
-else
-    CURRENT_EPOCH=$(current_epoch)
-    echo "Checking epoch ${CHECK_EPOCH} (head epoch: ${CURRENT_EPOCH}, using head-1)"
+check_obol_node() {
+    local node_ip="$1"
+    local node_name="$2"
+    local base_url="$3"    # e.g. http://100.x.x.x:3620
+    local idx="$4"         # 1, 2, or 3 — used for unique lock names
 
     # ------------------------------------------------------------------
-    # Method 1 — rewards/attestations endpoint
-    # Preferred: head+target+source all ≤ 0 → validator missed attestation.
-    # Not supported by all clients (Nimbus closes connection → HTTP 0).
+    # Reachability — GET /livez
+    # livez=200 → Charon process is alive and healthy
+    # livez=500 → Charon alive but cluster not fully ready (expected when
+    #             a peer is down); node itself is up, not alerted here
+    # livez=000 → curl got no response; node is completely unreachable
     # ------------------------------------------------------------------
-    ATT_RESP=$(beacon_post "/eth/v1/beacon/rewards/attestations/${CHECK_EPOCH}" "$INDICES_JSON")
-    ATT_HTTP=$(beacon_http_code)
+    LIVEZ=$(curl -s -o /dev/null -w "%{http_code}" \
+        --max-time "${CHARON_API_TIMEOUT:-8}" \
+        "${base_url}/livez" 2>/dev/null)
 
-    if [ "$ATT_HTTP" = "200" ] && [ -n "$ATT_RESP" ]; then
-        echo "  Method: rewards/attestations (HTTP 200)"
+    if [ "$LIVEZ" != "200" ] && [ "$LIVEZ" != "500" ]; then
+        lock_alert "ctrl-node-${idx}-down" "$(node_label)
+🚨 <b>Obol node unreachable</b>: <b>${node_name}</b> (<code>${node_ip}</code>) is not responding.
 
-        PARSE_RESULT=$(echo "$ATT_RESP" | python3 -c "
-import sys, json
-try:
-    rewards = json.load(sys.stdin)['data']['total_rewards']
-    missed, head_missed, ok = [], [], []
-    for r in rewards:
-        idx = str(r.get('validator_index', ''))
-        try:
-            h = int(r.get('head',   0))
-            t = int(r.get('target', 0))
-            s = int(r.get('source', 0))
-        except:
-            h = t = s = 0
-        if h <= 0 and t <= 0 and s <= 0:
-            missed.append(idx)          # full miss — validator did not participate
-        elif h <= 0:
-            head_missed.append(idx)     # participated but head vote wrong or late
-        else:
-            ok.append(idx)
-    print('MISSED:'      + ' '.join(missed))
-    print('HEAD_MISSED:' + ' '.join(head_missed))
-    print('OK:'          + ' '.join(ok))
-except Exception as e:
-    print(f'ERROR:{e}', file=sys.stderr)
-    print('MISSED:')
-    print('HEAD_MISSED:')
-    print('OK:')
-")
-        MISSED_ATTESTERS=$(echo "$PARSE_RESULT"      | grep '^MISSED:'      | cut -d: -f2)
-        HEAD_MISSED_ATTESTERS=$(echo "$PARSE_RESULT" | grep '^HEAD_MISSED:' | cut -d: -f2)
-        OK_ATTESTERS=$(echo    "$PARSE_RESULT"       | grep '^OK:'          | cut -d: -f2)
+Charon /livez returned: <code>${LIVEZ:-no response}</code>
 
+This could mean:
+• The board has crashed or lost power
+• Tailscale is down on that node
+• Charon service is not running
+
+Suggested actions:
+• Check Tailscale: <code>tailscale ping ${node_ip}</code>
+• Check Tailscale admin panel for node status
+• SSH in and check: <code>sudo systemctl status charon</code>
+• Physical inspection may be required" "critical"
+        return
+    fi
+    clear_lock_alert "ctrl-node-${idx}-down" "$(node_label)
+✅ <b>Resolved: Obol Node Reachable</b>
+
+<b>${node_name}</b> (<code>${node_ip}</code>) is responding to /livez again." "critical"
+
+    # ------------------------------------------------------------------
+    # Fetch metrics once — reused for peer count and latency checks
+    # ------------------------------------------------------------------
+    METRICS_RAW=$(curl -s --max-time "${CHARON_API_TIMEOUT:-8}" \
+        "${base_url}/metrics" 2>/dev/null)
+
+    if [ -z "$METRICS_RAW" ]; then
+        lock_alert "ctrl-node-${idx}-metrics" "$(node_label)
+⚠️ <b>${node_name}</b>: Charon metrics endpoint returned empty response.
+Charon may be starting up.
+• SSH in and check: <code>sudo systemctl status charon</code>" "detailed"
+        return
+    fi
+    clear_lock_alert "ctrl-node-${idx}-metrics" "$(node_label)
+✅ <b>Resolved: Charon Metrics Available</b>
+
+<b>${node_name}</b>: metrics endpoint is responding normally." "detailed"
+
+    # ------------------------------------------------------------------
+    # Charon peer connections
+    # Each line of p2p_peer_connection_total = one currently connected peer.
+    # In a 3-node cluster each node expects 2 peers.
+    # ------------------------------------------------------------------
+    CHARON_PEERS=$(echo "$METRICS_RAW" | \
+        grep '^p2p_peer_connection_total{' | wc -l)
+
+    if [ "${CHARON_PEERS:-0}" -lt "${CHARON_PEERS_MIN:-2}" ] 2>/dev/null; then
+        PEER_NAMES=$(echo "$METRICS_RAW" | \
+            grep '^p2p_peer_connection_total{' | \
+            grep -o 'peer="[^"]*"' | \
+            cut -d= -f2 | tr -d '"' | paste -sd ', ')
+        [ -z "$PEER_NAMES" ] && PEER_NAMES="none"
+
+        lock_alert "ctrl-node-${idx}-charon-peers" "$(node_label)
+🚨 <b>${node_name}</b>: Charon low peer connections — <b>${CHARON_PEERS}</b> of ${CHARON_PEERS_EXPECTED} expected peers connected.
+Connected peers: ${PEER_NAMES}
+
+The DVT cluster may not reach the 2/3 threshold for attestations.
+
+Suggested actions:
+• Check Charon logs on ${node_name}: <code>sudo journalctl -u charon -n 50</code>
+• Verify Tailscale is running on all nodes: <code>tailscale status</code>
+• Confirm the missing peer node is reachable" "critical"
     else
-        # ------------------------------------------------------------------
-        # Method 2 — validator/liveness fallback
-        # Used when the rewards endpoint is not available (Nimbus, older clients).
-        # is_live: false → validator did not participate in the epoch.
-        # Less precise than rewards (cannot distinguish head/target/source misses)
-        # but reliable and universally supported.
-        # ------------------------------------------------------------------
-        echo "  Method: validator/liveness fallback (rewards endpoint returned HTTP ${ATT_HTTP:-0})"
+        clear_lock_alert "ctrl-node-${idx}-charon-peers" "$(node_label)
+✅ <b>Resolved: Charon Peers Recovered</b>
 
-        LIVE_RESP=$(beacon_post "/eth/v1/validator/liveness/${CHECK_EPOCH}" "$INDICES_JSON")
-        LIVE_HTTP=$(beacon_http_code)
-
-        if [ -z "$LIVE_RESP" ] || [ "$LIVE_HTTP" != "200" ]; then
-            echo "WARNING: Both attestation endpoints failed."
-            echo "         rewards HTTP=${ATT_HTTP:-0}  liveness HTTP=${LIVE_HTTP:-0}"
-            echo "         Skipping attestation check for epoch ${CHECK_EPOCH}."
-            MISSED_ATTESTERS=""
-            OK_ATTESTERS=""
-        else
-            PARSE_RESULT=$(echo "$LIVE_RESP" | python3 -c "
-import sys, json
-try:
-    data = json.load(sys.stdin)['data']
-    missed = [str(v['index']) for v in data if not v.get('is_live', True)]
-    ok     = [str(v['index']) for v in data if     v.get('is_live', True)]
-    print('MISSED:' + ' '.join(missed))
-    print('OK:'     + ' '.join(ok))
-except Exception as e:
-    print(f'ERROR:{e}', file=sys.stderr)
-    print('MISSED:')
-    print('OK:')
-")
-            MISSED_ATTESTERS=$(echo "$PARSE_RESULT" | grep '^MISSED:' | cut -d: -f2)
-            OK_ATTESTERS=$(echo    "$PARSE_RESULT" | grep '^OK:'     | cut -d: -f2)
-        fi
+<b>${node_name}</b>: Charon now has <b>${CHARON_PEERS}</b> peer(s) connected (expected: ${CHARON_PEERS_EXPECTED:-2})." "critical"
     fi
 
     # ------------------------------------------------------------------
-    # Alert on any missed validators (same logic regardless of method)
+    # Charon peer latency (p50)
+    # p2p_ping_latency_seconds with quantile="0.5"
+    # May be absent if no pings recorded yet — skip alert if empty.
     # ------------------------------------------------------------------
-    MISSED_COUNT=$(echo "$MISSED_ATTESTERS" | wc -w | tr -d ' ')
-    OK_COUNT=$(echo     "$OK_ATTESTERS"     | wc -w | tr -d ' ')
-    echo "  Attested: ${OK_COUNT}  |  Missed: ${MISSED_COUNT}"
-
-    # ------------------------------------------------------------------
-    # CRITICAL: mass missed attestation alert
-    # Fires when >= MASS_MISS_THRESHOLD validators missed the same epoch —
-    # signals a cluster-level outage, not a single-node fault.
-    # When this fires, individual per-validator alerts are suppressed
-    # to avoid flooding with N messages for the same root cause.
-    # ------------------------------------------------------------------
-    MASS_MISS_FIRED=false
-    if [ "${MISSED_COUNT:-0}" -ge "${MASS_MISS_THRESHOLD:-10}" ]; then
-        MISS_PCT=$(( ACTIVE_COUNT > 0 ? MISSED_COUNT * 100 / ACTIVE_COUNT : 0 ))
-        lock_alert "vd-mass-miss-${CHECK_EPOCH}" "$(node_label)
-🚨 <b>Mass Missed Attestations</b>
-
-Epoch     : <b>${CHECK_EPOCH}</b>
-Missed    : <b>${MISSED_COUNT} / ${ACTIVE_COUNT}</b> validators (${MISS_PCT}%)
-Threshold : ${MASS_MISS_THRESHOLD:-10} validators
-
-This indicates a cluster-level issue, not a single-validator fault.
-
-Possible causes:
-• Beacon node down or not synced during this epoch
-• Charon not reaching DVT signing quorum
-• Network / Tailscale outage affecting multiple nodes
-
-Check:
-• Charon    : <code>sudo journalctl -u ${CHARON_SERVICE:-charon} -n 50</code>
-• Validator : <code>sudo journalctl -u ${VALIDATOR_SERVICE:-validator} -n 50</code>" "critical"
-        MASS_MISS_FIRED=true
-    fi
-
-    # Individual per-validator alerts — suppressed when mass-miss already fired,
-    # since the critical alert above covers the entire cluster event.
-    if [ "$MASS_MISS_FIRED" = "false" ]; then
-        for IDX in $MISSED_ATTESTERS; do
-            LABEL=$(get_label "$IDX")
-            LOCK_KEY="vd-att-${IDX}-${CHECK_EPOCH}"
-            lock_alert "$LOCK_KEY" "$(node_label)
-❌ <b>Missed Attestation</b>
-
-Validator : <code>${IDX}</code> (<code>${LABEL}</code>)
-Epoch     : <b>${CHECK_EPOCH}</b>
-Explorer  : https://beaconcha.in/validator/${IDX}
-
-The validator did not participate in duties during this epoch —
-its attestation was not included on-chain.
-
-Possible causes:
-• Validator client offline or crashed during this epoch
-• Beacon node was not synced or unreachable
-• Network connectivity issue (P2P port blocked)
-
-Check: <code>sudo journalctl -u ${VALIDATOR_SERVICE:-validator} -n 50</code>" "info"
-        done
-    fi
-
-    for IDX in $OK_ATTESTERS; do
-        clear_lock "vd-att-${IDX}-${CHECK_EPOCH}"
-    done
-
-    # ------------------------------------------------------------------
-    # Head-miss rolling rate (Method 1 only — rewards endpoint required)
-    #
-    # Tracks validators that attested correctly (source + target > 0) but
-    # cast a wrong or late head vote (head ≤ 0). These are performance
-    # misses, not full misses — they reduce rewards slightly but do not
-    # appear as full missed attestations.
-    #
-    # A rolling state file accumulates per-epoch data over the window.
-    # Epochs that had full misses are excluded from the rate so a cluster
-    # outage does not inflate the head-miss baseline.
-    #
-    # Alert fires when the rolling rate ≥ HEAD_MISS_RATE_PCT and at least
-    # 2 clean epochs have been collected (avoids noise on first run).
-    # Lock clears automatically when the rate recovers below threshold.
-    # ------------------------------------------------------------------
-    if [ "$ATT_HTTP" = "200" ] && [ "$MASS_MISS_FIRED" = "false" ]; then
-        HEAD_MISS_COUNT=$(echo "${HEAD_MISSED_ATTESTERS}" | wc -w | tr -d ' ')
-        HEAD_MISS_STATE="${INDEX_CACHE%/*}/head-miss-rate.json"
-        _HM_NOW=$(date +%s)
-        _HM_WINDOW=$(( ${HEAD_MISS_WINDOW_HOURS:-1} * 3600 ))
-
-        HEAD_RATE_DATA=$(python3 -I -c "
-import json, sys
-
-state_file = sys.argv[1]
-now        = int(sys.argv[2])
-window     = int(sys.argv[3])
-epoch      = int(sys.argv[4])
-head_miss  = int(sys.argv[5])
-active     = int(sys.argv[6])
-full_miss  = int(sys.argv[7])
-
-try:
-    with open(state_file) as f:
-        state = json.load(f)
-except Exception:
-    state = {'epochs': []}
-
-state['epochs'].append({
-    'epoch': epoch, 'ts': now,
-    'head_missed': head_miss, 'active': active, 'full_missed': full_miss
-})
-
-# Prune old entries; deduplicate by epoch (keep last entry per epoch)
-state['epochs'] = [e for e in state['epochs'] if now - e['ts'] <= window]
-seen = {}
-for e in state['epochs']:
-    seen[e['epoch']] = e
-state['epochs'] = sorted(seen.values(), key=lambda e: e['epoch'])
-
-try:
-    with open(state_file, 'w') as f:
-        json.dump(state, f)
-except Exception as err:
-    print(f'SAVE_ERR:{err}', file=sys.stderr)
-
-# Rate: skip epochs with full misses (cluster outage distorts baseline)
-clean     = [e for e in state['epochs'] if e['full_missed'] == 0]
-total_hm  = sum(e['head_missed'] for e in clean)
-total_att = sum(e['active']      for e in clean)
-n_epochs  = len(clean)
-rate = (total_hm / total_att * 100) if total_att > 0 else 0.0
-
-print(f'RATE:{rate:.3f}')
-print(f'EPOCHS:{n_epochs}')
-print(f'TOTAL_HM:{total_hm}')
-print(f'TOTAL_ATT:{total_att}')
-" "$HEAD_MISS_STATE" "$_HM_NOW" "$_HM_WINDOW" \
-            "$CHECK_EPOCH" "${HEAD_MISS_COUNT:-0}" \
-            "$ACTIVE_COUNT" "${MISSED_COUNT:-0}" 2>/dev/null)
-
-        ROLLING_RATE=$(    echo "$HEAD_RATE_DATA" | grep '^RATE:'      | cut -d: -f2)
-        ROLLING_EPOCHS=$(  echo "$HEAD_RATE_DATA" | grep '^EPOCHS:'    | cut -d: -f2)
-        ROLLING_TOTAL_HM=$(echo "$HEAD_RATE_DATA" | grep '^TOTAL_HM:'  | cut -d: -f2)
-        ROLLING_TOTAL_ATT=$(echo "$HEAD_RATE_DATA" | grep '^TOTAL_ATT:' | cut -d: -f2)
-
-        echo "  Head-only misses: ${HEAD_MISS_COUNT} | Rolling rate (${ROLLING_EPOCHS:-0} clean epochs): ${ROLLING_RATE:-0}%"
-
-        # Float comparison via Python (bash arithmetic is integers only)
-        RATE_EXCEEDED=$(python3 -c "
+    HIGH_LATENCY=$(echo "$METRICS_RAW" | \
+        grep 'p2p_ping_latency_seconds{' | \
+        grep 'quantile="0.5"' | \
+        python3 -c "
 import sys
-try:
-    rate = float(sys.argv[1])
-    thr  = float(sys.argv[2])
-    n    = int(sys.argv[3])
-    # Require at least 2 clean epochs to avoid false positives on first run
-    print('yes' if rate >= thr and n >= 2 else 'no')
-except:
-    print('no')
-" "${ROLLING_RATE:-0}" "${HEAD_MISS_RATE_PCT:-1.0}" "${ROLLING_EPOCHS:-0}")
-
-        if [ "$RATE_EXCEEDED" = "yes" ]; then
-            lock_alert "vd-head-rate" "$(node_label)
-📉 <b>Degraded Attestation Performance</b>
-
-Head-miss rate : <b>${ROLLING_RATE}%</b>  (threshold: ${HEAD_MISS_RATE_PCT:-1.0}%)
-Window         : ${HEAD_MISS_WINDOW_HOURS:-1}h (${ROLLING_EPOCHS} epochs)
-Head misses    : ${ROLLING_TOTAL_HM} / ${ROLLING_TOTAL_ATT} attestations
-
-Validators attested correctly (source + target) but cast a wrong or late
-head vote. Rewards are slightly reduced — this is a performance issue,
-not a full attestation miss.
-
-Typical causes in a DVT cluster:
-• A Charon peer with elevated latency causing late head delivery
-• Beacon node fork-choice delay (head divergence across nodes)
-• Clock skew on one or more Obol nodes
-
-Check:
-• Peer latency in control-health alerts
-• Charon logs  : <code>sudo journalctl -u charon -n 50</code>
-• Beacon logs  : <code>sudo journalctl -u ${CL_SERVICE:-beacon} -n 30</code>" "info"
-        else
-            clear_lock "vd-head-rate"
-        fi
-    fi
-fi
-
-# =============================================================================
-# SECTION 2 — MISSED BLOCK PROPOSALS
-#
-# Step A: Get proposer duties for recent epochs.
-#   GET /eth/v1/validator/duties/proposer/{epoch}
-#   → returns all (slot, validator_index) pairs for that epoch.
-#   We filter to only the validator indices we own.
-#
-# Step B: For each owned proposal slot in the past, check if a block exists.
-#   GET /eth/v1/beacon/headers/{slot}
-#   → HTTP 200 = block was proposed ✅
-#   → HTTP 404 / empty data = slot was missed ❌
-#
-# We only alert on slots in the PAST (slot < current head slot).
-# Future/current-epoch proposal duties are informational only.
-# =============================================================================
-
-echo ""
-echo "--- Block proposal check ---"
-
-CURRENT_EPOCH=$(current_epoch)
-if [ -z "$CURRENT_EPOCH" ]; then
-    echo "WARNING: Could not determine current epoch. Skipping proposal check."
-else
-    # Build a set of our validator indices for fast lookup
-    OUR_INDICES_SET=$(echo "$ACTIVE_INDICES" | tr ',' '\n' | sort)
-
-    # Get current head slot to distinguish past from future proposals
-    HEAD_SLOT=$(beacon_get "/eth/v1/node/syncing" | python3 -c "
-import sys, json
-try:
-    print(json.load(sys.stdin)['data']['head_slot'])
-except:
-    print(0)
-")
-
-    # Check the last PROPOSAL_CHECK_EPOCHS epochs
-    START_EPOCH=$(( CURRENT_EPOCH - ${PROPOSAL_CHECK_EPOCHS:-3} ))
-    [ "$START_EPOCH" -lt 0 ] && START_EPOCH=0
-
-    for EPOCH in $(seq "$START_EPOCH" "$CURRENT_EPOCH"); do
-        DUTIES_RESP=$(beacon_get "/eth/v1/validator/duties/proposer/${EPOCH}")
-
-        if [ -z "$DUTIES_RESP" ]; then
-            echo "  Epoch ${EPOCH}: no response from proposer duties endpoint."
-            continue
-        fi
-
-        # Extract duties for our validators only
-        OUR_DUTIES=$(echo "$DUTIES_RESP" | python3 -c "
-import sys, json
-our = set(sys.argv[1].split(','))
-try:
-    data = json.load(sys.stdin).get('data', [])
-except: data = []
-for d in data:
-    idx = str(d.get('validator_index',''))
-    slot = str(d.get('slot',''))
-    if idx in our: print(idx+' '+slot)
-" "$ACTIVE_INDICES")
-
-        if [ -z "$OUR_DUTIES" ]; then
-            echo "  Epoch ${EPOCH}: no proposal duties for our validators."
-            continue
-        fi
-
-        echo "  Epoch ${EPOCH}: found proposal duties:"
-        while IFS=' ' read -r IDX SLOT; do
-            LABEL=$(get_label "$IDX")
-
-            # Only check past slots — future slots have not been proposed yet
-            if [ "$SLOT" -ge "$HEAD_SLOT" ] 2>/dev/null; then
-                echo "    Slot ${SLOT} — validator ${IDX} (${LABEL}): upcoming, skipping."
-                continue
-            fi
-
-            echo -n "    Slot ${SLOT} — validator ${IDX} (${LABEL}): "
-
-            # Check if a block exists for this slot
-            HEADER_RESP=$(beacon_get "/eth/v1/beacon/headers/${SLOT}")
-
-            # A 404 or empty response means the slot was missed
-            HAS_BLOCK=$(echo "$HEADER_RESP" | python3 -c "
-import sys, json
-try:
-    d = json.load(sys.stdin)
-    # code != 200 or data missing = missed
-    if d.get('code', 200) != 200:
-        print('missed')
-    elif not d.get('data'):
-        print('missed')
-    else:
-        print('proposed')
-except:
-    print('missed')
+threshold = ${CHARON_LATENCY_ALERT_MS:-500} / 1000.0
+bad = []
+for line in sys.stdin:
+    line = line.strip()
+    if not line or line.startswith('#'):
+        continue
+    try:
+        labels_part = line.split('{', 1)[1].split('}')[0]
+        val = float(line.rsplit('}', 1)[1].strip())
+        peer = ''
+        for kv in labels_part.split(','):
+            k, _, v = kv.partition('=')
+            if k.strip() == 'peer':
+                peer = v.strip().strip('\"')
+        if val > threshold:
+            bad.append(f'{peer} ({val*1000:.0f}ms)')
+    except:
+        pass
+print(', '.join(bad))
 " 2>/dev/null)
 
-            if [ "$HAS_BLOCK" = "proposed" ]; then
-                echo "✅ proposed"
-                clear_lock "vd-proposal-${IDX}-${SLOT}"
-            else
-                echo "❌ MISSED"
-                LOCK_KEY="vd-proposal-${IDX}-${SLOT}"
-                lock_alert "$LOCK_KEY" "$(node_label)
-🚨 <b>Missed Block Proposal</b>
+    if [ -n "$HIGH_LATENCY" ]; then
+        lock_alert "ctrl-node-${idx}-charon-latency" "$(node_label)
+⚠️ <b>${node_name}</b>: Charon high peer latency (p50) exceeding ${CHARON_LATENCY_ALERT_MS}ms:
+<b>${HIGH_LATENCY}</b>
 
-Validator : <code>${IDX}</code> (<code>${LABEL}</code>)
-Slot      : <b>${SLOT}</b>  (epoch ${EPOCH})
+High inter-node latency can cause missed attestations in the DVT cluster.
 
-This validator was scheduled to propose a block but the slot is empty.
+Suggested actions:
+• Check Tailscale latency: <code>tailscale ping &lt;peer-tailscale-ip&gt;</code>
+• Check Charon logs on ${node_name}: <code>sudo journalctl -u charon -n 30</code>" "info"
+    else
+        clear_lock_alert "ctrl-node-${idx}-charon-latency" "$(node_label)
+✅ <b>Resolved: Charon Peer Latency Normal</b>
 
-A missed proposal means loss of significant MEV + block rewards.
+<b>${node_name}</b>: All peer latencies are within threshold (${CHARON_LATENCY_ALERT_MS:-500}ms)." "info"
+    fi
 
-Possible causes:
-• Validator client was offline at proposal time
-• Beacon node was not synced or had a connectivity issue
-• MEV boost relay timeout (block not received in time)
+    # ------------------------------------------------------------------
+    # Charon peer latency outlier detection
+    #
+    # Computes per-peer average latency from histogram _sum/_count and
+    # checks whether ONE peer is significantly slower than all others.
+    # A peer is flagged as an outlier when:
+    #   avg > 3 × median of all peers   AND   avg > CHARON_LATENCY_ALERT_MS
+    #
+    # This detects a slow/overloaded Charon instance from its peers'
+    # perspective. A slow node causes QBFT round changes that degrade
+    # attestation performance even when the node is technically alive.
+    #
+    # NOTE: peer labels are Charon p2p IDs, not human-readable names.
+    # Cross-reference with the daily control-status.sh latency report.
+    # ------------------------------------------------------------------
+    OUTLIER_PEER=$(echo "$METRICS_RAW" | python3 -c "
+import sys, statistics
+sums = {}; counts = {}
+for line in sys.stdin:
+    line = line.strip()
+    if not line or line.startswith('#'): continue
+    try:
+        if '_sum{' in line:     kind = 'sum'
+        elif '_count{' in line: kind = 'count'
+        else: continue
+        labels_part = line.split('{', 1)[1].split('}')[0]
+        val = float(line.rsplit('}', 1)[1].strip())
+        peer = 'unknown'
+        for kv in labels_part.split(','):
+            k, _, v = kv.partition('=')
+            if k.strip() == 'peer':
+                peer = v.strip().strip(chr(34))
+        if kind == 'sum':   sums[peer]   = val
+        if kind == 'count': counts[peer] = val
+    except: pass
 
-Check:
-• Validator logs: <code>sudo journalctl -u ${VALIDATOR_SERVICE:-validator} -n 100</code>
-• Beacon logs  : <code>sudo journalctl -u ${BEACON_SERVICE:-beacon} -n 50</code>
-• Slot on explorer     : https://beaconcha.in/slot/${SLOT}
-• Validator on explorer: https://beaconcha.in/validator/${IDX}" "critical"
-            fi
-        done <<< "$OUR_DUTIES"
-    done
+avgs = {}
+for peer in sums:
+    cnt = counts.get(peer, 0)
+    if cnt > 0 and peer != 'unknown':
+        avgs[peer] = sums[peer] / cnt * 1000  # ms
+
+if len(avgs) < 2:
+    sys.exit(0)
+
+vals   = list(avgs.values())
+median = statistics.median(vals)
+floor  = ${CHARON_LATENCY_ALERT_MS:-500}
+
+worst_peer = max(avgs, key=avgs.get)
+worst_ms   = avgs[worst_peer]
+others_ms  = [v for p, v in avgs.items() if p != worst_peer]
+other_avg  = sum(others_ms) / len(others_ms) if others_ms else 0
+
+if worst_ms > 3 * max(median, 1) and worst_ms > floor:
+    print(f'{worst_peer} ({worst_ms:.0f}ms avg vs {other_avg:.0f}ms others avg)')
+" 2>/dev/null)
+
+    if [ -n "$OUTLIER_PEER" ]; then
+        lock_alert "ctrl-node-${idx}-charon-outlier" "$(node_label)
+⚠️ <b>${node_name}</b>: One Charon peer has significantly higher latency than the rest.
+
+Outlier: <b>${OUTLIER_PEER}</b>
+
+A slow Charon instance is worse than a down one — it still participates in
+QBFT but causes round changes, stalling consensus for the entire cluster.
+This can reduce attestation performance even when all nodes appear reachable.
+
+Suggested actions:
+• Check system load on the slow peer: <code>uptime</code>, <code>top</code>
+• Check Charon on the slow peer: <code>sudo journalctl -u charon -n 50</code>
+• Check Tailscale path quality: <code>tailscale ping &lt;peer-tailscale-ip&gt;</code>" "info"
+    else
+        clear_lock_alert "ctrl-node-${idx}-charon-outlier" "$(node_label)
+✅ <b>Resolved: Charon Peer Latency Balanced</b>
+
+<b>${node_name}</b>: No peer latency outlier detected." "info"
+    fi
+}
+
+# Run check for each Obol node — dynamic loop over CLUSTER_SIZE
+for _idx in $(seq 1 "${CLUSTER_SIZE:-3}"); do
+    _ip_var="OBOL_NODE_${_idx}_IP"
+    _name_var="OBOL_NODE_${_idx}_NAME"
+    _base_var="OBOL_NODE_${_idx}_BASE"
+    _ip="${!_ip_var}"
+    _name="${!_name_var:-obol-node-${_idx}}"
+    _base="${!_base_var}"
+    if [ -z "$_ip" ]; then
+        echo "WARNING: OBOL_NODE_${_idx}_IP is not set — skipping node ${_idx}" >&2
+        continue
+    fi
+    check_obol_node "$_ip" "$_name" "$_base" "$_idx"
+done
+unset _idx _ip_var _name_var _base_var _ip _name _base
+
+# =============================================================================
+# SECTION 2 — LOCAL SERVICES (control node itself)
+# =============================================================================
+
+check_local_svc() {
+    local svc="$1"
+    local label="$2"
+    local lock="ctrl-local-svc-${svc}"
+    if service_active "$svc"; then
+        clear_lock_alert "$lock" "$(node_label)
+✅ <b>Resolved: Local Service Restored</b>
+
+<code>${svc}</code> (${label}) is running again on <b>${NODE_NAME}</b>." "detailed"
+    else
+        # Control node services are backup/monitoring only — DETAILED level.
+        # If these go down the cluster still operates via Obol nodes.
+        lock_alert "$lock" "$(node_label)
+🚨 <b>Local service DOWN</b>: <code>${svc}</code> (${label}) is not running on <b>${NODE_NAME}</b>.
+
+• <code>sudo systemctl status ${svc}</code>
+• <code>sudo journalctl -u ${svc} -n 50</code>" "detailed"
+    fi
+}
+
+check_local_svc "$EL_SERVICE"          "Execution client (backup)"
+check_local_svc "$CL_SERVICE"          "Consensus client (backup)"
+check_local_svc "$MEV_SERVICE"         "MEV Boost (backup)"
+check_local_svc "$VALIDATOR_SERVICE"   "Validator client (backup)"
+check_local_svc "$OBOL_RELAY_SERVICE"  "Obol relay"
+
+# =============================================================================
+# SECTION 3 — LOCAL SYSTEM RESOURCES (control node)
+# =============================================================================
+
+# Swap
+SWAP_KB=$(swap_used_kb)
+SWAP_GB=$(swap_used_gb)
+SWAP_THRESH_KB=$(( ${SWAP_ALERT_GB:-6} * 1048576 ))
+if [ "${SWAP_KB:-0}" -gt "$SWAP_THRESH_KB" ] 2>/dev/null; then
+    lock_alert "ctrl-local-swap" "$(node_label)
+⚠️ <b>${NODE_NAME}</b> (control): High swap usage — <b>${SWAP_GB} GB</b> in use (threshold: ${SWAP_ALERT_GB} GB).
+• <code>free -h</code>
+• <code>ps aux --sort=-%mem | head -10</code>" "info"
+else
+    clear_lock_alert "ctrl-local-swap" "$(node_label)
+✅ <b>Resolved: Swap Usage Normal</b>
+
+<b>${NODE_NAME}</b> (control): swap is back below threshold (currently <b>${SWAP_GB} GB</b>, threshold: ${SWAP_ALERT_GB:-6} GB)." "info"
 fi
 
-echo ""
-echo "=== Done — $(date) ==="
+# /home/ethereum disk
+ETH_FREE=$(disk_free_gb /home/ethereum)
+if [ "${ETH_FREE:-999}" -lt "${DISK_ETH_ALERT_GB:-150}" ] 2>/dev/null; then
+    lock_alert "ctrl-local-disk-eth" "$(node_label)
+🚨 <b>${NODE_NAME}</b> (control): Low disk on <code>/home/ethereum</code> — only <b>${ETH_FREE} GB</b> free (threshold: ${DISK_ETH_ALERT_GB} GB)." "critical"
+else
+    clear_lock_alert "ctrl-local-disk-eth" "$(node_label)
+✅ <b>Resolved: Disk Space Recovered</b>
+
+<b>${NODE_NAME}</b> (control): <code>/home/ethereum</code> now has <b>${ETH_FREE} GB</b> free (threshold: ${DISK_ETH_ALERT_GB:-150} GB)." "critical"
+fi
+
+# / disk
+ROOT_PCT=$(disk_used_pct /)
+if [ "${ROOT_PCT:-0}" -gt "${DISK_ROOT_ALERT_PCT:-85}" ] 2>/dev/null; then
+    lock_alert "ctrl-local-disk-root" "$(node_label)
+⚠️ <b>${NODE_NAME}</b> (control): Root <code>/</code> at <b>${ROOT_PCT}%</b> used (threshold: ${DISK_ROOT_ALERT_PCT}%).
+• <code>sudo journalctl --vacuum-size=500M</code>
+• <code>sudo apt-get clean</code>" "info"
+else
+    clear_lock_alert "ctrl-local-disk-root" "$(node_label)
+✅ <b>Resolved: Root Disk Space Recovered</b>
+
+<b>${NODE_NAME}</b> (control): <code>/</code> is now at <b>${ROOT_PCT}%</b> used (threshold: ${DISK_ROOT_ALERT_PCT:-85}%)." "info"
+fi
+
+# CPU temperature
+CPU_TEMP=$(cpu_temp_max)
+if [ "${CPU_TEMP:-0}" -gt "${CPU_TEMP_ALERT_C:-80}" ] 2>/dev/null; then
+    lock_alert "ctrl-local-cpu-temp" "$(node_label)
+🌡 <b>${NODE_NAME}</b> (control): CPU temperature <b>${CPU_TEMP}°C</b> (threshold: ${CPU_TEMP_ALERT_C}°C)." "info"
+else
+    clear_lock_alert "ctrl-local-cpu-temp" "$(node_label)
+✅ <b>Resolved: CPU Temperature Normal</b>
+
+<b>${NODE_NAME}</b> (control): CPU temperature is back below threshold (currently <b>${CPU_TEMP}°C</b>, threshold: ${CPU_TEMP_ALERT_C:-80}°C)." "info"
+fi
+
+# Local EL sync
+if service_active "$EL_SERVICE"; then
+    EL_SYNC=$(el_syncing)
+    if [ "$EL_SYNC" = "true" ]; then
+        lock_alert "ctrl-local-el-sync" "$(node_label)
+⚠️ <b>${NODE_NAME}</b> (control): backup EL client is not synced.
+• <code>sudo journalctl -u ${EL_SERVICE} -n 30</code>" "detailed"
+    else
+        clear_lock_alert "ctrl-local-el-sync" "$(node_label)
+✅ <b>Resolved: Backup EL Client Synced</b>
+
+<b>${NODE_NAME}</b> (control): <code>${EL_SERVICE}</code> is fully synced." "detailed"
+    fi
+fi
+
+# Local CL sync
+if service_active "$CL_SERVICE"; then
+    CL_SYNC=$(cl_syncing)
+    if [ "$CL_SYNC" = "true" ]; then
+        lock_alert "ctrl-local-cl-sync" "$(node_label)
+⚠️ <b>${NODE_NAME}</b> (control): backup CL client is not synced.
+• <code>sudo journalctl -u ${CL_SERVICE} -n 30</code>" "detailed"
+    else
+        clear_lock_alert "ctrl-local-cl-sync" "$(node_label)
+✅ <b>Resolved: Backup CL Client Synced</b>
+
+<b>${NODE_NAME}</b> (control): <code>${CL_SERVICE}</code> is fully synced." "detailed"
+    fi
+fi

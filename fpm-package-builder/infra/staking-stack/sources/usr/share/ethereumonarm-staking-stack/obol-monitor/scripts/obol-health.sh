@@ -32,7 +32,10 @@ check_service() {
     local lock="obol-svc-${svc}"
 
     if service_active "$svc"; then
-        clear_lock "$lock"
+        clear_lock_alert "$lock" "$(node_label)
+✅ <b>Resolved: Service Restored</b>
+
+<code>${svc}</code> (${label}) is running again." "$level"
     else
         lock_alert "$lock" "$(node_label)
 🚨 <b>Service DOWN</b>: <code>${svc}</code> (${label}) is not running.
@@ -90,8 +93,14 @@ Suggested actions:
 The execution client may have crashed or is still starting up.
 • Check status: <code>sudo systemctl status ${EL_SERVICE}</code>" "info"
     else
-        clear_lock "obol-el-sync"
-        clear_lock "obol-el-rpc"
+        clear_lock_alert "obol-el-sync" "$(node_label)
+✅ <b>Resolved: EL Client Synced</b>
+
+<code>${EL_SERVICE}</code> is fully synced." "info"
+        clear_lock_alert "obol-el-rpc" "$(node_label)
+✅ <b>Resolved: EL RPC Reachable</b>
+
+<code>${EL_RPC}</code> is responding normally." "info"
     fi
 
     # --- Consensus client sync ---
@@ -120,8 +129,14 @@ Suggested actions:
 The consensus client may have crashed or is still starting up.
 • Check status: <code>sudo systemctl status ${CL_SERVICE}</code>" "info"
     else
-        clear_lock "obol-cl-sync"
-        clear_lock "obol-cl-api"
+        clear_lock_alert "obol-cl-sync" "$(node_label)
+✅ <b>Resolved: CL Client Synced</b>
+
+<code>${CL_SERVICE}</code> is fully synced." "info"
+        clear_lock_alert "obol-cl-api" "$(node_label)
+✅ <b>Resolved: CL API Reachable</b>
+
+<code>${CL_API}</code> is responding normally." "info"
     fi
 fi
 
@@ -145,7 +160,10 @@ Suggested actions:
 • Verify port 30303 is reachable from the internet
 • Check logs: <code>sudo journalctl -u ${EL_SERVICE} -n 30</code>" "detailed"
         else
-            clear_lock "obol-el-peers"
+            clear_lock_alert "obol-el-peers" "$(node_label)
+✅ <b>Resolved: EL Peers Recovered</b>
+
+<code>${EL_SERVICE}</code> now has <b>${EL_P}</b> peer(s) connected (minimum: ${EL_PEERS_MIN:-5})." "detailed"
         fi
     fi
 fi
@@ -165,7 +183,10 @@ Suggested actions:
 • Verify port 9000 is open
 • Check logs: <code>sudo journalctl -u ${CL_SERVICE} -n 30</code>" "detailed"
         else
-            clear_lock "obol-cl-peers"
+            clear_lock_alert "obol-cl-peers" "$(node_label)
+✅ <b>Resolved: CL Peers Recovered</b>
+
+<code>${CL_SERVICE}</code> now has <b>${CL_P}</b> peer(s) connected (minimum: ${CL_PEERS_MIN:-10})." "detailed"
         fi
     fi
 fi
@@ -194,7 +215,10 @@ Suggested actions:
 • Confirm Charon p2p port is reachable from other cluster nodes
 • Check cluster peer config in <code>/home/ethereum/.charon/</code>" "critical"
     else
-        clear_lock "obol-charon-peers"
+        clear_lock_alert "obol-charon-peers" "$(node_label)
+✅ <b>Resolved: Charon Peers Recovered</b>
+
+Charon now has <b>${CHARON_CONNECTED}</b> peer(s) connected (minimum: ${CHARON_PEERS_MIN:-2})." "critical"
     fi
 
     # Latency — p50 per peer. Empty if no pings recorded yet; skip alert in that case.
@@ -235,7 +259,10 @@ Suggested actions:
 • Check Tailscale latency: <code>tailscale ping &lt;peer-tailscale-ip&gt;</code>
 • Check Charon logs: <code>sudo journalctl -u ${CHARON_SERVICE} -n 30</code>" "info"
     else
-        clear_lock "obol-charon-latency"
+        clear_lock_alert "obol-charon-latency" "$(node_label)
+✅ <b>Resolved: Charon Peer Latency Normal</b>
+
+All peer latencies are within threshold (${CHARON_LATENCY_ALERT_MS:-500}ms)." "info"
     fi
 
     # ------------------------------------------------------------------
@@ -327,7 +354,10 @@ Suggested actions:
 • Charon bcast logs : <code>sudo journalctl -u ${CHARON_SERVICE} -n 100 | grep bcast</code>
 • Tailscale latency : <code>tailscale ping &lt;peer-tailscale-ip&gt;</code>" "info"
     else
-        clear_lock "obol-charon-bcast-delay"
+        clear_lock_alert "obol-charon-bcast-delay" "$(node_label)
+✅ <b>Resolved: Charon Attestation Submissions Normal</b>
+
+High-delay attestation submissions are no longer detected." "info"
     fi
 fi
 
@@ -353,7 +383,10 @@ Suggested actions:
 • Check top consumers: <code>ps aux --sort=-%mem | head -10</code>
 • If persistent, consider restarting the highest-RAM client" "info"
 else
-    clear_lock "obol-swap"
+    clear_lock_alert "obol-swap" "$(node_label)
+✅ <b>Resolved: Swap Usage Normal</b>
+
+Swap is back below threshold (currently <b>${SWAP_GB} GB</b>, threshold: ${SWAP_ALERT_GB:-6} GB)." "info"
 fi
 
 # --- /home/ethereum disk space ---
@@ -369,7 +402,10 @@ Suggested actions:
 • Check overall usage: <code>df -h /home/ethereum</code>
 • Consider pruning or switching to a more space-efficient client" "critical"
 else
-    clear_lock "obol-disk-eth"
+    clear_lock_alert "obol-disk-eth" "$(node_label)
+✅ <b>Resolved: Disk Space Recovered</b>
+
+<code>/home/ethereum</code> now has <b>${ETH_FREE} GB</b> free (threshold: ${DISK_ETH_ALERT_GB:-150} GB)." "critical"
 fi
 
 # --- / (root) disk space ---
@@ -384,7 +420,10 @@ Suggested actions:
 • Clean apt cache: <code>sudo apt-get clean</code>
 • Check and rotate logs: <code>sudo journalctl --vacuum-size=500M</code>" "info"
 else
-    clear_lock "obol-disk-root"
+    clear_lock_alert "obol-disk-root" "$(node_label)
+✅ <b>Resolved: Root Disk Space Recovered</b>
+
+<code>/</code> (root) is now at <b>${ROOT_PCT}%</b> used (threshold: ${DISK_ROOT_ALERT_PCT:-85}%)." "info"
 fi
 
 # --- CPU temperature ---
@@ -401,5 +440,8 @@ Suggested actions:
 • Monitor over time: <code>watch -n 2 'cat /sys/class/thermal/thermal_zone*/temp | awk \"{print \$1/1000}\"'</code>
 • Consider reducing CPU governor: <code>cpufreq-info</code>" "info"
 else
-    clear_lock "obol-cpu-temp"
+    clear_lock_alert "obol-cpu-temp" "$(node_label)
+✅ <b>Resolved: CPU Temperature Normal</b>
+
+CPU temperature is back below threshold (currently <b>${CPU_TEMP}°C</b>, threshold: ${CPU_TEMP_ALERT_C:-80}°C)." "info"
 fi

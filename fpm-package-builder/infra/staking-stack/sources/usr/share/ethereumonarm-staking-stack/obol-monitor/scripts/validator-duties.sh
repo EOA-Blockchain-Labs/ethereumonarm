@@ -110,13 +110,20 @@ print(m.get('$1', 'idx:$1'))
 # Body    : ["index1", "index2", ...]
 # Response: data.total_rewards[].{ validator_index, head, target, source }
 #
-# A validator missed its attestation when ALL of head, target and source
-# equal "0" (or are negative/zero post-Electra). These are integer strings
-# in Gwei. We only check for the miss/not-miss condition — reward amounts
-# are intentionally discarded.
+# Classification (head, target, source are integer Gwei strings):
+#   h ≤ 0 AND t ≤ 0 AND s ≤ 0  → MISSED      (full miss — did not participate)
+#   h ≤ 0 only                  → HEAD_MISSED (participated but wrong/late head)
+#   h > 0                       → OK
 #
-# Uses current_epoch - 2 (same as beaconcha.in): the latest completed epoch
-# where all attestations have had time to be included on-chain.
+# NOTE: beaconcha.in "effectiveness" also penalises attestation *inclusion
+# delay* (attestation included in slot N+2 instead of N+1). That penalty is
+# reflected in beaconcha.in's score but does NOT affect h/t/s rewards, so
+# a 98–99% beaconcha.in score with no alerts here is expected when the root
+# cause is slow gossip / late inclusion rather than a wrong vote.
+#
+# Uses current_epoch - 1: the most recently completed epoch. By the time
+# the script runs at least one full epoch has passed, so all attestations
+# from epoch N-1 have had time to be included in epoch N blocks.
 # =============================================================================
 
 echo ""
@@ -168,9 +175,10 @@ except Exception as e:
     print('HEAD_MISSED:')
     print('OK:')
 ")
-        MISSED_ATTESTERS=$(echo "$PARSE_RESULT"      | grep '^MISSED:'      | cut -d: -f2)
+        MISSED_ATTESTERS=$(echo      "$PARSE_RESULT" | grep '^MISSED:'      | cut -d: -f2)
         HEAD_MISSED_ATTESTERS=$(echo "$PARSE_RESULT" | grep '^HEAD_MISSED:' | cut -d: -f2)
-        OK_ATTESTERS=$(echo    "$PARSE_RESULT"       | grep '^OK:'          | cut -d: -f2)
+        OK_ATTESTERS=$(echo          "$PARSE_RESULT" | grep '^OK:'          | cut -d: -f2)
+        HEAD_MISS_COUNT=$(echo "${HEAD_MISSED_ATTESTERS}" | wc -w | tr -d ' ')
 
     else
         # ------------------------------------------------------------------
@@ -215,7 +223,11 @@ except Exception as e:
     # ------------------------------------------------------------------
     MISSED_COUNT=$(echo "$MISSED_ATTESTERS" | wc -w | tr -d ' ')
     OK_COUNT=$(echo     "$OK_ATTESTERS"     | wc -w | tr -d ' ')
-    echo "  Attested: ${OK_COUNT}  |  Missed: ${MISSED_COUNT}"
+    if [ "$ATT_HTTP" = "200" ]; then
+        echo "  Attested: ${OK_COUNT}  |  Head-missed: ${HEAD_MISS_COUNT:-0}  |  Full-missed: ${MISSED_COUNT}"
+    else
+        echo "  Attested: ${OK_COUNT}  |  Missed: ${MISSED_COUNT}  (head-miss detail requires rewards endpoint)"
+    fi
 
     # ------------------------------------------------------------------
     # CRITICAL: mass missed attestation alert
@@ -301,7 +313,7 @@ Check: <code>sudo journalctl -u ${VALIDATOR_SERVICE:-validator} -n 50</code>" "i
     # Lock clears automatically when the rate recovers below threshold.
     # ------------------------------------------------------------------
     if [ "$ATT_HTTP" = "200" ] && [ "$MASS_MISS_FIRED" = "false" ]; then
-        HEAD_MISS_COUNT=$(echo "${HEAD_MISSED_ATTESTERS}" | wc -w | tr -d ' ')
+        # HEAD_MISS_COUNT already computed at parse time above
         HEAD_MISS_STATE="${INDEX_CACHE%/*}/head-miss-rate.json"
         _HM_NOW=$(date +%s)
         _HM_WINDOW=$(( ${HEAD_MISS_WINDOW_HOURS:-1} * 3600 ))
@@ -364,14 +376,15 @@ print(f'TOTAL_ATT:{total_att}')
         echo "  Head-only misses: ${HEAD_MISS_COUNT} | Rolling rate (${ROLLING_EPOCHS:-0} clean epochs): ${ROLLING_RATE:-0}%"
 
         # Float comparison via Python (bash arithmetic is integers only)
+        # n >= 1 so the very first epoch with elevated head-miss rate fires
+        # immediately rather than waiting for a second clean epoch.
         RATE_EXCEEDED=$(python3 -c "
 import sys
 try:
     rate = float(sys.argv[1])
     thr  = float(sys.argv[2])
     n    = int(sys.argv[3])
-    # Require at least 2 clean epochs to avoid false positives on first run
-    print('yes' if rate >= thr and n >= 2 else 'no')
+    print('yes' if rate >= thr and n >= 1 else 'no')
 except:
     print('no')
 " "${ROLLING_RATE:-0}" "${HEAD_MISS_RATE_PCT:-1.0}" "${ROLLING_EPOCHS:-0}")

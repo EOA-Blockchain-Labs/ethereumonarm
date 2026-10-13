@@ -516,6 +516,12 @@ except:
             if [ "$HAS_BLOCK" = "proposed" ]; then
                 echo "✅ proposed"
                 clear_lock "vd-proposal-${IDX}-${SLOT}"
+                lock_alert "vd-proposed-${IDX}-${SLOT}" "$(node_label)
+🎉 <b>Block Proposed!</b>
+
+Validator : <code>${IDX}</code> (<code>${LABEL}</code>)
+Slot      : <b>${SLOT}</b>  (epoch ${EPOCH})
+Explorer  : https://beaconcha.in/slot/${SLOT}" "info"
             else
                 echo "❌ MISSED"
                 LOCK_KEY="vd-proposal-${IDX}-${SLOT}"

@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-10-13 10:21:07 UTC_
+_Last updated: 2026-10-14 08:33:12 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-10-13 10:21:07 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **27** (73.0%)
-- ❌ Outdated: **10** (27.0%)
+- ✅ Up-to-date: **26** (70.3%)
+- ❌ Outdated: **11** (29.7%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -28,7 +28,7 @@ _Last updated: 2026-10-13 10:21:07 UTC_
 | `dirk` | `1.2.1` ([attestantio/dirk](https://github.com/attestantio/dirk)) | `1.2.1` | ✅ Up-to-date |
 | `dvt-anchor` | `1.3.2` ([sigp/anchor](https://github.com/sigp/anchor)) | `1.3.2` | ✅ Up-to-date |
 | `dvt-obol` | `1.11.0` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.11.0` | ✅ Up-to-date |
-| `dvt-ssv` | `2.4.3` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.4.3` | ✅ Up-to-date |
+| `dvt-ssv` | `2.5.0` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.4.3` | ❌ Outdated |
 | `ethereum-metrics-exporter` | `0.30.0` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.30.0` | ✅ Up-to-date |
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |
 | `ethstaker-deposit-cli` | `1.3.0` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.3.0` | ✅ Up-to-date |

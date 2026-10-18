@@ -257,7 +257,12 @@ except:
 
 # -----------------------------------------------------------------------------
 # cl_syncing
-# Returns 'true' if CL is still syncing, 'false' if synced, 'error' on failure.
+# Returns 'true' if CL is meaningfully behind, 'false' if synced or close
+# enough, 'error' on failure.
+#
+# Uses sync_distance instead of is_syncing to avoid spurious alerts when the
+# node is only 1 slot behind (normal propagation lag). Alert fires only when
+# distance >= CL_SYNC_DISTANCE_ALERT (default: 2 slots).
 # -----------------------------------------------------------------------------
 cl_syncing() {
     curl -s --max-time 5 "${CL_API:-http://localhost:5052}/eth/v1/node/syncing" \
@@ -265,7 +270,9 @@ cl_syncing() {
 import sys, json
 try:
     data = json.load(sys.stdin)['data']
-    print(str(data['is_syncing']).lower())
+    distance = int(data.get('sync_distance', 0))
+    threshold = ${CL_SYNC_DISTANCE_ALERT:-2}
+    print('true' if distance >= threshold else 'false')
 except:
     print('error')
 "

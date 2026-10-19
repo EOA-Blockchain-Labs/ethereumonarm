@@ -445,3 +445,157 @@ else
 
 CPU temperature is back below threshold (currently <b>${CPU_TEMP}°C</b>, threshold: ${CPU_TEMP_ALERT_C:-80}°C)." "info"
 fi
+
+# =============================================================================
+# 6. CLUSTER DISRUPTION RISK — recommend stopping Charon when node is unhealthy
+# =============================================================================
+#
+# A node that is swapping heavily, overloaded, or falling behind the chain
+# degrades QBFT consensus for the whole cluster: it causes round changes that
+# delay attestation signing for every other node.
+# Stopping Charon on a sick node is better than letting it drag the cluster.
+#
+# A single CRITICAL alert fires when ANY of these is true:
+#   1. Swap usage exceeds CHARON_STOP_SWAP_GB (early warning comes from SWAP_ALERT_GB)
+#   2. 1-min load average exceeds CHARON_STOP_CPU_LOAD × number of CPU cores
+#   3. CL is actively syncing (sync_distance >= CL_SYNC_DISTANCE_ALERT)
+#
+# The alert clears automatically once all three conditions resolve.
+# =============================================================================
+
+DISRUPT_REASONS=""
+
+# --- Condition 1: Swap above the stop threshold ---
+# SWAP_KB was already read in section 5; reuse it to avoid a duplicate call.
+CHARON_STOP_SWAP_KB=$(( ${CHARON_STOP_SWAP_GB:-10} * 1048576 ))
+if [ "${SWAP_KB:-0}" -gt "$CHARON_STOP_SWAP_KB" ] 2>/dev/null; then
+    DISRUPT_REASONS="${DISRUPT_REASONS}• 🔴 <b>Swap critically high</b>: <b>${SWAP_GB} GB</b> in use (stop threshold: ${CHARON_STOP_SWAP_GB:-10} GB)\n"
+fi
+
+# --- Condition 2: CPU load average (absolute threshold) ---
+# Reads /proc/loadavg (1-minute figure) and compares directly to CHARON_STOP_CPU_LOAD_AVG.
+# Uses python3 for float arithmetic; bash cannot handle decimals natively.
+LOAD_DATA=$(python3 -c "
+try:
+    load1 = float(open('/proc/loadavg').read().split()[0])
+    threshold = ${CHARON_STOP_CPU_LOAD_AVG:-6}
+    over = load1 > threshold
+    print(f'LOAD1:{load1:.2f}')
+    print(f'THRESHOLD:{threshold}')
+    print(f'OVER:true' if over else 'OVER:false')
+except Exception:
+    print('OVER:error')
+" 2>/dev/null)
+
+LOAD1=$(    echo "$LOAD_DATA" | grep '^LOAD1:'     | cut -d: -f2)
+LOAD_THR=$( echo "$LOAD_DATA" | grep '^THRESHOLD:' | cut -d: -f2)
+LOAD_OVER=$(echo "$LOAD_DATA" | grep '^OVER:'      | cut -d: -f2)
+
+if [ "$LOAD_OVER" = "true" ]; then
+    DISRUPT_REASONS="${DISRUPT_REASONS}• 🔴 <b>CPU load critically high</b>: 1-min average <b>${LOAD1}</b> (stop threshold: ${LOAD_THR})\n"
+fi
+
+# --- Condition 3: CL sync — sliding-window event counter ---
+# A single brief sync detection is noise. This fires only after more than
+# CHARON_STOP_SYNC_EVENTS detections within a 1-hour sliding window,
+# whether consecutive or not (e.g. backfill slowing the node intermittently).
+#
+# Each time CL is found syncing, the current timestamp is appended to a JSON
+# state file. Events older than 1 hour are pruned. The condition triggers
+# when the remaining count exceeds the threshold.
+# When CL is healthy the counter naturally decays without needing a reset.
+#
+# Re-evaluated independently so it works even when section 2 was skipped.
+
+DISRUPT_SYNC_FILE="${HOME:-/home/ethereum}/.obol-monitor/cache/charon-disrupt-sync.json"
+DISRUPT_CL_SYNC=$(cl_syncing)
+DISRUPT_SYNC_INFO=""
+
+SYNC_DATA=$(python3 -c "
+import json, os, sys
+state_file = '${DISRUPT_SYNC_FILE}'
+now = $(date +%s)
+window = 3600  # 1 hour
+threshold = ${CHARON_STOP_SYNC_EVENTS:-1}  # fire when count > this
+cl_syncing = '${DISRUPT_CL_SYNC}'
+
+# Load existing events
+events = []
+if os.path.exists(state_file):
+    try:
+        events = json.load(open(state_file))
+    except Exception:
+        events = []
+
+# Record a new event if CL is currently syncing
+if cl_syncing == 'true':
+    events.append(now)
+
+# Prune events older than the window
+events = [t for t in events if now - t <= window]
+
+# Persist updated list
+os.makedirs(os.path.dirname(state_file), exist_ok=True)
+json.dump(events, open(state_file, 'w'))
+
+count = len(events)
+over = count > threshold
+print(f'COUNT:{count}')
+print(f'THRESHOLD:{threshold}')
+print(f'OVER:true' if over else 'OVER:false')
+" 2>/dev/null)
+
+SYNC_COUNT=$(echo "$SYNC_DATA" | grep '^COUNT:'     | cut -d: -f2)
+SYNC_THR=$(  echo "$SYNC_DATA" | grep '^THRESHOLD:' | cut -d: -f2)
+SYNC_OVER=$( echo "$SYNC_DATA" | grep '^OVER:'      | cut -d: -f2)
+
+if [ "$SYNC_OVER" = "true" ]; then
+    if [ "$DISRUPT_CL_SYNC" = "true" ]; then
+        DISRUPT_SYNC_INFO=$(curl -s --max-time 5 "${CL_API:-http://localhost:5052}/eth/v1/node/syncing" \
+            2>/dev/null | python3 -c "
+import sys, json
+try:
+    d = json.load(sys.stdin)['data']
+    print(f'head={d[\"head_slot\"]} distance={d[\"sync_distance\"]} slots')
+except:
+    print('unknown')
+")
+        DISRUPT_REASONS="${DISRUPT_REASONS}• 🔴 <b>CL repeatedly out of sync</b>: <b>${SYNC_COUNT}</b> detections in last hour (${DISRUPT_SYNC_INFO})\n"
+    else
+        DISRUPT_REASONS="${DISRUPT_REASONS}• 🔴 <b>CL repeatedly out of sync</b>: <b>${SYNC_COUNT}</b> detections in last hour (currently recovering)\n"
+    fi
+fi
+
+# --- Fire or clear the composite alert ---
+if [ -n "$DISRUPT_REASONS" ]; then
+    lock_alert "obol-charon-disrupt" "$(node_label)
+🛑 <b>Cluster Disruption Risk — Consider stopping Charon</b>
+
+This node is likely degrading the DVT cluster. A slow or out-of-sync node
+triggers QBFT round changes that stall attestation signing for every peer.
+Stopping Charon here is safer than letting it drag the whole cluster.
+
+<b>Triggered by:</b>
+$(printf "$DISRUPT_REASONS")
+<b>Recommended action:</b>
+<code>sudo systemctl stop charon</code>
+
+Wait until the node is fully healthy, then restart:
+<code>sudo systemctl start charon</code>
+
+Quick status check:
+• Memory : <code>free -h</code>
+• CPU load: <code>uptime</code>
+• CL sync : <code>sudo systemctl status ${CL_SERVICE}</code>" "critical"
+else
+    clear_lock_alert "obol-charon-disrupt" "$(node_label)
+✅ <b>Resolved: Cluster Disruption Risk Cleared</b>
+
+This node has returned to a healthy state:
+• Swap below ${CHARON_STOP_SWAP_GB:-10} GB
+• CPU load below ${CHARON_STOP_CPU_LOAD_AVG:-6}
+• CL sync events in last hour: ${SYNC_COUNT:-0} (threshold: &gt;${CHARON_STOP_SYNC_EVENTS:-1})
+
+If Charon was stopped, restart it now:
+<code>sudo systemctl start charon</code>" "critical"
+fi

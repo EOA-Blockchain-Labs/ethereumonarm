@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-10-19 08:40:59 UTC_
+_Last updated: 2026-10-20 08:21:28 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-10-19 08:40:59 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **26** (70.3%)
-- ❌ Outdated: **11** (29.7%)
+- ✅ Up-to-date: **25** (67.6%)
+- ❌ Outdated: **12** (32.4%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -42,7 +42,7 @@ _Last updated: 2026-10-19 08:40:59 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
 | `grandine` | `2.0.6` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.6` | ✅ Up-to-date |
-| `lighthouse` | `8.2.3` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.2.3` | ✅ Up-to-date |
+| `lighthouse` | `8.3.0` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.3.0` | ✅ Up-to-date |
 | `lodestar` | `1.50.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.50.0` | ✅ Up-to-date |
 | `nimbus` | `26.10.1` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.10.1` | ✅ Up-to-date |
 | `prysm` | `7.3.0` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.3.0` | ✅ Up-to-date |
@@ -53,7 +53,7 @@ _Last updated: 2026-10-19 08:40:59 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
 | `besu` | `26.10.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.10.0` | ✅ Up-to-date |
-| `erigon` | `3.7.1` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.7.1` | ✅ Up-to-date |
+| `erigon` | `3.8.0` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.7.1` | ❌ Outdated |
 | `ethrex` | `30.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `30.0.0` | ✅ Up-to-date |
 | `geth` | `1.17.8` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.8` | ✅ Up-to-date |
 | `nethermind` | `2.2.0` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `2.2.0` | ✅ Up-to-date |

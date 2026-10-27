@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-10-26 08:43:10 UTC_
+_Last updated: 2026-10-27 08:49:17 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-10-26 08:43:10 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **26** (70.3%)
-- ❌ Outdated: **11** (29.7%)
+- ✅ Up-to-date: **24** (64.9%)
+- ❌ Outdated: **13** (35.1%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -34,7 +34,7 @@ _Last updated: 2026-10-26 08:43:10 UTC_
 | `ethstaker-deposit-cli` | `1.3.0` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.3.0` | ✅ Up-to-date |
 | `mev-boost` | `1.12` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.12` | ✅ Up-to-date |
 | `stakewise-operator` | `5.1.1` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `5.1.1` | ✅ Up-to-date |
-| `vero` | `1.4.2` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.4.1` | ❌ Outdated |
+| `vero` | `1.4.2` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.4.2` | ✅ Up-to-date |
 | `vouch` | `1.13.1` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.13.1` | ✅ Up-to-date |
 
 ## Layer 1 Consensus
@@ -46,17 +46,17 @@ _Last updated: 2026-10-26 08:43:10 UTC_
 | `lodestar` | `1.50.1` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.50.1` | ✅ Up-to-date |
 | `nimbus` | `26.10.2` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.10.2` | ✅ Up-to-date |
 | `prysm` | `7.3.1` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.3.1` | ✅ Up-to-date |
-| `teku` | `26.10.2` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.10.2` | ✅ Up-to-date |
+| `teku` | `26.10.3` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.10.2` | ❌ Outdated |
 
 ## Layer 1 Execution
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `besu` | `26.10.1` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.10.1` | ✅ Up-to-date |
+| `besu` | `26.10.2` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.10.1` | ❌ Outdated |
 | `erigon` | `3.8.1` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.8.1` | ✅ Up-to-date |
 | `ethrex` | `30.0.1` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `30.0.1` | ✅ Up-to-date |
 | `geth` | `1.17.10` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.10` | ✅ Up-to-date |
-| `nethermind` | `2.2.1` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `2.2.1` | ✅ Up-to-date |
+| `nethermind` | `2.2.2` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `2.2.1` | ❌ Outdated |
 | `nimbus-ec` | `0.4.4` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
 | `reth` | `2.8.1` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `2.8.1` | ✅ Up-to-date |
 
@@ -72,7 +72,7 @@ _Last updated: 2026-10-26 08:43:10 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `arbitrum-nitro` | `3.12.1` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.11.3` | ❌ Outdated |
 | `fuel-network` | `0.48.3` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.48.3` | ✅ Up-to-date |
-| `optimism-op-challenger` | `1.10.1` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.3` | ❌ Outdated |
+| `optimism-op-challenger` | `1.11.0` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.3` | ❌ Outdated |
 | `optimism-op-geth` | `1.101702.3` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101702.3` | ✅ Up-to-date |
 | `optimism-op-node` | `1.19.11` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.19.0` | ❌ Outdated |
 | `optimism-op-reth` | `2.8.1` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |

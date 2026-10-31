@@ -25,10 +25,55 @@ fi
 . "$CONF"
 . "${SCRIPT_DIR}/../lib/common.sh"
 
-# Primary/backup deduplication: skip if peer control node is reachable
-if ! is_primary; then
-    echo "Peer control node (${PEER_CONTROL_IP}) is reachable — deferring health check to primary."
-    exit 0
+# =============================================================================
+# PRIMARY / FAILOVER DEDUPLICATION — with mutual reachability alerts
+# =============================================================================
+# PEER_CONTROL_IP empty  → this is the primary; always runs checks.
+# PEER_CONTROL_IP set    → this is the failover; pings the primary first.
+#   Primary responds     → defer; clear any "taking over" alert and exit.
+#   Primary unreachable  → alert once (state file), then run full checks.
+#
+# PEER_FAILOVER_IP (optional, primary only) → primary pings the failover at
+# the end of its run and alerts if unreachable (lock-gated, INFO level).
+# =============================================================================
+
+_TAKEOVER_FILE="${HOME:-/home/ethereum}/.obol-monitor/cache/ctrl-takeover.sig"
+
+if [ -n "${PEER_CONTROL_IP:-}" ]; then
+    # ---- FAILOVER NODE: check whether primary is reachable ----
+    _TAKEOVER_PREV="__unset__"
+    [ -f "$_TAKEOVER_FILE" ] && _TAKEOVER_PREV=$(cat "$_TAKEOVER_FILE" 2>/dev/null)
+
+    if ping -c 1 -W "${PEER_CHECK_TIMEOUT:-5}" "$PEER_CONTROL_IP" > /dev/null 2>&1; then
+        # Primary is up — clear takeover alert if we were previously standing in
+        if [ "$_TAKEOVER_PREV" = "down" ]; then
+            mkdir -p "$(dirname "$_TAKEOVER_FILE")"
+            echo "up" > "$_TAKEOVER_FILE"
+            send_telegram "$(node_label)
+✅ <b>Primary control node restored</b>
+
+<b>${PEER_CONTROL_NAME:-primary control}</b> (<code>${PEER_CONTROL_IP}</code>) is reachable again.
+This node is standing down — primary has resumed cluster monitoring."
+        fi
+        echo "Peer control node (${PEER_CONTROL_IP}) is reachable — deferring health check to primary."
+        exit 0
+    else
+        # Primary is unreachable — alert once on transition, then take over
+        if [ "$_TAKEOVER_PREV" != "down" ]; then
+            mkdir -p "$(dirname "$_TAKEOVER_FILE")"
+            echo "down" > "$_TAKEOVER_FILE"
+            send_telegram "$(node_label)
+🚨 <b>Primary control node unreachable</b>
+
+<b>${PEER_CONTROL_NAME:-primary control}</b> (<code>${PEER_CONTROL_IP}</code>) is not responding.
+This node is taking over cluster monitoring.
+
+Suggested actions:
+• Check Tailscale: <code>tailscale ping ${PEER_CONTROL_IP}</code>
+• Check if the primary control node is online"
+        fi
+        # Fall through — failover runs the full health check
+    fi
 fi
 
 expire_locks "ctrl-"
@@ -55,6 +100,7 @@ check_obol_node() {
         "${base_url}/livez" 2>/dev/null)
 
     if [ "$LIVEZ" != "200" ] && [ "$LIVEZ" != "500" ]; then
+        eval "OBOL_NODE_${idx}_ONLINE=0"   # tracked for cluster status summary
         lock_alert "ctrl-node-${idx}-down" "$(node_label)
 🚨 <b>Obol node unreachable</b>: <b>${node_name}</b> (<code>${node_ip}</code>) is not responding.
 
@@ -72,6 +118,7 @@ Suggested actions:
 • Physical inspection may be required" "critical"
         return
     fi
+    eval "OBOL_NODE_${idx}_ONLINE=1"       # tracked for cluster status summary
     clear_lock_alert "ctrl-node-${idx}-down" "$(node_label)
 ✅ <b>Resolved: Obol Node Reachable</b>
 
@@ -272,6 +319,71 @@ done
 unset _idx _ip_var _name_var _base_var _ip _name _base
 
 # =============================================================================
+# CLUSTER STATUS SUMMARY — fires once per state change (node goes down or up)
+# =============================================================================
+# After the per-node loop, collect which nodes are online/offline and build a
+# sorted state signature. Send one Telegram message whenever the signature
+# differs from the last recorded state — a node just went down, or came back.
+#
+# No lock is used: the state file is the deduplication mechanism. This means
+# the message fires exactly once per transition, not once per 24 h like a lock.
+# =============================================================================
+
+_CS_DOWN=()
+_CS_UP=()
+for _idx in $(seq 1 "${CLUSTER_SIZE:-3}"); do
+    _cs_ip_var="OBOL_NODE_${_idx}_IP"
+    _cs_name_var="OBOL_NODE_${_idx}_NAME"
+    _cs_online_var="OBOL_NODE_${_idx}_ONLINE"
+    [ -z "${!_cs_ip_var}" ] && continue           # skip unconfigured node slots
+    _cs_name="${!_cs_name_var:-obol-node-${_idx}}"
+    _cs_online="${!_cs_online_var:-0}"
+    if [ "${_cs_online}" = "1" ]; then
+        _CS_UP+=("${_cs_name}")
+    else
+        _CS_DOWN+=("${_cs_name}")
+    fi
+done
+unset _idx _cs_ip_var _cs_name_var _cs_online_var _cs_name _cs_online
+
+_CS_UP_N=${#_CS_UP[@]}
+_CS_DOWN_N=${#_CS_DOWN[@]}
+_CS_TOTAL=$(( _CS_UP_N + _CS_DOWN_N ))
+_CS_QUORUM=$(( (_CS_TOTAL * 2 + 2) / 3 ))   # ceiling of 2N/3 — QBFT signing threshold
+
+# State signature: sorted comma-separated list of down node names (empty = all up)
+_CS_SIG=$(printf '%s\n' "${_CS_DOWN[@]}" | sort | paste -sd ',' - 2>/dev/null || echo "")
+
+_CS_STATE_FILE="${HOME:-/home/ethereum}/.obol-monitor/cache/cluster-state.sig"
+_CS_PREV_SIG="__unset__"
+[ -f "$_CS_STATE_FILE" ] && _CS_PREV_SIG=$(cat "$_CS_STATE_FILE" 2>/dev/null)
+
+if [ "$_CS_SIG" != "$_CS_PREV_SIG" ]; then
+    mkdir -p "$(dirname "$_CS_STATE_FILE")"
+    echo "$_CS_SIG" > "$_CS_STATE_FILE"
+
+    # Build per-node status lines (up first, then down)
+    _CS_LINES=""
+    for _n in "${_CS_UP[@]}";   do _CS_LINES="${_CS_LINES}• ✅ ${_n}\n"; done
+    for _n in "${_CS_DOWN[@]}"; do _CS_LINES="${_CS_LINES}• 🔴 ${_n} (not responding)\n"; done
+
+    if [ "${_CS_DOWN_N}" -eq 0 ]; then
+        send_telegram "$(node_label)
+✅ <b>Cluster fully healthy</b> — all <b>${_CS_UP_N}/${_CS_TOTAL}</b> nodes online
+
+$(printf "${_CS_LINES}")"
+    else
+        send_telegram "$(node_label)
+⚠️ <b>Cluster status changed</b>: <b>${_CS_UP_N}/${_CS_TOTAL}</b> nodes online
+
+$(printf "${_CS_LINES}")
+Signing requires ≥ <b>${_CS_QUORUM}/${_CS_TOTAL}</b> nodes (2/3 threshold)."
+    fi
+fi
+unset _CS_DOWN _CS_UP _CS_UP_N _CS_DOWN_N _CS_TOTAL _CS_QUORUM
+unset _CS_SIG _CS_STATE_FILE _CS_PREV_SIG _CS_LINES _n
+
+# =============================================================================
 # SECTION 2 — LOCAL SERVICES (control node itself)
 # =============================================================================
 
@@ -386,5 +498,31 @@ if service_active "$CL_SERVICE"; then
 ✅ <b>Resolved: Backup CL Client Synced</b>
 
 <b>${NODE_NAME}</b> (control): <code>${CL_SERVICE}</code> is fully synced." "detailed"
+    fi
+fi
+
+# =============================================================================
+# FAILOVER NODE REACHABILITY CHECK (primary only)
+# Runs only when PEER_CONTROL_IP is empty (i.e. this is the primary) and
+# PEER_FAILOVER_IP is configured. Alerts when the failover becomes unreachable
+# so the operator knows monitoring redundancy has been lost.
+# =============================================================================
+if [ -z "${PEER_CONTROL_IP:-}" ] && [ -n "${PEER_FAILOVER_IP:-}" ]; then
+    if ping -c 1 -W "${PEER_CHECK_TIMEOUT:-5}" "$PEER_FAILOVER_IP" > /dev/null 2>&1; then
+        clear_lock_alert "ctrl-failover-down" "$(node_label)
+✅ <b>Resolved: Failover control node reachable</b>
+
+<b>${PEER_FAILOVER_NAME:-failover control}</b> (<code>${PEER_FAILOVER_IP}</code>) is responding again.
+Cluster monitoring redundancy is restored." "info"
+    else
+        lock_alert "ctrl-failover-down" "$(node_label)
+⚠️ <b>Failover control node unreachable</b>
+
+<b>${PEER_FAILOVER_NAME:-failover control}</b> (<code>${PEER_FAILOVER_IP}</code>) is not responding.
+Cluster monitoring has no redundancy until it recovers.
+
+Suggested actions:
+• Check Tailscale: <code>tailscale ping ${PEER_FAILOVER_IP}</code>
+• Check if the failover control node is online" "info"
     fi
 fi

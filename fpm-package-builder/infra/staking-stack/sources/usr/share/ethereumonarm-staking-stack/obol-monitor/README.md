@@ -47,7 +47,12 @@ After installation everything lives under:
 ├── conf/node.env                # Your filled-in config
 ├── lib/common.sh
 ├── scripts/
-├── cache/                       # Validator index cache (control node)
+├── cache/
+│   ├── validator-indices.json   # Validator index cache (control node)
+│   ├── head-miss-rate.json      # Rolling head-miss rate state (control node)
+│   ├── charon-disrupt-sync.json # CL sync event timestamps (obol node)
+│   ├── cluster-state.sig        # Last known cluster up/down signature (control node)
+│   └── ctrl-takeover.sig        # Last known primary reachability state (failover node)
 ├── locks/                       # Alert deduplication lock files
 └── logs/                        # Cron output logs
 ```
@@ -131,32 +136,43 @@ Setting `ALERT_LEVEL=detailed` gives you everything.
 | Charon or validator service down | critical | 🚨 Service DOWN |
 | `/home/ethereum` free < `DISK_ETH_ALERT_GB` GB | critical | 🚨 Low disk |
 | Charon DVT peers < `CHARON_PEERS_MIN` | critical | 🚨 Charon low peers |
+| Swap > `CHARON_STOP_SWAP_GB` GB, OR load avg > `CHARON_STOP_CPU_LOAD_AVG`, OR CL sync events > `CHARON_STOP_SYNC_EVENTS` in 1 h | critical | 🛑 Cluster Disruption Risk — stop Charon |
 | EL / CL / MEV service down | info | 🚨 Service DOWN |
 | EL not synced | info | ⚠️ EL not synced |
-| CL not synced | info | ⚠️ CL not synced |
+| CL sync distance ≥ `CL_SYNC_DISTANCE_ALERT` slots | info | ⚠️ CL not synced |
 | EL RPC unreachable | info | ⚠️ EL RPC unreachable |
 | CL API unreachable | info | ⚠️ CL API unreachable |
 | Charon peer latency > `CHARON_LATENCY_ALERT_MS` ms | info | ⚠️ High latency |
 | ≥ `BCAST_DELAY_COUNT_MIN` attestation submissions with delay > `BCAST_DELAY_ALERT_MS` ms | info | ⚠️ Charon slow attestation submissions |
-| Swap > `SWAP_ALERT_GB` GB | info | ⚠️ High swap |
+| Swap > `SWAP_ALERT_GB` GB | info | ⚠️ High swap (early warning) |
 | `/` used > `DISK_ROOT_ALERT_PCT` % | info | ⚠️ Low root disk |
 | CPU temp > `CPU_TEMP_ALERT_C` °C | info | 🌡 High CPU temp |
 | EL peer count < `EL_PEERS_MIN` | detailed | ⚠️ EL low peers |
 | CL peer count < `CL_PEERS_MIN` | detailed | ⚠️ CL low peers |
 
+The **Cluster Disruption Risk** alert fires when any of these are true simultaneously on the same node — a node that is swapping heavily, CPU-saturated, or repeatedly falling behind the chain degrades QBFT consensus for the whole cluster. The alert recommends `sudo systemctl stop charon` and clears automatically once all conditions resolve. The CL sync condition uses a 1-hour sliding-window counter (`charon-disrupt-sync.json`) so a single brief slip does not trigger it.
+
 ### Control node (`control-health.sh`, every 5 min)
 
-| Condition | Level | Alert |
+| Condition | Level | Alert / Message |
 |---|---|---|
 | Obol node unreachable (Charon /livez) | critical | 🚨 Node UNREACHABLE |
 | Charon peer count < minimum (remote) | critical | 🚨 Charon low peers |
 | `/home/ethereum` free < threshold | critical | 🚨 Low disk |
+| Any node's reachability changes (up→down or down→up) | — | ⚠️ Cluster status changed (or ✅ Cluster fully healthy) |
+| Primary control node unreachable → failover takes over | — | 🚨 Primary control node unreachable |
+| Primary control node recovers → failover stands down | — | ✅ Primary control node restored |
+| Failover control node unreachable (primary only, requires `PEER_FAILOVER_IP`) | info | ⚠️ Failover control node unreachable |
 | Charon peer latency > threshold (remote) | info | ⚠️ High latency |
 | One Charon peer avg latency >3× others (outlier) | info | ⚠️ Charon peer outlier |
 | Swap / root disk / CPU temp | info | ⚠️ (same thresholds) |
 | Charon metrics endpoint empty | detailed | ⚠️ Metrics unavailable |
 | Local backup services down | detailed | 🚨 Service DOWN |
 | Local backup EL / CL not synced | detailed | ⚠️ Not synced |
+
+The **Cluster status changed** message is not lock-gated — it fires exactly once per state transition (e.g. node goes down, or recovers) using `cluster-state.sig` as the deduplication mechanism. It lists every node with a ✅ or 🔴 marker and shows whether the cluster still meets the 2/3 signing quorum.
+
+The **control node mutual monitoring** alerts use two different mechanisms: the takeover alert (failover → primary) uses a state file (`ctrl-takeover.sig`) so it fires exactly once when the primary goes down and once when it comes back; the failover reachability alert (primary → failover) uses a standard lock so it respects `LOCK_EXPIRY`. Set `PEER_FAILOVER_IP` on the primary and `PEER_CONTROL_IP` + `PEER_CONTROL_NAME` on the failover to enable both directions.
 
 ### Validator duties (`validator-duties.sh`, every 7 min — control node)
 
@@ -214,17 +230,25 @@ All thresholds are set in `node.env` and can be adjusted per node.
 | `ALERT_LEVEL` | `info` | Alert tier: `critical` / `info` / `detailed` |
 | `EL_PEERS_MIN` | 5 | Minimum EL peers before alert |
 | `CL_PEERS_MIN` | 10 | Minimum CL peers before alert |
+| `CL_SYNC_DISTANCE_ALERT` | 2 | CL slot distance that triggers the "not synced" alert (1 = strict, 2 = default) |
 | `CHARON_PEERS_MIN` | cluster−1 | Minimum Charon cluster peers |
 | `CHARON_PEERS_EXPECTED` | cluster−1 | Expected Charon peers (control node) |
 | `CHARON_LATENCY_ALERT_MS` | 500 | Max acceptable peer RTT in ms |
 | `BCAST_DELAY_ALERT_MS` | 3000 | Attestation bcast delay threshold (ms) — obol node only |
 | `BCAST_DELAY_COUNT_MIN` | 4 | Min high-delay submissions in 5 min to fire alert — obol node only |
-| `SWAP_ALERT_GB` | 6 | Swap usage alert threshold (GB) |
+| `SWAP_ALERT_GB` | 6 | Swap usage early-warning threshold (GB) |
+| `CHARON_STOP_SWAP_GB` | 10 | Swap threshold that triggers the Cluster Disruption Risk alert — must be > `SWAP_ALERT_GB` |
+| `CHARON_STOP_CPU_LOAD_AVG` | 6 | 1-min load average threshold for Cluster Disruption Risk alert |
+| `CHARON_STOP_SYNC_EVENTS` | 1 | Fire Cluster Disruption Risk after this many CL out-of-sync detections in 1 h (`>` this value) |
 | `DISK_ETH_ALERT_GB` | 150 | Free space alert on /home/ethereum (GB) |
 | `DISK_ROOT_ALERT_PCT` | 85 | Root disk used% alert |
 | `CPU_TEMP_ALERT_C` | 80 | CPU temperature alert (°C) |
 | `MASS_MISS_THRESHOLD` | 10 | Number of validators that triggers mass-miss alert |
 | `HEAD_MISS_RATE_PCT` | 1.0 | Rolling head-miss rate % that triggers performance alert |
 | `HEAD_MISS_WINDOW_HOURS` | 1 | Rolling window for head-miss rate calculation (hours) |
+| `PEER_CONTROL_IP` | _(empty)_ | VPN IP of the primary control node — set on the failover node only |
+| `PEER_CONTROL_NAME` | _(empty)_ | Human-readable name of the primary — shown in takeover alerts |
+| `PEER_FAILOVER_IP` | _(empty)_ | VPN IP of the failover control node — set on the primary to enable failover reachability check |
+| `PEER_FAILOVER_NAME` | _(empty)_ | Human-readable name of the failover — shown in alerts |
 | `LOCK_EXPIRY` | 86400 | Alert cooldown in seconds (24 h) |
 | `CHARON_API_TIMEOUT` | 8 | Timeout for Charon HTTP calls (seconds) |

@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-10-31 09:28:07 UTC_
+_Last updated: 2026-11-01 10:16:47 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-10-31 09:28:07 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **25** (67.6%)
-- ❌ Outdated: **12** (32.4%)
+- ✅ Up-to-date: **27** (73.0%)
+- ❌ Outdated: **10** (27.0%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -35,7 +35,7 @@ _Last updated: 2026-10-31 09:28:07 UTC_
 | `mev-boost` | `1.12` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.12` | ✅ Up-to-date |
 | `stakewise-operator` | `5.1.1` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `5.1.1` | ✅ Up-to-date |
 | `vero` | `1.4.2` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.4.2` | ✅ Up-to-date |
-| `vouch` | `1.13.2` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.13.1` | ❌ Outdated |
+| `vouch` | `1.13.2` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.13.2` | ✅ Up-to-date |
 
 ## Layer 1 Consensus
 
@@ -58,7 +58,7 @@ _Last updated: 2026-10-31 09:28:07 UTC_
 | `geth` | `1.17.10` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.10` | ✅ Up-to-date |
 | `nethermind` | `2.2.2` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `2.2.2` | ✅ Up-to-date |
 | `nimbus-ec` | `0.4.4` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
-| `reth` | `2.9.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `2.8.1` | ❌ Outdated |
+| `reth` | `2.9.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `2.9.0` | ✅ Up-to-date |
 
 ## Layer 1 Light Clients
 

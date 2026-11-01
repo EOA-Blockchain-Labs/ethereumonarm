@@ -44,8 +44,11 @@ if [ -n "${PEER_CONTROL_IP:-}" ]; then
     _TAKEOVER_PREV="__unset__"
     [ -f "$_TAKEOVER_FILE" ] && _TAKEOVER_PREV=$(cat "$_TAKEOVER_FILE" 2>/dev/null)
 
+    _TAKEOVER_PENDING="${HOME:-/home/ethereum}/.obol-monitor/cache/ctrl-takeover-pending"
+
     if ping -c 1 -W "${PEER_CHECK_TIMEOUT:-5}" "$PEER_CONTROL_IP" > /dev/null 2>&1; then
-        # Primary is up — clear takeover alert if we were previously standing in
+        # Primary is up — reset pending counter; clear takeover alert if we were standing in
+        rm -f "$_TAKEOVER_PENDING"
         if [ "$_TAKEOVER_PREV" = "down" ]; then
             mkdir -p "$(dirname "$_TAKEOVER_FILE")"
             echo "up" > "$_TAKEOVER_FILE"
@@ -58,7 +61,20 @@ This node is standing down — primary has resumed cluster monitoring."
         echo "Peer control node (${PEER_CONTROL_IP}) is reachable — deferring health check to primary."
         exit 0
     else
-        # Primary is unreachable — alert once on transition, then take over
+        # Primary unreachable — increment counter; only alert and take over after 2 consecutive failures
+        _TAKEOVER_COUNT=0
+        [ -f "$_TAKEOVER_PENDING" ] && _TAKEOVER_COUNT=$(cat "$_TAKEOVER_PENDING" 2>/dev/null || echo 0)
+        _TAKEOVER_COUNT=$(( _TAKEOVER_COUNT + 1 ))
+        mkdir -p "$(dirname "$_TAKEOVER_PENDING")"
+        echo "$_TAKEOVER_COUNT" > "$_TAKEOVER_PENDING"
+
+        if [ "$_TAKEOVER_COUNT" -lt 2 ]; then
+            # First failure — wait for confirmation before alerting or taking over
+            echo "Peer control node (${PEER_CONTROL_IP}) not responding (attempt ${_TAKEOVER_COUNT}/2) — waiting for confirmation."
+            exit 0
+        fi
+
+        # Second consecutive failure — alert once on transition, then take over
         if [ "$_TAKEOVER_PREV" != "down" ]; then
             mkdir -p "$(dirname "$_TAKEOVER_FILE")"
             echo "down" > "$_TAKEOVER_FILE"
@@ -508,14 +524,25 @@ fi
 # so the operator knows monitoring redundancy has been lost.
 # =============================================================================
 if [ -z "${PEER_CONTROL_IP:-}" ] && [ -n "${PEER_FAILOVER_IP:-}" ]; then
+    _FAILOVER_PENDING="${HOME:-/home/ethereum}/.obol-monitor/cache/ctrl-failover-pending"
     if ping -c 1 -W "${PEER_CHECK_TIMEOUT:-5}" "$PEER_FAILOVER_IP" > /dev/null 2>&1; then
+        # Reachable — reset the consecutive-failure counter and clear any active alert
+        rm -f "$_FAILOVER_PENDING"
         clear_lock_alert "ctrl-failover-down" "$(node_label)
 ✅ <b>Resolved: Failover control node reachable</b>
 
 <b>${PEER_FAILOVER_NAME:-failover control}</b> (<code>${PEER_FAILOVER_IP}</code>) is responding again.
 Cluster monitoring redundancy is restored." "info"
     else
-        lock_alert "ctrl-failover-down" "$(node_label)
+        # Unreachable — increment counter; only alert after 2 consecutive failures
+        _FAIL_COUNT=0
+        [ -f "$_FAILOVER_PENDING" ] && _FAIL_COUNT=$(cat "$_FAILOVER_PENDING" 2>/dev/null || echo 0)
+        _FAIL_COUNT=$(( _FAIL_COUNT + 1 ))
+        mkdir -p "$(dirname "$_FAILOVER_PENDING")"
+        echo "$_FAIL_COUNT" > "$_FAILOVER_PENDING"
+
+        if [ "$_FAIL_COUNT" -ge 2 ]; then
+            lock_alert "ctrl-failover-down" "$(node_label)
 ⚠️ <b>Failover control node unreachable</b>
 
 <b>${PEER_FAILOVER_NAME:-failover control}</b> (<code>${PEER_FAILOVER_IP}</code>) is not responding.
@@ -524,5 +551,7 @@ Cluster monitoring has no redundancy until it recovers.
 Suggested actions:
 • Check Tailscale: <code>tailscale ping ${PEER_FAILOVER_IP}</code>
 • Check if the failover control node is online" "info"
+        fi
     fi
+    unset _FAILOVER_PENDING _FAIL_COUNT
 fi

@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-11-01 10:16:47 UTC_
+_Last updated: 2026-11-02 10:49:00 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-11-01 10:16:47 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **27** (73.0%)
-- ❌ Outdated: **10** (27.0%)
+- ✅ Up-to-date: **25** (67.6%)
+- ❌ Outdated: **12** (32.4%)
 - ❓ N/A: **0** (0.0%)
 
 ## Infra
@@ -33,7 +33,7 @@ _Last updated: 2026-11-01 10:16:47 UTC_
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |
 | `ethstaker-deposit-cli` | `1.3.0` ([eth-educators/ethstaker-deposit-cli](https://github.com/eth-educators/ethstaker-deposit-cli)) | `1.3.0` | ✅ Up-to-date |
 | `mev-boost` | `1.12` ([flashbots/mev-boost](https://github.com/flashbots/mev-boost)) | `1.12` | ✅ Up-to-date |
-| `stakewise-operator` | `5.1.1` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `5.1.1` | ✅ Up-to-date |
+| `stakewise-operator` | `5.1.2` ([stakewise/v3-operator](https://github.com/stakewise/v3-operator)) | `5.1.1` | ❌ Outdated |
 | `vero` | `1.4.2` ([serenita-org/vero](https://github.com/serenita-org/vero)) | `1.4.2` | ✅ Up-to-date |
 | `vouch` | `1.13.2` ([attestantio/vouch](https://github.com/attestantio/vouch)) | `1.13.2` | ✅ Up-to-date |
 
@@ -52,7 +52,7 @@ _Last updated: 2026-11-01 10:16:47 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `besu` | `26.10.2` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.10.2` | ✅ Up-to-date |
+| `besu` | `26.11.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.10.2` | ❌ Outdated |
 | `erigon` | `3.8.1` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.8.1` | ✅ Up-to-date |
 | `ethrex` | `30.0.1` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `30.0.1` | ✅ Up-to-date |
 | `geth` | `1.17.10` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.10` | ✅ Up-to-date |

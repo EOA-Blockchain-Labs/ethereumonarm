@@ -114,6 +114,12 @@ clear_lock() {
 # (condition was never alerted, or already resolved).
 # The optional <level> must match the level of the original lock_alert call
 # so the resolved message is gated by the same ALERT_LEVEL threshold.
+#
+# The lock is removed only after a successful send. If send_telegram fails
+# (network error, Telegram timeout, etc.) the lock is kept so the next cron
+# run retries the resolved message rather than silently dropping it.
+# When the alert level is suppressed by ALERT_LEVEL, the lock is removed
+# immediately (no retry needed — the resolved message is intentionally muted).
 # -----------------------------------------------------------------------------
 clear_lock_alert() {
     local lock_name="$1"
@@ -121,8 +127,11 @@ clear_lock_alert() {
     local level="${3:-info}"
     local lock_file="${LOCK_DIR}/alert-${lock_name}.lock"
     if [ -f "$lock_file" ]; then
-        should_alert "$level" && send_telegram "$resolved_message"
-        rm -f "$lock_file"
+        if should_alert "$level"; then
+            send_telegram "$resolved_message" && rm -f "$lock_file"
+        else
+            rm -f "$lock_file"
+        fi
     fi
 }
 

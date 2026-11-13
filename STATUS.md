@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-11-12 10:49:53 UTC_
+_Last updated: 2026-11-13 10:45:35 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-11-12 10:49:53 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **21** (56.8%)
-- ❌ Outdated: **15** (40.5%)
+- ✅ Up-to-date: **24** (64.9%)
+- ❌ Outdated: **12** (32.4%)
 - ❓ N/A: **1** (2.7%)
 
 ## Infra
@@ -27,7 +27,7 @@ _Last updated: 2026-11-12 10:49:53 UTC_
 | `commit-boost` | `0.11.1` ([Commit-Boost/commit-boost-client](https://github.com/Commit-Boost/commit-boost-client)) | `0.9.6` | ❌ Outdated |
 | `dirk` | `1.2.1` ([attestantio/dirk](https://github.com/attestantio/dirk)) | `1.2.1` | ✅ Up-to-date |
 | `dvt-anchor` | `1.4.1` ([sigp/anchor](https://github.com/sigp/anchor)) | `1.4.1` | ✅ Up-to-date |
-| `dvt-obol` | `1.11.4` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.11.2` | ❌ Outdated |
+| `dvt-obol` | `1.11.4` ([ObolNetwork/charon](https://github.com/ObolNetwork/charon)) | `1.11.4` | ✅ Up-to-date |
 | `dvt-ssv` | `2.5.1` ([ssvlabs/ssv](https://github.com/ssvlabs/ssv)) | `2.5.0` | ❌ Outdated |
 | `ethereum-metrics-exporter` | `0.30.0` ([ethpandaops/ethereum-metrics-exporter](https://github.com/ethpandaops/ethereum-metrics-exporter)) | `0.30.0` | ✅ Up-to-date |
 | `ethereum-validator-metrics-exporter` | `0.0.4` ([ethpandaops/ethereum-validator-metrics-exporter](https://github.com/ethpandaops/ethereum-validator-metrics-exporter)) | `0.0.4` | ✅ Up-to-date |
@@ -42,7 +42,7 @@ _Last updated: 2026-11-12 10:49:53 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
 | `grandine` | `2.0.6` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.6` | ✅ Up-to-date |
-| `lighthouse` | `8.3.3` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.3.2` | ❌ Outdated |
+| `lighthouse` | `8.3.3` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.3.3` | ✅ Up-to-date |
 | `lodestar` | `1.50.1` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.50.1` | ✅ Up-to-date |
 | `nimbus` | `26.10.2` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.10.2` | ✅ Up-to-date |
 | `prysm` | `7.3.1` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.3.1` | ✅ Up-to-date |
@@ -58,7 +58,7 @@ _Last updated: 2026-11-12 10:49:53 UTC_
 | `geth` | `1.17.10` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.10` | ✅ Up-to-date |
 | `nethermind` | `2.2.2` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `2.2.2` | ✅ Up-to-date |
 | `nimbus-ec` | `0.4.4` ([status-im/nimbus-eth1](https://github.com/status-im/nimbus-eth1)) | `0.3.0` | ❌ Outdated |
-| `reth` | `2.11.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `2.10.1` | ❌ Outdated |
+| `reth` | `2.11.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `2.11.0` | ✅ Up-to-date |
 
 ## Layer 1 Light Clients
 

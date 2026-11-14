@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-11-13 10:45:35 UTC_
+_Last updated: 2026-11-14 10:00:15 UTC_
 
 ## What this report compares
 
@@ -72,7 +72,7 @@ _Last updated: 2026-11-13 10:45:35 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `arbitrum-nitro` | `3.12.2` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.11.3` | ❌ Outdated |
 | `fuel-network` | `0.48.4` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.48.3` | ❌ Outdated |
-| `optimism-op-challenger` | `1.11.0` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.3` | ❌ Outdated |
+| `optimism-op-challenger` | `1.12.0` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.3` | ❌ Outdated |
 | `optimism-op-geth` | `1.101702.3` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101702.3` | ✅ Up-to-date |
 | `optimism-op-node` | `1.20.1` ([ethereum-optimism/optimism#op-node](https://github.com/ethereum-optimism/optimism#op-node)) | `1.19.0` | ❌ Outdated |
 | `optimism-op-reth` | `2.11.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |

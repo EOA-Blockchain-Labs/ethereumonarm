@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-11-17 11:38:03 UTC_
+_Last updated: 2026-11-18 11:24:59 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-11-17 11:38:03 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **24** (64.9%)
-- ❌ Outdated: **12** (32.4%)
+- ✅ Up-to-date: **25** (67.6%)
+- ❌ Outdated: **11** (29.7%)
 - ❓ N/A: **1** (2.7%)
 
 ## Infra
@@ -43,7 +43,7 @@ _Last updated: 2026-11-17 11:38:03 UTC_
 | :------- | :------------------ | :----------------------- | :------: |
 | `grandine` | `2.0.6` ([grandinetech/grandine](https://github.com/grandinetech/grandine)) | `2.0.6` | ✅ Up-to-date |
 | `lighthouse` | `8.3.3` ([sigp/lighthouse](https://github.com/sigp/lighthouse)) | `8.3.3` | ✅ Up-to-date |
-| `lodestar` | `1.51.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.50.1` | ❌ Outdated |
+| `lodestar` | `1.51.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.51.0` | ✅ Up-to-date |
 | `nimbus` | `26.10.2` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.10.2` | ✅ Up-to-date |
 | `prysm` | `7.3.1` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.3.1` | ✅ Up-to-date |
 | `teku` | `26.10.3` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.10.3` | ✅ Up-to-date |
@@ -52,7 +52,7 @@ _Last updated: 2026-11-17 11:38:03 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `besu` | `26.11.0` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.11.0` | ✅ Up-to-date |
+| `besu` | `26.11.1` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.11.1` | ✅ Up-to-date |
 | `erigon` | `3.8.1` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.8.1` | ✅ Up-to-date |
 | `ethrex` | `31.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `31.0.0` | ✅ Up-to-date |
 | `geth` | `1.17.10` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.10` | ✅ Up-to-date |

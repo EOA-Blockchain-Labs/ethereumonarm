@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-11-19 11:22:40 UTC_
+_Last updated: 2026-11-20 11:12:34 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-11-19 11:22:40 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **24** (64.9%)
-- ❌ Outdated: **12** (32.4%)
+- ✅ Up-to-date: **23** (62.2%)
+- ❌ Outdated: **13** (35.1%)
 - ❓ N/A: **1** (2.7%)
 
 ## Infra
@@ -53,7 +53,7 @@ _Last updated: 2026-11-19 11:22:40 UTC_
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
 | `besu` | `26.11.1` ([hyperledger/besu](https://github.com/hyperledger/besu)) | `26.11.1` | ✅ Up-to-date |
-| `erigon` | `3.8.1` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.8.1` | ✅ Up-to-date |
+| `erigon` | `3.8.2` ([ledgerwatch/erigon](https://github.com/ledgerwatch/erigon)) | `3.8.1` | ❌ Outdated |
 | `ethrex` | `31.0.0` ([lambdaclass/ethrex](https://github.com/lambdaclass/ethrex)) | `31.0.0` | ✅ Up-to-date |
 | `geth` | `1.17.10` ([ethereum/go-ethereum](https://github.com/ethereum/go-ethereum)) | `1.17.10` | ✅ Up-to-date |
 | `nethermind` | `2.2.2` ([NethermindEth/nethermind](https://github.com/NethermindEth/nethermind)) | `2.2.2` | ✅ Up-to-date |
@@ -70,7 +70,7 @@ _Last updated: 2026-11-19 11:22:40 UTC_
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
-| `arbitrum-nitro` | `3.12.2` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.11.3` | ❌ Outdated |
+| `arbitrum-nitro` | `3.12.4` ([OffchainLabs/nitro](https://github.com/OffchainLabs/nitro)) | `3.11.3` | ❌ Outdated |
 | `fuel-network` | `0.48.4` ([FuelLabs/fuel-core](https://github.com/FuelLabs/fuel-core)) | `0.48.3` | ❌ Outdated |
 | `optimism-op-challenger` | `1.12.0` ([ethereum-optimism/optimism#op-challenger](https://github.com/ethereum-optimism/optimism#op-challenger)) | `1.9.3` | ❌ Outdated |
 | `optimism-op-geth` | `1.101702.3` ([ethereum-optimism/op-geth](https://github.com/ethereum-optimism/op-geth)) | `1.101702.3` | ✅ Up-to-date |

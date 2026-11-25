@@ -1,6 +1,6 @@
 # Ethereum on ARM Package Status
 
-_Last updated: 2026-11-24 13:28:19 UTC_
+_Last updated: 2026-11-25 12:26:55 UTC_
 
 ## What this report compares
 
@@ -16,8 +16,8 @@ _Last updated: 2026-11-24 13:28:19 UTC_
 ## Summary
 
 - Total packages checked: **37**
-- ✅ Up-to-date: **22** (59.5%)
-- ❌ Outdated: **14** (37.8%)
+- ✅ Up-to-date: **20** (54.1%)
+- ❌ Outdated: **16** (43.2%)
 - ❓ N/A: **1** (2.7%)
 
 ## Infra
@@ -46,7 +46,7 @@ _Last updated: 2026-11-24 13:28:19 UTC_
 | `lodestar` | `1.51.0` ([ChainSafe/lodestar](https://github.com/ChainSafe/lodestar)) | `1.51.0` | ✅ Up-to-date |
 | `nimbus` | `26.10.2` ([status-im/nimbus-eth2](https://github.com/status-im/nimbus-eth2)) | `26.10.2` | ✅ Up-to-date |
 | `prysm` | `7.3.2` ([prysmaticlabs/prysm](https://github.com/prysmaticlabs/prysm)) | `7.3.1` | ❌ Outdated |
-| `teku` | `26.10.3` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.10.3` | ✅ Up-to-date |
+| `teku` | `26.11.0` ([ConsenSys/teku](https://github.com/ConsenSys/teku)) | `26.10.3` | ❌ Outdated |
 
 ## Layer 1 Execution
 
@@ -78,11 +78,11 @@ _Last updated: 2026-11-24 13:28:19 UTC_
 | `optimism-op-reth` | `2.11.0` ([paradigmxyz/reth](https://github.com/paradigmxyz/reth)) | `1.10.2` | ❌ Outdated |
 | `starknet-juno` | `0.17.0` ([NethermindEth/juno](https://github.com/NethermindEth/juno)) | `0.16.6` | ❌ Outdated |
 | `starknet-madara` | `N/A` ([madara-alliance/madara](https://github.com/madara-alliance/madara)) | `0.10.2` | ❓ N/A |
-| `starknet-pathfinder` | `0.24.2` ([equilibriumco/pathfinder](https://github.com/equilibriumco/pathfinder)) | `0.24.0` | ❌ Outdated |
+| `starknet-pathfinder` | `0.24.3` ([equilibriumco/pathfinder](https://github.com/equilibriumco/pathfinder)) | `0.24.0` | ❌ Outdated |
 
 ## Web3
 
 | Package | GitHub (Upstream) | Repo (Ethereum on ARM) | Status |
 | :------- | :------------------ | :----------------------- | :------: |
 | `bee` | `2.8.3` ([ethersphere/bee](https://github.com/ethersphere/bee)) | `2.8.2` | ❌ Outdated |
-| `kubo` | `0.43.1` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.43.1` | ✅ Up-to-date |
+| `kubo` | `0.43.2` ([ipfs/kubo](https://github.com/ipfs/kubo)) | `0.43.1` | ❌ Outdated |

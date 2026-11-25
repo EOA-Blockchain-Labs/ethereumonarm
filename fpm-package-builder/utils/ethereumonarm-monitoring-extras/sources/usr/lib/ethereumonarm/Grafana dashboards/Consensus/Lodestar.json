@@ -1883,7 +1883,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "rate(lodestar_gossip_block_elapsed_time_till_processed_count[$rate_interval])\n- on(instance)\nrate(lodestar_gossip_block_elapsed_time_till_processed_bucket{le=\"4\"}[$rate_interval])",
+          "expr": "rate({__name__=~\"lodestar_gossip_block_elapsed_time_till_processed(_seconds)?_count\"}[$rate_interval])\n- on(instance)\nrate({__name__=~\"lodestar_gossip_block_elapsed_time_till_processed(_seconds)?_bucket\", le=\"4\"}[$rate_interval])",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"

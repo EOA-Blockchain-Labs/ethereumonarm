@@ -195,7 +195,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "(time() - lodestar_genesis_time) / 12"
+              "options": "(time() - {__name__=~\"lodestar_genesis_time(_seconds)?\"}) / 12"
             },
             "properties": [
               {
@@ -340,7 +340,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": false,
-          "expr": "(time() - lodestar_genesis_time) / 12",
+          "expr": "(time() - {__name__=~\"lodestar_genesis_time(_seconds)?\"}) / 12",
           "hide": false,
           "instant": false,
           "interval": "",
@@ -1883,7 +1883,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "rate(lodestar_gossip_block_elapsed_time_till_processed_count[$rate_interval])\n- on(instance)\nrate(lodestar_gossip_block_elapsed_time_till_processed_bucket{le=\"4\"}[$rate_interval])",
+          "expr": "rate({__name__=~\"lodestar_gossip_block_elapsed_time_till_processed(_seconds)?_count\"}[$rate_interval])\n- on(instance)\nrate({__name__=~\"lodestar_gossip_block_elapsed_time_till_processed(_seconds)?_bucket\", le=\"4\"}[$rate_interval])",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -3021,7 +3021,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "(time() - lodestar_genesis_time) / 12 - beacon_clock_slot",
+          "expr": "(time() - {__name__=~\"lodestar_genesis_time(_seconds)?\"}) / 12 - beacon_clock_slot",
           "hide": false,
           "interval": "",
           "legendFormat": "clock drift",

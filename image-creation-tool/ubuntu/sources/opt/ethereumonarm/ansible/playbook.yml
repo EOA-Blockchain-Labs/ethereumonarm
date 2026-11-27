@@ -58,6 +58,69 @@
         quiet: true
       when: require_armbian | bool
 
+    # Not every board exposes /sys/firmware/devicetree/base/model at runtime. Confirmed cause on
+    # the Orange Pi 6 Plus (CIX CD8180/CD8160 "Sky1" SoC): Armbian boots it via ACPI, not device
+    # tree (hostname/BOARDFAMILY literally say "cix-acpi"/"cix-p1") - when the kernel boots via
+    # ACPI there is no devicetree blob at all, so nothing can populate that sysfs path. This is a
+    # firmware/kernel-build choice, not something fixable from here. Two fallback identity sources
+    # are read instead, in priority order:
+    #   1. DMI/SMBIOS (/sys/class/dmi/id/*) - populated by UEFI firmware independently of which
+    #      kernel/OS is running, so it works the same whether boot is ACPI or device-tree-based.
+    #      Confirmed on a real Orange Pi 6 Plus unit: product_name/board_name report "CIX Phecda
+    #      Board" (CIX's own reference-board codename for this SoC - shared across vendors, not
+    #      Orange-Pi-specific on its own), while bios_vendor reports "Orange Pi" - the one field
+    #      that actually identifies the vendor. The two are combined into one identity string
+    #      ("Orange Pi CIX Phecda Board") when both are present and not already duplicating each
+    #      other, since a plain substring match still works either way. Obvious unset-firmware
+    #      placeholder strings ("To Be Filled By O.E.M.", "Default string", ...) are discarded.
+    #   2. /etc/armbian-release's BOARD_NAME, then its BOARD slug - always present on an Armbian
+    #      image (guaranteed by the check above), but may only identify the SoC/platform
+    #      (e.g. "Cix-ACPI") rather than the specific board when Armbian has no board-specific
+    #      config for it yet.
+    - name: Read fallback board identity sources (DMI, then Armbian's own board name)
+      ansible.builtin.shell:
+        cmd: |
+          set -o pipefail
+          printf '%s\n' "$(cat /sys/class/dmi/id/product_name 2>/dev/null)"
+          printf '%s\n' "$(cat /sys/class/dmi/id/board_name 2>/dev/null)"
+          printf '%s\n' "$(cat /sys/class/dmi/id/bios_vendor 2>/dev/null)"
+          printf '%s\n' "$(grep -m1 '^BOARD_NAME=' /etc/armbian-release 2>/dev/null | cut -d= -f2- | tr -d '"')"
+          printf '%s\n' "$(grep -m1 '^BOARD=' /etc/armbian-release 2>/dev/null | cut -d= -f2- | tr -d '"')"
+        executable: /bin/bash
+      register: board_identity_raw
+      changed_when: false
+      failed_when: false
+
+    - name: Record the fallback board identity candidates
+      ansible.builtin.set_fact:
+        dmi_product_name: "{{ (board_identity_raw.stdout_lines | default([]))[0] | default('') | trim }}"
+        dmi_board_name: "{{ (board_identity_raw.stdout_lines | default([]))[1] | default('') | trim }}"
+        dmi_bios_vendor: "{{ (board_identity_raw.stdout_lines | default([]))[2] | default('') | trim }}"
+        armbian_board_name: "{{ (board_identity_raw.stdout_lines | default([]))[3] | default('') | trim }}"
+        armbian_board_slug: "{{ (board_identity_raw.stdout_lines | default([]))[4] | default('') | trim }}"
+
+    # Generic/unconfigured UEFI firmware ships these exact placeholder strings in DMI fields
+    # instead of leaving them empty - not a real board name, so they are discarded here rather
+    # than used as the detected model.
+    - name: Discard known DMI placeholder values
+      ansible.builtin.set_fact:
+        dmi_product_name: "{{ '' if (dmi_product_name is search('to be filled|default string|not specified|system product name|^o\\.?e\\.?m\\.?$', ignorecase=True)) else dmi_product_name }}"
+        dmi_board_name: "{{ '' if (dmi_board_name is search('to be filled|default string|not specified|system product name|^o\\.?e\\.?m\\.?$', ignorecase=True)) else dmi_board_name }}"
+        dmi_bios_vendor: "{{ '' if (dmi_bios_vendor is search('to be filled|default string|not specified|o\\.?e\\.?m\\.?$', ignorecase=True)) else dmi_bios_vendor }}"
+
+    # Combine the vendor and product fields when both are present and distinct (bios_vendor is
+    # often the only field that actually names the vendor, e.g. "Orange Pi" vs. a generic
+    # "CIX Phecda Board" reference-design product name); fall back to whichever single field is
+    # available otherwise.
+    - name: Build a DMI-derived identity string
+      ansible.builtin.set_fact:
+        dmi_identity: >-
+          {%- if dmi_product_name | length > 0 and dmi_bios_vendor | length > 0 and dmi_bios_vendor | lower not in dmi_product_name | lower -%}
+          {{ dmi_bios_vendor }} {{ dmi_product_name }}
+          {%- elif dmi_product_name | length > 0 -%}{{ dmi_product_name }}
+          {%- elif dmi_board_name | length > 0 -%}{{ dmi_board_name }}
+          {%- else -%}{%- endif -%}
+
     - name: Check the OS release is one this playbook supports
       ansible.builtin.assert:
         that: ansible_facts['distribution_release'] in supported_releases
@@ -117,9 +180,29 @@
       register: device_tree_model
       ignore_errors: true
 
-    - name: Set device model fact
+    - name: Read the device tree model string, if any
       ansible.builtin.set_fact:
-        detected_model: "{{ (device_tree_model.content | b64decode | regex_replace('\\x00', '')) if device_tree_model is succeeded else 'Unknown' }}"
+        device_tree_model_str: "{{ (device_tree_model.content | b64decode | regex_replace('\\x00', '') | trim) if device_tree_model is succeeded else '' }}"
+
+    # Device tree first; if it's empty or the read failed (no such sysfs path - e.g. an
+    # ACPI-booted board), fall back to the DMI-derived identity, then to Armbian's own board
+    # name, then its board slug. "Unknown" only when none of the four sources has anything - no
+    # board is actually unrecognized on an Armbian image with require_armbian=true, since
+    # armbian-release is guaranteed present by the check above.
+    - name: Set device model fact (device tree, falling back to DMI, then Armbian's board identity)
+      ansible.builtin.set_fact:
+        detected_model: >-
+          {{ device_tree_model_str if device_tree_model_str | length > 0
+             else (dmi_identity if dmi_identity | default('') | length > 0
+             else (armbian_board_name if armbian_board_name | default('') | length > 0
+             else (armbian_board_slug if armbian_board_slug | default('') | length > 0
+             else 'Unknown'))) }}
+        detected_model_source: >-
+          {{ 'device tree' if device_tree_model_str | length > 0
+             else ('DMI' if dmi_identity | default('') | length > 0
+             else ('/etc/armbian-release BOARD_NAME' if armbian_board_name | default('') | length > 0
+             else ('/etc/armbian-release BOARD' if armbian_board_slug | default('') | length > 0
+             else 'none'))) }}
 
     - name: Derive hostname seed (known board pattern, otherwise slug of the model string)
       ansible.builtin.set_fact:
@@ -138,7 +221,7 @@
 
     - name: Display detected device
       ansible.builtin.debug:
-        msg: "Detected device: {{ detected_model }} (hostname seed: {{ hostname_seed }})"
+        msg: "Detected device: {{ detected_model }} (source: {{ detected_model_source }}; hostname seed: {{ hostname_seed }})"
 
     - name: Calculate swap size (2x RAM, max 24GB)
       ansible.builtin.set_fact:
@@ -556,7 +639,7 @@
       ansible.builtin.set_fact:
         plan_lines:
           - "OS release      : {{ ansible_facts['distribution_release'] }} (supported: {{ supported_releases | join(', ') }}); APT suites - {% for s in apt_sources if s.suite_probe is defined %}{% set suite = apt_suite_by_name[s.name] | default(os_suite) %}{{ s.name }}: {{ suite }}{{ ' (' ~ os_suite ~ ' not published there, using fallback)' if suite != os_suite else '' }}{{ '; ' if not loop.last else '' }}{% endfor %}"
-          - "Board           : {{ detected_model }} ({{ ansible_facts['memtotal_mb'] }} MB RAM, hostname seed '{{ hostname_seed }}')"
+          - "Board           : {{ detected_model }} ({{ ansible_facts['memtotal_mb'] }} MB RAM, hostname seed '{{ hostname_seed }}'){{ ' - identified via ' ~ detected_model_source ~ ' (no device tree model on this boot)' if detected_model_source != 'device tree' else '' }}"
           - >-
             NVMe disk       : {{ target_disk }}
             ({{ ((nvme_all | select('match', '^' ~ target_disk ~ ' ') | first).split()[1] | int / 1000000000) | round | int }} GB){{ ' - picked from ' ~ (nvme_candidates | join(', ')) ~ ' (first by device name); pass nvme_device=<path> to use a different one' if (nvme_device | length == 0 and nvme_candidates | length > 1) else '' }},

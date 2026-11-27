@@ -178,6 +178,20 @@ devices:
     pattern: "Orange Pi 5 Plus"
     hostname_seed: "opi5plus"
 
+  orangepi6plus:
+    # This board (CIX CD8180/CD8160 "Sky1" SoC) boots via ACPI on current Armbian images, so
+    # there is no device-tree model string at all. detected_model instead comes from DMI, and a
+    # real unit confirms neither product_name nor board_name say "Orange Pi" anywhere - both
+    # report "CIX Phecda Board" (CIX's own reference-board codename, shared across vendors who
+    # build on this SoC). Only bios_vendor says "Orange Pi"; the playbook folds that into
+    # detected_model as "Orange Pi CIX Phecda Board" when both fields are present, but "Phecda"
+    # is the substring actually guaranteed to be there (bios_vendor can be blank on some units).
+    # Caveat: since "Phecda" is CIX's reference design name rather than Orange-Pi-specific, a
+    # different vendor's board built on the same reference design could match this pattern too -
+    # there was no way to rule that out from this unit alone. See PLAYBOOK_LOGIC.md.
+    pattern: "Phecda"
+    hostname_seed: "opi6plus"
+
   nanopct6:
     pattern: "NanoPC-T6"
     hostname_seed: "nanopct6"

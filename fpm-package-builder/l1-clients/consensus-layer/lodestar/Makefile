@@ -99,7 +99,8 @@ FPM_DEB_OPTS = $(FPM_COMMON_OPTS) \
     --deb-no-default-config-files \
     $(shell test -d extras && find extras -name 'lodestar-*.service' -printf "--deb-systemd %p ") \
     $(shell test -d $(SOURCESDIR)/etc && find $(SOURCESDIR)/etc -type f -printf "--config-files /etc/%P " || true) \
-    --depends merge-config
+    --depends merge-config \
+    --depends libatomic1
 
 # ----------------------------------------------------------------------
 # RPM-specific options
@@ -108,7 +109,8 @@ FPM_RPM_OPTS = $(FPM_COMMON_OPTS) \
     -t rpm \
     --architecture $(PKG_ARCH_RPM) \
     $(shell test -d extras && find extras -name 'lodestar-*.service' -printf "--rpm-systemd %p ") \
-    --depends merge-config
+    --depends merge-config \
+    --depends libatomic
 
 # ----------------------------------------------------------------------
 # Targets
